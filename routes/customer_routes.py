@@ -345,22 +345,13 @@ def category_products(category_id=None):
 
 @customer_bp.route('/wede-semira')
 def wede_semira():
-    """Dedicated ወድ ሰሚራ women's and children's clothing section."""
+    """Dedicated ሰሚራ women's and children's clothing section."""
     lang = get_lang()
     try:
         conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute("""
-            SELECT * FROM categories
-            WHERE is_active = 1 AND (
-                name_am LIKE '%ልብስ%' OR name LIKE '%Clothing%'
-                OR name LIKE '%Women%' OR name LIKE '%Children%'
-                OR name_am LIKE '%ሴቶች%' OR name_am LIKE '%ልጆች%'
-                OR name LIKE '%wede%' OR name_am LIKE '%ወድ%'
-            )
-            ORDER BY sort_order ASC
-        """)
+        cursor.execute("SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order ASC")
         clothing_cats = cursor.fetchall()
         clothing_cat_ids = [c['id'] for c in clothing_cats]
 
@@ -370,40 +361,38 @@ def wede_semira():
                 SELECT p.*, c.name as cat_name, c.name_am as cat_name_am
                 FROM products p LEFT JOIN categories c ON p.category_id = c.id
                 WHERE p.is_active = 1 AND p.category_id IN ({placeholders})
-                ORDER BY p.is_featured DESC, p.id DESC
+                ORDER BY p.is_featured DESC, p.id DESC LIMIT 40
             """, clothing_cat_ids)
         else:
-            cursor.execute("SELECT p.*, c.name as cat_name, c.name_am as cat_name_am FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE 1=0")
+            cursor.execute("""
+                SELECT p.*, c.name as cat_name, c.name_am as cat_name_am
+                FROM products p LEFT JOIN categories c ON p.category_id = c.id
+                WHERE p.is_active = 1 ORDER BY p.is_featured DESC, p.id DESC LIMIT 40
+            """)
 
         products_rows = cursor.fetchall()
 
-        cursor.execute("""
-            SELECT p.*, c.name as cat_name, c.name_am as cat_name_am
-            FROM products p LEFT JOIN categories c ON p.category_id = c.id
-            WHERE p.is_active = 1 AND c.name_am LIKE '%ሴቶች%'
-            ORDER BY p.is_featured DESC, p.id DESC LIMIT 12
-        """)
-        women_products = cursor.fetchall()
-
-        cursor.execute("""
-            SELECT p.*, c.name as cat_name, c.name_am as cat_name_am
-            FROM products p LEFT JOIN categories c ON p.category_id = c.id
-            WHERE p.is_active = 1 AND (c.name_am LIKE '%ልጆች%' OR c.name LIKE '%Children%')
-            ORDER BY p.is_featured DESC, p.id DESC LIMIT 12
-        """)
-        children_products = cursor.fetchall()
+        # Products by category for per-section display
+        cat_products = {}
+        for cat in clothing_cats:
+            cursor.execute("""
+                SELECT p.*, c.name as cat_name, c.name_am as cat_name_am
+                FROM products p LEFT JOIN categories c ON p.category_id = c.id
+                WHERE p.is_active = 1 AND p.category_id = %s
+                ORDER BY p.is_featured DESC, p.id DESC LIMIT 8
+            """, (cat['id'],))
+            cat_products[cat['id']] = [dict(p) for p in cursor.fetchall()]
 
         return render_template('customer/wede_semira.html',
                                clothing_categories=[dict(c) for c in clothing_cats],
                                products=[dict(p) for p in products_rows],
-                               women_products=[dict(p) for p in women_products],
-                               children_products=[dict(p) for p in children_products],
+                               cat_products=cat_products,
                                lang=lang)
     except Exception as e:
         print(f"Wede Semira page error: {e}")
         return render_template('customer/wede_semira.html',
                                clothing_categories=[], products=[],
-                               women_products=[], children_products=[], lang=lang)
+                               cat_products={}, lang=lang)
 
 
 # ==================== SEARCH ====================

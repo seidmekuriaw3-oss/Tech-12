@@ -32,100 +32,73 @@
     }
     .ws-hero-emoji { font-size: 56px; margin-bottom: 16px; display: block; }
     .ws-hero h1 {
-        font-size: clamp(26px, 5vw, 40px);
-        font-weight: 800;
+        font-size: clamp(24px, 5vw, 38px);
+        font-weight: 900;
         margin: 0 0 12px 0;
         line-height: 1.2;
     }
     .ws-hero p {
-        font-size: 16px;
+        font-size: 15px;
         opacity: 0.92;
         margin: 0 auto 24px;
         max-width: 480px;
         line-height: 1.6;
     }
-    .ws-hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .ws-btn-primary {
+
+    /* Category pill bar */
+    .ws-cat-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 36px;
+    }
+    .ws-cat-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 18px;
+        border-radius: 30px;
         background: white;
+        border: 2px solid #f0c8d8;
         color: #c2185b;
-        padding: 12px 28px;
-        border-radius: 30px;
         font-weight: 700;
-        font-size: 15px;
+        font-size: 13px;
         text-decoration: none;
-        transition: all 0.3s;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        transition: all 0.25s;
+        white-space: nowrap;
     }
-    .ws-btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
-    .ws-btn-outline {
-        background: transparent;
-        color: white;
-        border: 2px solid rgba(255,255,255,0.7);
-        padding: 11px 26px;
-        border-radius: 30px;
-        font-weight: 600;
-        font-size: 14px;
-        text-decoration: none;
-        transition: all 0.3s;
-    }
-    .ws-btn-outline:hover { background: rgba(255,255,255,0.15); border-color: white; }
-
-    .ws-subcats {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-bottom: 40px;
-    }
-    .ws-subcat-card {
-        border-radius: 20px;
-        padding: 36px 24px;
-        text-align: center;
-        text-decoration: none;
-        color: white;
-        transition: all 0.3s;
-        position: relative;
-        overflow: hidden;
-    }
-    .ws-subcat-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.2); }
-    .ws-subcat-card.women {
+    .ws-cat-pill:hover, .ws-cat-pill.active {
         background: linear-gradient(135deg, #c2185b, #e91e8c);
-    }
-    .ws-subcat-card.children {
-        background: linear-gradient(135deg, #6a1b9a, #9c27b0);
-    }
-    .ws-subcat-card .sc-icon { font-size: 52px; margin-bottom: 14px; display: block; }
-    .ws-subcat-card h3 { font-size: 22px; font-weight: 800; margin: 0 0 8px 0; }
-    .ws-subcat-card p { font-size: 13px; opacity: 0.88; margin: 0 0 16px 0; }
-    .ws-subcat-card .sc-badge {
-        display: inline-block;
-        background: rgba(255,255,255,0.25);
-        padding: 4px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
+        color: white;
+        border-color: transparent;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(194,24,91,0.28);
     }
 
+    /* Section header */
     .ws-section-title {
         display: flex;
         align-items: center;
         gap: 12px;
-        margin: 40px 0 20px 0;
-        font-size: 22px;
+        margin: 44px 0 20px 0;
+        font-size: 20px;
         font-weight: 800;
-        color: #333;
+        color: #1a1a1a;
     }
-    .ws-section-title span.dot {
-        width: 6px; height: 6px;
-        border-radius: 50%;
-        background: #c2185b;
-        display: inline-block;
+    .ws-section-title .title-icon { font-size: 26px; }
+    .ws-section-title .title-line {
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(90deg, #f0c8d8, transparent);
+        border-radius: 2px;
     }
 
+    /* Products grid */
     .ws-products-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 18px;
-        margin-bottom: 32px;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 16px;
+        margin-bottom: 12px;
     }
     .ws-product-card {
         background: white;
@@ -137,9 +110,12 @@
         color: inherit;
         display: block;
     }
-    .ws-product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 28px rgba(0,0,0,0.14); }
+    .ws-product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 28px rgba(194,24,91,0.14);
+    }
     .ws-product-img {
-        height: 200px;
+        height: 196px;
         background: #fce4ec;
         display: flex;
         align-items: center;
@@ -147,12 +123,15 @@
         position: relative;
         overflow: hidden;
     }
-    .ws-product-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .ws-product-img img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
     .ws-product-card:hover .ws-product-img img { transform: scale(1.06); }
-    .ws-product-img .ws-fallback { font-size: 48px; }
-    .ws-product-info { padding: 14px 14px 16px; }
+    .ws-product-info { padding: 12px 14px 14px; }
     .ws-product-name {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 600;
         color: #222;
         margin: 0 0 8px 0;
@@ -162,44 +141,57 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    .ws-product-price { font-size: 16px; font-weight: 800; color: #c2185b; margin: 0 0 4px 0; }
-    .ws-product-compare { font-size: 12px; color: #999; text-decoration: line-through; }
+    .ws-product-price { font-size: 15px; font-weight: 800; color: #c2185b; margin: 0 0 2px 0; }
+    .ws-product-compare { font-size: 12px; color: #aaa; text-decoration: line-through; }
     .ws-add-btn {
         width: 100%;
         margin-top: 10px;
-        padding: 9px;
+        padding: 8px;
         background: linear-gradient(135deg, #c2185b, #e91e8c);
         color: white;
         border: none;
         border-radius: 10px;
-        font-size: 13px;
-        font-weight: 600;
+        font-size: 12px;
+        font-weight: 700;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: opacity 0.2s;
     }
-    .ws-add-btn:hover { opacity: 0.88; }
+    .ws-add-btn:hover { opacity: 0.85; }
 
+    /* Empty state */
     .ws-empty {
         text-align: center;
-        padding: 60px 24px;
+        padding: 40px 20px;
         background: #fce4ec;
-        border-radius: 20px;
-        margin-bottom: 32px;
+        border-radius: 16px;
+        margin-bottom: 16px;
     }
-    .ws-empty .emoji { font-size: 64px; margin-bottom: 16px; }
-    .ws-empty h3 { color: #c2185b; margin: 0 0 10px 0; font-size: 20px; }
-    .ws-empty p { color: #888; margin: 0 0 20px 0; }
+    .ws-empty .emoji { font-size: 48px; margin-bottom: 12px; }
+    .ws-empty p { color: #888; margin: 0 0 16px 0; font-size: 14px; }
+    .ws-wa-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #c2185b;
+        color: white;
+        padding: 9px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+    }
 
+    /* WhatsApp CTA */
     .ws-whatsapp-cta {
         background: linear-gradient(135deg, #25D366, #128C7E);
         color: white;
         border-radius: 20px;
         padding: 36px 28px;
         text-align: center;
-        margin: 40px 0;
+        margin: 48px 0 16px;
     }
-    .ws-whatsapp-cta h3 { font-size: 22px; font-weight: 800; margin: 0 0 10px 0; }
-    .ws-whatsapp-cta p { font-size: 15px; opacity: 0.92; margin: 0 0 20px 0; }
+    .ws-whatsapp-cta h3 { font-size: 20px; font-weight: 800; margin: 0 0 8px 0; }
+    .ws-whatsapp-cta p { font-size: 14px; opacity: 0.92; margin: 0 0 20px 0; }
     .ws-wa-btn {
         display: inline-flex;
         align-items: center;
@@ -216,190 +208,113 @@
     }
     .ws-wa-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
 
-    .ws-furniture-link {
-        background: linear-gradient(135deg, #1a7a4a, #0f5232);
-        color: white;
-        border-radius: 20px;
-        padding: 28px 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        text-decoration: none;
-        transition: all 0.3s;
-        margin-bottom: 32px;
-        flex-wrap: wrap;
-        gap: 16px;
-    }
-    .ws-furniture-link:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(26,122,74,0.3); }
-    .ws-furniture-link .fl-text h4 { font-size: 18px; font-weight: 800; margin: 0 0 6px 0; }
-    .ws-furniture-link .fl-text p { font-size: 13px; opacity: 0.85; margin: 0; }
-    .ws-furniture-link .fl-arrow { font-size: 24px; }
-
     @media (max-width: 600px) {
-        .ws-subcats { grid-template-columns: 1fr; }
-        .ws-hero { padding: 40px 20px 36px; }
-        .ws-products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+        .ws-hero { padding: 38px 18px 32px; }
+        .ws-products-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div style="max-width: 1200px; margin: 0 auto; padding: 0 16px 40px;">
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 16px 48px;">
 
     <!-- Hero -->
     <div class="ws-hero">
         <span class="ws-hero-emoji">👗</span>
-        <h1>ሰሚራ<br>የሴቶች እና የልጆች ልብስ እስቶር</h1>
+        <h1>ሰሚራ የሴቶች እና የልጆች ልብስ እስቶር</h1>
         <p>
-            {% if lang == 'ar' %}
-            أزياء نسائية وأطفال بأسعار معقولة — ديسي، وللو قوتابر
-            {% elif lang == 'am' %}
-            ለሴቶችና ለልጆች ዘመናዊ እና ጥራት ያለው ልብስ — ወሎ ደሴ ኩታበር
-            {% else %}
-            Modern, quality clothing for women & children — Wello Dessie Kutaber
-            {% endif %}
+            {% if lang == 'ar' %}ملابس نسائية وأطفال عصرية وذات جودة — وللو ديسي قوتابر
+            {% elif lang == 'am' %}ዘመናዊ እና ጥራት ያለው ልብስ — ወሎ ደሴ ኩታበር
+            {% else %}Modern quality clothing — Wello Dessie Kutaber{% endif %}
         </p>
-        <div class="ws-hero-btns">
-            <a href="#women-section" class="ws-btn-primary">👗 የሴቶች ልብስ</a>
-            <a href="#children-section" class="ws-btn-outline">👶 የልጆች ልብስ</a>
-        </div>
     </div>
 
-    <!-- Sub-category cards -->
-    <div class="ws-subcats">
-        <a href="#women-section" class="ws-subcat-card women">
-            <span class="sc-icon">👗</span>
-            <h3>{% if lang == 'am' %}የሴቶች ልብስ{% elif lang == 'ar' %}ملابس النساء{% else %}Women's Clothing{% endif %}</h3>
-            <p>{% if lang == 'am' %}ዘመናዊ ፋሽን — ቀሚስ፣ ጃኬት፣ ሌሎችም{% else %}Modern fashion — dresses, jackets & more{% endif %}</p>
-            <span class="sc-badge">🛍️ {% if lang == 'am' %}ሁሉም ዓይነት{% else %}All styles{% endif %}</span>
+    <!-- Category pill bar -->
+    {% if clothing_categories %}
+    <div class="ws-cat-bar">
+        <a href="{{ url_for('customer.wede_semira') }}" class="ws-cat-pill active">
+            🛍️ {% if lang == 'am' %}ሁሉም{% else %}All{% endif %}
         </a>
-        <a href="#children-section" class="ws-subcat-card children">
-            <span class="sc-icon">👶</span>
-            <h3>{% if lang == 'am' %}የልጆች ልብስ{% elif lang == 'ar' %}ملابس الأطفال{% else %}Children's Clothing{% endif %}</h3>
-            <p>{% if lang == 'am' %}ለወንድ ልጆችና ለሴት ልጆች — ምቹ እና ቆንጆ{% else %}Boys & girls — comfortable & beautiful{% endif %}</p>
-            <span class="sc-badge">🌟 {% if lang == 'am' %}ለሁሉም እድሜ{% else %}All ages{% endif %}</span>
+        {% for cat in clothing_categories %}
+        <a href="#cat-{{ cat.id }}" class="ws-cat-pill">
+            {% if cat.icon %}{{ cat.icon }}{% endif %} {{ cat.name_am or cat.name }}
         </a>
+        {% endfor %}
     </div>
+    {% endif %}
 
-    <!-- Women's Clothing Section -->
-    <div id="women-section">
-        <div class="ws-section-title">
-            <span>👗</span>
-            {% if lang == 'am' %}የሴቶች ልብስ{% elif lang == 'ar' %}ملابس النساء{% else %}Women's Clothing{% endif %}
-            <span class="dot"></span>
-        </div>
+    <!-- Per-category sections -->
+    {% if clothing_categories %}
+        {% for cat in clothing_categories %}
+        <div id="cat-{{ cat.id }}">
+            <div class="ws-section-title">
+                <span class="title-icon">{% if cat.icon %}{{ cat.icon }}{% else %}👗{% endif %}</span>
+                <span>{{ cat.name_am or cat.name }}</span>
+                <div class="title-line"></div>
+            </div>
 
-        {% if women_products and women_products|length > 0 %}
-        <div class="ws-products-grid">
-            {% for product in women_products %}
-            {% set disc = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int if (product.compare_price and product.compare_price|float > product.price|float) else 0 %}
-            <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="ws-product-card">
-                <div class="ws-product-img">
-                    {% if product.thumbnail and product.thumbnail != '' %}
-                        <img src="{{ url_for('static', filename=product.thumbnail) }}"
-                             alt="{{ product.name_am or product.name }}" loading="lazy"
-                             onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="ws-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:48px;">👗</div>
-                    {% else %}
-                        <div class="ws-fallback">👗</div>
-                    {% endif %}
-                </div>
-                <div class="ws-product-info">
-                    <p class="ws-product-name">{{ product.name_am or product.name }}</p>
-                    <p class="ws-product-price">{{ '{:,.0f}'.format(product.price) }} ETB</p>
-                    {% if disc > 0 %}
-                    <p class="ws-product-compare">{{ '{:,.0f}'.format(product.compare_price) }} ETB</p>
-                    {% endif %}
-                    <button class="ws-add-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)">
-                        🛒 {% if lang == 'am' %}ጋሪ ላይ ጨምር{% else %}Add to Cart{% endif %}
-                    </button>
-                </div>
-            </a>
-            {% endfor %}
+            {% set cat_prods = cat_products.get(cat.id, []) %}
+            {% if cat_prods %}
+            <div class="ws-products-grid">
+                {% for product in cat_prods %}
+                {% set disc = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int if (product.compare_price and product.compare_price|float > product.price|float) else 0 %}
+                <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="ws-product-card">
+                    <div class="ws-product-img">
+                        {% if product.thumbnail and product.thumbnail != '' %}
+                            <img src="{{ url_for('static', filename=product.thumbnail) }}"
+                                 alt="{{ product.name_am or product.name }}" loading="lazy"
+                                 onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.ws-fb').style.display='flex';">
+                            <div class="ws-fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:44px;">
+                                {% if cat.icon %}{{ cat.icon }}{% else %}👗{% endif %}
+                            </div>
+                        {% else %}
+                            <div style="font-size:48px;">{% if cat.icon %}{{ cat.icon }}{% else %}👗{% endif %}</div>
+                        {% endif %}
+                        {% if disc > 0 %}
+                        <span style="position:absolute;top:10px;left:10px;background:#c2185b;color:white;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;">-{{ disc }}%</span>
+                        {% endif %}
+                    </div>
+                    <div class="ws-product-info">
+                        <p class="ws-product-name">{{ product.name_am or product.name }}</p>
+                        <p class="ws-product-price">{{ '{:,.0f}'.format(product.price) }} ETB</p>
+                        {% if disc > 0 %}<p class="ws-product-compare">{{ '{:,.0f}'.format(product.compare_price) }} ETB</p>{% endif %}
+                        <button class="ws-add-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)">
+                            🛒 {% if lang == 'am' %}ጋሪ ላይ ጨምር{% else %}Add to Cart{% endif %}
+                        </button>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="ws-empty">
+                <div class="emoji">{% if cat.icon %}{{ cat.icon }}{% else %}👗{% endif %}</div>
+                <p>
+                    {% if lang == 'am' %}{{ cat.name_am or cat.name }} ምርቶች በቅርቡ ይመጣሉ — ዋትሳፕ ያግኙን!
+                    {% else %}{{ cat.name }} products coming soon — contact us on WhatsApp!{% endif %}
+                </p>
+                <a href="https://wa.me/251987957957?text={{ (cat.name_am or cat.name)|urlencode }}%20ምርት%20ጠይቃለሁ" target="_blank" class="ws-wa-link">💬 WhatsApp</a>
+            </div>
+            {% endif %}
         </div>
-        {% else %}
-        <div class="ws-empty">
-            <div class="emoji">👗</div>
-            <h3>{% if lang == 'am' %}ምርቶች በቅርቡ ይመጣሉ!{% else %}Products Coming Soon!{% endif %}</h3>
-            <p>{% if lang == 'am' %}አዲስ የሴቶች ልብስ ምርቶች እየተዘጋጀ ነው። ለዝርዝር ዋትሳፕ ያግኙን።{% else %}New women's clothing products are being added. Contact us on WhatsApp for details.{% endif %}</p>
-            <a href="https://wa.me/251987957957?text={% if lang == 'am' %}ስለ ወድ ሰሚራ የሴቶች ልብስ ጠይቃለሁ{% else %}I want to know about Wede Semira women's clothing{% endif %}" target="_blank" class="ws-btn-primary" style="color:#c2185b;text-decoration:none;">
-                💬 WhatsApp
-            </a>
-        </div>
-        {% endif %}
+        {% endfor %}
+    {% else %}
+    <div class="ws-empty" style="padding:60px 24px;">
+        <div class="emoji">👗</div>
+        <p>{% if lang == 'am' %}ምርቶች በቅርቡ ይቀርባሉ!{% else %}Products coming soon!{% endif %}</p>
     </div>
-
-    <!-- Children's Clothing Section -->
-    <div id="children-section">
-        <div class="ws-section-title">
-            <span>👶</span>
-            {% if lang == 'am' %}የልጆች ልብስ{% elif lang == 'ar' %}ملابس الأطفال{% else %}Children's Clothing{% endif %}
-            <span class="dot"></span>
-        </div>
-
-        {% if children_products and children_products|length > 0 %}
-        <div class="ws-products-grid">
-            {% for product in children_products %}
-            {% set disc = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int if (product.compare_price and product.compare_price|float > product.price|float) else 0 %}
-            <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="ws-product-card">
-                <div class="ws-product-img">
-                    {% if product.thumbnail and product.thumbnail != '' %}
-                        <img src="{{ url_for('static', filename=product.thumbnail) }}"
-                             alt="{{ product.name_am or product.name }}" loading="lazy"
-                             onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="ws-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:48px;">👶</div>
-                    {% else %}
-                        <div class="ws-fallback">👶</div>
-                    {% endif %}
-                </div>
-                <div class="ws-product-info">
-                    <p class="ws-product-name">{{ product.name_am or product.name }}</p>
-                    <p class="ws-product-price">{{ '{:,.0f}'.format(product.price) }} ETB</p>
-                    {% if disc > 0 %}
-                    <p class="ws-product-compare">{{ '{:,.0f}'.format(product.compare_price) }} ETB</p>
-                    {% endif %}
-                    <button class="ws-add-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)">
-                        🛒 {% if lang == 'am' %}ጋሪ ላይ ጨምር{% else %}Add to Cart{% endif %}
-                    </button>
-                </div>
-            </a>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="ws-empty">
-            <div class="emoji">👶</div>
-            <h3>{% if lang == 'am' %}ምርቶች በቅርቡ ይመጣሉ!{% else %}Products Coming Soon!{% endif %}</h3>
-            <p>{% if lang == 'am' %}አዲስ የልጆች ልብስ ምርቶች እየተዘጋጀ ነው። ለዝርዝር ዋትሳፕ ያግኙን።{% else %}New children's clothing products are being added. Contact us on WhatsApp for details.{% endif %}</p>
-            <a href="https://wa.me/251987957957?text={% if lang == 'am' %}ስለ ወድ ሰሚራ የልጆች ልብስ ጠይቃለሁ{% else %}I want to know about Wede Semira children's clothing{% endif %}" target="_blank" class="ws-btn-primary" style="color:#c2185b;text-decoration:none;">
-                💬 WhatsApp
-            </a>
-        </div>
-        {% endif %}
-    </div>
+    {% endif %}
 
     <!-- WhatsApp CTA -->
     <div class="ws-whatsapp-cta">
         <h3>💬 {% if lang == 'am' %}ቀጥታ ያናግሩን{% else %}Chat With Us Directly{% endif %}</h3>
         <p>
-            {% if lang == 'am' %}
-            ፍለጋ ያልተገኘ ልብስ ካለ ወይም ለዝርዝር — ዋትሳፕ ያድርሱን!
-            {% else %}
-            Can't find what you're looking for? Contact us directly on WhatsApp!
-            {% endif %}
+            {% if lang == 'am' %}ያስፈልጉዎትን ልብሶች ለማዘዝ ወይም ለተጨማሪ መረጃ — ዋትሳፕ ያድርሱን
+            {% else %}To order or get more info — contact us on WhatsApp{% endif %}
         </p>
-        <a href="https://wa.me/251987957957?text={% if lang == 'am' %}ወድ ሰሚራ ልብስ ዙሪያ ጥያቄ አለኝ{% else %}I have a question about Wede Semira clothing{% endif %}" target="_blank" class="ws-wa-btn">
+        <a href="https://wa.me/251987957957?text={% if lang == 'am' %}ሰሚራ ልብስ እስቶር — ጥያቄ አለኝ{% else %}Semira Clothing Store — I have a question{% endif %}" target="_blank" class="ws-wa-btn">
             💬 0987 957 957
         </a>
     </div>
-
-    <!-- Link back to furniture section -->
-    <a href="{{ url_for('customer.products') }}" class="ws-furniture-link">
-        <div class="fl-text">
-            <h4>🪑 {% if lang == 'am' %}ፈርኒቸር ክፍልን ጎብኙ{% else %}Also Visit Our Furniture Section{% endif %}</h4>
-            <p>{% if lang == 'am' %}ሶፋ፣ አልጋ፣ መጅሊስ እና ሌሎችም ጥራት ያለው የቤት እቃ{% else %}Sofa, Bed, Mejlis & more quality furniture{% endif %}</p>
-        </div>
-        <div class="fl-arrow">→</div>
-    </a>
 
 </div>
 {% endblock %}
