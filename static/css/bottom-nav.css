@@ -1,0 +1,628 @@
+/* ==================== PROFESSIONAL BOTTOM NAVIGATION ==================== */
+/* Modern, Responsive Bottom Navigation Bar for Ethiosadat Furniture */
+
+/* CSS Variables */
+:root {
+    --bottom-nav-bg: rgba(8,26,13,0.97);
+    --bottom-nav-border: rgba(201,168,76,0.25);
+    --bottom-nav-shadow: 0 -4px 30px rgba(0,0,0,0.5);
+    --bottom-nav-active: linear-gradient(135deg, #c9a84c, #a07832);
+    --bottom-nav-hover-bg: rgba(201,168,76,0.12);
+    --bottom-nav-text: rgba(255,255,255,0.6);
+    --bottom-nav-text-light: rgba(255,255,255,0.38);
+    --bottom-nav-badge: #ef4444;
+    --bottom-nav-transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* Dark Mode Variables */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bottom-nav-bg: rgba(22, 33, 62, 0.98);
+        --bottom-nav-border: rgba(255, 255, 255, 0.05);
+        --bottom-nav-text: #eee;
+        --bottom-nav-text-light: #aaa;
+    }
+}
+
+/* ==================== BOTTOM NAVIGATION ==================== */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bottom-nav-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 16px;
+    box-shadow: var(--bottom-nav-shadow);
+    z-index: 1000;
+    border-top: 1px solid var(--bottom-nav-border);
+    
+    /* Safe area support for modern phones */
+    padding-bottom: env(safe-area-inset-bottom, 8px);
+    
+    /* Hide initially for desktop, will be shown via media query */
+    display: none;
+}
+
+/* Show bottom nav only on mobile/tablet */
+@media (max-width: 768px) {
+    .bottom-nav {
+        display: flex;
+    }
+}
+
+/* ==================== NAVIGATION ITEMS ==================== */
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 12px;
+    transition: var(--bottom-nav-transition);
+    min-width: 65px;
+    gap: 4px;
+    position: relative;
+    color: var(--bottom-nav-text);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.nav-item .nav-icon {
+    font-size: 24px;
+    transition: transform 0.2s ease;
+}
+
+.nav-item .nav-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* Hover Effects (Desktop only) */
+@media (min-width: 769px) {
+    .bottom-nav {
+        max-width: 600px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        border-radius: 30px 30px 0 0;
+    }
+    
+    .bottom-nav .nav-item {
+        padding: 8px 16px;
+    }
+    
+    .nav-item .nav-label {
+        font-size: 12px;
+    }
+    
+    .nav-item:hover {
+        background: var(--bottom-nav-hover-bg);
+        transform: translateY(-2px);
+    }
+    
+    .nav-item:hover .nav-icon {
+        transform: scale(1.1);
+    }
+}
+
+/* Active State */
+.nav-item.active {
+    background: var(--bottom-nav-active);
+    color: white;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+}
+
+.nav-item.active .nav-icon {
+    transform: scale(1.05);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* ==================== CART BADGE ==================== */
+.nav-item .badge,
+.nav-item .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--bottom-nav-badge);
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 18px;
+    text-align: center;
+    animation: bounce 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* ==================== LANGUAGE DROPDOWN ==================== */
+.lang-dropdown {
+    position: relative;
+}
+
+.lang-dropdown .lang-trigger {
+    cursor: pointer;
+}
+
+.lang-dropdown-content {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bottom-nav-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    display: none;
+    min-width: 100px;
+    z-index: 1001;
+    border: 1px solid var(--bottom-nav-border);
+}
+
+.lang-dropdown:hover .lang-dropdown-content,
+.lang-dropdown:focus-within .lang-dropdown-content {
+    display: block;
+    animation: fadeInUp 0.2s ease;
+}
+
+.lang-dropdown-content a {
+    display: block;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: var(--bottom-nav-text);
+    border-radius: 8px;
+    transition: background 0.2s;
+    font-size: 14px;
+}
+
+.lang-dropdown-content a:hover {
+    background: var(--bottom-nav-hover-bg);
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ==================== CATEGORIES MODAL ==================== */
+#categories-modal {
+    position: fixed;
+    bottom: 70px;
+    left: 20px;
+    right: 20px;
+    background: var(--bottom-nav-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    max-width: 500px;
+    margin: 0 auto;
+    display: none;
+    animation: slideUp 0.3s ease-out;
+    border: 1px solid var(--bottom-nav-border);
+}
+
+#categories-modal.show {
+    display: block;
+}
+
+/* Categories Grid */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.category-chip {
+    display: block;
+    padding: 12px;
+    background: var(--bottom-nav-hover-bg);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--bottom-nav-text);
+    text-align: center;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.category-chip:hover {
+    background: #1a7a4a !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+}
+
+/* ==================== FULL SCREEN MODAL ==================== */
+.fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bottom-nav-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 2000;
+    overflow-y: auto;
+    animation: slideInRight 0.3s ease-out;
+    display: none;
+}
+
+.fullscreen-modal.active {
+    display: block;
+}
+
+.fullscreen-modal .modal-header {
+    background: var(--bottom-nav-active);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.fullscreen-modal .modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.fullscreen-modal .modal-header .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0 10px;
+    transition: transform 0.2s;
+}
+
+.fullscreen-modal .modal-header .close-btn:hover {
+    transform: rotate(90deg);
+}
+
+.fullscreen-modal .modal-body {
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Form Styles Inside Modal */
+.fullscreen-modal .form-group {
+    margin-bottom: 20px;
+}
+
+.fullscreen-modal label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--bottom-nav-text);
+}
+
+.fullscreen-modal input,
+.fullscreen-modal textarea,
+.fullscreen-modal select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--bottom-nav-border);
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background: var(--bottom-nav-bg);
+    color: var(--bottom-nav-text);
+    font-family: inherit;
+}
+
+.fullscreen-modal input:focus,
+.fullscreen-modal textarea:focus,
+.fullscreen-modal select:focus {
+    outline: none;
+    border-color: #1a7a4a;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+.fullscreen-modal textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.fullscreen-modal .btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.fullscreen-modal .btn-primary {
+    background: #1a7a4a;
+    color: white;
+}
+
+.fullscreen-modal .btn-primary:hover {
+    background: #0f5232;
+    transform: translateY(-2px);
+}
+
+.fullscreen-modal .btn-secondary {
+    background: var(--bottom-nav-text-light);
+    color: white;
+}
+
+.fullscreen-modal .btn-secondary:hover {
+    background: #666;
+    transform: translateY(-2px);
+}
+
+.fullscreen-modal .switch-link {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--bottom-nav-text-light);
+}
+
+.fullscreen-modal .switch-link a {
+    color: #1a7a4a;
+    text-decoration: none;
+}
+
+/* ==================== MODAL OVERLAY ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+}
+
+.modal-overlay.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+/* ==================== TOUCH FEEDBACK (Mobile) ==================== */
+@media (hover: none) and (pointer: coarse) {
+    .nav-item:active {
+        transform: scale(0.95);
+        background: var(--bottom-nav-hover-bg);
+    }
+    
+    .nav-item.active:active {
+        transform: scale(0.95);
+    }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Tablet (577px - 768px) */
+@media (min-width: 577px) and (max-width: 768px) {
+    .bottom-nav {
+        padding: 10px 20px;
+    }
+    
+    .nav-item {
+        min-width: 70px;
+    }
+    
+    .nav-item .nav-icon {
+        font-size: 26px;
+    }
+    
+    .nav-item .nav-label {
+        font-size: 11px;
+    }
+}
+
+/* Mobile (≤ 576px) */
+@media (max-width: 576px) {
+    .bottom-nav {
+        padding: 6px 12px;
+    }
+    
+    .nav-item {
+        min-width: 55px;
+        padding: 6px 8px;
+    }
+    
+    .nav-item .nav-icon {
+        font-size: 22px;
+    }
+    
+    .nav-item .nav-label {
+        font-size: 10px;
+    }
+    
+    #categories-modal {
+        left: 10px;
+        right: 10px;
+        bottom: 65px;
+        padding: 15px;
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+/* Landscape Mode */
+@media (max-width: 768px) and (orientation: landscape) {
+    .bottom-nav {
+        padding: 4px 12px;
+    }
+    
+    .nav-item .nav-label {
+        display: none;
+    }
+    
+    .nav-item {
+        min-width: auto;
+        padding: 8px 12px;
+    }
+    
+    .nav-item .nav-icon {
+        font-size: 20px;
+    }
+}
+
+/* Small phones (≤ 380px) */
+@media (max-width: 380px) {
+    .bottom-nav {
+        padding: 4px 8px;
+    }
+    
+    .nav-item {
+        min-width: 48px;
+        padding: 5px;
+    }
+    
+    .nav-item .nav-icon {
+        font-size: 20px;
+    }
+    
+    .nav-item .nav-label {
+        font-size: 9px;
+    }
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.hide-bottom-nav {
+    display: none !important;
+}
+
+.show-bottom-nav {
+    display: flex !important;
+}
+
+/* Add padding to body to prevent content hiding behind bottom nav */
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 70px;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        padding-bottom: 60px;
+    }
+}
+
+@media (min-width: 769px) {
+    body {
+        padding-bottom: 0;
+    }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+@media (prefers-reduced-motion: reduce) {
+    .nav-item,
+    .nav-item .nav-icon,
+    .bottom-nav,
+    #categories-modal,
+    .fullscreen-modal {
+        transition: none;
+        animation: none;
+    }
+    
+    .nav-item:active {
+        transform: none;
+    }
+}
+
+/* ==================== ADDITIONAL FEATURES ==================== */
+
+/* Active Navigation Indicator */
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: #1a7a4a;
+    border-radius: 3px;
+}
+
+/* Ripple Effect on Click */
+.nav-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}

@@ -1,0 +1,718 @@
+<!-- ==================== ADMIN SIDEBAR ==================== -->
+<!-- Ethiosadat Furniture - Admin Panel Sidebar Navigation -->
+
+<aside class="admin-sidebar" style="
+    width: 280px;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+">
+
+    <!-- Sidebar Header / Brand -->
+    <div class="sidebar-brand" style="
+        padding: 24px 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    ">
+        <div class="brand-logo" style="font-size: 48px; margin-bottom: 8px;">🪑</div>
+        <div class="brand-name" style="font-size: 20px; font-weight: bold; letter-spacing: 1px;">Ethiosadat</div>
+        <div class="brand-tagline" style="font-size: 11px; opacity: 0.7; margin-top: 4px;">Admin Panel</div>
+    </div>
+
+    <!-- User Info Section -->
+    <div class="sidebar-user" style="
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    ">
+        <div class="user-avatar" style="
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1a7a4a, #0f5232);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 28px;
+            font-weight: bold;
+            border: 3px solid rgba(255,255,255,0.2);
+        ">
+            {{ session.get('admin_username', session.get('admin_name', 'Admin'))[0]|upper }}
+        </div>
+        <div class="user-name" style="font-weight: 600; margin-bottom: 4px;">
+            {{ session.get('admin_username', session.get('admin_name', 'Admin User')) }}
+        </div>
+        <div class="user-role" style="font-size: 12px; opacity: 0.7;">
+            Administrator
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="sidebar-nav" style="flex: 1; padding: 20px 0;">
+        
+        <!-- Dashboard Section -->
+        <div class="nav-section">
+            <div class="nav-section-title" style="
+                padding: 8px 20px;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: rgba(255,255,255,0.4);
+            ">MAIN</div>
+            
+            <a href="{{ url_for('admin.dashboard') }}" class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+        </div>
+
+        <!-- Products Section -->
+        <div class="nav-section">
+            <div class="nav-section-title" style="
+                padding: 8px 20px;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: rgba(255,255,255,0.4);
+                margin-top: 8px;
+            ">PRODUCTS</div>
+            
+            <a href="{{ url_for('admin.products') }}" class="nav-item {% if request.endpoint in ('admin_products', 'admin_product_edit', 'admin_product_view') %}active{% endif %}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">All Products</span>
+                {% if low_stock_count and low_stock_count > 0 %}
+                <span class="badge" style="
+                    margin-left: auto;
+                    background: #ff9800;
+                    padding: 2px 8px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                " title="{{ low_stock_count }} low stock item(s)">⚠️ {{ low_stock_count }}</span>
+                {% else %}
+                <span class="badge" id="productsCount" style="
+                    margin-left: auto;
+                    background: rgba(255,255,255,0.2);
+                    padding: 2px 8px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                ">{{ products_count|default(0) }}</span>
+                {% endif %}
+            </a>
+            
+            <a href="{{ url_for('admin.product_create') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">➕</span>
+                <span class="nav-text">Add Product</span>
+            </a>
+
+            <a href="{{ url_for('admin.import_products') }}" class="nav-item {% if request.endpoint == 'admin_import_products' %}active{% endif %}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">📥</span>
+                <span class="nav-text">Import Products</span>
+            </a>
+
+            <a href="{{ url_for('admin.admin_reviews') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">⭐</span>
+                <span class="nav-text">Reviews</span>
+            </a>
+        </div>
+
+        <!-- Orders Section -->
+        <div class="nav-section">
+            <div class="nav-section-title" style="
+                padding: 8px 20px;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: rgba(255,255,255,0.4);
+                margin-top: 8px;
+            ">ORDERS</div>
+            
+            <a href="{{ url_for('admin.orders') }}" class="nav-item {% if request.endpoint in ('admin_orders', 'admin_order_detail') %}active{% endif %}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">🛒</span>
+                <span class="nav-text">All Orders</span>
+                {% if pending_orders_count and pending_orders_count > 0 %}
+                <span class="badge" style="
+                    margin-left: auto;
+                    background: #f44336;
+                    padding: 2px 8px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                ">{{ pending_orders_count }}</span>
+                {% endif %}
+            </a>
+        </div>
+
+        <!-- Advertisements Section -->
+        <div class="nav-section">
+            <div class="nav-section-title" style="
+                padding: 8px 20px;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: rgba(255,255,255,0.4);
+                margin-top: 8px;
+            ">MARKETING</div>
+            
+            <a href="{{ url_for('admin.ads') }}" class="nav-item {% if request.endpoint in ('admin_ads', 'admin_ad_create', 'admin_ad_edit') %}active{% endif %}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">📢</span>
+                <span class="nav-text">Advertisements</span>
+                <span class="badge" id="adsCount" style="
+                    margin-left: auto;
+                    background: rgba(255,255,255,0.2);
+                    padding: 2px 8px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                ">{{ ads_count|default(0) }}</span>
+            </a>
+            
+            <a href="{{ url_for('admin.ad_create') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">✨</span>
+                <span class="nav-text">Create Ad</span>
+            </a>
+            
+            <a href="{{ url_for('admin.send_notification') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">🔔</span>
+                <span class="nav-text">Push Notifications</span>
+            </a>
+
+            <a href="{{ url_for('admin.admin_alerts_page') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+                position: relative;
+            ">
+                <span class="nav-icon">📬</span>
+                <span class="nav-text">Alert Inbox</span>
+                <span id="sidebarAlertBadge" style="
+                    margin-left:auto;background:#f44336;color:#fff;
+                    font-size:10px;font-weight:800;padding:2px 7px;
+                    border-radius:20px;display:none;
+                ">0</span>
+            </a>
+        </div>
+
+        <!-- Reports Section -->
+        <div class="nav-section">
+            <div class="nav-section-title" style="
+                padding: 8px 20px;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: rgba(255,255,255,0.4);
+                margin-top: 8px;
+            ">REPORTS</div>
+            
+            <a href="{{ url_for('admin.reports') }}" class="nav-item {% if request.endpoint in ('admin_reports', 'admin_reports_sales', 'admin_reports_products') %}active{% endif %}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">📈</span>
+                <span class="nav-text">Overview</span>
+            </a>
+            
+            <a href="{{ url_for('admin.reports_sales') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">💰</span>
+                <span class="nav-text">Sales Report</span>
+            </a>
+            
+            <a href="{{ url_for('admin.reports_products') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Products Report</span>
+            </a>
+            
+            <a href="{{ url_for('admin.admin_users') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">Customers</span>
+            </a>
+        </div>
+
+        <!-- System Section -->
+        <div class="nav-section">
+            <div class="nav-section-title" style="
+                padding: 8px 20px;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: rgba(255,255,255,0.4);
+                margin-top: 8px;
+            ">SYSTEM</div>
+            
+            <a href="{{ url_for('admin.settings') }}" class="nav-item {% if request.endpoint == 'admin_settings' %}active{% endif %}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Settings</span>
+            </a>
+            
+            <a href="{{ url_for('admin.admin_users') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">Users</span>
+            </a>
+
+            <a href="{{ url_for('admin.admin_inbox') }}" class="nav-item {% if request.endpoint == 'admin.admin_inbox' %}active{% endif %}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">📩</span>
+                <span class="nav-text">Contact Messages</span>
+            </a>
+            
+            <a href="{{ url_for('admin.backup_database') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">💾</span>
+                <span class="nav-text">Backup</span>
+            </a>
+            
+            <a href="{{ url_for('admin.clear_cache') }}" class="nav-item" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            " onclick="event.preventDefault(); fetch('{{ url_for('admin.clear_cache') }}', {method:'POST'}).then(()=>{ if(window.showToast) window.showToast('Cache cleared!','success'); })">
+                <span class="nav-icon">🗑️</span>
+                <span class="nav-text">Clear Cache</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer" style="
+        padding: 20px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        margin-top: auto;
+    ">
+        <a href="{{ url_for('customer.index') }}" style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            padding: 8px 0;
+            transition: color 0.3s;
+        ">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">View Store</span>
+        </a>
+        
+        <a href="{{ url_for('admin.admin_logout') }}" style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            padding: 8px 0;
+            transition: color 0.3s;
+            margin-top: 8px;
+        ">
+            <span class="nav-icon">🚪</span>
+            <span class="nav-text">Logout</span>
+        </a>
+        
+        <!-- Language Switcher -->
+        <div class="sidebar-language" style="
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        ">
+            <div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-align: center;">Language / ቋንቋ</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <a href="{{ url_for('utility.set_language', lang='am') }}" style="
+                    color: rgba(255,255,255,0.8);
+                    text-decoration: none;
+                    font-size: 12px;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    transition: background 0.3s;
+                    text-align: center;
+                    {% if session.get('lang') == 'am' %}background: rgba(255,255,255,0.2);{% endif %}
+                ">🇪🇹 አማርኛ</a>
+                <a href="{{ url_for('utility.set_language', lang='en') }}" style="
+                    color: rgba(255,255,255,0.8);
+                    text-decoration: none;
+                    font-size: 12px;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    transition: background 0.3s;
+                    text-align: center;
+                    {% if session.get('lang') == 'en' or not session.get('lang') %}background: rgba(255,255,255,0.2);{% endif %}
+                ">🇬🇧 English</a>
+                <a href="{{ url_for('utility.set_language', lang='ar') }}" style="
+                    color: rgba(255,255,255,0.8);
+                    text-decoration: none;
+                    font-size: 12px;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    transition: background 0.3s;
+                    text-align: center;
+                    {% if session.get('lang') == 'ar' %}background: rgba(255,255,255,0.2);{% endif %}
+                ">🇸🇦 العربية</a>
+            </div>
+        </div>
+        
+        <div class="sidebar-version" style="
+            margin-top: 16px;
+            padding-top: 12px;
+            font-size: 10px;
+            text-align: center;
+            color: rgba(255,255,255,0.3);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        ">
+            Version 2.0.0
+        </div>
+    </div>
+</aside>
+
+<style>
+    /* Hover effects */
+    .nav-item:hover {
+        background: rgba(255,255,255,0.1);
+        padding-left: 24px !important;
+    }
+    
+    .nav-item.active {
+        background: rgba(26,122,74,0.2);
+        border-left-color: #1a7a4a !important;
+        color: white !important;
+    }
+    
+    /* Scrollbar styling */
+    .admin-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .admin-sidebar::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.1);
+    }
+    
+    .admin-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.3);
+        border-radius: 4px;
+    }
+    
+    .admin-sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255,255,255,0.5);
+    }
+    
+    /* Collapsible submenu (optional) */
+    .nav-item.has-submenu {
+        position: relative;
+    }
+    
+    .nav-item.has-submenu .submenu-toggle {
+        margin-left: auto;
+        font-size: 12px;
+        transition: transform 0.3s;
+    }
+    
+    .nav-item.has-submenu.open .submenu-toggle {
+        transform: rotate(90deg);
+    }
+    
+    .submenu {
+        display: none;
+        padding-left: 48px;
+    }
+    
+    .submenu.show {
+        display: block;
+    }
+    
+    .submenu a {
+        display: block;
+        padding: 8px 12px;
+        color: rgba(255,255,255,0.6);
+        text-decoration: none;
+        font-size: 13px;
+        transition: all 0.3s;
+    }
+    
+    .submenu a:hover {
+        color: white;
+        padding-left: 16px;
+    }
+    
+    /* Mobile styles */
+    @media (max-width: 768px) {
+        .admin-sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .admin-sidebar.mobile-open {
+            transform: translateX(0);
+        }
+        
+        .sidebar-overlay {
+            display: none;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+    }
+</style>
+
+<script>
+    // Update active state based on current URL
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-item');
+        
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (!href) return;
+            
+            link.classList.remove('active');
+            
+            if (href !== '/admin' && currentPath.startsWith(href)) {
+                link.classList.add('active');
+            } else if (href === '/admin' && currentPath === '/admin') {
+                link.classList.add('active');
+            }
+        });
+        
+        // Update counts dynamically
+        fetchCounts();
+    });
+    
+    function fetchCounts() {
+        fetch('{{ url_for('api.api_cart_count') if url_for is defined else "/api/admin/counts" }}')
+            .then(res => res.json())
+            .then(data => {
+                const productsSpan = document.getElementById('productsCount');
+                const adsSpan = document.getElementById('adsCount');
+                
+                if (productsSpan && data.products !== undefined) {
+                    productsSpan.textContent = data.products;
+                }
+                if (adsSpan && data.ads !== undefined) {
+                    adsSpan.textContent = data.ads;
+                }
+            })
+            .catch(err => console.error('Error fetching counts:', err));
+    }
+    
+    // Toggle submenu functionality (for future use)
+    function toggleSubmenu(element) {
+        if (!element) return;
+        element.classList.toggle('open');
+        const submenu = element.nextElementSibling;
+        if (submenu && submenu.classList && submenu.classList.contains('submenu')) {
+            submenu.classList.toggle('show');
+        }
+    }
+    
+    // Mobile sidebar toggle
+    function toggleMobileSidebar() {
+        const sidebar = document.querySelector('.admin-sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        
+        if (!sidebar) return;
+        
+        sidebar.classList.toggle('mobile-open');
+        if (overlay) {
+            overlay.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
+        }
+        
+        if (sidebar.classList.contains('mobile-open')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+    
+    // Close sidebar on overlay click
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', toggleMobileSidebar);
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            const sidebar = document.querySelector('.admin-sidebar');
+            const sidebarOverlay = document.querySelector('.sidebar-overlay');
+            if (sidebar) sidebar.classList.remove('mobile-open');
+            if (sidebarOverlay) sidebarOverlay.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Make functions globally available
+    window.toggleMobileSidebar = toggleMobileSidebar;
+    window.toggleSubmenu = toggleSubmenu;
+    window.fetchCounts = fetchCounts;
+</script>
+
+<!-- Mobile Overlay (for responsive) -->
+<div class="sidebar-overlay" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+"></div>

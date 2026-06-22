@@ -1,0 +1,27 @@
+Act as an expert Full-Stack Developer. Now that our Islamic Utility Suite is fully operational, I want to add a major new feature: A complete, fully functional, and beautiful "Qur'an Panel" inside the Islamic Suite tab system.
+
+[CRITICAL CODE QUALITY REQUIREMENT]
+Generate CLEAN, MODULAR, and PRODUCTION-READY code.
+
+Strictly REMOVE all comments from the provided code snippets. Do not include any # comments in Python, or // / /* */ comments in JavaScript. The output must be completely clean of any annotations.
+
+[FEATURE ARCHITECTURE: THE QUR'AN PANEL]
+Backend (Flask/Python API):
+
+Create an endpoint /api/quran/surahs that returns a structured JSON list of all 114 Surahs (Surah Number, Name in Arabic, Transliteration, English/Amharic Meaning, and Total Ayahs).
+
+Create an endpoint /api/quran/surah/<int:surah_num> that fetches the full text of that specific Surah. Use a reliable offline Python dictionary or lightweight JSON data file embedded in the project so it requires zero external API dependencies.
+
+Provide a high-quality audio streaming URL stream mapping for each Surah (e.g., streaming from a stable public CDN like Mishary Rashid Alafasy or Minshawi recitations).
+
+Frontend UI/UX (HTML & JavaScript inside the Islamic Suite template):
+
+Surah Selector View: Add a clean, responsive grid or list showing all 114 Surahs with a dynamic search bar to filter Surahs by name or number instantly.
+
+Reading Mode Pane: Clicking a Surah should seamlessly open a beautifully designed reading layout with clean Arabic typography (using a clear font like 'Amiri'), with adjustable font size controls.
+
+Integrated Audio Player Suite: Build an elegant audio player overlay at the bottom or side of the reading pane. It must feature: Play, Pause, Track Progress Bar, and Volume Control, streaming the Surah audio smoothly.
+
+WebView Optimization: Ensure the audio player state handles phone interruptions and operates perfectly within standard Android WebView containers.
+
+Please generate the full modular backend routes, updated frontend template structures, and the native player logic now. Remember: NO COMMENTS inside the code.

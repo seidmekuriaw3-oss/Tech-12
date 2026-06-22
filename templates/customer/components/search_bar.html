@@ -1,0 +1,556 @@
+<!-- ==================== SEARCH BAR COMPONENT ==================== -->
+<!-- Reusable search bar with autocomplete and suggestions -->
+
+<div class="search-bar-container" style="position: relative;">
+    
+    <!-- Search Form -->
+    <form action="{{ url_for('customer.search') }}" method="get" class="search-form" onsubmit="return handleSearchSubmit(event)" style="position: relative;">
+        <div class="search-input-wrapper" style="
+            display: flex;
+            align-items: center;
+            background: var(--bg-white, white);
+            border-radius: 50px;
+            border: 1px solid var(--border-color, #e0e0e0);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        " onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='0 2px 5px rgba(0,0,0,0.05)'">
+            
+            <!-- Search Icon -->
+            <div style="padding: 0 12px;">
+                <span style="font-size: 18px; color: var(--text-muted, #999);">🔍</span>
+            </div>
+            
+            <!-- Search Input -->
+            <input type="text" 
+                   name="q" 
+                   id="search-input"
+                   class="search-input"
+                   placeholder="{% if lang == 'am' %}ምርቶችን ፈልግ...{% else %}Search products...{% endif %}"
+                   autocomplete="off"
+                   style="
+                       flex: 1;
+                       padding: 14px 0;
+                       border: none;
+                       outline: none;
+                       font-size: 15px;
+                       background: transparent;
+                       color: var(--text-color, #333);
+                   "
+                   onfocus="showSearchSuggestions()"
+                   onblur="hideSearchSuggestions()"
+                   onkeyup="handleSearchInput(event)">
+            
+            <!-- Clear Button -->
+            <button type="button" 
+                    class="clear-search" 
+                    onclick="clearSearch()"
+                    style="
+                        background: none;
+                        border: none;
+                        padding: 0 12px;
+                        cursor: pointer;
+                        display: none;
+                        font-size: 16px;
+                        color: var(--text-muted, #999);
+                    ">
+                ✕
+            </button>
+            
+            <!-- Search Button -->
+            <button type="submit" 
+                    class="search-submit" 
+                    style="
+                        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+                        border: none;
+                        padding: 12px 24px;
+                        cursor: pointer;
+                        color: white;
+                        font-weight: 600;
+                        transition: all 0.3s;
+                    "
+                    onmouseover="this.style.opacity='0.9'"
+                    onmouseout="this.style.opacity='1'">
+                {% if lang == 'am' %}ፈልግ{% else %}Search{% endif %}
+            </button>
+        </div>
+    </form>
+    
+    <!-- Search Suggestions Dropdown -->
+    <div id="search-suggestions" class="search-suggestions" style="
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-white, white);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        margin-top: 8px;
+        z-index: 1000;
+        display: none;
+        overflow: hidden;
+        max-height: 400px;
+        overflow-y: auto;
+    ">
+        <div class="suggestions-header" style="
+            padding: 12px 16px;
+            background: var(--bg-hover, #f8f9fa);
+            border-bottom: 1px solid var(--border-color, #eee);
+            font-size: 12px;
+            color: var(--text-muted, #666);
+            display: flex;
+            justify-content: space-between;
+        ">
+            <span>📋 {% if lang == 'am' %}የተጠቆሙ ምርቶች{% else %}Suggestions{% endif %}</span>
+            <span class="trending-toggle" style="cursor: pointer;" onclick="toggleTrending()">🔥 {% if lang == 'am' %}ታዋቂ{% else %}Trending{% endif %}</span>
+        </div>
+        <div id="suggestions-list" class="suggestions-list">
+            <!-- Suggestions will be populated here -->
+            <div class="suggestion-loading" style="padding: 20px; text-align: center; color: var(--text-muted, #999);">
+                <span>⏳</span> {% if lang == 'am' %}በመጫን ላይ...{% else %}Loading...{% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Searches -->
+    <div id="recent-searches" class="recent-searches" style="
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-white, white);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        margin-top: 8px;
+        z-index: 1000;
+        display: none;
+        overflow: hidden;
+    ">
+        <div style="padding: 12px 16px; background: var(--bg-hover, #f8f9fa); border-bottom: 1px solid var(--border-color, #eee); display: flex; justify-content: space-between;">
+            <span>🕐 {% if lang == 'am' %}የቅርብ ጊዜ ፍለጋዎች{% else %}Recent Searches{% endif %}</span>
+            <button onclick="clearRecentSearches()" style="background: none; border: none; color: #f44336; cursor: pointer; font-size: 12px;">
+                {% if lang == 'am' %}ሁሉንም አጥፋ{% else %}Clear All{% endif %}
+            </button>
+        </div>
+        <div id="recent-searches-list" class="recent-searches-list"></div>
+    </div>
+</div>
+
+<style>
+    /* Custom scrollbar for suggestions */
+    .search-suggestions::-webkit-scrollbar {
+        width: 6px;
+    }
+    .search-suggestions::-webkit-scrollbar-track {
+        background: var(--border-color, #f0f0f0);
+    }
+    .search-suggestions::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 3px;
+    }
+    
+    /* Suggestion items */
+    .suggestion-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: background 0.2s;
+        border-bottom: 1px solid var(--border-color-light, #f5f5f5);
+    }
+    .suggestion-item:hover, .suggestion-item.active {
+        background: var(--bg-hover, #f8f9fa);
+    }
+    .suggestion-icon {
+        font-size: 20px;
+        width: 32px;
+        text-align: center;
+    }
+    .suggestion-info {
+        flex: 1;
+    }
+    .suggestion-name {
+        font-weight: 500;
+        color: var(--text-color, #333);
+    }
+    .suggestion-category {
+        font-size: 11px;
+        color: var(--text-muted, #999);
+        margin-top: 2px;
+    }
+    .suggestion-price {
+        font-weight: 600;
+        color: #1a7a4a;
+    }
+    
+    /* Trending tags */
+    .trending-tag {
+        display: inline-block;
+        background: var(--bg-hover, #f0f0f0);
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 13px;
+        margin: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--text-color, #333);
+    }
+    .trending-tag:hover {
+        background: #1a7a4a;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    /* Recent search items */
+    .recent-search-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid var(--border-color-light, #f5f5f5);
+    }
+    .recent-search-item:hover {
+        background: var(--bg-hover, #f8f9fa);
+    }
+    .recent-search-text {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-color, #333);
+    }
+    .remove-recent {
+        color: var(--text-muted, #999);
+        cursor: pointer;
+        padding: 4px;
+    }
+    .remove-recent:hover {
+        color: #f44336;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .trending-tag {
+            background: #1a1a2e;
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .search-submit {
+            padding: 10px 16px !important;
+            font-size: 13px !important;
+        }
+        .search-input {
+            font-size: 14px !important;
+        }
+    }
+    
+    /* Animations */
+    .search-suggestions, .recent-searches {
+        animation: fadeInDown 0.2s ease;
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+    // Search state
+    let searchTimeout = null;
+    let currentQuery = '';
+    let trendingSearches = [
+        'ሶፋ', 'አልጋ', 'መጅሊስ', 'ዋጋ', 'ቅናሽ', 'Sofa', 'Bed', 'Wardrobe'
+    ];
+    
+    // Get recent searches from localStorage
+    function getRecentSearches() {
+        try {
+            const recent = localStorage.getItem('ethiosadat_recent_searches');
+            return recent ? JSON.parse(recent) : [];
+        } catch(e) {
+            return [];
+        }
+    }
+    
+    function saveRecentSearch(query) {
+        if (!query || !query.trim()) return;
+        let recent = getRecentSearches();
+        recent = [query.trim(), ...recent.filter(q => q !== query)];
+        recent = recent.slice(0, 5);
+        localStorage.setItem('ethiosadat_recent_searches', JSON.stringify(recent));
+        renderRecentSearches();
+    }
+    
+    function clearRecentSearches() {
+        localStorage.removeItem('ethiosadat_recent_searches');
+        renderRecentSearches();
+        const recentDiv = document.getElementById('recent-searches');
+        if (recentDiv) recentDiv.style.display = 'none';
+    }
+    
+    function renderRecentSearches() {
+        const recent = getRecentSearches();
+        const container = document.getElementById('recent-searches-list');
+        if (!container) return;
+        
+        if (recent.length === 0) {
+            container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted, #999);">No recent searches</div>';
+            return;
+        }
+        
+        container.innerHTML = recent.map(query => `
+            <div class="recent-search-item" onclick="performSearch('${escapeHtml(query)}')">
+                <div class="recent-search-text">
+                    <span>🕐</span>
+                    <span>${escapeHtml(query)}</span>
+                </div>
+                <span class="remove-recent" onclick="event.stopPropagation(); removeRecentSearch('${escapeHtml(query)}')">✕</span>
+            </div>
+        `).join('');
+    }
+    
+    function removeRecentSearch(query) {
+        let recent = getRecentSearches();
+        recent = recent.filter(q => q !== query);
+        localStorage.setItem('ethiosadat_recent_searches', JSON.stringify(recent));
+        renderRecentSearches();
+    }
+    
+    // Show search suggestions
+    function showSearchSuggestions() {
+        const input = document.getElementById('search-input');
+        if (input && input.value.length > 0) {
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            const recentDiv = document.getElementById('recent-searches');
+            if (suggestionsDiv) suggestionsDiv.style.display = 'block';
+            if (recentDiv) recentDiv.style.display = 'none';
+        } else {
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            if (suggestionsDiv) suggestionsDiv.style.display = 'none';
+            const recent = getRecentSearches();
+            const recentDiv = document.getElementById('recent-searches');
+            if (recent.length > 0 && recentDiv) {
+                recentDiv.style.display = 'block';
+                renderRecentSearches();
+            }
+        }
+    }
+    
+    function hideSearchSuggestions() {
+        setTimeout(() => {
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            const recentDiv = document.getElementById('recent-searches');
+            if (suggestionsDiv) suggestionsDiv.style.display = 'none';
+            if (recentDiv) recentDiv.style.display = 'none';
+        }, 200);
+    }
+    
+    // Handle search input with debounce
+    function handleSearchInput(event) {
+        const query = event.target.value;
+        currentQuery = query;
+        
+        // Show/hide clear button
+        const clearBtn = document.querySelector('.clear-search');
+        if (clearBtn) {
+            clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+        }
+        
+        if (query.length > 0) {
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            const recentDiv = document.getElementById('recent-searches');
+            if (suggestionsDiv) suggestionsDiv.style.display = 'block';
+            if (recentDiv) recentDiv.style.display = 'none';
+            
+            if (searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                fetchSearchSuggestions(query);
+            }, 300);
+        } else {
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            if (suggestionsDiv) suggestionsDiv.style.display = 'none';
+            const recent = getRecentSearches();
+            const recentDiv = document.getElementById('recent-searches');
+            if (recent.length > 0 && recentDiv) {
+                recentDiv.style.display = 'block';
+            }
+        }
+    }
+    
+    // Fetch search suggestions from API
+    function fetchSearchSuggestions(query) {
+        fetch('{{ url_for('api.api_search_products') }}?q=' + encodeURIComponent(query) + '&limit=5')
+            .then(response => response.json())
+            .then(data => {
+                renderSuggestions(data.products || []);
+            })
+            .catch(error => {
+                console.error('Error fetching suggestions:', error);
+                renderSuggestions([]);
+            });
+    }
+    
+    function renderSuggestions(products) {
+        const container = document.getElementById('suggestions-list');
+        if (!container) return;
+        
+        if (products.length === 0) {
+            container.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: var(--text-muted, #999);">
+                    <span>🔍</span> No products found
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = products.map(product => `
+            <div class="suggestion-item" onclick="performSearch('${escapeHtml(product.name_am || product.name)}')">
+                <div class="suggestion-icon">🪑</div>
+                <div class="suggestion-info">
+                    <div class="suggestion-name">${escapeHtml(product.name_am || product.name)}</div>
+                    <div class="suggestion-category">${escapeHtml(product.category_name || 'Uncategorized')}</div>
+                </div>
+                <div class="suggestion-price">${formatPriceNumber(product.price)} ETB</div>
+            </div>
+        `).join('');
+    }
+    
+    function formatPriceNumber(price) {
+        if (price === undefined || price === null) return '0';
+        const num = parseFloat(price);
+        if (isNaN(num)) return '0';
+        return num.toLocaleString('en-US');
+    }
+    
+    // Toggle trending view
+    function toggleTrending() {
+        const container = document.getElementById('suggestions-list');
+        if (!container) return;
+        
+        const trendingHtml = `
+            <div style="padding: 16px;">
+                <div style="margin-bottom: 12px; font-weight: 500; color: var(--text-color, #333);">🔥 Trending Now</div>
+                <div>
+                    ${trendingSearches.map(tag => `
+                        <span class="trending-tag" onclick="performSearch('${escapeHtml(tag)}')">${escapeHtml(tag)}</span>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        if (container.innerHTML !== trendingHtml) {
+            container.innerHTML = trendingHtml;
+        } else if (currentQuery) {
+            fetchSearchSuggestions(currentQuery);
+        }
+    }
+    
+    // Perform search
+    function performSearch(query) {
+        if (query && query.trim()) {
+            saveRecentSearch(query);
+            window.location.href = '{{ url_for('customer.search') }}?q=' + encodeURIComponent(query);
+        }
+    }
+    
+    function handleSearchSubmit(event) {
+        const input = document.getElementById('search-input');
+        const query = input ? input.value.trim() : '';
+        if (query) {
+            saveRecentSearch(query);
+            return true;
+        }
+        event.preventDefault();
+        return false;
+    }
+    
+    function clearSearch() {
+        const input = document.getElementById('search-input');
+        if (input) {
+            input.value = '';
+            input.focus();
+        }
+        const clearBtn = document.querySelector('.clear-search');
+        if (clearBtn) clearBtn.style.display = 'none';
+        const suggestionsDiv = document.getElementById('search-suggestions');
+        if (suggestionsDiv) suggestionsDiv.style.display = 'none';
+        const recent = getRecentSearches();
+        const recentDiv = document.getElementById('recent-searches');
+        if (recent.length > 0 && recentDiv) {
+            recentDiv.style.display = 'block';
+        }
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Close suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-bar-container')) {
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            const recentDiv = document.getElementById('recent-searches');
+            if (suggestionsDiv) suggestionsDiv.style.display = 'none';
+            if (recentDiv) recentDiv.style.display = 'none';
+        }
+    });
+    
+    // Keyboard navigation
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('keydown', function(e) {
+            const suggestions = document.querySelectorAll('.suggestion-item');
+            if (suggestions.length === 0) return;
+            
+            let currentIndex = -1;
+            suggestions.forEach((item, i) => {
+                if (item.classList.contains('active')) {
+                    currentIndex = i;
+                    item.classList.remove('active');
+                }
+            });
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const nextIndex = currentIndex + 1;
+                if (nextIndex < suggestions.length) {
+                    suggestions[nextIndex].classList.add('active');
+                    suggestions[nextIndex].scrollIntoView({ block: 'nearest' });
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prevIndex = currentIndex - 1;
+                if (prevIndex >= 0) {
+                    suggestions[prevIndex].classList.add('active');
+                    suggestions[prevIndex].scrollIntoView({ block: 'nearest' });
+                }
+            } else if (e.key === 'Enter' && currentIndex >= 0) {
+                e.preventDefault();
+                suggestions[currentIndex].click();
+            }
+        });
+    }
+    
+    // Make functions globally available
+    window.showSearchSuggestions = showSearchSuggestions;
+    window.hideSearchSuggestions = hideSearchSuggestions;
+    window.handleSearchInput = handleSearchInput;
+    window.performSearch = performSearch;
+    window.clearSearch = clearSearch;
+    window.toggleTrending = toggleTrending;
+    window.clearRecentSearches = clearRecentSearches;
+    window.removeRecentSearch = removeRecentSearch;
+</script>

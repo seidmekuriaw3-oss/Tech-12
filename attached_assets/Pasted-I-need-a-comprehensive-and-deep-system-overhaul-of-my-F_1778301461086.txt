@@ -1,0 +1,22 @@
+I need a comprehensive and deep system overhaul of my Flask-based E-commerce project. You must act as a Senior Full-Stack Engineer and DevOps Specialist. We need to fix broken loops, restore missing features, and locate hidden project branches.
+​1. Branch & History Audit (Critical):
+I have 9 different branches in this project that are currently not visible or are hidden.
+​Task: Run git branch -a and check the reflog to identify all local and remote branches.
+​Action: Once identified, list all 9 branches for me. Ensure that the latest and most stable code from these branches is merged or accessible.
+​2. Admin Panel & Product Management Fixes:
+​'Add Product' Failure: The form currently fails and redirects without saving. Audit the POST request handling in admin_routes.py. Ensure all fields (name_en, name_am, name_ar, description_en, description_am, description_ar, price, compare_price, material, color, category) match the SQLAlchemy models and SQLite schema exactly.
+​CSRF & Validation: Fix any CSRF token mismatches or form validation errors causing the submission loop.
+​Persistence: Ensure 'Edit', 'Delete', and 'View Reports' actions complete their tasks and return success messages instead of just refreshing the page.
+​3. Authentication & User Flow:
+​Login/Register Loops: Users are getting 'Field errors' or 'Try again' messages. Audit the User model and the registration route. Ensure phone numbers, emails, and passwords are being validated and stored correctly.
+​4. UI/UX & Localization (Amharic & Arabic):
+​Full Background Video: The Hero/Ad section video is only covering the top part. Update the CSS to use min-height: 100vh, width: 100%, and object-fit: cover to ensure it fills the entire background.
+​RTL & Fonts: Ensure Arabic RTL (Right-to-Left) is applied site-wide and that Amharic/Arabic fonts render consistently across the 'Live Orders Map' and reports.
+​5. Database & Notifications:
+​Schema Sync: Check if all columns required for the multilingual features exist in the SQLite database. If not, generate the ALTER TABLE commands.
+​Alert Persistence: Admin notifications (New Order, New User) must be saved to the database so they don't disappear after a page refresh.
+​Execution Protocol:
+​Perform the Branch Audit first and report back the names of the 9 branches.
+​Fix the Product Creation and Auth loops.
+​Apply the CSS Video Fix.
+​Confirm when each module is 100% verified."

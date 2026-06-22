@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="400" height="250">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f7fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e4e8ec;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Card Shadow -->
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(0,0,0,0.1)"/>
+    </filter>
+    
+    <!-- Inner Shadow -->
+    <filter id="innerShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+      <feOffset dx="0" dy="2" result="offsetBlur"/>
+      <feComposite in="SourceGraphic" in2="offsetBlur" operator="over"/>
+    </filter>
+    
+    <!-- Icon Gradient -->
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a73e8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d47a1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="250" rx="12" fill="url(#bgGrad)"/>
+  
+  <!-- Inner Card -->
+  <rect x="25" y="25" width="350" height="200" rx="10" fill="white" filter="url(#cardShadow)"/>
+  
+  <!-- Dashed Border -->
+  <rect x="35" y="35" width="330" height="180" rx="8" fill="none" stroke="#ddd" stroke-width="2" stroke-dasharray="8,4"/>
+  
+  <!-- Media Icon -->
+  <g transform="translate(200, 95)">
+    <!-- Camera/Media Icon Circle -->
+    <circle cx="0" cy="0" r="30" fill="url(#iconGrad)" opacity="0.1"/>
+    <circle cx="0" cy="0" r="24" fill="url(#iconGrad)" opacity="0.2"/>
+    
+    <!-- Camera Icon -->
+    <rect x="-16" y="-12" width="32" height="24" rx="4" fill="none" stroke="#1a73e8" stroke-width="2"/>
+    <circle cx="0" cy="-2" r="7" fill="none" stroke="#1a73e8" stroke-width="2"/>
+    <circle cx="0" cy="-2" r="3" fill="#1a73e8"/>
+    
+    <!-- Flash -->
+    <rect x="10" y="-14" width="6" height="4" rx="1" fill="#1a73e8"/>
+    
+    <!-- Top button -->
+    <circle cx="0" cy="-16" r="2" fill="#1a73e8"/>
+  </g>
+  
+  <!-- "No Media" Text -->
+  <text x="200" y="160" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="16" font-weight="600" fill="#999" letter-spacing="1">
+    NO MEDIA
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="200" y="180" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="12" fill="#bbb" letter-spacing="0.5">
+    No image or video available
+  </text>
+  
+  <!-- Small Decorative Elements -->
+  <circle cx="60" cy="65" r="2" fill="#1a73e8" opacity="0.15"/>
+  <circle cx="340" cy="65" r="2" fill="#1a73e8" opacity="0.15"/>
+  <circle cx="60" cy="200" r="2" fill="#1a73e8" opacity="0.15"/>
+  <circle cx="340" cy="200" r="2" fill="#1a73e8" opacity="0.15"/>
+  
+  <!-- Corner decorations -->
+  <path d="M45 45 L55 45 M45 45 L45 55" stroke="#1a73e8" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+  <path d="M355 45 L345 45 M355 45 L355 55" stroke="#1a73e8" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+  <path d="M45 205 L55 205 M45 205 L45 195" stroke="#1a73e8" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+  <path d="M355 205 L345 205 M355 205 L355 195" stroke="#1a73e8" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+</svg>

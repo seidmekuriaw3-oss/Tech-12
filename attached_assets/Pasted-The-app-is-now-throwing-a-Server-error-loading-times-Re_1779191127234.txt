@@ -1,0 +1,27 @@
+The app is now throwing a "⚠️ Server error loading times. Retrying with defaults..." message, which means the Flask backend is returning a 500 Internal Server Error when calculating the prayer times. 
+
+Please perform a deep-scan audit on the Flask route handling the /api/prayer-times (or whichever endpoint is serving the prayer data). 
+
+[CRITICAL DEBUGGING & FALLBACK REQUIREMENTS]
+1. Wrap the entire prayer calculation logic inside a Python try...except Exception as e block. 
+2. Print the exact error str(e) to the server console so we can see what is missing (e.g., if the adhan library is not installed or if there's a math/type error).
+3. If the backend fails to calculate using the library or custom logic, DO NOT return a 500 error. Instead, implement a hardcoded mathematical or static fallback array of prayer times for East Africa/Addis Ababa as a safety net so the frontend ALWAYS receives valid JSON and never breaks.
+4. Ensure that the incoming latitude and longitude are explicitly cast to float(lat) and float(lon) safely before processing.
+
+[FRONTEND MATCHING]
+- Ensure the JavaScript fetch() handles the response safely and maps the JSON keys perfectly without trying to read properties of undefined.
+- Keep the design clean and remember: NO COMMENTS inside the code snippets. Remove all '#' in Python and all '//' or '/*' in JavaScript. Deliver purely clean, production-ready code blocks now.
+The entire backend API is failing. Prayer times are showing a 500 Server Error, and the Qibla tab is showing "--- °" because the backend calculation endpoint is crashing completely. 
+
+Please apply an immediate structural overhaul to the Flask backend prayer times route.
+
+[MANDATORY BACKEND RESTRUCTURING]
+1. Rewrite the Flask route to handle the calculation safely. Wrap the entire function in a strict try...except Exception as e block and log the exact traceback.
+2. If the external 'adhan' library or mathematical calculations fail due to any missing dependency or runtime error, DO NOT throw a 500 or 404 error. You MUST provide a robust fallback JSON response using standard default prayer times for East Africa / Ethiopia (Addis Ababa/Bishoftu region) so that the frontend ALWAYS renders successfully.
+3. Make sure the Qibla calculation uses a standard mathematical Great-Circle formula directly in Python to compute the bearing to Makkah (Lat: 21.4225, Lon: 39.8262) and returns it cleanly in the JSON response along with the prayer times.
+4. Safely convert incoming latitude and longitude parameters using float() with try-catch verification.
+
+[FRONTEND RECONCILIATION]
+- Fix the JavaScript fetch logic to parse this response properly. If the backend returns the fallback data, display the times immediately and clear the "Server error" message.
+- Ensure the Three.js 3D compass needle renders properly even if device orientation permissions are initially pending.
+- STRICT REQUIREMENT: Absolutely NO COMMENTS inside the code. Remove all '#' in Python and all '//' or '/*' in JavaScript. Deliver completely clean, production-ready code.

@@ -1,0 +1,28 @@
+[2026-04-29 11:46:46,098] INFO in app: ✅ Database initialized successfully
+[2026-04-29 11:46:46,111] INFO in app: ============================================================
+2026-04-29 11:46:46,111 - app - INFO - ============================================================
+[2026-04-29 11:46:46,111] INFO in app: 🚀 Ethiosadat Application Started
+2026-04-29 11:46:46,111 - app - INFO - 🚀 Ethiosadat Application Started
+[2026-04-29 11:46:46,111] INFO in app: 📁 Upload Folder: /storage/emulated/0/ethiosadat/static/uploads
+2026-04-29 11:46:46,111 - app - INFO - 📁 Upload Folder: /storage/emulated/0/ethiosadat/static/uploads
+[2026-04-29 11:46:46,112] INFO in app: 🗄️ Database: /storage/emulated/0/ethiosadat/database/ethiosadat.db
+2026-04-29 11:46:46,112 - app - INFO - 🗄️ Database: /storage/emulated/0/ethiosadat/database/ethiosadat.db
+[2026-04-29 11:46:46,112] INFO in app: 🔧 Debug Mode: True
+2026-04-29 11:46:46,112 - app - INFO - 🔧 Debug Mode: True
+[2026-04-29 11:46:46,112] INFO in app: ============================================================
+2026-04-29 11:46:46,112 - app - INFO - ============================================================
+✅ Database initialized successfully
+✅ Database initialized successfully
+
+==================================================
+🚀 ETHIOSADAT FURNITURE
+==================================================
+📍 Server: http://0.0.0.0:5000
+🔧 Debug: True
+🔐 Admin Password: 1234
+==================================================
+
+ * Serving Flask app 'app'
+ * Debug mode: on
+Address already in use
+Port 5000 is in use by another program. Either identify and stop that program, or start the server with a different port.

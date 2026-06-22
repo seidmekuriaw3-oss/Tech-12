@@ -1,0 +1,151 @@
+{% extends 'admin/layouts/admin_base.html' %}
+
+{% block title %}Alert Inbox — Ethiosadat Admin{% endblock %}
+
+{% block content %}
+<div style="padding: 28px 24px; max-width: 900px;">
+
+    <!-- Page Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+        <div>
+            <h1 style="font-size:24px;font-weight:800;color:#1a1a2e;margin:0;">
+                📬 Alert Inbox
+            </h1>
+            <p style="font-size:13px;color:#888;margin-top:4px;">
+                System events: new orders, new registrations, and admin broadcasts.
+            </p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            {% if unread > 0 %}
+            <button onclick="markAllRead()"
+                    style="background:#1a7a4a;color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                ✅ Mark All Read
+                <span style="background:rgba(255,255,255,0.3);border-radius:20px;padding:1px 8px;font-size:11px;">{{ unread }}</span>
+            </button>
+            {% endif %}
+            <a href="{{ url_for('admin.dashboard') }}"
+               style="background:#f5f5f5;color:#333;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div style="background:#f8f9fa;border-radius:14px;padding:16px 20px;margin-bottom:24px;display:flex;gap:24px;flex-wrap:wrap;">
+        <div>
+            <div style="font-size:22px;font-weight:900;color:#1a7a4a;">{{ alerts|length }}</div>
+            <div style="font-size:12px;color:#888;margin-top:2px;">Total Alerts</div>
+        </div>
+        <div>
+            <div style="font-size:22px;font-weight:900;color:#f44336;">{{ unread }}</div>
+            <div style="font-size:12px;color:#888;margin-top:2px;">Unread</div>
+        </div>
+        <div>
+            <div style="font-size:22px;font-weight:900;color:#4caf50;">{{ alerts|length - unread }}</div>
+            <div style="font-size:12px;color:#888;margin-top:2px;">Read</div>
+        </div>
+    </div>
+
+    <!-- Alert List -->
+    {% if alerts %}
+    <div style="display:flex;flex-direction:column;gap:10px;" id="alertList">
+        {% for alert in alerts %}
+        {% set type_icon = {'new_order': '🛒', 'new_user': '👤', 'info': 'ℹ️', 'system': '⚙️', 'warning': '⚠️', 'error': '❌'}.get(alert.type, '🔔') %}
+        {% set bg_color = {'new_order': '#e8f0fe', 'new_user': '#e8f5e9', 'info': '#f3f4f6', 'system': '#fff8e1', 'warning': '#fff8e1', 'error': '#ffebee'}.get(alert.type, '#f3f4f6') %}
+        <div id="alert-{{ alert.id }}" style="
+            background:{{ bg_color }};
+            border-radius:14px;
+            padding:16px 18px;
+            display:flex;
+            gap:14px;
+            align-items:flex-start;
+            opacity:{{ '0.75' if alert.is_read else '1' }};
+            border-left:4px solid {{ '#1a7a4a' if not alert.is_read else 'transparent' }};
+            transition:opacity 0.3s;
+        ">
+            <div style="font-size:26px;flex-shrink:0;margin-top:2px;">{{ type_icon }}</div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:15px;font-weight:{{ '900' if not alert.is_read else '600' }};color:#1a1a2e;">
+                    {{ alert.title }}
+                </div>
+                <div style="font-size:13px;color:#555;margin-top:4px;line-height:1.5;">
+                    {{ alert.body }}
+                </div>
+                <div style="display:flex;gap:12px;align-items:center;margin-top:8px;flex-wrap:wrap;">
+                    <span style="font-size:11px;color:#aaa;">{{ alert.created_at }}</span>
+                    {% if alert.ref_order_id %}
+                    <a href="{{ url_for('admin.admin_order_detail', order_id=alert.ref_order_id) }}"
+                       style="font-size:11px;color:#1a7a4a;font-weight:700;text-decoration:none;background:rgba(26,122,74,0.1);padding:2px 8px;border-radius:6px;">
+                        View Order →
+                    </a>
+                    {% endif %}
+                    {% if alert.ref_user_id %}
+                    <a href="{{ url_for('admin.admin_customer_detail', user_id=alert.ref_user_id) if 'admin_customer_detail' in dir() else '#' }}"
+                       style="font-size:11px;color:#4caf50;font-weight:700;text-decoration:none;background:rgba(76,175,80,0.1);padding:2px 8px;border-radius:6px;">
+                        View Customer →
+                    </a>
+                    {% endif %}
+                    {% if alert.link and not alert.ref_order_id and not alert.ref_user_id %}
+                    <a href="{{ alert.link }}"
+                       style="font-size:11px;color:#1a7a4a;font-weight:700;text-decoration:none;background:rgba(26,122,74,0.1);padding:2px 8px;border-radius:6px;">
+                        View →
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% if not alert.is_read %}
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;">
+                <div style="width:9px;height:9px;background:#1a7a4a;border-radius:50%;"></div>
+                <button onclick="markOneRead({{ alert.id }})"
+                        style="background:none;border:1px solid #1a7a4a;color:#1a7a4a;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;">
+                    Mark read
+                </button>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:70px 20px;color:#aaa;">
+        <div style="font-size:60px;margin-bottom:16px;">📬</div>
+        <div style="font-weight:700;font-size:18px;color:#666;margin-bottom:8px;">No alerts yet</div>
+        <div style="font-size:14px;">Alerts will appear here when orders are placed or customers register.</div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function markOneRead(id) {
+    fetch('/api/admin/alerts/mark-read', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: id})
+    }).then(() => {
+        const el = document.getElementById('alert-' + id);
+        if (el) {
+            el.style.opacity = '0.75';
+            el.style.borderLeftColor = 'transparent';
+            const dot = el.querySelector('[style*="border-radius:50%"]');
+            if (dot) dot.remove();
+            const btn = el.querySelector('button');
+            if (btn) btn.closest('div').remove();
+        }
+    }).catch(console.error);
+}
+
+function markAllRead() {
+    fetch('/api/admin/alerts/mark-read', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({})
+    }).then(() => {
+        document.querySelectorAll('[id^="alert-"]').forEach(el => {
+            el.style.opacity = '0.75';
+            el.style.borderLeftColor = 'transparent';
+        });
+        const markBtn = document.querySelector('button[onclick="markAllRead()"]');
+        if (markBtn) markBtn.style.display = 'none';
+    }).catch(console.error);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,701 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Products - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-bar {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .filter-bar input, .filter-bar select {
+        padding: 10px 14px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 8px;
+        font-size: 14px;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .filter-bar input {
+        flex: 1;
+        min-width: 200px;
+    }
+    .product-row:hover {
+        background: var(--bg-hover, #f9f9f9);
+    }
+    .stock-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .stock-high {
+        background: #4caf50;
+        color: white;
+    }
+    .stock-medium {
+        background: #ff9800;
+        color: white;
+    }
+    .stock-low {
+        background: #f44336;
+        color: white;
+    }
+    .stock-out {
+        background: #999;
+        color: white;
+    }
+    .actions-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .actions-btn {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px 8px;
+        color: var(--text-color, #333);
+    }
+    .actions-dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background: var(--bg-white, white);
+        min-width: 150px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-radius: 8px;
+        z-index: 10;
+    }
+    .actions-dropdown-content a {
+        display: block;
+        padding: 10px 16px;
+        text-decoration: none;
+        color: var(--text-color, #333);
+        font-size: 13px;
+        cursor: pointer;
+    }
+    .actions-dropdown-content a:hover {
+        background: var(--bg-hover, #f5f5f5);
+    }
+    .actions-dropdown:hover .actions-dropdown-content {
+        display: block;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+    .page-btn {
+        padding: 8px 14px;
+        border: 1px solid var(--border-color, #ddd);
+        background: var(--bg-white, white);
+        border-radius: 6px;
+        cursor: pointer;
+        color: var(--text-color, #333);
+    }
+    .page-btn.active {
+        background: #1a7a4a;
+        color: white;
+        border-color: #1a7a4a;
+    }
+    .page-btn:hover:not(.active):not(:disabled) {
+        background: var(--bg-hover, #f5f5f5);
+    }
+    .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .page-dots {
+        padding: 8px 4px;
+    }
+    .bulk-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+        padding: 12px;
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 8px;
+        display: none;
+    }
+    .bulk-actions.show {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .btn-small {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    .category-badge {
+        background: var(--bg-hover, #f0f0f0);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        display: inline-block;
+        color: var(--text-color, #333);
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .actions-dropdown-content {
+            background: #16213e;
+            border: 1px solid #2a2a3e;
+        }
+        .actions-dropdown-content a:hover {
+            background: #1a1a2e;
+        }
+        .category-badge {
+            background: #1a1a2e;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .filter-bar {
+            flex-direction: column;
+        }
+        .filter-bar select {
+            width: 100%;
+        }
+        .products-table th, .products-table td {
+            padding: 8px;
+            font-size: 12px;
+        }
+        .bulk-actions {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="products-container" style="padding: 20px;">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <h1 style="margin-bottom: 4px;">📦 Products Management</h1>
+            <p style="color: var(--text-muted, #666); margin: 0;">Manage your store products inventory</p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="{{ url_for('admin.import_products') }}" class="btn btn-outline">📥 Import CSV</a>
+            <a href="{{ url_for('admin.product_create') }}" class="btn btn-primary">➕ Add New Product</a>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <input type="text" id="searchProducts" placeholder="🔍 Search by name, category..." onkeyup="filterProducts()">
+        <select id="categoryFilter" onchange="filterProducts()">
+            <option value="all">All Categories</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name_am }} ({{ category.name }})</option>
+            {% endfor %}
+        </select>
+        <select id="stockFilter" onchange="filterProducts()">
+            <option value="all">All Stock</option>
+            <option value="high">In Stock (>10)</option>
+            <option value="medium">Low Stock (1-10)</option>
+            <option value="low">Out of Stock (0)</option>
+        </select>
+        <button onclick="resetFilters()" class="btn btn-outline">Reset</button>
+    </div>
+
+    <!-- Bulk Actions Bar -->
+    <div id="bulkActions" class="bulk-actions">
+        <span id="selectedCount">0 products selected</span>
+        <button onclick="bulkDelete()" class="btn btn-danger btn-small">🗑️ Delete Selected</button>
+        <button onclick="bulkUpdateCategory()" class="btn btn-outline btn-small">📂 Change Category</button>
+        <button onclick="clearSelection()" class="btn btn-outline btn-small">Clear</button>
+    </div>
+
+    <!-- Products Table -->
+    <div style="background: var(--bg-white, white); border-radius: 15px; overflow-x: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <table class="products-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: linear-gradient(135deg, #1a7a4a, #0f5232); color: white;">
+                    <th style="padding: 14px; text-align: center; width: 40px;">
+                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" style="cursor: pointer;">
+                    </th>
+                    <th style="padding: 14px; text-align: left;">ID</th>
+                    <th style="padding: 14px; text-align: left;">Image</th>
+                    <th style="padding: 14px; text-align: left;">Name (Am)</th>
+                    <th style="padding: 14px; text-align: left;">Name (En)</th>
+                    <th style="padding: 14px; text-align: left;">Price</th>
+                    <th style="padding: 14px; text-align: left;">Category</th>
+                    <th style="padding: 14px; text-align: center;">Stock</th>
+                    <th style="padding: 14px; text-align: center;">Featured</th>
+                    <th style="padding: 14px; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody">
+                {% for product in products %}
+                {% set stock = product.stock_quantity|default(0) %}
+                {% set threshold = product.low_stock_threshold|default(5) %}
+                {% set is_low = stock > 0 and stock <= threshold %}
+                <tr class="product-row" data-id="{{ product.id }}" data-category="{{ product.category_id }}" data-stock="{{ stock }}" style="border-bottom: 1px solid var(--border-color, #eee);{% if is_low %} border-left: 4px solid #ff9800; background: rgba(255,152,0,0.04);{% endif %}">
+                    <td style="padding: 12px; text-align: center;">
+                        <input type="checkbox" class="product-select" value="{{ product.id }}" onchange="updateBulkActions()" style="cursor: pointer;">
+                    </td>
+                    <td style="padding: 12px;">{{ product.id }}</td>
+                    <td style="padding: 12px;">
+                        {% if product.thumbnail and product.thumbnail != '' %}
+                            <img src="{{ url_for('static', filename=(product.thumbnail if product.thumbnail[:8] == 'uploads/' else 'uploads/products/' ~ product.thumbnail)) }}" 
+                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" 
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+                        {% else %}
+                            <div style="width: 50px; height: 50px; background: var(--bg-hover, #f5f5f5); display: flex; align-items: center; justify-content: center; border-radius: 8px;">🪑</div>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; font-weight: 500;">{{ product.name_am }}</td>
+                    <td style="padding: 12px;">{{ product.name }}</td>
+                    <td style="padding: 12px;">
+                        <span style="font-weight: 600; color: #1a7a4a;">{{ format_price(product.price) }}</span>
+                        {% if product.compare_price and product.compare_price > 0 %}
+                            <span style="text-decoration: line-through; color: var(--text-muted, #999); font-size: 11px; margin-left: 4px;">{{ format_price(product.compare_price) }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        <span class="category-badge">
+                            {{ product.category.name_am if product.category else '-' }}
+                        </span>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <span class="stock-badge 
+                            {% if stock == 0 %}stock-out
+                            {% elif is_low %}stock-low
+                            {% elif stock <= 10 %}stock-medium
+                            {% else %}stock-high{% endif %}">
+                            {% if stock == 0 %}✗ Out
+                            {% elif is_low %}⚠️ {{ stock }}
+                            {% elif stock <= 10 %}~ {{ stock }}
+                            {% else %}✓ {{ stock }}{% endif %}
+                        </span>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <span onclick="toggleFeatured({{ product.id }}, this)" style="cursor: pointer; font-size: 18px;">
+                            {% if product.is_featured %}
+                                ⭐
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <div class="actions-dropdown">
+                            <button class="actions-btn">⋮</button>
+                            <div class="actions-dropdown-content">
+                                <a href="{{ url_for('admin.product_edit', pid=product.id) }}">✏️ Edit</a>
+                                <a href="{{ url_for('admin.product_edit', pid=product.id) }}" target="_blank">👁️ View</a>
+                                <a onclick="toggleFeatured({{ product.id }}, this)">⭐ Toggle Featured</a>
+                                <a onclick="duplicateProduct({{ product.id }})">📋 Duplicate</a>
+                                <a href="#" onclick="deleteProduct({{ product.id }}, '{{ product.name_am }}')" style="color: #f44336;">🗑️ Delete</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="10" style="text-align: center; padding: 60px;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+                        <h3>No Products Found</h3>
+                        <p>Click the "Add New Product" button to create your first product.</p>
+                        <a href="{{ url_for('admin.product_create') }}" class="btn btn-primary" style="margin-top: 10px;">➕ Add New Product</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+
+    <!-- Export Section -->
+    <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+        <button onclick="exportProducts()" class="btn btn-outline">📥 Export to CSV</button>
+    </div>
+</div>
+
+<script>
+    // ==================== Helper Functions ====================
+    
+    function formatPriceLocal(price) {
+        if (price === undefined || price === null) return '0 ETB';
+        const num = parseFloat(price);
+        if (isNaN(num)) return '0 ETB';
+        return num.toLocaleString('en-US') + ' ETB';
+    }
+
+    function showToast(message, type) {
+        if (window.showToast) {
+            window.showToast(message, type);
+        } else {
+            alert(message);
+        }
+    }
+
+    function showLoading(show) {
+        if (window.showLoading) {
+            if (show) window.showLoading();
+            else window.hideLoading();
+        }
+    }
+
+    // ==================== Search and Filter ====================
+    function filterProducts() {
+        const searchTerm = document.getElementById('searchProducts').value.toLowerCase();
+        const categoryFilter = document.getElementById('categoryFilter').value;
+        const stockFilter = document.getElementById('stockFilter').value;
+        const rows = document.querySelectorAll('#productsTableBody .product-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const nameAm = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
+            const nameEn = row.querySelector('td:nth-child(5)')?.textContent.toLowerCase() || '';
+            const category = row.dataset.category;
+            const stock = parseInt(row.dataset.stock) || 0;
+            
+            let matches = true;
+
+            if (searchTerm && !nameAm.includes(searchTerm) && !nameEn.includes(searchTerm)) {
+                matches = false;
+            }
+            if (categoryFilter !== 'all' && category !== categoryFilter) {
+                matches = false;
+            }
+            if (stockFilter === 'high' && stock <= 10) matches = false;
+            if (stockFilter === 'medium' && (stock <= 0 || stock > 10)) matches = false;
+            if (stockFilter === 'low' && stock > 0) matches = false;
+
+            // Use data attribute to track filter state — not style.display
+            // so pagination can independently control visibility
+            row.dataset.filtered = matches ? 'true' : 'false';
+            if (!matches) {
+                row.style.display = 'none';
+            }
+            if (matches) visibleCount++;
+        });
+
+        currentPage = 1;
+        updatePagination();
+        
+        // Update result count
+        const resultMsg = document.getElementById('filterResult');
+        if (!resultMsg) {
+            const filterBar = document.querySelector('.filter-bar');
+            const msg = document.createElement('div');
+            msg.id = 'filterResult';
+            msg.style.marginTop = '8px';
+            msg.style.fontSize = '12px';
+            msg.style.color = 'var(--text-muted, #666)';
+            msg.textContent = `${visibleCount} product(s) found`;
+            filterBar.parentNode.insertBefore(msg, filterBar.nextSibling);
+        } else {
+            resultMsg.textContent = `${visibleCount} product(s) found`;
+        }
+    }
+
+    function resetFilters() {
+        document.getElementById('searchProducts').value = '';
+        document.getElementById('categoryFilter').value = 'all';
+        document.getElementById('stockFilter').value = 'all';
+        filterProducts();
+    }
+
+    // ==================== Bulk Actions ====================
+    function toggleSelectAll() {
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.product-select');
+        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        updateBulkActions();
+    }
+
+    function updateBulkActions() {
+        const selected = document.querySelectorAll('.product-select:checked');
+        const count = selected.length;
+        const bulkDiv = document.getElementById('bulkActions');
+        
+        if (count > 0) {
+            bulkDiv.classList.add('show');
+            document.getElementById('selectedCount').textContent = `${count} product(s) selected`;
+        } else {
+            bulkDiv.classList.remove('show');
+            const selectAll = document.getElementById('selectAll');
+            if (selectAll) selectAll.checked = false;
+        }
+    }
+
+    function clearSelection() {
+        document.querySelectorAll('.product-select').forEach(cb => cb.checked = false);
+        updateBulkActions();
+    }
+
+    function getSelectedIds() {
+        return Array.from(document.querySelectorAll('.product-select:checked')).map(cb => cb.value);
+    }
+
+    function bulkDelete() {
+        const ids = getSelectedIds();
+        if (ids.length === 0) return;
+        
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            showLoading(true);
+            fetch('{{ url_for('admin.bulk_delete_products') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ ids: ids })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading(false);
+                if (data.success) {
+                    showToast(`${data.deleted || ids.length} product(s) deleted`, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast(data.error || 'Failed to delete products', 'error');
+                }
+            })
+            .catch(() => {
+                showLoading(false);
+                showToast('Error deleting products', 'error');
+            });
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Bulk Delete', `Are you sure you want to delete ${ids.length} product(s)? This action cannot be undone.`, callback);
+        } else {
+            if (confirm(`Are you sure you want to delete ${ids.length} product(s)? This action cannot be undone.`)) callback();
+        }
+    }
+
+    function bulkUpdateCategory() {
+        const ids = getSelectedIds();
+        if (ids.length === 0) return;
+        
+        const newCategoryId = prompt('Enter category ID (1=Sofa, 2=Bed, 3=Mejlis, 4=Curtain, 5=Wardrobe, 6=Other):');
+        if (!newCategoryId) return;
+        
+        showLoading(true);
+        fetch('{{ url_for('admin.products') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ ids: ids, category_id: newCategoryId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            showLoading(false);
+            if (data.success) {
+                showToast(`${data.updated || ids.length} product(s) updated`, 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(data.error || 'Failed to update categories', 'error');
+            }
+        })
+        .catch(() => {
+            showLoading(false);
+            showToast('Error updating categories', 'error');
+        });
+    }
+
+    // ==================== Individual Actions ====================
+    function deleteProduct(productId, productName) {
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            showLoading(true);
+            fetch('{{ url_for('admin.product_delete', pid=0) }}'.replace('/0', '/' + productId), {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    showToast(`${productName} deleted successfully`, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    throw new Error('Delete failed');
+                }
+            })
+            .catch(() => {
+                showToast('Failed to delete product', 'error');
+            })
+            .finally(() => {
+                showLoading(false);
+            });
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Delete Product', `Are you sure you want to delete "${productName}"? This action cannot be undone.`, callback);
+        } else {
+            if (confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) callback();
+        }
+    }
+
+    function toggleFeatured(productId, element) {
+        fetch('{{ url_for('admin.product_toggle_featured', pid=0) }}'.replace('/0', '/' + productId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.is_featured) {
+                    element.innerHTML = '⭐';
+                    showToast('Product featured successfully', 'success');
+                } else {
+                    element.innerHTML = '☆';
+                    showToast('Product unfeatured successfully', 'success');
+                }
+            } else {
+                showToast(data.error || 'Failed to toggle featured', 'error');
+            }
+        })
+        .catch(() => {
+            showToast('Error toggling featured status', 'error');
+        });
+    }
+
+    function duplicateProduct(productId) {
+        showLoading(true);
+        fetch('{{ url_for('admin.product_duplicate', pid=0) }}'.replace('/0', '/' + productId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            showLoading(false);
+            if (data.success) {
+                showToast('Product duplicated successfully', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(data.error || 'Failed to duplicate product', 'error');
+            }
+        })
+        .catch(() => {
+            showLoading(false);
+            showToast('Error duplicating product', 'error');
+        });
+    }
+
+    // ==================== Pagination ====================
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function updatePagination() {
+        const rows = document.querySelectorAll('#productsTableBody .product-row');
+        // Use data-filtered attribute so filter state and pagination state are separate.
+        // Rows that haven't been filtered yet (no attribute) count as visible.
+        const filteredRows = Array.from(rows).filter(row => row.dataset.filtered !== 'false');
+        const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+        const paginationDiv = document.getElementById('pagination');
+        
+        if (!paginationDiv) return;
+        
+        if (totalPages <= 1) {
+            paginationDiv.innerHTML = '';
+            // Still show all filtered rows
+            filteredRows.forEach(row => { row.style.display = ''; });
+            return;
+        }
+
+        // Clamp currentPage
+        if (currentPage > totalPages) currentPage = totalPages;
+        
+        let paginationHtml = '';
+        paginationHtml += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>« Prev</button>`;
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHtml += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        }
+        
+        paginationHtml += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next »</button>`;
+        paginationDiv.innerHTML = paginationHtml;
+        
+        // Show only the current page's rows from the filtered set
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        filteredRows.forEach((row, index) => {
+            row.style.display = (index >= start && index < end) ? '' : 'none';
+        });
+    }
+
+    function changePage(page) {
+        if (page < 1) return;
+        const rows = document.querySelectorAll('#productsTableBody .product-row');
+        const filteredRows = Array.from(rows).filter(row => row.dataset.filtered !== 'false');
+        const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+        if (page > totalPages) return;
+        currentPage = page;
+        updatePagination();
+    }
+
+    // ==================== Export Functions ====================
+    function exportProducts() {
+        const rows = document.querySelectorAll('#productsTableBody .product-row');
+        let csvContent = "\uFEFFID,Name (Amharic),Name (English),Price,Category,Stock,Featured\n";
+        
+        rows.forEach(row => {
+            if (row.style.display !== 'none') {
+                const id = row.querySelector('td:nth-child(2)')?.textContent || '';
+                const nameAm = row.querySelector('td:nth-child(4)')?.textContent || '';
+                const nameEn = row.querySelector('td:nth-child(5)')?.textContent || '';
+                const price = row.querySelector('td:nth-child(6)')?.textContent.replace(' ETB', '').split(' ')[0] || '';
+                const category = row.querySelector('td:nth-child(7) .category-badge')?.textContent || '';
+                const stock = row.querySelector('td:nth-child(8) .stock-badge')?.textContent.replace(/[✓⚠️✗]/g, '').trim() || '0';
+                const featured = row.querySelector('td:nth-child(9)')?.textContent === '⭐' ? 'Yes' : 'No';
+                
+                csvContent += `"${id}","${escapeCsv(nameAm)}","${escapeCsv(nameEn)}","${price}","${escapeCsv(category)}","${stock}","${featured}"\n`;
+            }
+        });
+        
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', `products_export_${new Date().toISOString().slice(0,19)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast('Products exported successfully', 'success');
+    }
+    
+    function escapeCsv(text) {
+        if (!text) return '';
+        return text.replace(/"/g, '""');
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        filterProducts();
+    });
+</script>
+{% endblock %}

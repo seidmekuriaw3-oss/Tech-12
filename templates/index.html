@@ -1,0 +1,543 @@
+{% extends "base.html" %}
+
+{% block title %}Ethiosadat Furniture - Quality Furniture in Addis Ababa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slider.css') }}">
+<style>
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white;
+        text-align: center;
+        padding: 60px 20px;
+        border-radius: 24px;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '🪑';
+        position: absolute;
+        font-size: 200px;
+        opacity: 0.05;
+        bottom: -50px;
+        right: -50px;
+        transform: rotate(-15deg);
+        pointer-events: none;
+    }
+    
+    .hero-section h1 {
+        font-size: 42px;
+        margin-bottom: 16px;
+    }
+    
+    .hero-section p {
+        font-size: 18px;
+        margin-bottom: 24px;
+        opacity: 0.95;
+    }
+    
+    .hero-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .hero-btn {
+        padding: 12px 28px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .hero-btn-primary {
+        background: white;
+        color: #1a7a4a;
+    }
+    
+    .hero-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    
+    .hero-btn-secondary {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+    
+    .hero-btn-secondary:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-3px);
+    }
+    
+    /* Section Styles */
+    .section-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+    
+    .section-header h2 {
+        font-size: 32px;
+        margin-bottom: 12px;
+        color: #1a7a4a;
+    }
+    
+    .section-header p {
+        color: var(--text-muted, #666);
+        font-size: 16px;
+    }
+    
+    /* Categories Grid */
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin-bottom: 50px;
+    }
+    
+    .category-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 24px 16px;
+        text-align: center;
+        text-decoration: none;
+        color: var(--text-color, #333);
+        transition: all 0.3s;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        cursor: pointer;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        background: #1a7a4a;
+        color: white;
+    }
+    
+    .category-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+    
+    .category-name {
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    /* Features Section */
+    .features-section {
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 24px;
+        padding: 50px 30px;
+        margin: 50px 0;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        text-align: center;
+    }
+    
+    .feature-item {
+        padding: 20px;
+    }
+    
+    .feature-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+    
+    .feature-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-color, #333);
+    }
+    
+    .feature-desc {
+        color: var(--text-muted, #666);
+        font-size: 14px;
+    }
+    
+    /* Products Grid - Default (Mobile): 2 columns */
+    .products-grid {
+        display: grid;
+        gap: 25px;
+        margin: 30px 0;
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .product-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .product-image {
+        height: 220px;
+        background: var(--bg-hover, #f8f9fa);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+    
+    .product-card:hover .product-image img {
+        transform: scale(1.05);
+    }
+    
+    .discount-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: linear-gradient(135deg, #f44336, #d32f2f);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .product-info {
+        padding: 16px;
+    }
+    
+    .product-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: var(--text-color, #333);
+    }
+    
+    .product-price {
+        margin: 12px 0;
+    }
+    
+    .current-price {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1a7a4a;
+    }
+    
+    .old-price {
+        text-decoration: line-through;
+        color: var(--text-muted, #999);
+        font-size: 14px;
+        margin-left: 8px;
+    }
+    
+    .btn-add-to-cart {
+        width: 100%;
+        background: #1a7a4a;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .btn-add-to-cart:hover {
+        background: #0f5232;
+        transform: translateY(-2px);
+    }
+    
+    .view-all-btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    /* Tablet: 4 columns */
+    @media (min-width: 600px) {
+        .products-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    /* Desktop: 6 columns */
+    @media (min-width: 1024px) {
+        .products-grid {
+            grid-template-columns: repeat(6, 1fr);
+        }
+    }
+    
+    /* Large Desktop: 8 columns */
+    @media (min-width: 1280px) {
+        .products-grid {
+            grid-template-columns: repeat(8, 1fr);
+        }
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 28px;
+        }
+        .hero-section p {
+            font-size: 14px;
+        }
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        .hero-btn {
+            width: 80%;
+        }
+        .section-header h2 {
+            font-size: 24px;
+        }
+        .categories-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .category-card {
+            padding: 16px 8px;
+        }
+        .category-icon {
+            font-size: 32px;
+        }
+        .category-name {
+            font-size: 12px;
+        }
+        .features-section {
+            padding: 30px 20px;
+        }
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .products-grid {
+            gap: 12px;
+        }
+        .product-image {
+            height: 160px;
+        }
+        .product-title {
+            font-size: 13px;
+        }
+        .current-price {
+            font-size: 16px;
+        }
+        .btn-add-to-cart {
+            padding: 8px;
+            font-size: 11px;
+        }
+    }
+    
+    /* Small Mobile */
+    @media (max-width: 480px) {
+        .categories-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .features-section {
+            background: #1a1a2e;
+        }
+        .feature-desc {
+            color: #aaa;
+        }
+        .category-card {
+            background: #1e1e2e;
+            color: #eee;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <h1>🪑 Ethiosadat Furniture</h1>
+    <p>Quality furniture at affordable prices in Addis Ababa</p>
+    <p>🚚 Free shipping on orders over 5000 ETB</p>
+    <div class="hero-buttons">
+        <a href="{{ url_for('customer.products') }}" class="hero-btn hero-btn-primary">Shop Now →</a>
+        <a href="{{ url_for('customer.about') }}" class="hero-btn hero-btn-secondary">Learn More</a>
+    </div>
+</div>
+
+<!-- Ads Slider -->
+{% include 'customer/components/ads_slider.html' %}
+
+<!-- Categories Section -->
+<div class="section-header">
+    <h2>📂 Shop by Category</h2>
+    <p>Browse our collection by category</p>
+</div>
+<div class="categories-grid">
+    {% for cat in categories %}
+    <a href="{{ url_for('customer.products', category=cat.id) }}" class="category-card">
+        <div class="category-icon">
+            {% if cat.name_am == 'ሶፋ' %}🛋️
+            {% elif cat.name_am == 'አልጋ' %}🛏️
+            {% elif cat.name_am == 'መጅሊስ' %}🪑
+            {% elif cat.name_am == 'መጋረጃ' %}🚪
+            {% elif cat.name_am == 'ቁምሳጥን' %}🗄️
+            {% else %}📦{% endif %}
+        </div>
+        <div class="category-name">{{ cat.name_am if lang == 'am' else cat.name }}</div>
+    </a>
+    {% endfor %}
+    <a href="{{ url_for('customer.products') }}" class="category-card">
+        <div class="category-icon">🔄</div>
+        <div class="category-name">{% if lang == 'am' %}ሁሉም{% else %}All Products{% endif %}</div>
+    </a>
+</div>
+
+<!-- Featured Products Section -->
+<div class="section-header">
+    <h2>⭐ Featured Products</h2>
+    <p>Our most popular and recommended items</p>
+</div>
+
+{% if featured_products and featured_products|length > 0 %}
+<div class="products-grid">
+    {% for product in featured_products[:12] %}
+    <div class="product-card" onclick="location.href='{{ url_for(&quot;product_detail&quot;, product_id=product.id) }}'">
+        <div class="product-image">
+            {% if product.thumbnail and product.thumbnail|trim != '' %}
+                <img src="{{ url_for('static', filename=product.thumbnail) }}" 
+                     alt="{{ product.name_am }}"
+                     loading="lazy"
+                     onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>🪑</div>'">
+            {% else %}
+                <div style="font-size: 48px;">🪑</div>
+            {% endif %}
+            {% if product.compare_price and product.compare_price|float > product.price|float %}
+                {% set discount = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int %}
+                <span class="discount-badge">-{{ discount }}%</span>
+            {% endif %}
+        </div>
+        <div class="product-info">
+            <h3 class="product-title">{{ product.name_am if lang == 'am' else product.name }}</h3>
+            <div class="product-price">
+                <span class="current-price">{{ format_price(product.price) }}</span>
+                {% if product.compare_price and product.compare_price|float > product.price|float %}
+                    <span class="old-price">{{ format_price(product.compare_price) }}</span>
+                {% endif %}
+            </div>
+            <button class="btn-add-to-cart" onclick="event.stopPropagation(); if(window.addToCart) addToCart('{{ product.id }}', 1, this)">
+                🛒 Add to Cart
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="view-all-btn">
+    <a href="{{ url_for('customer.products') }}" class="hero-btn hero-btn-primary">View All Products →</a>
+</div>
+{% else %}
+<div style="text-align: center; padding: 60px; background: var(--bg-white, white); border-radius: 20px;">
+    <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+    <h3 style="color: var(--text-color, #333);">No products yet</h3>
+    <p style="color: var(--text-muted, #666);">Check back soon for our amazing furniture collection!</p>
+</div>
+{% endif %}
+
+<!-- Features Section -->
+<div class="features-section">
+    <div class="section-header">
+        <h2>✨ Why Choose Us?</h2>
+        <p>We pride ourselves on quality and customer satisfaction</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-item">
+            <div class="feature-icon">⭐</div>
+            <div class="feature-title">Quality Guaranteed</div>
+            <div class="feature-desc">Premium materials and expert craftsmanship</div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">💰</div>
+            <div class="feature-title">Best Prices</div>
+            <div class="feature-desc">Affordable furniture for every budget</div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🚚</div>
+            <div class="feature-title">Free Delivery</div>
+            <div class="feature-desc">On orders over 5000 ETB</div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">😊</div>
+            <div class="feature-title">Customer Support</div>
+            <div class="feature-desc">24/7 assistance for your needs</div>
+        </div>
+    </div>
+</div>
+
+<!-- About Section (Desktop only - based on platform) -->
+{% if show_about %}
+<div style="background: var(--bg-white, white); border-radius: 24px; padding: 40px; margin: 40px 0; text-align: center;">
+    <h2 style="color: #1a7a4a;">🏢 About Ethiosadat Furniture</h2>
+    <p style="color: var(--text-muted, #666); max-width: 800px; margin: 20px auto;">
+        Ethiosadat Furniture is a leading furniture retailer in Ethiopia, offering high-quality 
+        furniture at competitive prices. With multiple branches across the country, we serve 
+        thousands of satisfied customers.
+    </p>
+</div>
+{% endif %}
+
+<!-- Admin Login Link (only visible when not logged in) -->
+<div style="text-align: center; margin-top: 40px; padding: 20px;">
+    {% if not session.get('admin') and not session.get('is_admin') %}
+    <a href="{{ url_for('admin.admin_login') }}" class="hero-btn hero-btn-secondary" style="background: #1a1a2e; color: #d4af37;">
+        👑 Admin Login
+    </a>
+    {% endif %}
+    {% if session.get('admin') or session.get('is_admin') %}
+    <a href="{{ url_for('admin.dashboard') }}" class="hero-btn hero-btn-secondary" style="background: #1a1a2e; color: #d4af37;">
+        👑 Go to Admin Panel
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/slider.js') }}"></script>
+<script>
+    // Product card click handler
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.classList && e.target.classList.contains('btn-add-to-cart')) return;
+            const link = this.querySelector('a[href^="/product/"]');
+            if (link) window.location.href = link.getAttribute('href');
+        });
+    });
+</script>
+{% endblock %}

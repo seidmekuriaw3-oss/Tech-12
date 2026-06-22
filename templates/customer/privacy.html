@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy - Ethiosadat Furniture{% endblock %}
+{% block content %}
+<div style="max-width:900px;margin:40px auto;padding:0 20px;">
+    <h1 style="color:#1a7a4a;margin-bottom:10px;">
+        {% if lang == 'am' %}የግላዊነት ፖሊሲ{% elif lang == 'ar' %}سياسة الخصوصية{% else %}Privacy Policy{% endif %}
+    </h1>
+    <p style="color:#888;margin-bottom:30px;">
+        {% if lang == 'am' %}የመጨረሻ ዝማኔ: ጥር 2017 ዓ.ም{% else %}Last updated: January 2025{% endif %}
+    </p>
+
+    <div style="background:#fff;border-radius:12px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,0.08);line-height:1.8;color:#555;">
+        {% if lang == 'am' %}
+        <h2 style="color:#333;">1. የምናሰባስበው መረጃ</h2>
+        <p>ስምዎን፣ ስልክ ቁጥርዎን፣ አድራሻዎን፣ እና ትዕዛዝ ታሪክዎን እናሰባስባለን።</p>
+        <h2 style="color:#333;">2. መረጃውን የምንጠቀምበት ምክንያት</h2>
+        <p>ምርቶችን ለማቅረብ፣ ትዕዛዝዎን ለማስኬድ፣ እና አገልግሎቱን ለማሻሻል።</p>
+        <h2 style="color:#333;">3. ደህንነት</h2>
+        <p>የእርስዎን መረጃ ደህንነቱ በተጠበቀ ሁኔታ እናስቀምጣለን እና ለሶስተኛ ወገን አናጋራም።</p>
+        <h2 style="color:#333;">4. ለጥያቄ</h2>
+        <p>+251906020606 ይደውሉ ወይም info@ethiosadat.com ኢሜይል ያድርጉ።</p>
+        {% elif lang == 'ar' %}
+        <h2 style="color:#333;">1. المعلومات التي نجمعها</h2>
+        <p>نجمع اسمك ورقم هاتفك وعنوانك وتاريخ طلباتك.</p>
+        <h2 style="color:#333;">2. كيف نستخدم المعلومات</h2>
+        <p>لتسليم المنتجات ومعالجة الطلبات وتحسين خدمتنا.</p>
+        <h2 style="color:#333;">3. الأمان</h2>
+        <p>نحافظ على معلوماتك بشكل آمن ولا نشاركها مع أطراف ثالثة.</p>
+        <h2 style="color:#333;">4. التواصل</h2>
+        <p>اتصل بـ +251906020606 أو راسلنا على info@ethiosadat.com</p>
+        {% else %}
+        <h2 style="color:#333;">1. Information We Collect</h2>
+        <p>We collect your name, phone number, address, and order history.</p>
+        <h2 style="color:#333;">2. How We Use Your Information</h2>
+        <p>To deliver products, process orders, and improve our service.</p>
+        <h2 style="color:#333;">3. Security</h2>
+        <p>We store your information securely and do not share it with third parties.</p>
+        <h2 style="color:#333;">4. Contact</h2>
+        <p>Call +251906020606 or email info@ethiosadat.com</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

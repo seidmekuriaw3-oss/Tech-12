@@ -1,0 +1,23 @@
+Full Project Restructuring & Global Route Centralization
+​Goal: Perform a complete architectural refactor to eliminate all route conflicts and redundancy across the entire project. Move all logic out of app.py into specialized blueprint files within the routes/ directory.
+​Protocol 1: Global Route Audit
+​Scan All Files: Map out every single route currently defined in app.py and all files inside the routes/ folder.
+​Identify Overlaps: Look for duplicate endpoints (e.g., the same URL being defined in both app.py and a route file).
+​Categorize: Group routes by their function: customer, admin, auth, products, etc.
+​Protocol 2: Systematic Migration (The "No-Conflict" Rule)
+​Centralize by Domain: 
+​All customer-facing routes (Profile, Orders, etc.) must live only in routes/customer_routes.py.
+​All admin/management routes must live only in routes/admin_routes.py.
+​All authentication routes (Login, Signup) must live only in routes/auth_routes.py.
+​Clean app.py: Once logic is moved, delete the route functions from app.py. app.py should only be used for: 
+​App initialization (Flask(name)).
+​Configuration (Database, Secret Keys).
+​Registering Blueprints.
+​Protocol 3: Blueprint Registration & Template Safety
+​Blueprint Names: Ensure each blueprint is registered with a unique name in app.py.
+​Fix url_for Globally: Search all HTML templates. Update every url_for() call to include the correct blueprint prefix (e.g., customer.user_profile, auth.login, admin.dashboard).
+​Zero Data Loss: Ensure that in the process of moving code, no variables (like order_stats, orders, or user data) are dropped from the context being passed to the templates.
+​Protocol 4: Stability Check
+​Verify that the db instance and all models are correctly imported in each new route file.
+​Ensure the app starts without any "View function mapping is overwriting an existing endpoint" errors.
+​Execution: Proceed with extreme caution. Refactor one domain at a time and verify the app's stability after each step.

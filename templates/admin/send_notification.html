@@ -1,0 +1,355 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Send Notification - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notification-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .notification-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .preview-box {
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 20px;
+        border-left: 4px solid #1a7a4a;
+    }
+    .preview-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 8px;
+        color: var(--text-color, #333);
+    }
+    .preview-body {
+        font-size: 14px;
+        color: var(--text-muted, #666);
+        margin-bottom: 8px;
+    }
+    .preview-image {
+        max-width: 100%;
+        max-height: 150px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+    .char-count {
+        font-size: 12px;
+        color: var(--text-muted, #666);
+        text-align: right;
+        margin-top: 4px;
+    }
+    .char-count.warning {
+        color: #ff9800;
+    }
+    .target-selector {
+        margin: 20px 0;
+        padding: 15px;
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 12px;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .preview-box {
+            background: #1a1a2e;
+        }
+        .target-selector {
+            background: #1a1a2e;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .notification-container {
+            padding: 15px;
+        }
+        .notification-card {
+            padding: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="notification-container">
+    <div style="margin-bottom: 24px;">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline" style="margin-bottom: 12px; display: inline-block;">← Back to Dashboard</a>
+        <h1 style="margin: 8px 0 4px;">📢 Send Push Notification</h1>
+        <p style="color: var(--text-muted, #666); margin: 0;">Send real-time notifications to your customers</p>
+    </div>
+    
+    <div class="notification-card">
+        <form method="post" action="{{ url_for('admin.send_notification') }}" id="notificationForm" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label>📌 Title <span style="color: #f44336;">*</span></label>
+                <input type="text" 
+                       name="title" 
+                       id="title" 
+                       class="form-control" 
+                       required 
+                       maxlength="100"
+                       placeholder="e.g., New Arrivals!">
+                <div id="titleCharCount" class="char-count">0 / 100 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label>💬 Message <span style="color: #f44336;">*</span></label>
+                <textarea name="body" 
+                          id="body" 
+                          class="form-control" 
+                          rows="4" 
+                          required 
+                          maxlength="500"
+                          placeholder="Your message..."></textarea>
+                <div id="bodyCharCount" class="char-count">0 / 500 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label>🖼️ Image URL (Optional)</label>
+                <input type="url" 
+                       name="image_url" 
+                       id="image_url" 
+                       class="form-control" 
+                       placeholder="https://example.com/image.jpg"
+                       onchange="previewImage(this.value)">
+                <small style="color: var(--text-muted, #666); display: block; margin-top: 5px;">Add an image to make your notification more engaging</small>
+            </div>
+            
+            <div class="form-group">
+                <label>🔗 Link URL (Optional)</label>
+                <input type="url" 
+                       name="link" 
+                       id="link" 
+                       class="form-control" 
+                       placeholder="https://example.com/promotion">
+                <small style="color: var(--text-muted, #666);">Clicking the notification will open this link</small>
+            </div>
+            
+            <div class="target-selector">
+                <label style="font-weight: 600; margin-bottom: 10px; display: block;">🎯 Target Audience</label>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 6px;">
+                        <input type="radio" name="target" value="all" checked> All Users
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px;">
+                        <input type="radio" name="target" value="customers"> Customers Only
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px;">
+                        <input type="radio" name="target" value="admins"> Admins Only
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Live Preview -->
+            <div class="preview-box">
+                <div style="font-weight: 600; margin-bottom: 12px;">📱 Preview</div>
+                <div id="previewContainer">
+                    <div class="preview-title" id="previewTitle">Your notification title</div>
+                    <div class="preview-body" id="previewBody">Your notification message will appear here</div>
+                    <div id="previewImageContainer"></div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; padding: 12px;">
+                    📤 Send Notification
+                </button>
+                <button type="button" onclick="resetForm()" class="btn btn-outline" style="padding: 12px 24px;">
+                    Reset
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Info Box -->
+    <div style="margin-top: 20px; padding: 15px; background: var(--bg-hover, #e3f2fd); border-radius: 12px; border-left: 3px solid #1a7a4a;">
+        <div style="font-weight: 600; margin-bottom: 8px;">ℹ️ About Push Notifications</div>
+        <ul style="margin: 0; padding-left: 20px; color: var(--text-muted, #666); font-size: 13px;">
+            <li>Notifications are sent instantly to all active devices</li>
+            <li>Users must grant permission to receive notifications</li>
+            <li>Keep messages concise and engaging (50-100 characters works best)</li>
+            <li>Include a clear call-to-action in your message</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Character counters
+    const titleInput = document.getElementById('title');
+    const bodyTextarea = document.getElementById('body');
+    const titleCount = document.getElementById('titleCharCount');
+    const bodyCount = document.getElementById('bodyCharCount');
+    
+    function updateTitleCount() {
+        if (titleInput && titleCount) {
+            const length = titleInput.value.length;
+            const maxLength = 100;
+            titleCount.textContent = `${length} / ${maxLength} characters`;
+            titleCount.classList.remove('warning', 'danger');
+            if (length > maxLength) {
+                titleCount.classList.add('danger');
+            } else if (length > maxLength * 0.8) {
+                titleCount.classList.add('warning');
+            }
+        }
+    }
+    
+    function updateBodyCount() {
+        if (bodyTextarea && bodyCount) {
+            const length = bodyTextarea.value.length;
+            const maxLength = 500;
+            bodyCount.textContent = `${length} / ${maxLength} characters`;
+            bodyCount.classList.remove('warning', 'danger');
+            if (length > maxLength) {
+                bodyCount.classList.add('danger');
+            } else if (length > maxLength * 0.8) {
+                bodyCount.classList.add('warning');
+            }
+        }
+    }
+    
+    if (titleInput) titleInput.addEventListener('input', updateTitleCount);
+    if (bodyTextarea) bodyTextarea.addEventListener('input', updateBodyCount);
+    
+    // Initialize counts
+    updateTitleCount();
+    updateBodyCount();
+    
+    // Live preview update
+    function updatePreview() {
+        const title = document.getElementById('title')?.value || '';
+        const body = document.getElementById('body')?.value || '';
+        const previewTitle = document.getElementById('previewTitle');
+        const previewBody = document.getElementById('previewBody');
+        
+        if (previewTitle) previewTitle.textContent = title || 'Your notification title';
+        if (previewBody) previewBody.textContent = body || 'Your notification message will appear here';
+    }
+    
+    if (titleInput) titleInput.addEventListener('input', updatePreview);
+    if (bodyTextarea) bodyTextarea.addEventListener('input', updatePreview);
+    
+    // Image preview
+    function previewImage(url) {
+        const container = document.getElementById('previewImageContainer');
+        if (!container) return;
+        
+        if (url && url.trim()) {
+            const img = document.createElement('img');
+            img.src = url;
+            img.className = 'preview-image';
+            img.alt = 'Preview';
+            img.onerror = function() {
+                container.innerHTML = '<small style="color: #f44336;">❌ Failed to load image</small>';
+            };
+            img.onload = function() {
+                container.innerHTML = '';
+                container.appendChild(img);
+            };
+        } else {
+            container.innerHTML = '';
+        }
+    }
+    
+    const imageUrlInput = document.getElementById('image_url');
+    if (imageUrlInput) {
+        imageUrlInput.addEventListener('input', (e) => previewImage(e.target.value));
+    }
+    
+    // Reset form
+    function resetForm() {
+        if (titleInput) titleInput.value = '';
+        if (bodyTextarea) bodyTextarea.value = '';
+        const imageUrl = document.getElementById('image_url');
+        if (imageUrl) imageUrl.value = '';
+        const link = document.getElementById('link');
+        if (link) link.value = '';
+        
+        // Reset radio buttons
+        const radioAll = document.querySelector('input[value="all"]');
+        if (radioAll) radioAll.checked = true;
+        
+        updateTitleCount();
+        updateBodyCount();
+        updatePreview();
+        previewImage('');
+        
+        if (window.showToast) {
+            window.showToast('Form reset', 'info');
+        }
+    }
+    
+    // Form validation
+    function validateForm() {
+        const title = titleInput?.value.trim();
+        const body = bodyTextarea?.value.trim();
+        
+        if (!title) {
+            if (window.showToast) {
+                window.showToast('Please enter a notification title', 'error');
+            } else {
+                alert('Please enter a notification title');
+            }
+            titleInput?.focus();
+            return false;
+        }
+        
+        if (!body) {
+            if (window.showToast) {
+                window.showToast('Please enter a notification message', 'error');
+            } else {
+                alert('Please enter a notification message');
+            }
+            bodyTextarea?.focus();
+            return false;
+        }
+        
+        if (title.length > 100) {
+            if (window.showToast) {
+                window.showToast('Title must be less than 100 characters', 'error');
+            } else {
+                alert('Title must be less than 100 characters');
+            }
+            return false;
+        }
+        
+        if (body.length > 500) {
+            if (window.showToast) {
+                window.showToast('Message must be less than 500 characters', 'error');
+            } else {
+                alert('Message must be less than 500 characters');
+            }
+            return false;
+        }
+        
+        // Show loading state on button
+        const submitBtn = document.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-sm"></span> Sending...';
+        }
+        
+        return true;
+    }
+    
+    // Reset button loading state if needed
+    window.addEventListener('load', function() {
+        const submitBtn = document.querySelector('button[type="submit"]');
+        if (submitBtn && submitBtn.disabled) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '📤 Send Notification';
+        }
+    });
+    
+    // Make functions globally available
+    window.resetForm = resetForm;
+    window.previewImage = previewImage;
+    window.updatePreview = updatePreview;
+</script>
+{% endblock %}

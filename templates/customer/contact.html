@@ -1,0 +1,452 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Ethiosadat Furniture{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .contact-header {
+        margin-bottom: 30px;
+    }
+    .contact-header h1 {
+        margin: 0 0 8px 0;
+        color: var(--text-color, #333);
+    }
+    .contact-header p {
+        color: var(--text-muted, #666);
+        margin: 0;
+    }
+    .contact-form-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .info-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .info-card h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-color, #333);
+    }
+    .info-item {
+        margin-bottom: 24px;
+    }
+    .info-item p {
+        margin: 8px 0 0 0;
+        color: var(--text-muted, #555);
+    }
+    .info-label {
+        font-weight: 600;
+        color: var(--text-color, #333);
+        margin-bottom: 5px;
+        display: block;
+    }
+    .social-links {
+        display: flex;
+        gap: 16px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+    .social-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: var(--bg-hover, #f5f5f5);
+        border-radius: 30px;
+        text-decoration: none;
+        color: var(--text-color, #333);
+        transition: all 0.3s;
+    }
+    .social-link:hover {
+        background: #1a7a4a;
+        color: white;
+        transform: translateY(-3px);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-color, #333);
+    }
+    .form-group label .required {
+        color: #f44336;
+        margin-left: 4px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #1a7a4a;
+        box-shadow: 0 0 0 3px rgba(26,122,74,0.1);
+    }
+    .form-control.error {
+        border-color: #f44336;
+        background-color: #ffebee;
+    }
+    .error-message {
+        color: #f44336;
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
+    .success-message {
+        background: #e8f5e9;
+        color: #4caf50;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .map-placeholder {
+        background: linear-gradient(135deg, #e8f0fe, #d4e2fc);
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+        margin-top: 20px;
+    }
+    .btn-submit {
+        width: 100%;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    .btn-submit.loading {
+        opacity: 0.7;
+        cursor: wait;
+        pointer-events: none;
+    }
+    .faq-section {
+        margin-top: 40px;
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .faq-section h3 {
+        margin-top: 0;
+        color: var(--text-color, #333);
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .form-control.error {
+            background-color: #4a1a1a;
+        }
+        .map-placeholder {
+            background: #2a2a3e;
+        }
+        .success-message {
+            background: #1a3a2a;
+        }
+        .social-link {
+            background: #2a2a3e;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .contact-container {
+            padding: 15px;
+        }
+        .contact-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+        }
+        .contact-form-card, .info-card {
+            padding: 20px;
+        }
+        .social-links {
+            justify-content: center;
+        }
+        .faq-section {
+            padding: 20px;
+        }
+        .faq-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .contact-form-card, .info-card {
+            padding: 16px;
+        }
+        .form-control {
+            padding: 10px 14px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-container">
+    
+    <!-- Header -->
+    <div class="contact-header">
+        <h1>📞 Contact Us</h1>
+        <p>We'd love to hear from you! Send us a message and we'll respond as soon as possible.</p>
+    </div>
+
+    <!-- Success Message (if any) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            {% if category == 'success' %}
+            <div class="success-message">
+                <span>✅</span> {{ message }}
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endwith %}
+
+    <div class="contact-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        
+        <!-- Contact Form -->
+        <div class="contact-form-card">
+            <form method="post" action="{{ url_for('customer.contact') }}" id="contactForm" onsubmit="return validateAndSubmit(event)">
+                <div class="form-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" name="name" id="contactName" class="form-control" 
+                           placeholder="John Doe" required>
+                    <div class="error-message" id="nameError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" id="contactEmail" class="form-control" 
+                           placeholder="your@email.com">
+                    <div class="error-message" id="emailError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" id="contactPhone" class="form-control" 
+                           placeholder="09xxxxxxxx">
+                    <small style="color: var(--text-muted, #666); display: block; margin-top: 5px;">Format: 09xxxxxxxx, 07xxxxxxxx, or 2519xxxxxxxx</small>
+                    <div class="error-message" id="phoneError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Message <span class="required">*</span></label>
+                    <textarea name="message" id="contactMessage" class="form-control" 
+                              rows="5" placeholder="How can we help you?"></textarea>
+                    <div class="error-message" id="messageError"></div>
+                </div>
+                
+                <button type="submit" id="submitBtn" class="btn btn-primary btn-submit">
+                    📤 Send Message
+                </button>
+            </form>
+        </div>
+        
+        <!-- Contact Information -->
+        <div class="info-card">
+            <h3>
+                <span>📍</span> Get in Touch
+            </h3>
+            
+            <div class="info-item">
+                <span class="info-label">📞 Phone</span>
+                <p>+251 90 602 0606</p>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">📧 Email</span>
+                <p>info@ethiosadat.com</p>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">📍 Address</span>
+                <p>Addis Ababa, Ethiopia</p>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">🕒 Business Hours</span>
+                <p>Monday - Saturday: 9:00 AM - 6:00 PM</p>
+                <p>Sunday: Closed</p>
+            </div>
+            
+            <!-- WhatsApp Numbers -->
+            <div class="info-item">
+                <span class="info-label">💬 WhatsApp</span>
+                <p>
+                    <a href="https://wa.me/251906020606" target="_blank" style="color: #1a7a4a; text-decoration: none;">0906 020606</a> | 
+                    <a href="https://wa.me/251906080606" target="_blank" style="color: #1a7a4a; text-decoration: none;">0906 080606</a> | 
+                    <a href="https://wa.me/251906090606" target="_blank" style="color: #1a7a4a; text-decoration: none;">0906 090606</a>
+                </p>
+            </div>
+            
+            <!-- Social Links -->
+            <div class="social-links">
+                <a href="https://www.facebook.com/ethiosadat" target="_blank" class="social-link">
+                    <span>📘</span> Facebook
+                </a>
+                <a href="https://www.instagram.com/ethiosadat" target="_blank" class="social-link">
+                    <span>📷</span> Instagram
+                </a>
+                <a href="https://wa.me/251906020606" target="_blank" class="social-link">
+                    <span>💬</span> WhatsApp
+                </a>
+                <a href="mailto:info@ethiosadat.com" class="social-link">
+                    <span>📧</span> Email
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Map / Location -->
+    <div class="map-placeholder">
+        <div style="font-size: 48px; margin-bottom: 12px;">🗺️</div>
+        <h3 style="margin: 0 0 8px 0; color: var(--text-color, #333);">Find Us</h3>
+        <p style="color: var(--text-muted, #666);">Addis Ababa, Ethiopia</p>
+        <p style="color: var(--text-muted-light, #999); font-size: 13px;">Contact us for exact location details</p>
+    </div>
+    
+    <!-- FAQ Section -->
+    <div class="faq-section">
+        <h3>❓ Frequently Asked Questions</h3>
+        <div class="faq-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div>
+                <p><strong>🛋️ Do you deliver nationwide?</strong></p>
+                <p style="color: var(--text-muted, #666);">Yes, we deliver to all cities in Ethiopia.</p>
+            </div>
+            <div>
+                <p><strong>💳 What payment methods do you accept?</strong></p>
+                <p style="color: var(--text-muted, #666);">Cash on delivery (COD) and bank transfer.</p>
+            </div>
+            <div>
+                <p><strong>🚚 How long does delivery take?</strong></p>
+                <p style="color: var(--text-muted, #666);">2-5 business days depending on location.</p>
+            </div>
+            <div>
+                <p><strong>🔄 What is your return policy?</strong></p>
+                <p style="color: var(--text-muted, #666);">7-day return policy for defective products.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateAndSubmit(event) {
+        event.preventDefault();
+        
+        clearErrors();
+        let isValid = true;
+        
+        const name = document.getElementById('contactName').value.trim();
+        const email = document.getElementById('contactEmail').value.trim();
+        const phone = document.getElementById('contactPhone').value.trim();
+        const message = document.getElementById('contactMessage').value.trim();
+        
+        // Validate name
+        if (!name) {
+            showError('nameError', 'Please enter your name');
+            document.getElementById('contactName').classList.add('error');
+            isValid = false;
+        } else if (name.length < 2) {
+            showError('nameError', 'Name must be at least 2 characters');
+            document.getElementById('contactName').classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate email (if provided)
+        if (email && !isValidEmail(email)) {
+            showError('emailError', 'Please enter a valid email address');
+            document.getElementById('contactEmail').classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate phone (if provided)
+        if (phone && !isValidPhone(phone)) {
+            showError('phoneError', 'Please enter a valid Ethiopian phone number (09xxxxxxxx, 07xxxxxxxx, or 2519xxxxxxxx)');
+            document.getElementById('contactPhone').classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate message
+        if (!message) {
+            showError('messageError', 'Please enter your message');
+            document.getElementById('contactMessage').classList.add('error');
+            isValid = false;
+        } else if (message.length < 5) {
+            showError('messageError', 'Message must be at least 5 characters');
+            document.getElementById('contactMessage').classList.add('error');
+            isValid = false;
+        }
+        
+        if (isValid) {
+            submitForm();
+        }
+        
+        return false;
+    }
+    
+    function isValidEmail(email) {
+        const pattern = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        return pattern.test(email);
+    }
+    
+    function isValidPhone(phone) {
+        const cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
+        const pattern = /^(09|07|2519)[0-9]{8}$/;
+        return pattern.test(cleaned);
+    }
+    
+    function showError(elementId, message) {
+        const errorDiv = document.getElementById(elementId);
+        if (errorDiv) errorDiv.textContent = message;
+    }
+    
+    function clearErrors() {
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+    }
+    
+    function submitForm() {
+        const submitBtn = document.getElementById('submitBtn');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.innerHTML = 'Sending...';
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        
+        // Submit the form
+        document.getElementById('contactForm').submit();
+    }
+    
+    // Auto-format phone number as user types
+    const phoneInput = document.getElementById('contactPhone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            if (value.length > 12) value = value.slice(0, 12);
+            e.target.value = value;
+        });
+    }
+    
+    // Make functions globally available
+    window.validateAndSubmit = validateAndSubmit;
+</script>
+{% endblock %}

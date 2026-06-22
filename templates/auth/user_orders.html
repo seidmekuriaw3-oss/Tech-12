@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders - Ethiosadat Furniture{% endblock %}
+
+{% block extra_css %}
+<style>
+    .orders-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    .orders-header {
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        border-radius: 20px;
+        padding: 30px;
+        color: white;
+        margin-bottom: 30px;
+    }
+    .orders-header h1 { margin: 0 0 8px 0; font-size: 24px; }
+    .orders-header p { margin: 0; opacity: 0.9; }
+    .order-card {
+        background: var(--bg-white, white);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-left: 5px solid #1a7a4a;
+    }
+    .order-card.delivered { border-left-color: #4caf50; }
+    .order-card.cancelled { border-left-color: #f44336; }
+    .order-card.processing { border-left-color: #ff9800; }
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .order-number { font-size: 18px; font-weight: 700; color: var(--text-color, #333); }
+    .order-date { font-size: 13px; color: var(--text-muted, #666); margin-top: 4px; }
+    .status-badge {
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .status-pending { background: #fff3e0; color: #e65100; }
+    .status-processing { background: #e3f2fd; color: #0f5232; }
+    .status-delivered { background: #e8f5e9; color: #2e7d32; }
+    .status-cancelled { background: #ffebee; color: #c62828; }
+    .status-shipped { background: #f3e5f5; color: #6a1b9a; }
+    .order-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        padding: 16px 0;
+        border-top: 1px solid var(--border-color, #f0f0f0);
+        border-bottom: 1px solid var(--border-color, #f0f0f0);
+        margin-bottom: 16px;
+    }
+    .detail-item { }
+    .detail-label { font-size: 12px; color: var(--text-muted, #999); text-transform: uppercase; letter-spacing: 0.5px; }
+    .detail-value { font-size: 16px; font-weight: 600; color: var(--text-color, #333); margin-top: 4px; }
+    .detail-value.price { color: #1a7a4a; }
+    .order-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-sm {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        border: none;
+        transition: all 0.2s;
+        display: inline-block;
+    }
+    .btn-primary-sm { background: #1a7a4a; color: white; }
+    .btn-primary-sm:hover { background: #1557b0; }
+    .btn-outline-sm { background: transparent; border: 2px solid #1a7a4a; color: #1a7a4a; }
+    .btn-outline-sm:hover { background: rgba(26,122,74,0.1); }
+    .empty-orders {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    .empty-orders .icon { font-size: 64px; margin-bottom: 16px; }
+    .empty-orders h2 { color: var(--text-color, #333); margin-bottom: 12px; }
+    .empty-orders p { color: var(--text-muted, #666); margin-bottom: 24px; }
+    @media (max-width: 600px) {
+        .order-header { flex-direction: column; }
+        .orders-container { padding: 20px 12px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="orders-container">
+
+    <div class="orders-header">
+        <h1>📦 My Orders</h1>
+        <p>Track and manage all your orders</p>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{{ url_for('customer.user_profile') }}" style="color: #1a7a4a; text-decoration: none; font-weight: 500;">
+            ← Back to Profile
+        </a>
+    </div>
+
+    {% if orders %}
+        {% for order in orders %}
+        <div class="order-card {{ order.status }}">
+            <div class="order-header">
+                <div>
+                    <div class="order-number">Order #{{ order.order_number }}</div>
+                    <div class="order-date">📅 {{ order.created_at.strftime('%Y-%m-%d') if order.created_at else 'N/A' }}</div>
+                </div>
+                <span class="status-badge status-{{ order.status }}">
+                    {% if order.status == 'pending' %}⏳ Pending
+                    {% elif order.status == 'processing' %}🔄 Processing
+                    {% elif order.status == 'shipped' %}🚚 Shipped
+                    {% elif order.status == 'delivered' %}✅ Delivered
+                    {% elif order.status == 'cancelled' %}❌ Cancelled
+                    {% else %}{{ order.status|title }}
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="order-details">
+                <div class="detail-item">
+                    <div class="detail-label">Total Amount</div>
+                    <div class="detail-value price">{{ order.total|format_price_number }} ETB</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Payment</div>
+                    <div class="detail-value">{{ order.payment_method or 'COD' }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Payment Status</div>
+                    <div class="detail-value">{{ order.payment_status|title if order.payment_status else 'Pending' }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Delivery City</div>
+                    <div class="detail-value">{{ order.shipping_city or 'N/A' }}</div>
+                </div>
+                {% if order.tracking_number %}
+                <div class="detail-item">
+                    <div class="detail-label">Tracking</div>
+                    <div class="detail-value">{{ order.tracking_number }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="order-actions">
+                <a href="{{ url_for('customer.order_detail', order_id=order.id) }}" class="btn-sm btn-primary-sm">
+                    👁️ View Details
+                </a>
+                {% if order.status == 'pending' %}
+                <a href="https://wa.me/251906020606?text=Order+%23{{ order.order_number }}" 
+                   target="_blank" class="btn-sm btn-outline-sm">
+                    💬 Contact Support
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+    {% else %}
+        <div class="empty-orders">
+            <div class="icon">📦</div>
+            <h2>No orders yet</h2>
+            <p>You haven't placed any orders. Start shopping and your orders will appear here.</p>
+            <a href="{{ url_for('customer.products') }}" class="btn-sm btn-primary-sm" style="padding: 12px 32px; font-size: 15px;">
+                🛍️ Start Shopping
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

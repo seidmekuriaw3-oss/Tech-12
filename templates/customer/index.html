@@ -1,0 +1,1088 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Ethiosadat Furniture{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slider.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+    /* Fullscreen video overlay */
+    .fullscreen-video {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.96);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .fullscreen-video video {
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+    }
+    .close-fullscreen {
+        position: absolute;
+        top: 20px; right: 20px;
+        background: white; color: black;
+        border: none; border-radius: 50%;
+        width: 44px; height: 44px;
+        font-size: 24px; cursor: pointer;
+        z-index: 10000;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    /* ── VIDEO SLIDE: full-cover video, text ONLY at very bottom ── */
+    .slider-slide.has-video {
+        position: relative !important;
+        padding: 0 !important;
+        height: 320px !important;
+        min-height: 220px;
+        overflow: hidden;
+        background: #000 !important;
+    }
+    .slider-slide.has-video::before { display: none !important; }
+
+    /* Video fills 100% of slide */
+    .ad-video-col {
+        position: absolute !important;
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100%; height: 100%;
+        overflow: hidden;
+        background: #000;
+        z-index: 1;
+    }
+    .ad-video-col video {
+        position: absolute !important;
+        top: 0; left: 0;
+        width: 100% !important; height: 100% !important;
+        object-fit: cover !important;
+        display: block !important;
+        z-index: 1;
+    }
+
+    /* Play button — centered, above video, doesn't block video view */
+    .video-click-zone {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+    }
+    .video-play-btn {
+        width: 60px; height: 60px;
+        background: rgba(255,255,255,0.18);
+        border: 2px solid rgba(255,255,255,0.75);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 22px; color: white;
+        backdrop-filter: blur(3px);
+        transition: transform 0.2s, background 0.2s;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+    .video-click-zone:hover .video-play-btn {
+        transform: scale(1.15);
+        background: rgba(255,255,255,0.32);
+        opacity: 1;
+    }
+
+    /* Thin text bar ONLY at very bottom — doesn't obscure video */
+    .ad-text-col {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        z-index: 4;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 16px;
+        background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.55) 70%, transparent 100%);
+        padding-top: 28px;
+        color: white;
+        pointer-events: none;
+    }
+    .ad-text-col a { pointer-events: all; }
+    .ad-text-col-inner { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+    .ad-text-col h3 {
+        font-size: 13px; font-weight: 700; margin: 0;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+    .ad-text-col p { display: none; }
+    .ad-text-col .slide-btn {
+        flex-shrink: 0;
+        font-size: 11px; padding: 5px 12px;
+        background: #1a7a4a; color: white;
+        border-radius: 20px; text-decoration: none;
+        pointer-events: all;
+        white-space: nowrap;
+    }
+
+    /* ── ADS SHOW/HIDE (ID selectors = highest CSS specificity, beat all class rules) ── */
+    #adsMobileSlider { display: none !important; }        /* hidden on desktop by default */
+    #adsDesktopGrid  { display: grid !important;          /* visible on desktop by default */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin: 20px 0;
+    }
+    @media (max-width: 768px) {
+        #adsMobileSlider { display: block !important; }   /* show slider on mobile */
+        #adsDesktopGrid  { display: none  !important; }   /* hide grid on mobile */
+    }
+
+    /* ── DESKTOP GRID CARDS ── */
+    .ad-grid-card {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        min-height: 260px;
+        position: relative;
+    }
+
+    /* Video card — full-cover video, text bar only at bottom */
+    .ad-grid-video {
+        position: relative;
+        min-height: 260px;
+        background: #000;
+        overflow: hidden;
+    }
+    .adg-video-side {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: #000;
+        overflow: hidden;
+    }
+    .adg-video-side video {
+        position: absolute;
+        inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .adg-play-zone {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+    }
+    .adg-play-btn {
+        width: 64px; height: 64px;
+        background: rgba(255,255,255,0.22);
+        border: 3px solid rgba(255,255,255,0.85);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 26px; color: white;
+        backdrop-filter: blur(4px);
+        transition: transform 0.2s, background 0.2s;
+        pointer-events: none;
+    }
+    .adg-play-zone:hover .adg-play-btn {
+        transform: scale(1.12);
+        background: rgba(255,255,255,0.38);
+    }
+    /* Text bar overlaid at bottom of video */
+    .adg-text-side {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 28px 20px 14px;
+        background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
+        color: white;
+        pointer-events: none;
+    }
+    .adg-text-side a { pointer-events: all; }
+    .adg-text-side h3 {
+        font-size: 16px; font-weight: 800; margin: 0;
+        line-height: 1.3;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        width: 100%;
+    }
+    .adg-text-side p {
+        font-size: 12px; opacity: 0.9; margin: 0;
+        line-height: 1.4; display: none;
+    }
+
+    /* Image card */
+    .ad-grid-image {
+        display: flex;
+        align-items: flex-end;
+        min-height: 260px;
+    }
+    .adg-image-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+    }
+    .adg-image-text {
+        position: relative;
+        z-index: 2;
+        padding: 20px 24px;
+        color: white;
+        text-align: center;
+        width: 100%;
+    }
+    .adg-image-text h3 { font-size: 20px; font-weight: 800; margin: 0 0 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+    .adg-image-text p  { font-size: 13px; opacity: 0.9; margin: 0 0 10px; }
+
+    /* Text-only card */
+    .ad-grid-text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+        padding: 30px 24px;
+    }
+    .adg-text-center h3 { font-size: 22px; font-weight: 800; margin: 0 0 8px; }
+    .adg-text-center p  { font-size: 14px; opacity: 0.92; margin: 0 0 16px; line-height: 1.5; }
+
+    /* Shared button */
+    .adg-btn {
+        display: inline-block;
+        background: white;
+        color: #1a7a4a;
+        padding: 10px 24px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 13px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .adg-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+    
+    /* Products Grid - Mobile: 2, Desktop: 4 */
+    .products-grid {
+        display: grid !important;
+        gap: 12px !important;
+        margin-top: 20px !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    /* Tablet and Desktop: 4 columns */
+    @media (min-width: 768px) {
+        .products-grid {
+            gap: 25px !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+        }
+    }
+    
+    /* About Section */
+    .about-section {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 40px;
+        margin: 40px 0;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .about-section h2 {
+        color: var(--primary, #1a7a4a);
+        margin-bottom: 20px;
+    }
+    .about-section p {
+        color: var(--text-muted, #666);
+        line-height: 1.6;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .hero {
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white;
+        text-align: center;
+        padding: 60px 20px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+    }
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 16px;
+    }
+    .hero p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+    
+    .btn-outline {
+        padding: 8px 16px;
+        background: var(--bg-white, white);
+        border-radius: 25px;
+        text-decoration: none;
+        color: #1a7a4a;
+        border: 1px solid #1a7a4a;
+        transition: all 0.3s;
+    }
+    .btn-outline:hover {
+        background: #1a7a4a;
+        color: white;
+        transform: translateY(-2px);
+    }
+    /* ══════════════════════════════════════════
+       PRODUCT CARD — Modern & Professional
+       Mobile: 2 cols  |  Desktop: 6 cols
+       ══════════════════════════════════════════ */
+    .product-card {
+        display: block;
+        text-decoration: none !important;
+        color: inherit !important;
+        background: var(--bg-white, #fff);
+        border-radius: 14px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+        cursor: pointer;
+    }
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 28px rgba(26,122,74,0.18);
+    }
+    /* — Image area — */
+    .pc-img {
+        position: relative;
+        height: 140px;
+        background: #f0f0f0;
+        overflow: hidden;
+    }
+    .pc-img img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.35s ease;
+        display: block;
+    }
+    .product-card:hover .pc-img img { transform: scale(1.08); }
+
+    /* Hover overlay shimmer */
+    .pc-img::after {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(160deg, transparent 60%, rgba(26,122,74,0.12) 100%);
+        opacity: 0; transition: opacity 0.25s;
+        pointer-events: none;
+    }
+    .product-card:hover .pc-img::after { opacity: 1; }
+
+    /* — Badges — */
+    .pc-badge {
+        position: absolute;
+        padding: 3px 7px;
+        border-radius: 20px;
+        font-size: 9px; font-weight: 800;
+        color: white; line-height: 1.4;
+        z-index: 2; letter-spacing: 0.3px;
+    }
+    .pc-badge-sale { top: 6px; right: 6px; background: #e53935; }
+    .pc-badge-new  { top: 6px; left: 6px;
+        background: linear-gradient(135deg,#1a7a4a,#2ecc71); }
+
+    /* — Cart button — */
+    .pc-cart-btn {
+        position: absolute; bottom: 7px; right: 7px;
+        background: #1a7a4a; color: white; border: none;
+        width: 30px; height: 30px; border-radius: 50%;
+        font-size: 13px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 3px 8px rgba(26,122,74,0.35);
+        z-index: 3;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        opacity: 0.85;
+    }
+    .product-card:hover .pc-cart-btn {
+        opacity: 1;
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(26,122,74,0.5);
+    }
+    .pc-cart-btn:hover { background: #0f5232; }
+
+    /* — Body — */
+    .pc-body {
+        padding: 8px 9px 10px;
+        border-top: 1px solid rgba(0,0,0,0.04);
+    }
+    .pc-name {
+        font-size: 12px; margin: 0 0 4px;
+        color: var(--text-color, #222);
+        line-height: 1.35; font-weight: 600;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .pc-price-row { display: flex; align-items: baseline; gap: 5px; }
+    .pc-price { font-size: 13px; font-weight: 800; color: #1a7a4a; }
+    .pc-compare {
+        font-size: 10px; color: #aaa;
+        text-decoration: line-through;
+    }
+
+    /* — Grid — */
+    /* Products Grid - Mobile: 2, Desktop: 6 */
+    .products-grid {
+        display: grid !important;
+        gap: 12px !important;
+        margin-top: 20px !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    @media (min-width: 540px) {
+        .products-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 14px !important; }
+        .pc-img { height: 150px; }
+    }
+    @media (min-width: 900px) {
+        .products-grid { grid-template-columns: repeat(6, 1fr) !important; gap: 18px !important; }
+        .pc-img { height: 170px; }
+        .pc-name { font-size: 13px; }
+        .pc-price { font-size: 14px; }
+        .pc-badge { font-size: 10px; }
+        .pc-cart-btn { width: 34px; height: 34px; font-size: 15px; bottom: 8px; right: 8px; }
+        .pc-body { padding: 10px 11px 12px; }
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+        .product-card { background: #1e1e2e; box-shadow: 0 2px 10px rgba(0,0,0,0.25); }
+        .pc-name { color: #eee; }
+        .pc-body { border-top-color: rgba(255,255,255,0.06); }
+        .about-section { background: #16213e; }
+    }
+    @media (max-width: 768px) {
+        .hero { padding: 40px 20px !important; }
+        .hero h1 { font-size: 24px !important; }
+        .about-section { padding: 30px 20px; }
+    }
+
+    .idc-wrap {
+        margin: 36px 0;
+        background: linear-gradient(160deg,#f0faf4 0%,#fdfffe 55%,#f2f8f4 100%);
+        border-radius: 18px;
+        border: 1px solid #d4ead8;
+        padding: 22px 18px 18px;
+    }
+    .idc-head { text-align:center; margin-bottom:16px; }
+    .idc-head h2 {
+        font-size:clamp(15px,2.5vw,19px); font-weight:800; color:#1a2e1e;
+        margin:0 0 3px; display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .idc-arabic-sub {
+        font-family:'Amiri',serif; font-size:13px; color:#4a8a5e;
+        display:block; margin-bottom:3px;
+    }
+    .idc-head p { font-size:11px; color:#6a8f70; margin:0; }
+    .idc-slider-outer {
+        position:relative; max-width:340px; margin:0 auto 16px;
+        overflow:hidden; border-radius:14px;
+    }
+    .idc-slider-track {
+        display:flex;
+        transition:transform .52s cubic-bezier(.4,0,.2,1);
+        will-change:transform;
+    }
+    .idc-card {
+        min-width:100%; width:100%;
+        background:#fff; border-radius:14px; padding:16px 16px 14px;
+        box-shadow:0 4px 24px rgba(26,122,74,.1);
+        border:1px solid rgba(26,122,74,.12);
+        display:flex; flex-direction:column;
+        box-sizing:border-box;
+    }
+    .idc-card-head { display:flex; align-items:center; gap:7px; margin-bottom:10px; }
+    .idc-card-icon {
+        width:30px; height:30px; border-radius:8px;
+        background:linear-gradient(135deg,#1a7a4a,#0f5232);
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; flex-shrink:0;
+    }
+    .idc-card-lbl { font-size:11px; font-weight:700; color:#6a8f70; text-transform:uppercase; letter-spacing:1px; }
+    .idc-card-link {
+        margin-top:auto; padding-top:12px;
+        font-size:12px; color:#1a7a4a; font-weight:700;
+        text-decoration:none; display:flex; align-items:center; gap:5px;
+        border-top:1px solid #edf6ef;
+    }
+    .idc-card-link:hover { color:#0f5232; }
+    .idc-slider-arr {
+        position:absolute; top:50%; transform:translateY(-50%);
+        width:34px; height:34px; border-radius:50%;
+        background:rgba(255,255,255,.92); border:1px solid rgba(26,122,74,.2);
+        color:#1a7a4a; font-size:18px; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        box-shadow:0 2px 10px rgba(0,0,0,.1); z-index:10;
+        transition:all .2s; user-select:none;
+    }
+    .idc-slider-arr:hover { background:#1a7a4a; color:#fff; }
+    .idc-slider-arr.left  { left:10px; }
+    .idc-slider-arr.right { right:10px; }
+    .idc-slider-dots {
+        display:flex; align-items:center; justify-content:center;
+        gap:8px; margin-bottom:20px;
+    }
+    .idc-slider-dot {
+        width:8px; height:8px; border-radius:50%;
+        background:rgba(26,122,74,.2); border:1px solid rgba(26,122,74,.2);
+        cursor:pointer; transition:all .25s;
+    }
+    .idc-slider-dot.on {
+        background:#1a7a4a; border-color:#1a7a4a;
+        transform:scale(1.3); box-shadow:0 0 6px rgba(26,122,74,.4);
+    }
+
+    .idc-prayer-list { display:flex; flex-direction:column; gap:6px; flex:1; }
+    .idc-prayer-row {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:7px 10px; border-radius:9px;
+        background:#f7fbf8; border-left:3px solid transparent; transition:all .18s;
+    }
+    .idc-prayer-row.pnext { background:rgba(26,122,74,.09); border-left-color:#1a7a4a; }
+    .idc-prayer-row.pcurr { background:rgba(201,168,76,.1); border-left-color:#c9a84c; }
+    .idc-pname { font-size:13px; font-weight:600; color:#2a4a2e; display:flex; align-items:center; gap:5px; }
+    .idc-ptime { font-size:13px; font-weight:700; color:#1a7a4a; font-variant-numeric:tabular-nums; }
+
+    .idc-hijri-body { text-align:center; flex:1; padding:2px 0 8px; }
+    .idc-hijri-day { font-size:42px; font-weight:900; color:#1a7a4a; line-height:1; margin-bottom:3px; }
+    .idc-hijri-month { font-size:14px; font-weight:600; color:#2a4a2e; margin-bottom:2px; }
+    .idc-hijri-year { font-size:11px; color:#8aaa8e; margin-bottom:10px; }
+    .idc-next-event {
+        background:rgba(26,122,74,.06); border-radius:9px;
+        padding:8px 12px; font-size:11px; color:#5a7a60;
+        border:1px solid rgba(26,122,74,.1);
+    }
+    .idc-next-event strong { color:#1a7a4a; }
+
+    .idc-compass-body { display:flex; flex-direction:column; align-items:center; flex:1; gap:6px; padding:2px 0 8px; }
+    .idc-compass-svg { width:80px; height:80px; }
+    .idc-bearing { font-size:20px; font-weight:800; color:#1a7a4a; letter-spacing:-1px; text-align:center; }
+    .idc-bearing-sub { font-size:10px; color:#8aaa8e; text-align:center; }
+
+    .idc-ayah-body { flex:1; display:flex; flex-direction:column; }
+    .idc-ayah-text {
+        font-family:'Amiri','Traditional Arabic',serif;
+        font-size:clamp(16px,2.6vw,21px); color:#1a2e1e;
+        line-height:1.9; text-align:right; direction:rtl; unicode-bidi:embed;
+        flex:1; padding:4px 0 12px; border-bottom:1px solid #edf6ef;
+    }
+    .idc-ayah-ref { font-size:11px; color:#8aaa8e; margin-top:8px; display:flex; align-items:center; gap:5px; }
+
+    .idc-cta { text-align:center; padding-top:4px; }
+    .idc-cta a {
+        display:inline-flex; align-items:center; gap:7px;
+        background:linear-gradient(135deg,#1a7a4a,#0f5232); color:#fff;
+        text-decoration:none; padding:9px 22px; border-radius:30px;
+        font-weight:700; font-size:12px;
+        transition:transform .22s,box-shadow .22s;
+        box-shadow:0 4px 16px rgba(26,122,74,.28);
+    }
+    .idc-cta a:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(26,122,74,.38); }
+
+    @media (max-width:640px) {
+        .idc-wrap { padding:16px 10px 14px; }
+        .idc-hijri-day { font-size:34px; }
+        .idc-compass-svg { width:64px; height:64px; }
+        .idc-slider-outer { max-width:100%; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero">
+    <h1>🪑 Ethiosadat Furniture</h1>
+    <p>{{ t.quality_tagline }}</p>
+    <p>{{ t.free_shipping_msg }}</p>
+</div>
+
+<!-- ==================== ADS SECTION ==================== -->
+{% if ads %}
+
+{# ── MOBILE: standard slider carousel (hidden on desktop) ── #}
+<div id="adsMobileSlider" class="slider-container">
+    <button class="slider-btn slider-prev">❮</button>
+    <div class="slider-wrapper">
+        <div class="slider-track">
+            {% for ad in ads %}
+            {% set vid_exts = ('.mp4', '.webm', '.mov', '.avi', '.ogg') %}
+            {% set is_video = (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) or (ad.media_url and ad.media_url|trim != '' and ad.media_url.lower().endswith(vid_exts)) %}
+            {% set video_src = (url_for('static', filename=ad.image) if (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) else ad.media_url) if is_video else '' %}
+            {% set is_image = ad.image and ad.image|trim != '' and not is_video %}
+            <div class="slider-slide {% if is_video %}has-video{% elif is_image %}has-image{% endif %}"
+                 {% if is_image %}style="background-image: url('{{ url_for('static', filename=ad.image) }}');"{% endif %}>
+                {% if is_video %}
+                <div class="ad-video-col">
+                    <video src="{{ video_src }}"
+                           autoplay muted loop playsinline
+                           style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;"></video>
+                    <div class="video-click-zone" onclick="playFullscreen('{{ video_src }}')" title="Click to watch fullscreen">
+                        <div class="video-play-btn">▶</div>
+                    </div>
+                </div>
+                <div class="ad-text-col">
+                    <div class="ad-text-col-inner">
+                        <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
+                    </div>
+                    <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="slide-btn">{{ t.shop_now }}</a>
+                </div>
+                {% else %}
+                <div class="slide-content">
+                    <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
+                    <p>{{ localized_ad_description(ad) or t.quality_tagline }}</p>
+                    <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="slide-btn">{{ t.shop_now }}</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <button class="slider-btn slider-next">❯</button>
+    <div class="slider-dots"></div>
+</div>
+
+{# ── DESKTOP: independent 2-column grid (hidden on mobile) ── #}
+<div id="adsDesktopGrid" class="ads-desktop-grid">
+    {% for ad in ads %}
+    {% set vid_exts = ('.mp4', '.webm', '.mov', '.avi', '.ogg') %}
+    {% set is_video = (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) or (ad.media_url and ad.media_url|trim != '' and ad.media_url.lower().endswith(vid_exts)) %}
+    {% set video_src = (url_for('static', filename=ad.image) if (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) else ad.media_url) if is_video else '' %}
+    {% set is_image = ad.image and ad.image|trim != '' and not is_video %}
+
+    {% if is_video %}
+    {# Video card: full-cover video with text overlay at bottom #}
+    <div class="ad-grid-card ad-grid-video">
+        <div class="adg-video-side">
+            <video autoplay muted loop playsinline>
+                <source src="{{ video_src }}" type="video/mp4">
+                <source src="{{ video_src }}" type="video/webm">
+            </video>
+            <div class="adg-play-zone" onclick="playFullscreen('{{ video_src }}')" title="Click to watch fullscreen">
+                <div class="adg-play-btn">▶</div>
+            </div>
+        </div>
+        <div class="adg-text-side">
+            <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
+            <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="adg-btn" style="pointer-events:all;">{{ t.shop_now }} →</a>
+        </div>
+    </div>
+
+    {% elif is_image %}
+    {# Image card: full-cover image with text at bottom #}
+    <div class="ad-grid-card ad-grid-image"
+         style="background-image:url('{{ url_for('static', filename=ad.image) }}');background-size:cover;background-position:center;">
+        <div class="adg-image-overlay"></div>
+        <div class="adg-image-text">
+            <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
+            {% set ad_desc = localized_ad_description(ad) or t.quality_tagline %}
+            {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
+            <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="adg-btn">{{ t.shop_now }} →</a>
+        </div>
+    </div>
+
+    {% else %}
+    {# Text-only card: gradient background #}
+    <div class="ad-grid-card ad-grid-text" style="background:linear-gradient(135deg,
+        {% if loop.index % 3 == 0 %}#667eea,#764ba2
+        {% elif loop.index % 3 == 2 %}#f093fb,#f5576c
+        {% else %}#1a7a4a,#0f5232{% endif %});">
+        <div class="adg-text-center">
+            <div style="font-size:44px;margin-bottom:12px;">🎉</div>
+            <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
+            {% set ad_desc = localized_ad_description(ad) or t.quality_tagline %}
+            {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
+            <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="adg-btn">{{ t.shop_now }} →</a>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% endif %}
+
+<!-- Categories -->
+<div style="margin-bottom: 30px;">
+    <h2>📂 {{ t.categories }}</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+        <a href="{{ url_for('customer.products') }}" class="btn btn-outline">{{ t.all }}</a>
+        {% for cat in categories %}
+        <a href="{{ url_for('customer.category_products', category_id=cat.id) }}" class="btn btn-outline">
+            {% if cat.icon %}{{ cat.icon }}{% endif %} {{ category_name(cat) }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Products Grid -->
+<h2>{{ t.featured_products }}</h2>
+<div class="products-grid">
+    {% for product in featured_products %}
+    {% set disc = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int if (product.compare_price and product.compare_price|float > product.price|float) else 0 %}
+    <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="product-card" data-product-id="{{ product.id }}">
+        <div class="pc-img">
+            {% if product.thumbnail and product.thumbnail != '' %}
+                <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
+                     onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.pc-fallback').style.display='flex';">
+                <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">🪑</div>
+            {% else %}
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">🪑</div>
+            {% endif %}
+            {% if disc > 0 %}<span class="pc-badge pc-badge-sale">-{{ disc }}%</span>{% endif %}
+            {% if product.is_new %}<span class="pc-badge pc-badge-new">NEW</span>{% endif %}
+            <button class="pc-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)" title="{{ t.add_to_cart }}">🛒</button>
+        </div>
+        <div class="pc-body">
+            <p class="pc-name">{{ product_name(product) }}</p>
+            <div class="pc-price-row">
+                <span class="pc-price">{{ format_price(product.price) }}</span>
+                {% if disc > 0 %}<span class="pc-compare">{{ format_price(product.compare_price) }}</span>{% endif %}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+<!-- New Products Section -->
+{% if new_products and new_products|length > 0 %}
+<h2 style="margin-top: 40px;">{{ t.new_arrivals }}</h2>
+<div class="products-grid">
+    {% for product in new_products %}
+    {% set disc = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int if (product.compare_price and product.compare_price|float > product.price|float) else 0 %}
+    <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="product-card" data-product-id="{{ product.id }}">
+        <div class="pc-img">
+            {% if product.thumbnail and product.thumbnail != '' %}
+                <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
+                     onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.pc-fallback').style.display='flex';">
+                <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">🪑</div>
+            {% else %}
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">🪑</div>
+            {% endif %}
+            {% if disc > 0 %}<span class="pc-badge pc-badge-sale">-{{ disc }}%</span>{% endif %}
+            <span class="pc-badge pc-badge-new">NEW</span>
+            <button class="pc-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)" title="{{ t.add_to_cart }}">🛒</button>
+        </div>
+        <div class="pc-body">
+            <p class="pc-name">{{ product_name(product) }}</p>
+            <div class="pc-price-row">
+                <span class="pc-price">{{ format_price(product.price) }}</span>
+                {% if disc > 0 %}<span class="pc-compare">{{ format_price(product.compare_price) }}</span>{% endif %}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if hijri_home %}
+<div class="idc-wrap">
+    <div class="idc-head">
+        <span class="idc-arabic-sub">الزاوية الإسلامية</span>
+        <h2>🕌 Islamic Corner</h2>
+        <p>Prayer times, Hijri calendar, Qibla direction & daily Qur'an — for our Muslim customers</p>
+    </div>
+
+    <div class="idc-slider-outer" id="idc-slider-outer">
+        <button class="idc-slider-arr left" onclick="idcNav(-1)">&#8249;</button>
+        <button class="idc-slider-arr right" onclick="idcNav(1)">&#8250;</button>
+
+        <div class="idc-slider-track" id="idc-track">
+
+            <div class="idc-card">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">🕐</div>
+                    <span class="idc-card-lbl">Prayer Times</span>
+                </div>
+                <div class="idc-prayer-list" id="idc-prayer-list">
+                    <div style="font-size:12px;color:#a0b8a4;text-align:center;padding:14px 0;">Loading…</div>
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#prayer" class="idc-card-link">
+                    Full Prayer Schedule →
+                </a>
+            </div>
+
+            <div class="idc-card">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">📅</div>
+                    <span class="idc-card-lbl">Hijri Calendar</span>
+                </div>
+                <div class="idc-hijri-body">
+                    <div class="idc-hijri-day">{{ hijri_home.day }}</div>
+                    <div class="idc-hijri-month">{{ hijri_home.month }}</div>
+                    <div class="idc-hijri-year">{{ hijri_home.year }} AH</div>
+                    {% if next_event %}
+                    <div class="idc-next-event">
+                        {{ next_event.icon }}
+                        {% if next_event.is_today %}
+                            <strong>{{ next_event.name }}</strong> — Today!
+                        {% elif next_event.days_away == 1 %}
+                            <strong>{{ next_event.name }}</strong> — Tomorrow
+                        {% else %}
+                            <strong>{{ next_event.name }}</strong> in {{ next_event.days_away }} days
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#calendar" class="idc-card-link">
+                    Full Hijri Calendar →
+                </a>
+            </div>
+
+            <div class="idc-card">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">🧭</div>
+                    <span class="idc-card-lbl">Qibla Direction</span>
+                </div>
+                <div class="idc-compass-body">
+                    <svg class="idc-compass-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="47" fill="#f7fbf8" stroke="#d4ead8" stroke-width="1.5"/>
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="#edf6ef" stroke-width="1"/>
+                        <line x1="50" y1="12" x2="50" y2="18" stroke="#d4ead8" stroke-width="1.5"/>
+                        <line x1="88" y1="50" x2="82" y2="50" stroke="#d4ead8" stroke-width="1"/>
+                        <line x1="50" y1="88" x2="50" y2="82" stroke="#d4ead8" stroke-width="1"/>
+                        <line x1="12" y1="50" x2="18" y2="50" stroke="#d4ead8" stroke-width="1"/>
+                        <text x="50" y="11" text-anchor="middle" font-size="9" font-weight="700" fill="#1a7a4a" font-family="system-ui,sans-serif">N</text>
+                        <text x="91" y="53" text-anchor="middle" font-size="7" fill="#a0c0a8" font-family="system-ui,sans-serif">E</text>
+                        <text x="50" y="97" text-anchor="middle" font-size="7" fill="#a0c0a8" font-family="system-ui,sans-serif">S</text>
+                        <text x="9" y="53" text-anchor="middle" font-size="7" fill="#a0c0a8" font-family="system-ui,sans-serif">W</text>
+                        <g id="idc-compass-needle" style="transform-origin:50px 50px;transform:rotate(4.6deg)">
+                            <polygon points="50,14 46,50 54,50" fill="#1a7a4a"/>
+                            <polygon points="50,86 46,50 54,50" fill="#d4ead8"/>
+                            <circle cx="50" cy="50" r="4" fill="white" stroke="#1a7a4a" stroke-width="1.5"/>
+                        </g>
+                    </svg>
+                    <div class="idc-bearing" id="idc-bearing-val">4.6°</div>
+                    <div class="idc-bearing-sub" id="idc-bearing-sub">from Addis Ababa · North</div>
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#qibla" class="idc-card-link">
+                    Interactive Compass →
+                </a>
+            </div>
+
+            <div class="idc-card">
+                <div class="idc-card-head">
+                    <div class="idc-card-icon">📖</div>
+                    <span class="idc-card-lbl">Daily Ayah</span>
+                </div>
+                <div class="idc-ayah-body">
+                    {% if daily_ayah and daily_ayah.text %}
+                    <div class="idc-ayah-text">{{ daily_ayah.text }}</div>
+                    <div class="idc-ayah-ref">
+                        <span>📖</span>
+                        <span>{{ daily_ayah.surah_name }} — {{ daily_ayah.surah_num }}:{{ daily_ayah.ayah_num }}</span>
+                    </div>
+                    {% else %}
+                    <div style="font-size:13px;color:#a0b8a4;text-align:center;padding:20px 0;flex:1;">
+                        بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ
+                    </div>
+                    {% endif %}
+                </div>
+                <a href="{{ url_for('islamic.islamic_suite') }}#quran" class="idc-card-link">
+                    Read Full Qur'an →
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="idc-slider-dots" id="idc-dots">
+        <div class="idc-slider-dot on" onclick="idcGoTo(0)"></div>
+        <div class="idc-slider-dot" onclick="idcGoTo(1)"></div>
+        <div class="idc-slider-dot" onclick="idcGoTo(2)"></div>
+        <div class="idc-slider-dot" onclick="idcGoTo(3)"></div>
+    </div>
+
+    <div class="idc-cta">
+        <a href="{{ url_for('islamic.islamic_suite') }}">
+            🕌 Open Full Islamic Suite
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recently Viewed Section -->
+{% if recently_viewed_products and recently_viewed_products|length > 0 %}
+<div style="margin-top: 40px;">
+    <h2 style="display:flex; align-items:center; gap:10px;">
+        🕐 {% if lang == 'am' %}የቅርብ ጊዜ ምርቶች{% elif lang == 'ar' %}المنتجات المشاهدة مؤخراً{% else %}Recently Viewed{% endif %}
+    </h2>
+    <div class="products-grid">
+        {% for product in recently_viewed_products %}
+        {% set disc = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int if (product.compare_price and product.compare_price|float > product.price|float) else 0 %}
+        <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" class="product-card" data-product-id="{{ product.id }}">
+            <div class="pc-img">
+                {% if product.thumbnail and product.thumbnail != '' %}
+                    <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
+                         onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.pc-fallback').style.display='flex';">
+                    <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">🪑</div>
+                {% else %}
+                    <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">🪑</div>
+                {% endif %}
+                {% if disc > 0 %}<span class="pc-badge pc-badge-sale">-{{ disc }}%</span>{% endif %}
+                <button class="pc-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)" title="{{ t.add_to_cart }}">🛒</button>
+            </div>
+            <div class="pc-body">
+                <p class="pc-name">{{ product_name(product) }}</p>
+                <div class="pc-price-row">
+                    <span class="pc-price">{{ format_price(product.price) }}</span>
+                    {% if disc > 0 %}<span class="pc-compare">{{ format_price(product.compare_price) }}</span>{% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- About Section (Desktop only - shown based on platform) -->
+{% if show_about %}
+<div class="about-section">
+    <h2>🏢 About Ethiosadat Furniture</h2>
+    <p>
+        Ethiosadat Furniture is a leading furniture retailer in Ethiopia, offering high-quality 
+        furniture at competitive prices. With multiple branches across the country, we serve 
+        thousands of satisfied customers. Our mission is to provide comfortable, stylish, 
+        and durable furniture that transforms houses into homes.
+    </p>
+    <p style="margin-top: 15px;">
+        🇪🇹 Proudly serving Ethiopia since 2000 | 9 branches nationwide | Thousands of happy customers
+    </p>
+</div>
+{% endif %}
+
+<!-- Admin Link -->
+<div style="text-align: center; margin-top: 40px; padding: 20px;">
+    {% if not session.get('admin') and not session.get('is_admin') %}
+    <a href="{{ url_for('admin.admin_login') }}" style="display: inline-flex; align-items: center; gap: 8px; background: #1a1a2e; color: #d4af37; padding: 12px 24px; border-radius: 30px; text-decoration: none; font-weight: bold;">
+        👑 Admin Login
+    </a>
+    {% endif %}
+    {% if session.get('admin') or session.get('is_admin') %}
+    <a href="{{ url_for('admin.dashboard') }}" style="display: inline-flex; align-items: center; gap: 8px; background: #1a1a2e; color: #d4af37; padding: 12px 24px; border-radius: 30px; text-decoration: none; font-weight: bold;">
+        👑 Go to Admin Panel
+    </a>
+    {% endif %}
+</div>
+
+<script>
+(function() {
+    var PICONS = {Fajr:'🌙',Dhuhr:'☀️',Asr:'🌤️',Maghrib:'🌅',Isha:'🌃'};
+    var PORDER = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+    function toMin(s) { var p=s.split(':'); return +p[0]*60 + +p[1]; }
+    function compassDir(deg) {
+        var dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+        return dirs[Math.round(deg/22.5) % 16];
+    }
+    function renderPrayers(times) {
+        var now = new Date();
+        var cur = now.getHours()*60 + now.getMinutes();
+        var nextP = null;
+        for (var i=0; i<PORDER.length; i++) {
+            if (toMin(times[PORDER[i]]) > cur) { nextP = PORDER[i]; break; }
+        }
+        if (!nextP) nextP = PORDER[0];
+        var currP = null;
+        for (var j=PORDER.length-1; j>=0; j--) {
+            if (toMin(times[PORDER[j]]) <= cur) { currP = PORDER[j]; break; }
+        }
+        var el = document.getElementById('idc-prayer-list');
+        if (!el) return;
+        el.innerHTML = PORDER.map(function(p) {
+            var cls = p===nextP ? 'pnext' : (p===currP ? 'pcurr' : '');
+            return '<div class="idc-prayer-row '+cls+'">'
+                + '<span class="idc-pname">'+PICONS[p]+' '+p+'</span>'
+                + '<span class="idc-ptime">'+times[p]+'</span>'
+                + '</div>';
+        }).join('');
+    }
+    function loadPrayers() {
+        fetch('/api/islamic/prayer-times?lat=8.9806&lng=38.7578')
+            .then(function(r){ return r.json(); })
+            .then(function(d){ if(d.success) renderPrayers(d.times); })
+            .catch(function(){});
+    }
+    function loadQibla() {
+        fetch('/api/islamic/qibla-direction?lat=8.9806&lng=38.7578')
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+                if (!d.success) return;
+                var b = d.bearing;
+                var val = document.getElementById('idc-bearing-val');
+                var sub = document.getElementById('idc-bearing-sub');
+                var needle = document.getElementById('idc-compass-needle');
+                if (val) val.textContent = b.toFixed(1)+'°';
+                if (sub) sub.textContent = 'from Addis Ababa · '+compassDir(b);
+                if (needle) needle.style.transform = 'rotate('+b+'deg)';
+            })
+            .catch(function(){});
+    }
+    var idcIdx = 0;
+    var idcTotal = 4;
+    var idcTimer;
+    function idcGoTo(n) {
+        idcIdx = (n + idcTotal) % idcTotal;
+        var track = document.getElementById('idc-track');
+        if (track) track.style.transform = 'translateX(-' + (idcIdx * 100) + '%)';
+        var dots = document.querySelectorAll('.idc-slider-dot');
+        dots.forEach(function(d, i) { d.classList.toggle('on', i === idcIdx); });
+    }
+    window.idcGoTo = idcGoTo;
+    window.idcNav = function(dir) {
+        clearInterval(idcTimer);
+        idcGoTo(idcIdx + dir);
+        idcTimer = setInterval(function(){ idcGoTo(idcIdx + 1); }, 3500);
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('idc-prayer-list')) {
+            loadPrayers();
+            loadQibla();
+        }
+        var outer = document.getElementById('idc-slider-outer');
+        if (!outer) return;
+        idcTimer = setInterval(function(){ idcGoTo(idcIdx + 1); }, 3500);
+        var tsx = 0;
+        outer.addEventListener('touchstart', function(e){ tsx = e.touches[0].clientX; }, {passive:true});
+        outer.addEventListener('touchend', function(e){
+            var dx = tsx - e.changedTouches[0].clientX;
+            if (Math.abs(dx) > 40) { clearInterval(idcTimer); idcGoTo(idcIdx + (dx > 0 ? 1 : -1)); idcTimer = setInterval(function(){ idcGoTo(idcIdx + 1); }, 3500); }
+        }, {passive:true});
+    });
+})();
+
+    function playFullscreen(videoSrc) {
+        const fullscreenDiv = document.createElement('div');
+        fullscreenDiv.className = 'fullscreen-video';
+        fullscreenDiv.innerHTML = `
+            <button class="close-fullscreen" onclick="this.parentElement.remove()">✕</button>
+            <video src="${videoSrc}" autoplay controls style="width: 100%; height: auto; max-height: 100%;"></video>
+        `;
+        document.body.appendChild(fullscreenDiv);
+        
+        const video = fullscreenDiv.querySelector('video');
+        video.addEventListener('ended', () => fullscreenDiv.remove());
+    }
+    
+    // Product cards are now <a> tags — no custom click handler needed
+    
+    // Make playFullscreen globally available
+    window.playFullscreen = playFullscreen;
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/slider.js') }}"></script>
+{% endblock %}

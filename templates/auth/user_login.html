@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Ethiosadat Furniture{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    .login-card {
+        background: var(--bg-white, white);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .login-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        color: #1a7a4a;
+    }
+    .login-card h2 {
+        margin-bottom: 8px;
+        color: var(--text-color, #333);
+    }
+    .login-subtitle {
+        color: var(--text-muted, #666);
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-color, #333);
+    }
+    .form-group input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #1a7a4a;
+        box-shadow: 0 0 0 3px rgba(26,122,74,0.1);
+    }
+    .btn-login {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(26,122,74,0.4);
+    }
+    .btn-login:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    .btn-register {
+        width: 100%;
+        padding: 14px;
+        background: transparent;
+        border: 2px solid #1a7a4a;
+        color: #1a7a4a;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 12px;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+    .btn-register:hover {
+        background: rgba(26,122,74,0.05);
+        transform: translateY(-2px);
+    }
+    .forgot-link {
+        display: inline-block;
+        margin-top: 16px;
+        color: #1a7a4a;
+        text-decoration: none;
+        font-size: 13px;
+    }
+    .forgot-link:hover {
+        text-decoration: underline;
+    }
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 25px 0;
+        color: var(--text-muted, #999);
+        font-size: 13px;
+    }
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border-color, #ddd);
+    }
+    .divider span {
+        padding: 0 15px;
+    }
+    .success-message {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border-left: 4px solid #4caf50;
+        text-align: left;
+        font-size: 14px;
+    }
+    .error-message {
+        background: #ffebee;
+        color: #c62828;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border-left: 4px solid #f44336;
+        text-align: left;
+        font-size: 14px;
+    }
+    .info-message {
+        background: #e3f2fd;
+        color: #0f5232;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border-left: 4px solid #1a7a4a;
+        text-align: left;
+        font-size: 14px;
+    }
+    .spinner-sm {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
+        margin-right: 8px;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    @media (max-width: 768px) {
+        .login-card {
+            padding: 30px 20px;
+        }
+        .login-icon {
+            font-size: 48px;
+        }
+        .login-card h2 {
+            font-size: 22px;
+        }
+    }
+    .demo-credentials {
+        background: #f5f5f5;
+        border-radius: 12px;
+        padding: 12px;
+        margin-top: 20px;
+        font-size: 12px;
+        color: #666;
+        text-align: left;
+    }
+    .demo-credentials p {
+        margin: 5px 0;
+    }
+    .demo-credentials code {
+        background: #e0e0e0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+        .demo-credentials {
+            background: #1a1a2e;
+        }
+        .demo-credentials code {
+            background: #2a2a3e;
+            color: #eee;
+        }
+        .success-message {
+            background: #1a3a2a;
+            color: #81c784;
+        }
+        .error-message {
+            background: #4a1a1a;
+            color: #ef9a9a;
+        }
+        .info-message {
+            background: #1a3a5c;
+            color: #64b5f6;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-icon">👤</div>
+        <h2>Welcome Back!</h2>
+        <p class="login-subtitle">Login to your account to continue shopping</p>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="{% if category == 'error' or category == 'danger' %}error-message{% elif category == 'success' %}success-message{% else %}info-message{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+        
+        <!-- Login Form -->
+        <form method="post" action="{{ url_for('customer.user_login') }}" id="loginForm" onsubmit="return handleSubmit(event)">
+            <div class="form-group">
+                <label>📧 Email Address</label>
+                <input type="email" 
+                       name="email" 
+                       id="email" 
+                       placeholder="your@email.com" 
+                       value="{{ request.args.get('email', '') }}"
+                       required 
+                       autofocus>
+            </div>
+            <div class="form-group">
+                <label>🔒 Password</label>
+                <input type="password" 
+                       name="password" 
+                       id="password" 
+                       placeholder="Enter your password" 
+                       required>
+            </div>
+            <button type="submit" class="btn-login" id="loginBtn">
+                Login
+            </button>
+        </form>
+        
+        <div class="divider">
+            <span>or</span>
+        </div>
+        
+        <a href="{{ url_for('customer.user_register') }}" class="btn-register">
+            Create New Account
+        </a>
+        
+        <div>
+            <a href="{{ url_for('customer.forgot_password') }}" class="forgot-link">
+                Forgot Password?
+            </a>
+        </div>
+        
+        <!-- Demo Credentials -->
+        <div class="demo-credentials" onclick="fillDemo()" style="cursor:pointer;" title="Click to auto-fill">
+            <p style="margin-top: 0; font-weight: 600;">📝 Demo Account <span style="font-size:11px;font-weight:normal;">(click to fill)</span></p>
+            <p><strong>Email:</strong> <code>customer@ethiosadat.com</code></p>
+            <p><strong>Password:</strong> <code>Demo@1234</code></p>
+            <p style="margin-bottom: 0; font-size: 11px; color: #999;">* Create your own account to get 10% discount</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle form submission with loading state
+    function handleSubmit(event) {
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const btn = document.getElementById('loginBtn');
+        
+        const emailValue = email.value.trim();
+        const passwordValue = password.value.trim();
+        
+        // Validate email
+        if (!emailValue) {
+            showMessage('Please enter your email address', 'error');
+            email.focus();
+            return false;
+        }
+        
+        if (!isValidEmail(emailValue)) {
+            showMessage('Please enter a valid email address', 'error');
+            email.focus();
+            return false;
+        }
+        
+        // Validate password
+        if (!passwordValue) {
+            showMessage('Please enter your password', 'error');
+            password.focus();
+            return false;
+        }
+        
+        // Show loading state
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-sm"></span> Logging in...';
+        
+        return true;
+    }
+    
+    // Email validation
+    function isValidEmail(email) {
+        const re = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        return re.test(email);
+    }
+    
+    // Show temporary message
+    function showMessage(message, type) {
+        // Remove existing temporary messages
+        const existingMsg = document.querySelector('.temp-message');
+        if (existingMsg) existingMsg.remove();
+        
+        const msgDiv = document.createElement('div');
+        msgDiv.className = type === 'error' ? 'error-message temp-message' : 'info-message temp-message';
+        msgDiv.textContent = message;
+        
+        const form = document.getElementById('loginForm');
+        if (form && form.parentNode) {
+            form.parentNode.insertBefore(msgDiv, form);
+        }
+        
+        setTimeout(() => {
+            msgDiv.style.opacity = '0';
+            msgDiv.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                if (msgDiv && msgDiv.parentNode) msgDiv.remove();
+            }, 300);
+        }, 4000);
+    }
+    
+    // Remove loading state if page loads with error
+    window.addEventListener('load', function() {
+        const btn = document.getElementById('loginBtn');
+        if (btn && btn.disabled && !btn.innerHTML.includes('Login')) {
+            btn.disabled = false;
+            btn.innerHTML = 'Login';
+        }
+    });
+    
+    // Auto-hide flash messages after 5 seconds
+    setTimeout(() => {
+        const messages = document.querySelectorAll('.error-message, .success-message, .info-message');
+        messages.forEach(msg => {
+            if (!msg.classList.contains('temp-message')) {
+                setTimeout(() => {
+                    msg.style.opacity = '0';
+                    msg.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => {
+                        if (msg && msg.parentNode) msg.remove();
+                    }, 300);
+                }, 5000);
+            }
+        });
+    }, 100);
+    
+    // Enter key submit handler
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    
+    if (emailInput) {
+        emailInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const form = document.getElementById('loginForm');
+                if (form) form.submit();
+            }
+        });
+    }
+    
+    if (passwordInput) {
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const form = document.getElementById('loginForm');
+                if (form) form.submit();
+            }
+        });
+    }
+    
+    // Pre-fill email from URL parameter (for registration redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const emailParam = urlParams.get('email');
+    if (emailParam && document.getElementById('email')) {
+        document.getElementById('email').value = emailParam;
+    }
+
+    // Auto-fill demo credentials
+    function fillDemo() {
+        const emailEl = document.getElementById('email');
+        const passEl = document.getElementById('password');
+        if (emailEl) emailEl.value = 'customer@ethiosadat.com';
+        if (passEl) passEl.value = 'Demo@1234';
+        [emailEl, passEl].forEach(el => {
+            if (!el) return;
+            el.style.transition = 'background 0.4s';
+            el.style.background = '#e8f5e9';
+            setTimeout(() => { el.style.background = ''; }, 800);
+        });
+    }
+    window.fillDemo = fillDemo;
+</script>
+{% endblock %}

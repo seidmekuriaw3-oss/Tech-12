@@ -1,0 +1,501 @@
+<!-- ==================== GLOBAL SCRIPTS ==================== -->
+<!-- Main JavaScript files and initializations -->
+
+<!-- Core Scripts -->
+<script src="{{ url_for('static', filename='js/main.js') }}?v=2"></script>
+<script src="{{ url_for('static', filename='js/cart.js') }}?v=2"></script>
+<script src="{{ url_for('static', filename='js/filter.js') }}?v=2"></script>
+<script src="{{ url_for('static', filename='js/slider.js') }}?v=2"></script>
+
+<!-- Component Scripts -->
+<script src="{{ url_for('static', filename='js/components/modal.js') }}?v=2"></script>
+<script src="{{ url_for('static', filename='js/components/toast.js') }}?v=2"></script>
+
+<!-- Page Specific Scripts (Optional) -->
+{% block extra_scripts %}{% endblock %}
+
+<!-- Global Initialization -->
+<script>
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Ethiosadat - Scripts initialized');
+        
+        // Initialize main components
+        initGlobalComponents();
+    });
+    
+    // Global initialization function
+    function initGlobalComponents() {
+        // Initialize tooltips if any
+        initTooltips();
+        
+        // Initialize lazy loading for images
+        initLazyLoading();
+        
+        // Initialize number formatting
+        initNumberFormatting();
+        
+        // Initialize CSRF protection for AJAX
+        initCSRFProtection();
+    }
+    
+    // Tooltip initialization
+    function initTooltips() {
+        const tooltips = document.querySelectorAll('[data-tooltip]');
+        let tooltipTimeout = null;
+        
+        tooltips.forEach(el => {
+            let tooltip = null;
+            
+            el.addEventListener('mouseenter', function(e) {
+                // Clear any existing timeout
+                if (tooltipTimeout) clearTimeout(tooltipTimeout);
+                
+                tooltipTimeout = setTimeout(() => {
+                    tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    tooltip.textContent = this.dataset.tooltip;
+                    tooltip.style.cssText = `
+                        position: absolute;
+                        background: rgba(0,0,0,0.8);
+                        color: white;
+                        padding: 5px 10px;
+                        border-radius: 6px;
+                        font-size: 12px;
+                        white-space: nowrap;
+                        z-index: 10000;
+                        pointer-events: none;
+                        backdrop-filter: blur(4px);
+                        font-family: inherit;
+                    `;
+                    document.body.appendChild(tooltip);
+                    
+                    const rect = this.getBoundingClientRect();
+                    let left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
+                    let top = rect.top - tooltip.offsetHeight - 8;
+                    
+                    // Prevent going off-screen
+                    left = Math.max(5, Math.min(left, window.innerWidth - tooltip.offsetWidth - 5));
+                    if (top < 0) top = rect.bottom + 8;
+                    
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                }, 300);
+            });
+            
+            el.addEventListener('mouseleave', function() {
+                if (tooltipTimeout) {
+                    clearTimeout(tooltipTimeout);
+                    tooltipTimeout = null;
+                }
+                if (tooltip) {
+                    tooltip.remove();
+                    tooltip = null;
+                }
+            });
+        });
+    }
+    
+    // Lazy loading images
+    function initLazyLoading() {
+        if ('IntersectionObserver' in window) {
+            const lazyImages = document.querySelectorAll('img[data-src], img[data-lazy]');
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        const src = img.dataset.src || img.dataset.lazy;
+                        if (src) {
+                            img.src = src;
+                            img.removeAttribute('data-src');
+                            img.removeAttribute('data-lazy');
+                        }
+                        imageObserver.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px',
+                threshold: 0.01
+            });
+            
+            lazyImages.forEach(img => imageObserver.observe(img));
+        } else {
+            // Fallback for older browsers
+            document.querySelectorAll('img[data-src], img[data-lazy]').forEach(img => {
+                const src = img.dataset.src || img.dataset.lazy;
+                if (src) {
+                    img.src = src;
+                    img.removeAttribute('data-src');
+                    img.removeAttribute('data-lazy');
+                }
+            });
+        }
+        
+        // Lazy load background images
+        const bgElements = document.querySelectorAll('[data-bg]');
+        bgElements.forEach(el => {
+            const bg = el.dataset.bg;
+            if (bg) {
+                el.style.backgroundImage = `url(${bg})`;
+                el.removeAttribute('data-bg');
+            }
+        });
+    }
+    
+    // Number formatting (prices)
+    function initNumberFormatting() {
+        const priceElements = document.querySelectorAll('.format-price');
+        priceElements.forEach(el => {
+            const price = parseFloat(el.textContent);
+            if (!isNaN(price)) {
+                el.textContent = formatNumber(price) + ' ETB';
+            }
+        });
+    }
+    
+    function formatNumber(num) {
+        if (num === undefined || num === null) return '0';
+        const number = parseFloat(num);
+        if (isNaN(number)) return '0';
+        return number.toLocaleString('en-US');
+    }
+    
+    // CSRF Protection for AJAX
+    function initCSRFProtection() {
+        // Get CSRF token from meta tag if available
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfMeta?.getAttribute('content');
+        
+        if (csrfToken) {
+            // Add CSRF token to all fetch requests
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                const request = args[1] || {};
+                if (request.method && ['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method.toUpperCase())) {
+                    request.headers = {
+                        ...request.headers,
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    };
+                    args[1] = request;
+                }
+                return originalFetch.apply(this, args);
+            };
+        }
+    }
+    
+    // Network status detection
+    let wasOffline = false;
+    
+    window.addEventListener('online', function() {
+        if (wasOffline && window.showToast) {
+            window.showToast('You are back online!', 'success');
+        }
+        wasOffline = false;
+    });
+    
+    window.addEventListener('offline', function() {
+        wasOffline = true;
+        if (window.showToast) {
+            window.showToast('You are offline. Please check your connection.', 'warning');
+        }
+    });
+    
+    // Handle beforeunload for unsaved changes
+    let hasUnsavedChanges = false;
+    let beforeUnloadHandler = null;
+    
+    window.setUnsavedChanges = function(value) {
+        hasUnsavedChanges = value;
+    };
+    
+    function handleBeforeUnload(e) {
+        if (hasUnsavedChanges) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+            return e.returnValue;
+        }
+    }
+    
+    function enableBeforeUnload() {
+        window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+    
+    function disableBeforeUnload() {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+    
+    enableBeforeUnload();
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId && targetId !== '#') {
+                const target = document.querySelector(targetId);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    });
+    
+    // Add active class to current navigation
+    function setActiveNavLink() {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link, .mobile-nav-link, .menu-item').forEach(link => {
+            const href = link.getAttribute('href');
+            if (!href || href === '#') return;
+            
+            link.classList.remove('active');
+            
+            if (currentPath === href) {
+                link.classList.add('active');
+            } else if (href !== '/' && currentPath.startsWith(href)) {
+                link.classList.add('active');
+            }
+        });
+    }
+    setActiveNavLink();
+    
+    // Expose global functions
+    window.formatNumber = formatNumber;
+    window.initTooltips = initTooltips;
+    window.enableBeforeUnload = enableBeforeUnload;
+    window.disableBeforeUnload = disableBeforeUnload;
+</script>
+
+<style>
+    /* Tooltip styles */
+    .custom-tooltip {
+        animation: tooltipFadeIn 0.2s ease;
+        font-family: inherit;
+        font-size: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    @keyframes tooltipFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Global loading spinner */
+    .global-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        display: none;
+    }
+    
+    .global-loader.active {
+        display: flex;
+    }
+    
+    .loader-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #1a7a4a;
+        border-radius: 50%;
+        animation: loaderSpin 0.8s linear infinite;
+        background: transparent;
+    }
+    
+    @keyframes loaderSpin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .custom-tooltip,
+        .loader-spinner {
+            animation: none;
+        }
+        .global-loader {
+            backdrop-filter: none;
+        }
+    }
+    
+    /* Dark mode loader */
+    @media (prefers-color-scheme: dark) {
+        .loader-spinner {
+            border-color: rgba(255,255,255,0.2);
+            border-top-color: #2d9966;
+        }
+    }
+</style>
+
+<!-- Global Loader Element -->
+<div id="globalLoader" class="global-loader">
+    <div class="loader-spinner"></div>
+</div>
+
+<!-- Global Loading Functions -->
+<script>
+    function showGlobalLoader() {
+        const loader = document.getElementById('globalLoader');
+        if (loader) loader.classList.add('active');
+    }
+    
+    function hideGlobalLoader() {
+        const loader = document.getElementById('globalLoader');
+        if (loader) loader.classList.remove('active');
+    }
+    
+    // Override showLoading/hideLoading if exists
+    if (typeof window.showLoading === 'undefined') {
+        window.showLoading = showGlobalLoader;
+        window.hideLoading = hideGlobalLoader;
+    }
+</script>
+
+<!-- Form Auto-save Detection -->
+<script>
+    // Auto-save form data to sessionStorage
+    function initAutoSave(formId, storageKey) {
+        const form = document.getElementById(formId);
+        if (!form) return false;
+        
+        // Load saved data
+        try {
+            const savedData = sessionStorage.getItem(storageKey);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                for (const [name, value] of Object.entries(data)) {
+                    const field = form.querySelector(`[name="${name}"]`);
+                    if (field && field.value !== undefined) {
+                        field.value = value;
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Error loading auto-save data:', e);
+        }
+        
+        // Save on input
+        let saveTimeout = null;
+        const saveHandler = function() {
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                const formData = new FormData(form);
+                const data = {};
+                for (const [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+                try {
+                    sessionStorage.setItem(storageKey, JSON.stringify(data));
+                    window.setUnsavedChanges(true);
+                } catch (e) {
+                    console.error('Error saving auto-save data:', e);
+                }
+            }, 1000);
+        };
+        
+        form.addEventListener('input', saveHandler);
+        
+        // Clear on successful submit
+        form.addEventListener('submit', function() {
+            try {
+                sessionStorage.removeItem(storageKey);
+                window.setUnsavedChanges(false);
+            } catch (e) {
+                console.error('Error clearing auto-save data:', e);
+            }
+        });
+        
+        return true;
+    }
+    
+    // Expose auto-save function
+    window.initAutoSave = initAutoSave;
+</script>
+
+<!-- Performance Monitoring (Optional) -->
+<script>
+    // Report page load performance
+    if (window.performance && window.performance.timing) {
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                try {
+                    const timing = window.performance.timing;
+                    const loadTime = timing.loadEventEnd - timing.navigationStart;
+                    if (loadTime > 0 && loadTime < 30000) {
+                        console.log(`Page load time: ${loadTime}ms`);
+                        
+                        // Send to analytics if available
+                        if (typeof gtag !== 'undefined') {
+                            gtag('event', 'performance', {
+                                'event_category': 'page_load',
+                                'event_label': window.location.pathname,
+                                'value': Math.round(loadTime)
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error('Performance monitoring error:', e);
+                }
+            }, 0);
+        });
+    }
+</script>
+
+<!-- Service Worker Registration (PWA) -->
+<script>
+    if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('{{ url_for("static", filename="service-worker.js") }}')
+                .then(registration => {
+                    console.log('ServiceWorker registered successfully:', registration.scope);
+                    registration.addEventListener('updatefound', function() {
+                        const newWorker = registration.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                                    window.location.reload();
+                                }
+                            });
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.log('ServiceWorker registration failed:', error);
+                });
+        });
+    }
+</script>
+
+<!-- Debug Mode (Development Only) -->
+{% if config.DEBUG %}
+<script>
+    console.log('🐛 Debug mode enabled');
+    
+    // Log all fetch requests in debug mode
+    const originalFetch = window.fetch;
+    window.fetch = function(...args) {
+        console.log('📡 Fetch:', args[0], args[1] || {});
+        return originalFetch.apply(this, args);
+    };
+    
+    // Log console warnings as debug info
+    const originalWarn = console.warn;
+    console.warn = function(...args) {
+        console.log('⚠️ Warning:', ...args);
+        originalWarn.apply(console, args);
+    };
+</script>
+{% endif %}

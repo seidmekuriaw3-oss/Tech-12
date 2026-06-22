@@ -1,0 +1,585 @@
+<!-- ==================== CHECKOUT MODAL COMPONENT ==================== -->
+<!-- Quick checkout modal for faster purchasing -->
+
+<div id="checkoutModal" class="checkout-modal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10001;
+    align-items: center;
+    justify-content: center;
+">
+    <!-- Modal Overlay -->
+    <div class="checkout-overlay" style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    "></div>
+    
+    <!-- Modal Container -->
+    <div class="checkout-container" style="
+        position: relative;
+        background: var(--bg-white, white);
+        border-radius: 24px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalFadeIn 0.3s ease;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    ">
+        
+        <!-- Modal Header -->
+        <div class="checkout-header" style="
+            padding: 20px 24px;
+            background: linear-gradient(135deg, #1a7a4a, #0f5232);
+            color: white;
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        ">
+            <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                <span>📝</span>
+                <span>{% if lang == 'am' %}ትዕዛዝ ማስገቢያ{% else %}Checkout{% endif %}</span>
+            </h3>
+            <button class="close-checkout" onclick="closeCheckoutModal()" style="
+                background: none;
+                border: none;
+                color: white;
+                font-size: 28px;
+                cursor: pointer;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.3s;
+            " onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='none'">
+                &times;
+            </button>
+        </div>
+        
+        <!-- Modal Body -->
+        <div class="checkout-body" style="padding: 24px;">
+            
+            <!-- Order Summary -->
+            <div class="order-summary" style="
+                background: var(--bg-hover, #f8f9fa);
+                border-radius: 16px;
+                padding: 16px;
+                margin-bottom: 24px;
+            ">
+                <h4 style="margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                    <span>🛒</span>
+                    <span>{% if lang == 'am' %}የትዕዛዝ ማጠቃለያ{% else %}Order Summary{% endif %}</span>
+                </h4>
+                <div id="checkoutOrderItems" style="max-height: 200px; overflow-y: auto;">
+                    <!-- Items will be populated here -->
+                </div>
+                <div class="summary-divider" style="height: 1px; background: var(--border-color, #e0e0e0); margin: 12px 0;"></div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>{% if lang == 'am' %}ንዑስ ድምር{% else %}Subtotal{% endif %}:</span>
+                    <span id="checkoutSubtotal">0 ETB</span>
+                </div>
+                <div id="checkoutDiscountRow" style="display: flex; justify-content: space-between; margin-bottom: 8px; display: none;">
+                    <span>{% if lang == 'am' %}ቅናሽ (10%){% else %}Discount (10%){% endif %}:</span>
+                    <span id="checkoutDiscount" style="color: #4caf50;">0 ETB</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>{% if lang == 'am' %}ማጓጓዝ{% else %}Shipping{% endif %}:</span>
+                    <span id="checkoutShipping">0 ETB</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; margin-top: 8px; padding-top: 8px; border-top: 2px solid var(--border-color, #e0e0e0);">
+                    <span>{% if lang == 'am' %}ጠቅላላ{% else %}Total{% endif %}:</span>
+                    <span id="checkoutTotal" style="color: #1a7a4a;">0 ETB</span>
+                </div>
+            </div>
+            
+            <!-- Customer Information Form -->
+            <form id="checkoutForm" onsubmit="submitQuickOrder(event)">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">
+                        👤 {% if lang == 'am' %}ሙሉ ስም{% else %}Full Name{% endif %} <span style="color: #f44336;">*</span>
+                    </label>
+                    <input type="text" 
+                           name="customer_name" 
+                           id="checkoutName"
+                           class="form-control"
+                           required
+                           placeholder="John Doe"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 10px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">
+                        📞 {% if lang == 'am' %}ስልክ ቁጥር{% else %}Phone Number{% endif %} <span style="color: #f44336;">*</span>
+                    </label>
+                    <input type="tel" 
+                           name="customer_phone" 
+                           id="checkoutPhone"
+                           class="form-control"
+                           required
+                           placeholder="09xxxxxxxx"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 10px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">
+                        📍 {% if lang == 'am' %}አድራሻ{% else %}Address{% endif %}
+                    </label>
+                    <input type="text" 
+                           name="customer_address" 
+                           id="checkoutAddress"
+                           class="form-control"
+                           placeholder="Addis Ababa, Ethiopia"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 10px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">
+                        📧 {% if lang == 'am' %}ኢሜይል{% else %}Email{% endif %}
+                    </label>
+                    <input type="email" 
+                           name="customer_email" 
+                           id="checkoutEmail"
+                           class="form-control"
+                           placeholder="your@email.com"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 10px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500;">
+                        📝 {% if lang == 'am' %}ተጨማሪ ማብራሪያ{% else %}Notes{% endif %}
+                    </label>
+                    <textarea name="order_notes" 
+                              id="checkoutNotes"
+                              rows="3"
+                              class="form-control"
+                              placeholder="{% if lang == 'am' %}ማንኛውም ተጨማሪ መረጃ...{% else %}Any additional information...{% endif %}"
+                              style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 10px; font-size: 14px; resize: vertical; background: var(--bg-white, white); color: var(--text-color, #333);"></textarea>
+                </div>
+                
+                <!-- Submit Button -->
+                <div style="display: flex; gap: 12px; margin-top: 20px;">
+                    <button type="button" onclick="closeCheckoutModal()" class="btn btn-outline" style="flex: 1;">
+                        {% if lang == 'am' %}ሰርዝ{% else %}Cancel{% endif %}
+                    </button>
+                    <button type="submit" id="checkoutSubmitBtn" class="btn btn-primary" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        📤 {% if lang == 'am' %}ትዕዛዝ ላክ{% else %}Place Order{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    .checkout-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-color-light, #eee);
+    }
+    
+    .checkout-item:last-child {
+        border-bottom: none;
+    }
+    
+    .checkout-item-name {
+        flex: 1;
+        font-size: 14px;
+        color: var(--text-color, #333);
+    }
+    
+    .checkout-item-quantity {
+        color: var(--text-muted, #666);
+        margin: 0 12px;
+        font-size: 13px;
+    }
+    
+    .checkout-item-price {
+        font-weight: 600;
+        color: #1a7a4a;
+        font-size: 14px;
+    }
+    
+    /* Loading state for button */
+    .btn-loading {
+        opacity: 0.7;
+        cursor: wait;
+        pointer-events: none;
+    }
+    
+    .btn-loading::after {
+        content: '';
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        margin-left: 8px;
+        border: 2px solid white;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: btnSpin 0.6s linear infinite;
+    }
+    
+    @keyframes btnSpin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Form validation styles */
+    .form-control.error {
+        border-color: #f44336 !important;
+        background-color: #ffebee !important;
+    }
+    
+    .field-error {
+        color: #f44336;
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .form-control.error {
+            background-color: #4a1a1a !important;
+        }
+        .checkout-item {
+            border-color: #2a2a3e;
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 576px) {
+        .checkout-container {
+            width: 95%;
+            max-height: 95vh;
+        }
+        .checkout-body {
+            padding: 16px;
+        }
+        .checkout-header {
+            padding: 16px;
+        }
+    }
+</style>
+
+<script>
+    let currentCartData = null;
+    
+    // Open checkout modal
+    function openCheckoutModal() {
+        const modal = document.getElementById('checkoutModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Fetch current cart data
+            fetchCartForCheckout();
+        }
+    }
+    
+    // Close checkout modal
+    function closeCheckoutModal() {
+        const modal = document.getElementById('checkoutModal');
+        if (modal) modal.style.display = 'none';
+        document.body.style.overflow = '';
+        
+        // Reset form
+        const form = document.getElementById('checkoutForm');
+        if (form) form.reset();
+        removeValidationErrors();
+    }
+    
+    // Fetch cart data for checkout
+    function fetchCartForCheckout() {
+        fetch('{{ url_for('api.api_get_cart') }}')
+            .then(response => response.text())
+            .then(text => {
+                if (!text || !text.trim()) { closeCheckoutModal(); return; }
+                const data = JSON.parse(text);
+                if (data.success) {
+                    currentCartData = data;
+                    renderCheckoutSummary(data);
+                } else {
+                    if (window.showToast) window.showToast('Error loading cart', 'error');
+                    closeCheckoutModal();
+                }
+            })
+            .catch(() => closeCheckoutModal());
+    }
+    
+    // Render checkout summary
+    function renderCheckoutSummary(data) {
+        const cart = data.items || [];
+        const subtotal = data.subtotal || 0;
+        const discount = data.discount || 0;
+        const shipping = data.shipping_cost || 0;
+        const total = data.total || 0;
+        
+        // Render items
+        const itemsContainer = document.getElementById('checkoutOrderItems');
+        if (!itemsContainer) return;
+        
+        if (cart.length === 0) {
+            itemsContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted, #999);">Cart is empty</div>';
+            return;
+        }
+        
+        itemsContainer.innerHTML = cart.map(item => `
+            <div class="checkout-item">
+                <span class="checkout-item-name">${escapeHtml(item.name_am || item.name)}</span>
+                <span class="checkout-item-quantity">x${item.quantity}</span>
+                <span class="checkout-item-price">${formatPriceNumber(item.price * item.quantity)} ETB</span>
+            </div>
+        `).join('');
+        
+        // Update totals
+        const subtotalSpan = document.getElementById('checkoutSubtotal');
+        const discountSpan = document.getElementById('checkoutDiscount');
+        const discountRow = document.getElementById('checkoutDiscountRow');
+        const shippingSpan = document.getElementById('checkoutShipping');
+        const totalSpan = document.getElementById('checkoutTotal');
+        
+        if (subtotalSpan) subtotalSpan.textContent = formatPriceNumber(subtotal) + ' ETB';
+        if (discountSpan) discountSpan.textContent = '- ' + formatPriceNumber(discount) + ' ETB';
+        if (discountRow && discount > 0) discountRow.style.display = 'flex';
+        
+        if (shippingSpan) {
+            if (shipping === 0) {
+                shippingSpan.innerHTML = '<span style="color: #4caf50;">Free</span>';
+            } else {
+                shippingSpan.textContent = formatPriceNumber(shipping) + ' ETB';
+            }
+        }
+        if (totalSpan) totalSpan.textContent = formatPriceNumber(total) + ' ETB';
+    }
+    
+    function formatPriceNumber(price) {
+        if (price === undefined || price === null) return '0';
+        const num = parseFloat(price);
+        if (isNaN(num)) return '0';
+        return num.toLocaleString('en-US');
+    }
+    
+    // Submit quick order
+    function submitQuickOrder(event) {
+        event.preventDefault();
+        
+        // Validate form
+        if (!validateCheckoutForm()) {
+            return;
+        }
+        
+        const submitBtn = document.getElementById('checkoutSubmitBtn');
+        const originalText = submitBtn ? submitBtn.innerHTML : '';
+        
+        // Show loading state
+        if (submitBtn) {
+            submitBtn.innerHTML = '⏳ Processing...';
+            submitBtn.disabled = true;
+            submitBtn.classList.add('btn-loading');
+        }
+        
+        // Get form data
+        const formData = {
+            customer_name: document.getElementById('checkoutName')?.value.trim() || '',
+            customer_phone: document.getElementById('checkoutPhone')?.value.trim() || '',
+            customer_address: document.getElementById('checkoutAddress')?.value.trim() || '',
+            customer_email: document.getElementById('checkoutEmail')?.value.trim() || '',
+            order_notes: document.getElementById('checkoutNotes')?.value.trim() || ''
+        };
+        
+        // Submit order
+        fetch('{{ url_for('api.api_submit_order') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (window.showToast) window.showToast('Order placed successfully!', 'success');
+                // Redirect to WhatsApp if URL provided
+                if (data.whatsapp_url) {
+                    window.open(data.whatsapp_url, '_blank');
+                }
+                // Clear cart and close modal
+                if (window.updateCartCount) window.updateCartCount(0);
+                closeCheckoutModal();
+                // Reload page to update cart
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                if (window.showToast) window.showToast(data.error || 'Failed to place order', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting order:', error);
+            if (window.showToast) window.showToast('Network error. Please try again.', 'error');
+        })
+        .finally(() => {
+            if (submitBtn) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-loading');
+            }
+        });
+    }
+    
+    // Validate checkout form
+    function validateCheckoutForm() {
+        let isValid = true;
+        const name = document.getElementById('checkoutName')?.value.trim() || '';
+        const phone = document.getElementById('checkoutPhone')?.value.trim() || '';
+        
+        // Remove existing errors
+        removeValidationErrors();
+        
+        // Validate name
+        if (!name) {
+            showFieldError('checkoutName', 'Please enter your name');
+            isValid = false;
+        } else if (name.length < 2) {
+            showFieldError('checkoutName', 'Name must be at least 2 characters');
+            isValid = false;
+        }
+        
+        // Validate phone
+        if (!phone) {
+            showFieldError('checkoutPhone', 'Please enter your phone number');
+            isValid = false;
+        } else if (!validatePhoneNumber(phone)) {
+            showFieldError('checkoutPhone', 'Enter a valid Ethiopian phone number (09xxxxxxxx)');
+            isValid = false;
+        }
+        
+        // Validate email if provided
+        const email = document.getElementById('checkoutEmail')?.value.trim() || '';
+        if (email && !validateEmail(email)) {
+            showFieldError('checkoutEmail', 'Enter a valid email address');
+            isValid = false;
+        }
+        
+        if (!isValid && window.showToast) {
+            window.showToast('Please fix the errors above', 'error');
+        }
+        
+        return isValid;
+    }
+    
+    function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        
+        field.classList.add('error');
+        
+        let errorDiv = field.parentNode?.querySelector('.field-error');
+        if (!errorDiv && field.parentNode) {
+            errorDiv = document.createElement('small');
+            errorDiv.className = 'field-error';
+            field.parentNode.appendChild(errorDiv);
+        }
+        if (errorDiv) errorDiv.textContent = message;
+    }
+    
+    function removeValidationErrors() {
+        document.querySelectorAll('.form-control').forEach(field => {
+            field.classList.remove('error');
+        });
+        document.querySelectorAll('.field-error').forEach(error => {
+            error.remove();
+        });
+    }
+    
+    function validatePhoneNumber(phone) {
+        const cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
+        const pattern = /^(09|07|2519)[0-9]{8}$/;
+        return pattern.test(cleaned);
+    }
+    
+    function validateEmail(email) {
+        const pattern = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        return pattern.test(email);
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('checkoutModal');
+            if (modal && modal.style.display === 'flex') {
+                closeCheckoutModal();
+            }
+        }
+    });
+    
+    // Close modal on overlay click
+    const overlay = document.querySelector('.checkout-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', closeCheckoutModal);
+    }
+    
+    // Auto-format phone number as user types
+    const phoneInput = document.getElementById('checkoutPhone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            e.target.value = value;
+        });
+    }
+    
+    // Pre-fill name from localStorage if available
+    const savedName = localStorage.getItem('ethiosadat_customer_name');
+    const nameInput = document.getElementById('checkoutName');
+    if (savedName && nameInput) {
+        nameInput.value = savedName;
+    }
+    
+    // Save name for next time
+    if (nameInput) {
+        nameInput.addEventListener('blur', function() {
+            if (this.value.trim()) {
+                localStorage.setItem('ethiosadat_customer_name', this.value.trim());
+            }
+        });
+    }
+    
+    // Make functions globally available
+    window.openCheckoutModal = openCheckoutModal;
+    window.closeCheckoutModal = closeCheckoutModal;
+    window.submitQuickOrder = submitQuickOrder;
+</script>

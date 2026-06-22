@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - Ethiosadat{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .profile-header {
+        margin-bottom: 30px;
+    }
+    .profile-header h1 {
+        margin: 0 0 8px 0;
+        color: var(--text-color, #333);
+    }
+    .profile-header p {
+        color: var(--text-muted, #666);
+        margin: 0;
+    }
+    .profile-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        height: fit-content;
+    }
+    .profile-card h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-color, #333);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-color, #333);
+    }
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #1a7a4a;
+        box-shadow: 0 0 0 3px rgba(26,122,74,0.1);
+    }
+    .form-control:disabled {
+        background: var(--bg-hover, #f5f5f5);
+        color: var(--text-muted, #999);
+        cursor: not-allowed;
+    }
+    .form-control.error {
+        border-color: #f44336;
+        background-color: #ffebee;
+    }
+    .error-message {
+        color: #f44336;
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
+    .success-message {
+        background: #e8f5e9;
+        color: #4caf50;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .orders-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .orders-card h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
+        color: var(--text-color, #333);
+    }
+    .order-item {
+        border: 1px solid var(--border-color, #eee);
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 16px;
+        transition: all 0.3s;
+    }
+    .order-item:hover {
+        border-color: #1a7a4a;
+        box-shadow: 0 2px 8px rgba(26,122,74,0.1);
+    }
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border-color, #eee);
+    }
+    .order-number {
+        font-weight: bold;
+        font-size: 16px;
+        color: #1a7a4a;
+    }
+    .order-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .status-pending { background: #ff9800; color: white; }
+    .status-confirmed { background: #1a7a4a; color: white; }
+    .status-processing { background: #9c27b0; color: white; }
+    .status-shipped { background: #9c27b0; color: white; }
+    .status-delivered { background: #4caf50; color: white; }
+    .status-cancelled { background: #f44336; color: white; }
+    .order-details {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 8px;
+    }
+    .order-total {
+        font-weight: bold;
+        font-size: 18px;
+        color: #1a7a4a;
+    }
+    .order-date {
+        color: var(--text-muted, #666);
+        font-size: 13px;
+    }
+    .view-order-btn {
+        background: none;
+        border: none;
+        color: #1a7a4a;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .empty-orders {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-muted, #999);
+    }
+    .logout-btn {
+        display: block;
+        margin-top: 20px;
+        color: #f44336;
+        text-decoration: none;
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #f44336;
+        border-radius: 12px;
+        transition: all 0.3s;
+    }
+    .logout-btn:hover {
+        background: #f44336;
+        color: white;
+    }
+    .security-section {
+        margin-top: 30px;
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .security-section h3 {
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-color, #333);
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .form-control.error {
+            background-color: #4a1a1a;
+        }
+        .success-message {
+            background: #1a3a2a;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 15px;
+        }
+        .profile-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+        }
+        .order-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .order-details {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+    @media (max-width: 480px) {
+        .profile-card, .orders-card {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    
+    <!-- Header -->
+    <div class="profile-header">
+        <h1>👤 My Profile</h1>
+        <p>Manage your personal information and view your order history</p>
+    </div>
+
+    <!-- Success/Error Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="success-message" style="{% if category == 'error' %}background:#ffebee; color:#f44336;{% endif %}">
+                <span>{% if category == 'success' %}✅{% else %}⚠️{% endif %}</span>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="profile-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        
+        <!-- Personal Information Card -->
+        <div class="profile-card">
+            <h3>
+                <span>📝</span> Personal Information
+            </h3>
+            
+            <form id="profileForm" method="post" action="{{ url_for('customer.update_profile') }}" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" id="fullName" class="form-control" 
+                           value="{{ user.full_name if user else '' }}" required>
+                    <div class="error-message" id="nameError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" value="{{ user.email if user else '' }}" class="form-control" disabled>
+                    <small style="color: var(--text-muted, #666); margin-top: 4px; display: block;">Email cannot be changed</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" id="phone" class="form-control" 
+                           value="{{ user.phone if user else '' }}" placeholder="09xxxxxxxx">
+                    <div class="error-message" id="phoneError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Member Since</label>
+                    <input type="text" value="{{ user.created_at.strftime('%B %d, %Y') if user and user.created_at else 'N/A' }}" class="form-control" disabled>
+                </div>
+                
+                <button type="submit" id="updateBtn" class="btn btn-primary" style="width: 100%; padding: 12px;">
+                    💾 Update Profile
+                </button>
+            </form>
+            
+            <a href="{{ url_for('customer.user_logout') }}" class="logout-btn">
+                🚪 Logout
+            </a>
+        </div>
+        
+        <!-- Orders Card -->
+        <div class="orders-card">
+            <h3>
+                <span>📦</span> My Orders
+            </h3>
+            
+            {% if orders and orders|length > 0 %}
+                {% for order in orders %}
+                <div class="order-item">
+                    <div class="order-header">
+                        <span class="order-number">Order #{{ order.order_number }}</span>
+                        <span class="order-status status-{{ order.status }}">
+                            {% if order.status == 'pending' %}⏳ Pending
+                            {% elif order.status == 'confirmed' %}✅ Confirmed
+                            {% elif order.status == 'processing' %}⚙️ Processing
+                            {% elif order.status == 'shipped' %}🚚 Shipped
+                            {% elif order.status == 'delivered' %}🎉 Delivered
+                            {% elif order.status == 'cancelled' %}❌ Cancelled
+                            {% else %}{{ order.status }}{% endif %}
+                        </span>
+                    </div>
+                    <div class="order-details">
+                        <div>
+                            <span style="color: var(--text-muted, #666);">Total:</span>
+                            <span class="order-total">{{ format_price(order.total) }}</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted, #666);">Items:</span>
+                            <span>{{ order.items|length if order.items else 0 }} item(s)</span>
+                        </div>
+                        <div class="order-date">
+                            🕐 {{ order.created_at.strftime('%B %d, %Y') if order.created_at else 'N/A' }}
+                        </div>
+                        <button class="view-order-btn" onclick="viewOrderDetails('{{ order.order_number }}')">
+                            View Details →
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if orders|length > 5 %}
+                <div style="text-align: center; margin-top: 16px;">
+                    <a href="{{ url_for('customer.user_orders') }}" class="btn btn-outline">View All Orders →</a>
+                </div>
+                {% endif %}
+                
+            {% else %}
+                <div class="empty-orders">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+                    <p>You haven't placed any orders yet.</p>
+                    <a href="{{ url_for('customer.products') }}" class="btn btn-primary" style="margin-top: 16px; text-decoration: none;">Start Shopping →</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Account Settings Section -->
+    <div class="security-section">
+        <h3>
+            <span>🔒</span> Account Security
+        </h3>
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <button onclick="changePassword()" class="btn btn-outline">🔑 Change Password</button>
+            <button onclick="enable2FA()" class="btn btn-outline">📱 Enable Two-Factor Authentication</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateForm() {
+        let isValid = true;
+        const fullName = document.getElementById('fullName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        
+        // Clear previous errors
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+        
+        // Validate name
+        if (!fullName) {
+            showError('nameError', 'Please enter your full name');
+            document.getElementById('fullName').classList.add('error');
+            isValid = false;
+        } else if (fullName.length < 2) {
+            showError('nameError', 'Name must be at least 2 characters');
+            document.getElementById('fullName').classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate phone (if provided)
+        if (phone && !isValidPhone(phone)) {
+            showError('phoneError', 'Please enter a valid Ethiopian phone number (09xxxxxxxx, 07xxxxxxxx, or 2519xxxxxxxx)');
+            document.getElementById('phone').classList.add('error');
+            isValid = false;
+        }
+        
+        if (isValid) {
+            const btn = document.getElementById('updateBtn');
+            btn.innerHTML = '⏳ Saving...';
+            btn.disabled = true;
+            return true;
+        }
+        
+        return false;
+    }
+    
+    function isValidPhone(phone) {
+        const cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
+        const pattern = /^(09|07|2519)[0-9]{8}$/;
+        return pattern.test(cleaned);
+    }
+    
+    function showError(elementId, message) {
+        const errorDiv = document.getElementById(elementId);
+        if (errorDiv) errorDiv.textContent = message;
+    }
+    
+    function viewOrderDetails(orderNumber) {
+        window.location.href = '{{ url_for('customer.order_detail', order_id=0) }}'.replace('/0', '/' + orderNumber);
+    }
+    
+    function changePassword() {
+        const newPassword = prompt('Enter new password:');
+        if (newPassword && newPassword.length >= 6) {
+            if (window.showLoading) window.showLoading(true);
+            
+            fetch('{{ url_for('customer.change_password') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ password: newPassword })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showToast) window.showToast('Password changed successfully', 'success');
+                } else {
+                    if (window.showToast) window.showToast(data.error || 'Failed to change password', 'error');
+                }
+            })
+            .catch(() => {
+                if (window.showToast) window.showToast('Error changing password', 'error');
+            })
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        } else if (newPassword) {
+            if (window.showToast) window.showToast('Password must be at least 6 characters', 'error');
+        }
+    }
+    
+    function enable2FA() {
+        if (window.showToast) window.showToast('Two-factor authentication coming soon', 'info');
+    }
+    
+    // Auto-format phone number
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            e.target.value = value;
+        });
+    }
+    
+    // Remove loading state if page loads with error
+    window.addEventListener('load', function() {
+        const updateBtn = document.getElementById('updateBtn');
+        if (updateBtn && updateBtn.disabled && !updateBtn.innerHTML.includes('Update')) {
+            updateBtn.disabled = false;
+            updateBtn.innerHTML = '💾 Update Profile';
+        }
+    });
+</script>
+{% endblock %}

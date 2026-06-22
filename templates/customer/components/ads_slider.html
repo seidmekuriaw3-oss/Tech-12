@@ -1,0 +1,563 @@
+<!-- ==================== ADS SLIDER COMPONENT ==================== -->
+<!-- Reusable advertisement slider for customer pages -->
+
+{% if ads and ads|length > 0 %}
+<div class="ads-slider-section" style="margin: 20px 0; position: relative;">
+    
+    <!-- Slider Container -->
+    <div class="ads-slider-container" 
+         data-autoplay="true" 
+         data-interval="5000"
+         data-loop="true"
+         style="position: relative; overflow: hidden; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        
+        <!-- Slider Track -->
+        <div class="ads-slider-track" style="display: flex; transition: transform 0.5s ease-in-out;">
+            {% for ad in ads %}
+            <div class="ads-slide" style="min-width: 100%; position: relative;">
+                {% if ad.image and ad.image|trim != '' and ad.image.endswith(('.mp4', '.webm', '.mov', '.avi', '.ogg')) %}
+                <!-- === VIDEO AD: full-slide background video === -->
+                <div style="position: relative; width: 100%; min-height: 320px; background: #000; overflow: hidden; cursor: pointer;" onclick="toggleAdVideo(this)">
+                    <video autoplay muted loop playsinline
+                           style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <source src="{{ url_for('static', filename=ad.image) }}" type="video/mp4">
+                        <source src="{{ url_for('static', filename=ad.image) }}" type="video/webm">
+                    </video>
+                    <!-- Dark gradient overlay so text is readable -->
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.1) 100%);"></div>
+                    <!-- Text overlay -->
+                    <div style="position: relative; z-index: 2; padding: 24px 40px; color: white; text-align: center; min-height: 320px; display: flex; align-items: center; justify-content: flex-end; flex-direction: column;">
+                        {% if ad.title and ad.title != '' %}
+                        <h3 class="slide-title" style="font-size: 26px; margin-bottom: 8px; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.7); width: 100%; text-align: center;">{{ ad.title }}</h3>
+                        {% endif %}
+                        {% set ad_text = ad.description if ad.description else ad.text if ad.text else '' %}
+                        {% if ad_text %}
+                        <p class="slide-text" style="font-size: 15px; margin-bottom: 18px; opacity: 0.95; max-width: 80%; text-shadow: 0 1px 4px rgba(0,0,0,0.7); text-align: center; width: 100%;">{{ ad_text }}</p>
+                        {% endif %}
+                        <div style="width: 100%; text-align: center;">
+                            <a href="{{ ad.link if ad.link else '/products' }}" class="slide-btn" style="
+                                display: inline-block; background: white; color: #1a7a4a;
+                                padding: 12px 30px; border-radius: 50px; text-decoration: none;
+                                font-weight: bold; transition: transform 0.3s, box-shadow 0.3s;
+                            " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 5px 20px rgba(0,0,0,0.3)'"
+                               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                Shop Now →
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Mute/unmute hint -->
+                    <div class="video-play-hint" style="position: absolute; top: 16px; right: 16px; z-index: 3; background: rgba(0,0,0,0.5); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 18px; pointer-events: none; transition: opacity 0.3s;">🔇</div>
+                </div>
+
+                {% elif ad.image and ad.image|trim != '' %}
+                <!-- === IMAGE AD: full-cover background image === -->
+                <div style="position: relative; width: 100%; min-height: 320px; overflow: hidden;">
+                    <img src="{{ url_for('static', filename=ad.image) }}"
+                         style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;"
+                         alt="{{ ad.title or 'Advertisement' }}" loading="lazy">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 60%, transparent 100%);"></div>
+                    <div style="position: relative; z-index: 2; padding: 40px 60px; color: white; text-align: center; min-height: 320px; display: flex; align-items: flex-end; justify-content: center; flex-direction: column;">
+                        {% if ad.title and ad.title != '' %}
+                        <h3 class="slide-title" style="font-size: 26px; margin-bottom: 8px; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.7); width: 100%; text-align: center;">{{ ad.title }}</h3>
+                        {% endif %}
+                        {% set ad_text = ad.description if ad.description else ad.text if ad.text else '' %}
+                        {% if ad_text %}
+                        <p class="slide-text" style="font-size: 15px; margin-bottom: 18px; opacity: 0.95; max-width: 80%; text-shadow: 0 1px 4px rgba(0,0,0,0.7); text-align: center; width: 100%;">{{ ad_text }}</p>
+                        {% endif %}
+                        <div style="width: 100%; text-align: center;">
+                            <a href="{{ ad.link if ad.link else '/products' }}" class="slide-btn" style="
+                                display: inline-block; background: white; color: #1a7a4a;
+                                padding: 12px 30px; border-radius: 50px; text-decoration: none;
+                                font-weight: bold; transition: transform 0.3s, box-shadow 0.3s;
+                            " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 5px 20px rgba(0,0,0,0.3)'"
+                               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                Shop Now →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {% else %}
+                <!-- === TEXT-ONLY AD: colored gradient === -->
+                <div class="slide-content" style="
+                    background: linear-gradient(135deg,
+                        {% if loop.index % 2 == 0 %}#667eea, #764ba2
+                        {% elif loop.index % 3 == 0 %}#f093fb, #f5576c
+                        {% else %}#1a7a4a, #0f5232{% endif %});
+                    padding: 40px 60px; color: white; text-align: center;
+                    min-height: 250px; display: flex; align-items: center;
+                    justify-content: center; flex-direction: column;">
+                    <div class="slide-icon" style="font-size: 48px; margin-bottom: 15px;">🎉</div>
+                    {% if ad.title and ad.title != '' %}
+                    <h3 class="slide-title" style="font-size: 24px; margin-bottom: 10px; font-weight: bold;">{{ ad.title }}</h3>
+                    {% endif %}
+                    <p class="slide-text" style="font-size: 16px; margin-bottom: 20px; opacity: 0.95; max-width: 80%;">
+                        {{ ad.description if ad.description else ad.text if ad.text else 'Special offer available!' }}
+                    </p>
+                    <a href="{{ ad.link if ad.link else '/products' }}" class="slide-btn" style="
+                        display: inline-block; background: white; color: #1a7a4a;
+                        padding: 12px 30px; border-radius: 50px; text-decoration: none;
+                        font-weight: bold; transition: transform 0.3s, box-shadow 0.3s;
+                    " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 5px 20px rgba(0,0,0,0.2)'"
+                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        Shop Now →
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Navigation Buttons -->
+        <button class="slider-nav slider-prev" style="
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        " onmouseover="this.style.background='rgba(255,255,255,0.5)'; this.style.transform='translateY(-50%) scale(1.1)'"
+           onmouseout="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='translateY(-50%) scale(1)'">
+            ❮
+        </button>
+        
+        <button class="slider-nav slider-next" style="
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        " onmouseover="this.style.background='rgba(255,255,255,0.5)'; this.style.transform='translateY(-50%) scale(1.1)'"
+           onmouseout="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='translateY(-50%) scale(1)'">
+            ❯
+        </button>
+        
+        <!-- Dots Navigation -->
+        <div class="slider-dots" style="
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 10;
+        ">
+            {% for ad in ads %}
+            <button class="slider-dot" data-index="{{ loop.index0 }}" style="
+                width: 10px;
+                height: 10px;
+                background: rgba(255,255,255,0.5);
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all 0.3s;
+                padding: 0;
+            " aria-label="Go to slide {{ loop.index }}"></button>
+            {% endfor %}
+        </div>
+        
+        <!-- Progress Bar (for autoplay) -->
+        <div class="slider-progress" style="
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255,255,255,0.5);
+            width: 0%;
+            transition: width linear;
+            pointer-events: none;
+        "></div>
+    </div>
+</div>
+
+<style>
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .slide-content {
+            padding: 30px 20px !important;
+            min-height: 200px !important;
+        }
+        .slide-title {
+            font-size: 18px !important;
+        }
+        .slide-text {
+            font-size: 12px !important;
+            max-width: 90% !important;
+        }
+        .slide-btn {
+            padding: 8px 20px !important;
+            font-size: 12px !important;
+        }
+        .slider-nav {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 16px !important;
+        }
+        .slider-prev { left: 10px !important; }
+        .slider-next { right: 10px !important; }
+        .slide-media {
+            max-height: 80px !important;
+        }
+        .slide-icon {
+            font-size: 36px !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .slide-content {
+            padding: 20px 15px !important;
+        }
+        .slide-title {
+            font-size: 16px !important;
+        }
+        .slide-text {
+            font-size: 11px !important;
+            margin-bottom: 12px !important;
+        }
+        .slide-btn {
+            padding: 6px 16px !important;
+            font-size: 11px !important;
+        }
+        .slider-nav {
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 14px !important;
+        }
+    }
+    
+    /* Reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+        .ads-slider-track {
+            transition: none !important;
+        }
+        .slider-nav:hover {
+            transform: translateY(-50%) scale(1) !important;
+        }
+        .slider-progress {
+            transition: none !important;
+        }
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .ads-placeholder {
+            background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+        }
+        .ads-placeholder h3 {
+            color: #ddd !important;
+        }
+    }
+</style>
+
+<script>
+    // Initialize slider functionality
+    (function() {
+        const container = document.querySelector('.ads-slider-container');
+        if (!container) return;
+        
+        // Check if already initialized
+        if (container.dataset.sliderInitialized === 'true') return;
+        container.dataset.sliderInitialized = 'true';
+        
+        const track = container.querySelector('.ads-slider-track');
+        const slides = container.querySelectorAll('.ads-slide');
+        const prevBtn = container.querySelector('.slider-prev');
+        const nextBtn = container.querySelector('.slider-next');
+        const dots = container.querySelectorAll('.slider-dot');
+        const progressBar = container.querySelector('.slider-progress');
+        
+        if (!track || slides.length === 0) return;
+        
+        let currentIndex = 0;
+        let totalSlides = slides.length;
+        let autoPlayInterval = null;
+        let isAnimating = false;
+        let autoplayDelay = parseInt(container.dataset.interval) || 5000;
+        let isAutoPlay = container.dataset.autoplay !== 'false';
+        let progressInterval = null;
+        let progressStartTime = 0;
+        
+        // Function to update slider position
+        function goToSlide(index, skipAnimation = false) {
+            if (isAnimating) return;
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+            if (index === currentIndex) return;
+            
+            isAnimating = true;
+            currentIndex = index;
+            
+            const offset = -currentIndex * 100;
+            
+            if (skipAnimation) {
+                track.style.transition = 'none';
+                track.style.transform = `translateX(${offset}%)`;
+                // Force reflow
+                void track.offsetHeight;
+                track.style.transition = 'transform 0.5s ease-in-out';
+            } else {
+                track.style.transform = `translateX(${offset}%)`;
+            }
+            
+            // Update dots
+            dots.forEach((dot, i) => {
+                if (i === currentIndex) {
+                    dot.style.background = 'white';
+                    dot.style.transform = 'scale(1.2)';
+                    dot.style.width = '20px';
+                    dot.style.borderRadius = '10px';
+                } else {
+                    dot.style.background = 'rgba(255,255,255,0.5)';
+                    dot.style.transform = 'scale(1)';
+                    dot.style.width = '10px';
+                    dot.style.borderRadius = '50%';
+                }
+            });
+            
+            // Dispatch custom event
+            const event = new CustomEvent('slideChanged', { detail: { index: currentIndex } });
+            container.dispatchEvent(event);
+            
+            setTimeout(() => {
+                isAnimating = false;
+            }, 500);
+        }
+        
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+            resetAutoPlay();
+        }
+        
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+            resetAutoPlay();
+        }
+        
+        // Autoplay functions
+        function startAutoPlay() {
+            if (!isAutoPlay) return;
+            if (autoPlayInterval) clearInterval(autoPlayInterval);
+            
+            autoPlayInterval = setInterval(() => {
+                if (!isAnimating) {
+                    nextSlide();
+                    resetProgressBar();
+                }
+            }, autoplayDelay);
+        }
+        
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+        
+        function resetAutoPlay() {
+            if (!isAutoPlay) return;
+            stopAutoPlay();
+            startAutoPlay();
+        }
+        
+        // Progress bar animation
+        function resetProgressBar() {
+            if (!progressBar) return;
+            
+            if (progressInterval) clearInterval(progressInterval);
+            
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '0%';
+            // Force reflow
+            void progressBar.offsetHeight;
+            progressBar.style.transition = `width ${autoplayDelay}ms linear`;
+            progressBar.style.width = '100%';
+            
+            progressStartTime = Date.now();
+            progressInterval = setInterval(() => {
+                const elapsed = Date.now() - progressStartTime;
+                if (elapsed >= autoplayDelay) {
+                    if (progressInterval) clearInterval(progressInterval);
+                    progressInterval = null;
+                }
+            }, 100);
+        }
+        
+        function pauseProgressBar() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+            if (progressBar) {
+                const computedWidth = window.getComputedStyle(progressBar).width;
+                progressBar.style.transition = 'none';
+                progressBar.style.width = computedWidth;
+            }
+        }
+        
+        function resumeProgressBar() {
+            if (progressBar && autoPlayInterval) {
+                const currentWidth = parseFloat(progressBar.style.width) || 0;
+                const remainingPercent = 100 - currentWidth;
+                const remainingTime = (remainingPercent / 100) * autoplayDelay;
+                
+                progressBar.style.transition = `width ${remainingTime}ms linear`;
+                progressBar.style.width = '100%';
+                
+                progressStartTime = Date.now();
+                progressInterval = setInterval(() => {
+                    const elapsed = Date.now() - progressStartTime;
+                    if (elapsed >= remainingTime) {
+                        if (progressInterval) clearInterval(progressInterval);
+                        progressInterval = null;
+                    }
+                }, 100);
+            }
+        }
+        
+        // Event listeners
+        if (prevBtn) {
+            prevBtn.removeEventListener('click', prevSlide);
+            prevBtn.addEventListener('click', prevSlide);
+        }
+        if (nextBtn) {
+            nextBtn.removeEventListener('click', nextSlide);
+            nextBtn.addEventListener('click', nextSlide);
+        }
+        
+        dots.forEach((dot, i) => {
+            dot.removeEventListener('click', dot._clickHandler);
+            dot._clickHandler = () => {
+                goToSlide(i);
+                resetAutoPlay();
+                resetProgressBar();
+            };
+            dot.addEventListener('click', dot._clickHandler);
+        });
+        
+        // Pause on hover
+        container.addEventListener('mouseenter', () => {
+            if (isAutoPlay) {
+                stopAutoPlay();
+                pauseProgressBar();
+            }
+        });
+        
+        container.addEventListener('mouseleave', () => {
+            if (isAutoPlay) {
+                startAutoPlay();
+                resumeProgressBar();
+            }
+        });
+        
+        // Touch events for mobile swipe
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        container.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            if (isAutoPlay) stopAutoPlay();
+        }, { passive: true });
+        
+        container.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchEndX - touchStartX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    prevSlide();
+                } else {
+                    nextSlide();
+                }
+            }
+            
+            if (isAutoPlay) startAutoPlay();
+        });
+        
+        // Initialize first slide — bypass same-index guard by resetting currentIndex
+        currentIndex = -1;
+        goToSlide(0, true);
+        if (isAutoPlay) {
+            startAutoPlay();
+            resetProgressBar();
+        }
+        
+        // Handle window resize
+        let resizeTimeout = null;
+        window.addEventListener('resize', () => {
+            if (resizeTimeout) clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                goToSlide(currentIndex, true);
+            }, 150);
+        });
+        
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (autoPlayInterval) clearInterval(autoPlayInterval);
+            if (progressInterval) clearInterval(progressInterval);
+        });
+    })();
+    
+    // Click-to-unmute/mute ad videos
+    function toggleAdVideo(wrapper) {
+        const video = wrapper.querySelector('video');
+        const hint = wrapper.querySelector('.video-play-hint');
+        if (!video) return;
+        
+        if (video.muted) {
+            video.muted = false;
+            video.play();
+            if (hint) { hint.textContent = '🔊'; hint.style.opacity = '0'; }
+            setTimeout(() => { if (hint) hint.style.opacity = '1'; }, 1500);
+        } else {
+            video.muted = true;
+            if (hint) { hint.textContent = '🔇'; hint.style.opacity = '1'; }
+        }
+    }
+</script>
+
+{% else %}
+<!-- Fallback when no ads available -->
+<div class="ads-placeholder" style="
+    background: linear-gradient(135deg, #f5f7fa, #e4e8ec);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    margin: 20px 0;
+">
+    <div style="font-size: 48px; margin-bottom: 15px;">📢</div>
+    <h3 style="color: #666;">No Advertisements</h3>
+    <p style="color: #999;">Check back later for special offers!</p>
+</div>
+{% endif %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Terms & Conditions - Ethiosadat Furniture{% endblock %}
+{% block content %}
+<div style="max-width:900px;margin:40px auto;padding:0 20px;">
+    <h1 style="color:#1a7a4a;margin-bottom:10px;">
+        {% if lang == 'am' %}የአጠቃቀም ውሎች{% elif lang == 'ar' %}الشروط والأحكام{% else %}Terms &amp; Conditions{% endif %}
+    </h1>
+    <p style="color:#888;margin-bottom:30px;">
+        {% if lang == 'am' %}የመጨረሻ ዝማኔ: ጥር 2017 ዓ.ም{% else %}Last updated: January 2025{% endif %}
+    </p>
+
+    <div style="background:#fff;border-radius:12px;padding:30px;box-shadow:0 2px 12px rgba(0,0,0,0.08);line-height:1.8;color:#555;">
+        {% if lang == 'am' %}
+        <h2 style="color:#333;">1. አጠቃላይ</h2>
+        <p>ይህን ድህረ ገጽ በመጠቀም ከዚህ በታች ያሉትን ውሎች ተቀብለዋል ብለን እናስባለን።</p>
+        <h2 style="color:#333;">2. ምርቶች</h2>
+        <p>የምርቶቻችን ዋጋ ያለምንም ቅድሚያ ሊለወጥ ይችላል። ምስሎቹ ለምሳሌ ብቻ ሊሆኑ ይችላሉ።</p>
+        <h2 style="color:#333;">3. ትዕዛዝ</h2>
+        <p>ትዕዛዝ ካስገቡ በኋላ ቡድናችን ያረጋግጥልዎታል። ዋጋ ወይም ምርት ያልተሟላ ሲሆን ሊሰርዝ ይችላል።</p>
+        <h2 style="color:#333;">4. ክፍያ</h2>
+        <p>ምርቱ ሲደርስዎ ነው ክፍያ የሚፈጸመው (Cash on Delivery)።</p>
+        <h2 style="color:#333;">5. ሌሎች</h2>
+        <p>ለጥያቄ +251906020606 ይደውሉ።</p>
+        {% elif lang == 'ar' %}
+        <h2 style="color:#333;">1. عام</h2>
+        <p>باستخدام هذا الموقع، فإنك توافق على الشروط التالية.</p>
+        <h2 style="color:#333;">2. المنتجات</h2>
+        <p>قد تتغير أسعار منتجاتنا دون إشعار مسبق. الصور للتوضيح فقط.</p>
+        <h2 style="color:#333;">3. الطلبات</h2>
+        <p>بعد تقديم الطلب، سيتواصل معك فريقنا للتأكيد. يمكن إلغاء الطلب في حالة عدم توفر المنتج.</p>
+        <h2 style="color:#333;">4. الدفع</h2>
+        <p>الدفع عند الاستلام (Cash on Delivery).</p>
+        <h2 style="color:#333;">5. أخرى</h2>
+        <p>للاستفسار: +251906020606</p>
+        {% else %}
+        <h2 style="color:#333;">1. General</h2>
+        <p>By using this website, you agree to the following terms and conditions.</p>
+        <h2 style="color:#333;">2. Products</h2>
+        <p>Product prices may change without prior notice. Images are for illustration purposes only.</p>
+        <h2 style="color:#333;">3. Orders</h2>
+        <p>After placing an order, our team will confirm it. Orders may be cancelled if a product is unavailable.</p>
+        <h2 style="color:#333;">4. Payment</h2>
+        <p>Payment is collected on delivery (Cash on Delivery).</p>
+        <h2 style="color:#333;">5. Contact</h2>
+        <p>For enquiries call +251906020606.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

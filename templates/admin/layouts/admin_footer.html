@@ -1,0 +1,348 @@
+<!-- ==================== ADMIN FOOTER ==================== -->
+<!-- Ethiosadat Furniture - Admin Panel Footer -->
+
+<footer class="admin-footer" style="
+    background: var(--bg-white, white);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 40px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <!-- Copyright -->
+        <div style="color: var(--text-muted, #666); font-size: 14px;">
+            &copy; {{ current_year }} <strong>Ethiosadat Furniture</strong> - All Rights Reserved
+        </div>
+        
+        <!-- Quick Info -->
+        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted, #666); font-size: 13px;">
+                <span>🛒</span>
+                <span>Orders: <strong id="footerOrdersCount">{{ orders_count|default(0) }}</strong></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted, #666); font-size: 13px;">
+                <span>📦</span>
+                <span>Products: <strong id="footerProductsCount">{{ products_count|default(0) }}</strong></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted, #666); font-size: 13px;">
+                <span>📢</span>
+                <span>Ads: <strong id="footerAdsCount">{{ ads_count|default(0) }}</strong></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted, #666); font-size: 13px;">
+                <span>👥</span>
+                <span>Users: <strong id="footerUsersCount">{{ users_count|default(0) }}</strong></span>
+            </div>
+        </div>
+        
+        <!-- Version -->
+        <div style="color: var(--text-muted-light, #999); font-size: 12px;">
+            Version 2.0.0 | 
+            <a href="{{ url_for('customer.index') }}" style="color: var(--primary, #1a7a4a); text-decoration: none;">View Store →</a>
+        </div>
+    </div>
+    
+    <!-- System Status Bar -->
+    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color, #eee); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <!-- Server Status -->
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span id="serverStatus" style="width: 10px; height: 10px; background: #4caf50; border-radius: 50%; display: inline-block;"></span>
+                <span style="font-size: 12px; color: var(--text-muted, #666);" id="serverStatusText">Server Online</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span>🕐</span>
+                <span style="font-size: 12px; color: var(--text-muted, #666);" id="currentTime"></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span>📡</span>
+                <span style="font-size: 12px; color: var(--text-muted, #666);" id="connectionStatus">Online</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span>🔄</span>
+                <span style="font-size: 12px; color: var(--text-muted, #666);" id="lastUpdated"></span>
+            </div>
+        </div>
+        
+        <!-- Links -->
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <a href="{{ url_for('admin.dashboard') }}" style="color: var(--text-muted-light, #999); text-decoration: none; font-size: 12px;">Dashboard</a>
+            <a href="{{ url_for('admin.settings') }}" style="color: var(--text-muted-light, #999); text-decoration: none; font-size: 12px;">Settings</a>
+            <a href="{{ url_for('customer.contact') }}" style="color: var(--text-muted-light, #999); text-decoration: none; font-size: 12px;">Support</a>
+            <a href="#" onclick="clearAdminCache(event)" style="color: var(--text-muted-light, #999); text-decoration: none; font-size: 12px;">Clear Cache</a>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .admin-footer {
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .admin-footer a {
+        transition: color 0.2s ease;
+    }
+    
+    .admin-footer a:hover {
+        color: var(--primary, #1a7a4a) !important;
+        text-decoration: underline !important;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .admin-footer {
+            --bg-white: #16213e;
+            --text-muted: #aaa;
+            --text-muted-light: #888;
+            --border-color: #2a2a3e;
+            --primary: #2d9966;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .admin-footer > div:first-child {
+            flex-direction: column;
+            text-align: center;
+        }
+        .admin-footer .system-status {
+            flex-direction: column;
+            text-align: center;
+        }
+        .admin-footer .quick-info {
+            justify-content: center;
+        }
+    }
+    
+    @media print {
+        .admin-footer {
+            display: none;
+        }
+    }
+    
+    /* Status indicators animation */
+    .status-pulse {
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+</style>
+
+<script>
+    // Update current time
+    function updateCurrentTime() {
+        const now = new Date();
+        const formatted = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        const timeElement = document.getElementById('currentTime');
+        if (timeElement) timeElement.textContent = formatted;
+    }
+    
+    // Update last updated time
+    function updateLastUpdated() {
+        const now = new Date();
+        const formatted = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        const lastUpdatedEl = document.getElementById('lastUpdated');
+        if (lastUpdatedEl) lastUpdatedEl.textContent = `Last updated: ${formatted}`;
+    }
+    
+    // Update connection status
+    function updateConnectionStatus() {
+        const connectionStatusEl = document.getElementById('connectionStatus');
+        if (!connectionStatusEl) return;
+        
+        if (navigator.onLine) {
+            connectionStatusEl.textContent = 'Online';
+            connectionStatusEl.style.color = '#4caf50';
+        } else {
+            connectionStatusEl.textContent = 'Offline';
+            connectionStatusEl.style.color = '#f44336';
+        }
+    }
+    
+    // Check server status periodically
+    let serverCheckInterval = null;
+    let lastServerStatus = true;
+    
+    function checkServerStatus() {
+        fetch('{{ url_for("utility.health_check") if url_for is defined else "/health" }}', {
+            method: 'GET',
+            headers: { 
+                'X-Requested-With': 'XMLHttpRequest',
+                'Cache-Control': 'no-cache'
+            },
+            cache: 'no-store'
+        })
+        .then(response => {
+            const statusDot = document.getElementById('serverStatus');
+            const statusText = document.getElementById('serverStatusText');
+            
+            if (statusDot && statusText) {
+                if (response.ok) {
+                    statusDot.style.background = '#4caf50';
+                    statusDot.classList.remove('status-pulse');
+                    statusText.textContent = 'Server Online';
+                    if (!lastServerStatus && window.showToast) {
+                        window.showToast('Server connection restored', 'success');
+                    }
+                    lastServerStatus = true;
+                } else {
+                    statusDot.style.background = '#ff9800';
+                    statusText.textContent = 'Server Degraded';
+                    lastServerStatus = false;
+                }
+            }
+        })
+        .catch((error) => {
+            const statusDot = document.getElementById('serverStatus');
+            const statusText = document.getElementById('serverStatusText');
+            
+            if (statusDot && statusText) {
+                statusDot.style.background = '#f44336';
+                statusDot.classList.add('status-pulse');
+                statusText.textContent = 'Server Offline';
+                if (lastServerStatus && window.showToast) {
+                    window.showToast('Cannot connect to server. Please check your connection.', 'error');
+                }
+                lastServerStatus = false;
+            }
+            console.error('Server status check failed:', error);
+        });
+    }
+    
+    // Update counts dynamically
+    let updateTimeout = null;
+    
+    function updateFooterCounts() {
+        // Clear previous timeout
+        if (updateTimeout) clearTimeout(updateTimeout);
+        
+        fetch('{{ url_for('api.api_cart_count') if url_for is defined else "/api/admin/stats" }}', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const ordersEl = document.getElementById('footerOrdersCount');
+                const productsEl = document.getElementById('footerProductsCount');
+                const adsEl = document.getElementById('footerAdsCount');
+                const usersEl = document.getElementById('footerUsersCount');
+                
+                if (ordersEl && data.orders !== undefined) ordersEl.textContent = data.orders;
+                if (productsEl && data.products !== undefined) productsEl.textContent = data.products;
+                if (adsEl && data.ads !== undefined) adsEl.textContent = data.ads;
+                if (usersEl && data.users !== undefined) usersEl.textContent = data.users;
+                
+                updateLastUpdated();
+            }
+        })
+        .catch(err => console.error('Error updating footer counts:', err));
+        
+        // Set timeout for next update
+        updateTimeout = setTimeout(updateFooterCounts, 60000);
+    }
+    
+    // Clear admin cache
+    function clearAdminCache(event) {
+        if (event) event.preventDefault();
+        
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            if (window.showLoading) window.showLoading(true);
+            
+            fetch('{{ url_for('admin.clear_cache') if url_for is defined else "/admin/clear-cache" }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showSuccess) {
+                        window.showSuccess('Cache cleared successfully');
+                    } else if (window.showToast) {
+                        window.showToast('Cache cleared successfully', 'success');
+                    }
+                    // Reload page after 1 second
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (window.showError) window.showError(data.error || 'Failed to clear cache');
+                }
+            })
+            .catch(() => {
+                if (window.showError) window.showError('Error clearing cache');
+            })
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Clear Cache', 'Are you sure you want to clear the admin cache? This may temporarily slow down the system.', callback);
+        } else {
+            if (confirm('Are you sure you want to clear the admin cache? This may temporarily slow down the system.')) {
+                callback();
+            }
+        }
+    }
+    
+    // Network status listener
+    function initNetworkListener() {
+        window.addEventListener('online', () => {
+            updateConnectionStatus();
+            checkServerStatus();
+            updateFooterCounts();
+            if (window.showToast) window.showToast('Back online!', 'success');
+        });
+        
+        window.addEventListener('offline', () => {
+            updateConnectionStatus();
+            if (window.showToast) window.showToast('You are offline. Some features may be limited.', 'warning');
+        });
+    }
+    
+    // Initialize all footer functions
+    function initAdminFooter() {
+        updateCurrentTime();
+        updateConnectionStatus();
+        checkServerStatus();
+        updateFooterCounts();
+        initNetworkListener();
+        
+        // Set intervals
+        setInterval(updateCurrentTime, 1000);
+        setInterval(updateConnectionStatus, 5000);
+        if (serverCheckInterval) clearInterval(serverCheckInterval);
+        serverCheckInterval = setInterval(checkServerStatus, 30000);
+    }
+    
+    // Start when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAdminFooter);
+    } else {
+        initAdminFooter();
+    }
+    
+    // Clean up intervals on page unload
+    window.addEventListener('beforeunload', () => {
+        if (serverCheckInterval) clearInterval(serverCheckInterval);
+        if (updateTimeout) clearTimeout(updateTimeout);
+    });
+    
+    // Make functions globally available
+    window.clearAdminCache = clearAdminCache;
+    window.updateFooterCounts = updateFooterCounts;
+    window.checkServerStatus = checkServerStatus;
+</script>

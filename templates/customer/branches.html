@@ -1,0 +1,603 @@
+{% extends "base.html" %}
+
+{% block title %}Our Branches - Ethiosadat Furniture{% endblock %}
+
+{% block extra_css %}
+<style>
+    .branches-hero {
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white;
+        padding: 60px 20px;
+        text-align: center;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 40px;
+    }
+    .branches-hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 16px;
+    }
+    .branches-hero p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .delivery-info {
+        background: #e8f5e9;
+        border-left: 4px solid #4caf50;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .delivery-info-icon {
+        font-size: 32px;
+    }
+    .delivery-info-text {
+        flex: 1;
+    }
+    .delivery-info-text strong {
+        color: #2e7d32;
+    }
+    .branches-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+    .branch-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .branch-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+    .branch-header {
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .branch-icon {
+        font-size: 36px;
+    }
+    .branch-header h3 {
+        margin: 0;
+        font-size: 1.3rem;
+    }
+    .branch-body {
+        padding: 20px;
+    }
+    .branch-info {
+        margin-bottom: 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .branch-info-icon {
+        font-size: 18px;
+        min-width: 24px;
+        color: #1a7a4a;
+    }
+    .branch-info-text {
+        flex: 1;
+        color: var(--text-color, #333);
+        line-height: 1.5;
+    }
+    .branch-phone {
+        color: #1a7a4a;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .branch-phone:hover {
+        text-decoration: underline;
+    }
+    .branch-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+    }
+    .btn-map {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+    .btn-map:hover {
+        background: #388e3c;
+        transform: translateY(-2px);
+    }
+    .btn-whatsapp {
+        background: #25D366;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+    .btn-whatsapp:hover {
+        background: #128C7E;
+        transform: translateY(-2px);
+    }
+    .btn-call {
+        background: #1a7a4a;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+    .btn-call:hover {
+        background: #0f5232;
+        transform: translateY(-2px);
+    }
+    .contact-section {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 30px;
+        margin-top: 30px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    .contact-numbers {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+    }
+    .contact-number {
+        background: #f5f5f5;
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1a7a4a;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+    }
+    .contact-number:hover {
+        background: #1a7a4a;
+        color: white;
+        transform: translateY(-2px);
+    }
+    .whatsapp-float {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #25D366;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s;
+        z-index: 1000;
+        text-decoration: none;
+    }
+    .whatsapp-float:hover {
+        transform: scale(1.1);
+        background: #128C7E;
+    }
+    @media (max-width: 768px) {
+        .branches-hero h1 {
+            font-size: 1.8rem;
+        }
+        .branches-grid {
+            grid-template-columns: 1fr;
+        }
+        .contact-number {
+            padding: 10px 18px;
+            font-size: 1rem;
+        }
+        .whatsapp-float {
+            width: 50px;
+            height: 50px;
+            font-size: 28px;
+            bottom: 20px;
+            right: 20px;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        .delivery-info {
+            background: #1a3a2a;
+        }
+        .contact-number {
+            background: #2a2a3e;
+        }
+        .contact-number:hover {
+            background: #1a7a4a;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="branches-container">
+    
+    <!-- Hero Section -->
+    <div class="branches-hero">
+        <h1>📍 {{ _('Our Branches') }}</h1>
+        <p>{{ _('Visit our showrooms across Ethiopia to experience quality furniture firsthand') }}</p>
+    </div>
+
+    <!-- Delivery Information -->
+    <div class="delivery-info">
+        <div class="delivery-info-icon">🚚</div>
+        <div class="delivery-info-text">
+            <strong>{% if lang == 'am' %}ነፃ ደሊቨሪ ስላለን አድራሻችን ከአድራሻዎ አቅራቢያ ባለመሆኑ ሀሳብ እንዳይገባዎት።{% else %}Free delivery available! Don't worry if our address is not near your location - we deliver nationwide!{% endif %}</strong>
+        </div>
+    </div>
+
+    <!-- Branches Grid -->
+    <div class="branches-grid">
+        
+        <!-- Branch 1: Merkato Mars -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon">🏢</div>
+                <div>
+                    <h3>መሀል መርካቶ ማርስ</h3>
+                    <small>Merkato Mars</small>
+                </div>
+            </div>
+            <div class="branch-body">
+                <div class="branch-info">
+                    <div class="branch-info-icon">📍</div>
+                    <div class="branch-info-text">ማርስ የገበያ ማእከል 2ኛ ፎቅ ሱቅ ቁጥር 230</div>
+                </div>
+                <div class="branch-info">
+                    <div class="branch-info-icon">📞</div>
+                    <div class="branch-info-text">
+                        <a href="tel:+251906020606" class="branch-phone">0906 020606</a>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=9.0100,38.7450" target="_blank" class="btn-map">
+                        🗺️ {{ _('Navigate') }}
+                    </a>
+                    <a href="https://wa.me/251906020606" target="_blank" class="btn-whatsapp">
+                        💬 WhatsApp
+                    </a>
+                    <a href="tel:+251906020606" class="btn-call">
+                        📞 {{ _('Call') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branch 2: Betel -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon">🏢</div>
+                <div>
+                    <h3>ቤተል</h3>
+                    <small>Betel</small>
+                </div>
+            </div>
+            <div class="branch-body">
+                <div class="branch-info">
+                    <div class="branch-info-icon">📍</div>
+                    <div class="branch-info-text">ቢጫ ፎቅ ጎን</div>
+                </div>
+                <div class="branch-info">
+                    <div class="branch-info-icon">📞</div>
+                    <div class="branch-info-text">
+                        <a href="tel:+251906080606" class="branch-phone">0906 080606</a>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=9.0080,38.7600" target="_blank" class="btn-map">
+                        🗺️ {{ _('Navigate') }}
+                    </a>
+                    <a href="https://wa.me/251906080606" target="_blank" class="btn-whatsapp">
+                        💬 WhatsApp
+                    </a>
+                    <a href="tel:+251906080606" class="btn-call">
+                        📞 {{ _('Call') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branch 3: Furi Nok -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon">🏢</div>
+                <div>
+                    <h3>ፉሪ ኖክ</h3>
+                    <small>Furi Nok</small>
+                </div>
+            </div>
+            <div class="branch-body">
+                <div class="branch-info">
+                    <div class="branch-info-icon">📍</div>
+                    <div class="branch-info-text">ኖክ ማደያ ፊት ለፊት</div>
+                </div>
+                <div class="branch-info">
+                    <div class="branch-info-icon">📞</div>
+                    <div class="branch-info-text">
+                        <a href="tel:+251906090606" class="branch-phone">0906 090606</a>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=8.9900,38.7300" target="_blank" class="btn-map">
+                        🗺️ {{ _('Navigate') }}
+                    </a>
+                    <a href="https://wa.me/251906090606" target="_blank" class="btn-whatsapp">
+                        💬 WhatsApp
+                    </a>
+                    <a href="tel:+251906090606" class="btn-call">
+                        📞 {{ _('Call') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branch 4: Dire Dawa Meskeleña -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon">🏢</div>
+                <div>
+                    <h3>ድሬዳዋ መስቀለኛ</h3>
+                    <small>Dire Dawa</small>
+                </div>
+            </div>
+            <div class="branch-body">
+                <div class="branch-info">
+                    <div class="branch-info-icon">📍</div>
+                    <div class="branch-info-text">የሰይዶ ታክሲ ተራ ጋር</div>
+                </div>
+                <div class="branch-info">
+                    <div class="branch-info-icon">📞</div>
+                    <div class="branch-info-text">
+                        <a href="tel:+251906020606" class="branch-phone">0906 020606</a>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=9.5900,41.8500" target="_blank" class="btn-map">
+                        🗺️ {{ _('Navigate') }}
+                    </a>
+                    <a href="https://wa.me/251906020606" target="_blank" class="btn-whatsapp">
+                        💬 WhatsApp
+                    </a>
+                    <a href="tel:+251906020606" class="btn-call">
+                        📞 {{ _('Call') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branch 5: Dire Dawa Mall -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon">🏢</div>
+                <div>
+                    <h3>ድሬዳዋ ሞል</h3>
+                    <small>Dire Dawa Mall</small>
+                </div>
+            </div>
+            <div class="branch-body">
+                <div class="branch-info">
+                    <div class="branch-info-icon">📍</div>
+                    <div class="branch-info-text">ቢራ ሞል 1ኛ ፎቅ</div>
+                </div>
+                <div class="branch-info">
+                    <div class="branch-info-icon">📞</div>
+                    <div class="branch-info-text">
+                        <a href="tel:+251906080606" class="branch-phone">0906 080606</a>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=9.5950,41.8550" target="_blank" class="btn-map">
+                        🗺️ {{ _('Navigate') }}
+                    </a>
+                    <a href="https://wa.me/251906080606" target="_blank" class="btn-whatsapp">
+                        💬 WhatsApp
+                    </a>
+                    <a href="tel:+251906080606" class="btn-call">
+                        📞 {{ _('Call') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branch 6: Asosa -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon">🏢</div>
+                <div>
+                    <h3>አሶሳ</h3>
+                    <small>Asosa</small>
+                </div>
+            </div>
+            <div class="branch-body">
+                <div class="branch-info">
+                    <div class="branch-info-icon">📍</div>
+                    <div class="branch-info-text">የተባበሩት ማዲያ ፊትለፊት</div>
+                </div>
+                <div class="branch-info">
+                    <div class="branch-info-icon">📞</div>
+                    <div class="branch-info-text">
+                        <a href="tel:+251906090606" class="branch-phone">0906 090606</a>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=10.0700,34.5300" target="_blank" class="btn-map">
+                        🗺️ {{ _('Navigate') }}
+                    </a>
+                    <a href="https://wa.me/251906090606" target="_blank" class="btn-whatsapp">
+                        💬 WhatsApp
+                    </a>
+                    <a href="tel:+251906090606" class="btn-call">
+                        📞 {{ _('Call') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branch 7: Butajira -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon">🏢</div>
+                <div>
+                    <h3>ቡታጅራ</h3>
+                    <small>Butajira</small>
+                </div>
+            </div>
+            <div class="branch-body">
+                <div class="branch-info">
+                    <div class="branch-info-icon">📍</div>
+                    <div class="branch-info-text">ቄጤማ መናኸሪያ ጎን</div>
+                </div>
+                <div class="branch-info">
+                    <div class="branch-info-icon">📞</div>
+                    <div class="branch-info-text">
+                        <a href="tel:+251906020606" class="branch-phone">0906 020606</a>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=8.1200,38.3700" target="_blank" class="btn-map">
+                        🗺️ {{ _('Navigate') }}
+                    </a>
+                    <a href="https://wa.me/251906020606" target="_blank" class="btn-whatsapp">
+                        💬 WhatsApp
+                    </a>
+                    <a href="tel:+251906020606" class="btn-call">
+                        📞 {{ _('Call') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branch 8: Shire -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon">🏢</div>
+                <div>
+                    <h3>ሽሬ</h3>
+                    <small>Shire</small>
+                </div>
+            </div>
+            <div class="branch-body">
+                <div class="branch-info">
+                    <div class="branch-info-icon">📍</div>
+                    <div class="branch-info-text">ቶታል ማዲያ ፊትለፊት</div>
+                </div>
+                <div class="branch-info">
+                    <div class="branch-info-icon">📞</div>
+                    <div class="branch-info-text">
+                        <a href="tel:+251906080606" class="branch-phone">0906 080606</a>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=14.1000,38.2800" target="_blank" class="btn-map">
+                        🗺️ {{ _('Navigate') }}
+                    </a>
+                    <a href="https://wa.me/251906080606" target="_blank" class="btn-whatsapp">
+                        💬 WhatsApp
+                    </a>
+                    <a href="tel:+251906080606" class="btn-call">
+                        📞 {{ _('Call') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branch 9: Semera -->
+        <div class="branch-card">
+            <div class="branch-header">
+                <div class="branch-icon">🏢</div>
+                <div>
+                    <h3>ሰመራ</h3>
+                    <small>Semera</small>
+                </div>
+            </div>
+            <div class="branch-body">
+                <div class="branch-info">
+                    <div class="branch-info-icon">📍</div>
+                    <div class="branch-info-text">ሰመራ</div>
+                </div>
+                <div class="branch-info">
+                    <div class="branch-info-icon">📞</div>
+                    <div class="branch-info-text">
+                        <a href="tel:+251906090606" class="branch-phone">0906 090606</a>
+                    </div>
+                </div>
+                <div class="branch-actions">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=11.7900,41.0100" target="_blank" class="btn-map">
+                        🗺️ {{ _('Navigate') }}
+                    </a>
+                    <a href="https://wa.me/251906090606" target="_blank" class="btn-whatsapp">
+                        💬 WhatsApp
+                    </a>
+                    <a href="tel:+251906090606" class="btn-call">
+                        📞 {{ _('Call') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-section">
+        <h2>📞 {{ _('Contact Us') }}</h2>
+        <p>{{ _('Call or WhatsApp us for inquiries, orders, and support') }}</p>
+        <div class="contact-numbers">
+            <a href="tel:+251906020606" class="contact-number">📱 0906 020606</a>
+            <a href="tel:+251906080606" class="contact-number">📱 0906 080606</a>
+            <a href="tel:+251906090606" class="contact-number">📱 0906 090606</a>
+        </div>
+        <div>
+            <a href="https://wa.me/251906020606" class="btn-whatsapp" style="padding: 12px 30px; font-size: 16px;">
+                💬 {{ _('Chat on WhatsApp') }}
+            </a>
+        </div>
+    </div>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/251906020606" target="_blank" class="whatsapp-float" title="Chat on WhatsApp">
+        💬
+    </a>
+</div>
+{% endblock %}

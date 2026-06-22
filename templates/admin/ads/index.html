@@ -1,0 +1,476 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Advertisements - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ad-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .status-active {
+        background: #4caf50;
+        color: white;
+    }
+    .status-inactive {
+        background: #999;
+        color: white;
+    }
+    .ad-preview {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .ad-preview-video {
+        width: 80px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .sort-handle {
+        cursor: move;
+        padding: 8px;
+        color: #999;
+        display: inline-block;
+    }
+    .sort-handle:hover {
+        color: #1a7a4a;
+    }
+    .filter-bar {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    .filter-bar input, .filter-bar select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+    @media (max-width: 768px) {
+        .filter-bar {
+            flex-direction: column;
+        }
+        .ad-preview, .ad-preview-video {
+            width: 40px;
+            height: 40px;
+        }
+        .ads-table-container {
+            overflow-x: auto;
+        }
+        table {
+            min-width: 600px;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        .filter-bar input, .filter-bar select {
+            background: #16213e;
+            border-color: #2a2a3e;
+            color: #eee;
+        }
+        .ads-table-container {
+            background: #1a1a2e;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ads-container" style="padding: 20px;">
+    <!-- Header -->
+    <div class="d-flex justify-between align-center" style="margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <h1 style="margin-bottom: 4px;">📢 Advertisements Management</h1>
+            <p style="color: #666; margin: 0;">Manage your store advertisements and promotions</p>
+        </div>
+        <div>
+            <a href="{{ url_for('admin.ad_create') }}" class="btn btn-primary">
+                ➕ Add New Ad
+            </a>
+        </div>
+    </div>
+
+    <!-- Search/Filter Bar -->
+    <div class="filter-bar">
+        <input type="text" id="searchAds" placeholder="🔍 Search advertisements..." onkeyup="filterAds()">
+        <select id="statusFilter" onchange="filterAds()">
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+        </select>
+    </div>
+    <div id="filterResult" style="font-size: 12px; color: #666; margin-bottom: 12px;"></div>
+
+    <!-- Ads List -->
+    <div class="ads-table-container" style="background: white; border-radius: 15px; overflow-x: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <table style="width: 100%; border-collapse: collapse;" id="adsTable">
+            <thead>
+                <tr style="background: linear-gradient(135deg, #1a7a4a, #0f5232); color: white;">
+                    <th style="padding: 14px; text-align: left; width: 50px;">ID</th>
+                    <th style="padding: 14px; text-align: left; width: 80px;">Media</th>
+                    <th style="padding: 14px; text-align: left;">Advertisement Text</th>
+                    <th style="padding: 14px; text-align: center; width: 100px;">Status</th>
+                    <th style="padding: 14px; text-align: center; width: 100px;">Sort</th>
+                    <th style="padding: 14px; text-align: center; width: 120px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="adsTableBody">
+                {% for ad in ads %}
+                <tr class="ad-row"
+                    data-id="{{ ad.id }}"
+                    data-status="{% if ad.is_active %}active{% else %}inactive{% endif %}"
+                    data-search="{{ ad.title or '' }} {{ ad.description or '' }}"
+                    style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px;">#{{ ad.id }}</td>
+                    <td style="padding: 12px; text-align: center;">
+                        {% if ad.image and ad.image|trim %}
+                            {% set media_name = ad.image.split('/')[-1] %}
+                            {% if media_name.lower().endswith(('.mp4', '.webm', '.mov', '.avi', '.ogg')) %}
+                                <video class="ad-preview-video"
+                                       muted
+                                       preload="metadata"
+                                       poster="{{ url_for('static', filename='images/placeholder.png')}}"
+                                       onerror="this.onerror=null; this.poster=`{{ url_for('static', filename='images/placeholder.png') }}`;">
+                                    <source src="/static/uploads/ads/{{ media_name }}" type="video/mp4">
+                                </video>
+                            {% else %}
+                                <img class="ad-preview"
+                                     src="/static/uploads/ads/{{ media_name }}"
+                                     alt="Ad media"
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.src=`{{ url_for('static', filename='images/placeholder.png') }}`;">
+                            {% endif %}
+                        {% else %}
+                            <div style="width: 60px; height: 60px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                📢
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        <div class="ad-text" style="font-weight: 500;">
+                            {{ ad.title if ad.title else ad.description[:50] if ad.description else '-' }}{% if ad.description and ad.description|length > 50 %}...{% endif %}
+                        </div>
+                        {% if ad.description and ad.title %}
+                            <small style="color: #999;">{{ ad.description[:80] }}{% if ad.description|length > 80 %}...{% endif %}</small><br>
+                        {% endif %}
+                        <small style="color: #999;">Created: {{ ad.formatted_date if ad.formatted_date else 'N/A' }}</small>
+                        {% if ad.end_date %}
+                            <small style="color: #ff9800; display: block;">
+                                Expires:
+                                {% if ad.end_date is string %}
+                                    {{ ad.end_date.split(' ')[0] }}
+                                {% else %}
+                                    {{ ad.end_date.strftime('%Y-%m-%d') }}
+                                {% endif %}
+                            </small>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <button class="ad-status {% if ad.is_active %}status-active{% else %}status-inactive{% endif %}"
+                                onclick="toggleAdStatus({{ ad.id }}, this, '{{ url_for('admin.ad_toggle', aid=ad.id) }}')">
+                            {% if ad.is_active %}Active{% else %}Inactive{% endif %}
+                        </button>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <span class="sort-handle" draggable="true" data-id="{{ ad.id }}" style="cursor: grab;">⋮⋮</span>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <a href="{{ url_for('admin.ad_edit', aid=ad.id) }}"
+                           style="background: none; border: none; color: #ff9800; cursor: pointer; margin-right: 8px; text-decoration: none; display: inline-block;"
+                           title="Edit">✏️</a>
+                        <button onclick="deleteAd({{ ad.id }}, '{{ url_for('admin.ad_delete', aid=ad.id) }}')"
+                                style="background: none; border: none; color: #f44336; cursor: pointer;"
+                                title="Delete">🗑️</button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No Advertisements Found</h3>
+                        <p>Click the "Add New Ad" button to create your first advertisement.</p>
+                        <a href="{{ url_for('admin.ad_create') }}" class="btn btn-primary">➕ Create First Ad</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if ads|length > 10 %}
+    <div class="pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: 24px;">
+        <button class="btn btn-outline" onclick="prevPage()">← Previous</button>
+        <span id="pageInfo" style="padding: 8px 16px;">Page 1</span>
+        <button class="btn btn-outline" onclick="nextPage()">Next →</button>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Delete ad function
+    function deleteAd(adId, deleteUrl) {
+        if (!adId || !deleteUrl) return;
+
+        const callback = () => {
+            if (window.showLoading) window.showLoading(true);
+
+            fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    if (window.showSuccess) {
+                        window.showSuccess('Advertisement deleted successfully');
+                    } else if (window.showToast) {
+                        window.showToast('Advertisement deleted successfully', 'success');
+                    }
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    throw new Error('Delete failed');
+                }
+            })
+            .catch(() => {
+                if (window.showError) window.showError('Failed to delete advertisement');
+            })
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        };
+
+        if (window.showConfirm) {
+            window.showConfirm(
+                'Delete Advertisement',
+                'Are you sure you want to delete this advertisement? This action cannot be undone.',
+                callback
+            );
+        } else if (confirm('Are you sure you want to delete this advertisement? This action cannot be undone.')) {
+            callback();
+        }
+    }
+
+    // Toggle ad status
+    function toggleAdStatus(adId, button, toggleUrl) {
+        if (!adId || !button || !toggleUrl) return;
+
+        const newStatus = button.textContent.trim() === 'Active' ? 'inactive' : 'active';
+
+        if (window.showLoading) window.showLoading(true);
+
+        fetch(toggleUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (newStatus === 'active') {
+                    button.textContent = 'Active';
+                    button.className = 'ad-status status-active';
+                } else {
+                    button.textContent = 'Inactive';
+                    button.className = 'ad-status status-inactive';
+                }
+                if (window.showSuccess) {
+                    window.showSuccess(`Ad ${newStatus}d successfully`);
+                } else if (window.showToast) {
+                    window.showToast(`Ad ${newStatus}d successfully`, 'success');
+                }
+
+                const row = button.closest('.ad-row');
+                if (row) row.dataset.status = newStatus;
+            } else if (window.showError) {
+                window.showError(data.error || 'Failed to update status');
+            }
+        })
+        .catch(() => {
+            if (window.showError) window.showError('Error updating status');
+        })
+        .finally(() => {
+            if (window.showLoading) window.showLoading(false);
+        });
+    }
+
+    // Search/Filter functionality
+    function filterAds() {
+        const searchTerm = document.getElementById('searchAds').value.toLowerCase().trim();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const rows = document.querySelectorAll('#adsTableBody .ad-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const text = (row.dataset.search || '').toLowerCase();
+            const adText = row.querySelector('.ad-text')?.textContent.toLowerCase() || '';
+            const status = row.dataset.status;
+            let matches = true;
+
+            if (searchTerm && !text.includes(searchTerm) && !adText.includes(searchTerm)) matches = false;
+            if (statusFilter !== 'all' && status !== statusFilter) matches = false;
+
+            if (matches) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const resultMsg = document.getElementById('filterResult');
+        if (resultMsg) {
+            resultMsg.textContent = `${visibleCount} advertisement(s) found`;
+        }
+
+        if (typeof currentPage !== 'undefined') {
+            currentPage = 1;
+            if (typeof showPage === 'function') showPage(1);
+        }
+    }
+
+    // Drag and drop sorting
+    let dragSrc = null;
+
+    function initDragAndDrop() {
+        const handles = document.querySelectorAll('.sort-handle');
+        handles.forEach(handle => {
+            handle.removeEventListener('dragstart', handleDragStart);
+            handle.removeEventListener('dragover', handleDragOver);
+            handle.removeEventListener('drop', handleDrop);
+
+            handle.addEventListener('dragstart', handleDragStart);
+            handle.addEventListener('dragover', handleDragOver);
+            handle.addEventListener('drop', handleDrop);
+        });
+    }
+
+    function handleDragStart(e) {
+        dragSrc = this;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', this.dataset.id);
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        if (dragSrc !== this) {
+            const srcRow = dragSrc.closest('.ad-row');
+            const destRow = this.closest('.ad-row');
+            if (srcRow && destRow) {
+                const srcId = srcRow.dataset.id;
+                const destId = destRow.dataset.id;
+
+                fetch('{{ url_for('admin.ad_reorder') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ src_id: srcId, dest_id: destId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else if (window.showError) {
+                        window.showError(data.error || 'Failed to reorder');
+                    }
+                })
+                .catch(() => {
+                    if (window.showError) window.showError('Error reordering ads');
+                });
+            }
+        }
+        dragSrc = null;
+    }
+
+    // Pagination
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function showPage(page) {
+        const rows = document.querySelectorAll('#adsTableBody .ad-row');
+        const totalRows = rows.length;
+        const maxPage = Math.ceil(totalRows / rowsPerPage);
+
+        if (page < 1) page = 1;
+        if (page > maxPage) page = maxPage;
+
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const pageInfo = document.getElementById('pageInfo');
+        if (pageInfo) pageInfo.textContent = `Page ${page}`;
+        currentPage = page;
+    }
+
+    function prevPage() {
+        if (currentPage > 1) showPage(currentPage - 1);
+    }
+
+    function nextPage() {
+        const totalRows = document.querySelectorAll('#adsTableBody .ad-row').length;
+        const maxPage = Math.ceil(totalRows / rowsPerPage);
+        if (currentPage < maxPage) showPage(currentPage + 1);
+    }
+
+    // Video preview on hover
+    function initVideoPreviews() {
+        const videos = document.querySelectorAll('.ad-preview-video');
+        videos.forEach(video => {
+            video.addEventListener('mouseenter', () => {
+                video.play().catch(() => {});
+            });
+            video.addEventListener('mouseleave', () => {
+                video.pause();
+                video.currentTime = 0;
+            });
+        });
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+        initDragAndDrop();
+        initVideoPreviews();
+
+        const totalRows = document.querySelectorAll('#adsTableBody .ad-row').length;
+        if (totalRows > rowsPerPage) {
+            showPage(1);
+        }
+    });
+</script>
+{% endblock %}

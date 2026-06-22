@@ -1,0 +1,526 @@
+/* ==================== MODERN SLIDER/CAROUSEL ==================== */
+/* Ethiosadat Furniture - Professional Image Slider */
+
+/* CSS Variables */
+:root {
+    --slider-border-radius: 15px;
+    --slider-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    --slider-btn-size: 45px;
+    --slider-btn-bg: rgba(255, 255, 255, 0.3);
+    --slider-btn-bg-hover: rgba(255, 255, 255, 0.5);
+    --slider-dot-size: 10px;
+    --slider-dot-active-width: 25px;
+    --slider-transition: transform 0.5s ease-in-out;
+    --slider-progress-height: 3px;
+    --slider-slide-min-height: 250px;
+    --slider-font-size-h3: 28px;
+    --slider-font-size-p: 16px;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --slider-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        --slider-btn-bg: rgba(0, 0, 0, 0.3);
+        --slider-btn-bg-hover: rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* ==================== SLIDER CONTAINER ==================== */
+.slider-container {
+    position: relative;
+    max-width: 100%;
+    margin: 20px 0;
+    overflow: hidden;
+    border-radius: var(--slider-border-radius);
+    box-shadow: var(--slider-shadow);
+}
+
+/* ==================== SLIDER WRAPPER ==================== */
+.slider-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--slider-border-radius);
+}
+
+/* ==================== SLIDER TRACK ==================== */
+.slider-track {
+    display: flex;
+    transition: var(--slider-transition);
+    will-change: transform;
+}
+
+/* ==================== SLIDER SLIDES ==================== */
+.slider-slide {
+    flex: 0 0 100%;
+    position: relative;
+    min-height: var(--slider-slide-min-height);
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    opacity: 0.95;
+    transition: opacity 0.3s ease;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Image Background Support */
+.slider-slide.has-image {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.slider-slide.has-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.slider-slide.has-image .slide-content {
+    position: relative;
+    z-index: 2;
+}
+
+.slider-slide.active {
+    opacity: 1;
+}
+
+/* Slide Background Variations (Fallback) */
+.slider-slide:nth-child(1) { background: linear-gradient(135deg, #667eea, #764ba2); }
+.slider-slide:nth-child(2) { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.slider-slide:nth-child(3) { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.slider-slide:nth-child(4) { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.slider-slide:nth-child(5) { background: linear-gradient(135deg, #fa709a, #fee140); }
+.slider-slide:nth-child(6) { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+.slider-slide:nth-child(7) { background: linear-gradient(135deg, #d4fc79, #96e6a1); }
+.slider-slide:nth-child(8) { background: linear-gradient(135deg, #fbc2eb, #a6c1ee); }
+
+/* ==================== SLIDE CONTENT ==================== */
+.slide-content {
+    max-width: 80%;
+    animation: fadeInUp 0.8s ease;
+}
+
+.slide-content h3 {
+    font-size: var(--slider-font-size-h3);
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.slide-content p {
+    font-size: var(--slider-font-size-p);
+    margin-bottom: 20px;
+    opacity: 0.95;
+    line-height: 1.5;
+}
+
+.slide-btn {
+    display: inline-block;
+    background: white;
+    color: #ff9800;
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.slide-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.slide-btn:active {
+    transform: translateY(-1px);
+}
+
+.slide-btn:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+/* ==================== SLIDER NAVIGATION BUTTONS ==================== */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--slider-btn-bg);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    color: white;
+    border: none;
+    width: var(--slider-btn-size);
+    height: var(--slider-btn-size);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-btn:hover {
+    background: var(--slider-btn-bg-hover);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.slider-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.slider-btn:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+.slider-prev {
+    left: 15px;
+}
+
+.slider-next {
+    right: 15px;
+}
+
+/* ==================== SLIDER DOTS ==================== */
+.slider-dots {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    z-index: 10;
+}
+
+.slider-dot {
+    width: var(--slider-dot-size);
+    height: var(--slider-dot-size);
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+}
+
+.slider-dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+}
+
+.slider-dot.active {
+    background: white;
+    width: var(--slider-dot-active-width);
+    border-radius: 10px;
+}
+
+/* ==================== AUTO-PLAY PROGRESS BAR ==================== */
+.slider-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: var(--slider-progress-height);
+    background: rgba(255, 255, 255, 0.5);
+    width: 0%;
+    border-radius: 0 0 0 var(--slider-border-radius);
+    transition: width 0.1s linear;
+    pointer-events: none;
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Tablet (577px - 768px) */
+@media (max-width: 768px) {
+    :root {
+        --slider-slide-min-height: 200px;
+        --slider-font-size-h3: 20px;
+        --slider-font-size-p: 12px;
+        --slider-btn-size: 35px;
+    }
+    
+    .slider-slide {
+        padding: 30px 20px;
+    }
+    
+    .slider-btn {
+        font-size: 16px;
+    }
+    
+    .slider-dot {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .slider-dot.active {
+        width: 20px;
+    }
+}
+
+/* Mobile (≤ 576px) */
+@media (max-width: 576px) {
+    :root {
+        --slider-slide-min-height: 180px;
+        --slider-font-size-h3: 18px;
+        --slider-font-size-p: 11px;
+        --slider-btn-size: 30px;
+    }
+    
+    .slider-slide {
+        padding: 20px 15px;
+    }
+    
+    .slide-content {
+        max-width: 90%;
+    }
+    
+    .slide-content h3 {
+        margin-bottom: 10px;
+    }
+    
+    .slide-content p {
+        margin-bottom: 15px;
+    }
+    
+    .slide-btn {
+        padding: 8px 20px;
+        font-size: 12px;
+    }
+    
+    .slider-btn {
+        font-size: 14px;
+    }
+    
+    .slider-prev {
+        left: 10px;
+    }
+    
+    .slider-next {
+        right: 10px;
+    }
+    
+    .slider-dots {
+        bottom: 10px;
+        gap: 8px;
+    }
+    
+    .slider-dot {
+        width: 6px;
+        height: 6px;
+    }
+    
+    .slider-dot.active {
+        width: 16px;
+    }
+}
+
+/* Large Desktop (≥ 1200px) */
+@media (min-width: 1200px) {
+    :root {
+        --slider-slide-min-height: 350px;
+        --slider-font-size-h3: 36px;
+        --slider-font-size-p: 18px;
+    }
+}
+
+/* ==================== TOUCH DEVICE OPTIMIZATION ==================== */
+@media (hover: none) and (pointer: coarse) {
+    .slider-btn {
+        opacity: 0.7;
+    }
+    
+    .slider-btn:active {
+        opacity: 1;
+        transform: translateY(-50%) scale(0.95);
+    }
+    
+    .slider-dot {
+        min-width: 12px;
+        min-height: 12px;
+    }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .slider-track,
+    .slider-slide,
+    .slider-btn,
+    .slider-dot,
+    .slide-btn,
+    .slider-progress {
+        transition: none;
+        animation: none;
+    }
+    
+    .slider-progress {
+        display: none;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: none;
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+}
+
+/* Focus Visible */
+.slider-btn:focus-visible,
+.slider-dot:focus-visible,
+.slide-btn:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 3px;
+}
+
+/* ==================== LOADING STATE ==================== */
+.slider-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 20;
+}
+
+@keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.slider-no-animation {
+    transition: none !important;
+}
+
+.slider-paused .slider-progress {
+    animation-play-state: paused;
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+    .slider-container {
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+    
+    .slider-btn,
+    .slider-dots,
+    .slider-progress {
+        display: none;
+    }
+    
+    .slider-slide {
+        page-break-inside: avoid;
+        background: #f5f5f5 !important;
+        color: black;
+    }
+    
+    .slide-btn {
+        border: 1px solid #ccc;
+        color: #333;
+        background: #fff;
+    }
+}
+
+/* ==================== SAFE AREA SUPPORT ==================== */
+@supports (padding: max(0px)) {
+    .slider-prev {
+        left: max(15px, env(safe-area-inset-left));
+    }
+    
+    .slider-next {
+        right: max(15px, env(safe-area-inset-right));
+    }
+}
+
+/* ==================== SLIDE INDICATOR ==================== */
+.slider-indicators {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 5px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 10;
+}
+
+/* ==================== HOVER PAUSE INDICATOR ==================== */
+.slider-container:hover .slider-progress {
+    animation-play-state: paused;
+}
+
+/* ==================== TOUCH SWIPE INDICATOR ==================== */
+.swipe-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 5px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 11px;
+    display: none;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .swipe-indicator {
+        display: block;
+    }
+}

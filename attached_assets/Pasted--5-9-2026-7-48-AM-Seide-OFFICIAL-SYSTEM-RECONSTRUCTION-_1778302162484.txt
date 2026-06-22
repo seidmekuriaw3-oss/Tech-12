@@ -1,0 +1,86 @@
+[5/9/2026 7:48 AM] Seide: OFFICIAL SYSTEM RECONSTRUCTION & DEEP FORENSIC AUDIT DIRECTIVE
+
+​"I am authorizing you to perform a 100% comprehensive, deep-level forensic audit and complete system overhaul of this Flask-based E-commerce project. The project is currently in a state of high technical debt with broken core functionalities and missing architectural components. You must follow this directive step-by-step, without skipping any section, and resolve every error identified.
+
+​PHASE 1: GIT ARCHAEOLOGY & BRANCH RECOVERY (CRITICAL)
+
+​I have 9 distinct branches in this repository that represent significant development time. They are currently not appearing in the primary UI.
+
+​Audit Task: Execute a deep-level Git inspection using git branch -a and git reflog.
+
+​Discovery: Identify every local and remote branch. List all 9 branches by name, including the date and message of the last commit for each.
+
+​Integration: Analyze the differences between these branches and the current main. Ensure no critical feature (like the map or notification system) is lost.
+
+​Final Action: Once identified, wait for my confirmation on which branch to merge or restore to the active workspace.
+
+​PHASE 2: DATABASE ARCHITECTURE & SCHEMA ALIGNMENT
+
+​The communication between models.py and the physical SQLite database (database/ethiosadat.db) is completely broken.
+
+​Schema Forensic: Compare the Product and User models in models.py with the actual table structure in the .db file.
+
+​Migration Scripting: If columns like name_am, name_ar, description_am, description_ar, compare_price, material, color, and thumbnail are missing, you MUST generate and run a Python script to ALTER TABLE products to add these fields immediately without deleting existing data.
+
+​Connection Lifecycle Management: The 'Operation on a closed database' error is a priority. Rewrite the database session handling in routes/admin_routes.py to ensure sessions are properly scoped, committed, and closed ONLY after the response is sent.
+
+​PHASE 3: ADMIN PANEL & PRODUCT MANAGEMENT OVERHAUL
+
+​Currently, the Admin panel is visually present but functionally dead in many areas.
+
+​Add Product Fix: The 'Create Product' form fails upon submission. Audit the request.form.get() logic. Ensure every multilingual field is being captured. Fix the image upload logic (using werkzeug.utils.secure_filename) and ensure the file path is saved correctly in the DB.
+
+​Edit/Update Logic: The 'Edit' button must prepopulate the form with existing data (English, Amharic, Arabic). Ensure the update query uses the correct ID and does not create a duplicate entry.
+
+​Delete & Cleanup: The 'Delete' function must remove the record from the database AND delete the associated product image from the static/uploads folder to save space.
+
+​Pagination & Navigation: Fix the 'Next/Previous' (ቀጣይ/ተመለስ) buttons in the product management table. They must handle offset and limit parameters correctly.
+
+​Ad Publishing: The 'Publish' toggle for announcements must update the is_published boolean in the database and trigger an immediate change on the frontend.
+
+​PHASE 4: USER EXPERIENCE, CART, & AUTHENTICATION
+
+​Shopping Cart (ቅርጫት) Logic: The cart is failing to persist items. Audit the session['cart'] logic. 
+
+​Fix the issue where product images do not show in the cart (fix the url_for('static', filename=...) pathing).
+
+​Ensure price calculations (subtotal/total) are accurate.
+
+​Authentication Loops: Fix the Registration and Login flow. Resolve the 'Field errors' that appear even when data is correct. Check the User model for required fields like phone number and ensure they are being validated correctly.
+
+​Search & Filters: Ensure the search bar works for Amharic and Arabic text by using LIKE queries with UTF-8 support.
+
+​PHASE 5: MULTILINGUAL (AMHARIC/ARABIC) & RTL SUPPORT
+
+​RTL (Right-to-Left) Layout: When Arabic is selected, the entire CSS must flip. 
+
+​Fix the sidebar orientation.
+
+​Ensure icons and text do not overlap.
+
+​Apply direction: rtl; text-align: right; to the main container dynamically.
+[5/9/2026 7:48 AM] Seide: ​Translation Audit: Scan the entire project for hardcoded English strings. Move them to your translation dictionary/file. Ensure the Admin Dashboard stats and labels are 100% translated.
+
+​Font Rendering: Ensure that the Amharic and Arabic fonts are embedded correctly in the CSS so they look professional on all devices
+PHASE 6: UI/UX & HERO SECTION VIDEO FIX
+Background Video: The Hero section video is currently broken or incorrectly sized. Modify the CSS to ensure it is a true full-screen background:.
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+Admin Dashboard Stats: Implement a live statistics grid showing:
+Total Users (Count from User table).
+Total Orders (Count from Order table).
+Live Visitors (Implement a simple session tracker).
+PHASE 7: NOTIFICATION SYSTEM & SYSTEM CLEANUP
+
+​Persistent Alerts: Create a notification system where the Admin sees a badge/alert whenever a new order is placed or a new user joins. This must be stored in a notifications table.
+
+​Cleanup: Force-remove all pycache folders and .log files. Audit app.py for any redundant code or print statements that are slowing down the Replit environment.
+
+​I am expecting a systematic fix. Do not stop until every route returns a success status. Please start with Phase 1 (Git Audit) and provide me with the list of the 9 branches before proceeding to the code fixes."

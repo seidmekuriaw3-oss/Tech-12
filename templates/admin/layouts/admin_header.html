@@ -1,0 +1,529 @@
+<!-- ==================== ADMIN HEADER ==================== -->
+<!-- Ethiosadat Furniture - Admin Panel Header -->
+
+<header class="admin-header" style="
+    background: var(--bg-white, white);
+    border-radius: 12px;
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+">
+    <!-- Left Section: Page Title -->
+    <div class="admin-header-title">
+        <h1 style="margin: 0; font-size: 24px; color: var(--primary, #1a7a4a); display: flex; align-items: center; gap: 10px;">
+            <span class="header-icon">{% block header_icon %}👑{% endblock %}</span>
+            <span>{% block header_title %}Admin Dashboard{% endblock %}</span>
+        </h1>
+        <p style="margin: 5px 0 0; color: var(--text-muted, #666); font-size: 13px;" class="header-subtitle">
+            {% block header_subtitle %}Manage your store from here{% endblock %}
+        </p>
+    </div>
+    
+    <!-- Right Section: User Menu & Actions -->
+    <div class="admin-header-actions" style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+        <!-- Search Bar (Optional) -->
+        {% block header_search %}
+        <div class="admin-search" style="position: relative;">
+            <input type="text" 
+                   id="adminQuickSearch" 
+                   placeholder="🔍 Search..." 
+                   style="
+                       padding: 8px 12px;
+                       border: 1px solid var(--border-color, #ddd);
+                       border-radius: 25px;
+                       width: 200px;
+                       font-size: 13px;
+                       transition: all 0.3s;
+                       background: var(--bg-white, white);
+                       color: var(--text-color, #333);
+                   "
+                   onfocus="this.style.width='250px'"
+                   onblur="this.style.width='200px'"
+                   onkeyup="quickSearch(this.value)">
+            <div id="searchResults" style="
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background: var(--bg-white, white);
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                min-width: 250px;
+                max-height: 300px;
+                overflow-y: auto;
+                z-index: 1000;
+                display: none;
+            "></div>
+        </div>
+        {% endblock %}
+        
+        <!-- Notification Bell -->
+        <div class="admin-notifications" style="position: relative; cursor: pointer;" onclick="toggleNotifications(event)">
+            <span style="font-size: 22px;">🔔</span>
+            <span id="notificationBadge" style="
+                position: absolute;
+                top: -5px;
+                right: -8px;
+                background: #f44336;
+                color: white;
+                border-radius: 50%;
+                padding: 2px 6px;
+                font-size: 10px;
+                font-weight: bold;
+                display: none;
+            ">0</span>
+            
+            <!-- Notification Dropdown -->
+            <div id="notificationDropdown" style="
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background: var(--bg-white, white);
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                width: 320px;
+                max-height: 400px;
+                overflow-y: auto;
+                z-index: 1001;
+                margin-top: 10px;
+            ">
+                <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color, #eee); font-weight: bold;">
+                    Notifications
+                </div>
+                <div id="notificationList" style="padding: 8px 0;">
+                    <div style="padding: 12px 16px; color: #999; text-align: center;">
+                        No new notifications
+                    </div>
+                </div>
+                <div style="padding: 10px 16px; border-top: 1px solid var(--border-color, #eee); text-align: center; display:flex; gap:10px; justify-content:center;">
+                    <a href="{{ url_for('admin.admin_alerts_page') }}" style="color: var(--primary, #1a7a4a); text-decoration: none; font-size: 12px; font-weight:600;">View all alerts</a>
+                    <span style="color:#ddd;">|</span>
+                    <a href="#" onclick="markAllAdminAlertsRead(); return false;" style="color: #888; text-decoration: none; font-size: 12px;">Mark all read</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Menu -->
+        <div class="admin-user-menu" style="position: relative;">
+            <div class="admin-user-trigger" onclick="toggleUserMenu(event)" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                cursor: pointer;
+                padding: 5px 10px;
+                border-radius: 30px;
+                transition: background 0.3s;
+            ">
+                <div class="admin-avatar" style="
+                    width: 40px;
+                    height: 40px;
+                    background: linear-gradient(135deg, var(--primary, #1a7a4a), var(--primary-dark, #0f5232));
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 18px;
+                ">
+                    {{ session.get('admin_username', session.get('admin_name', 'Admin'))[0]|upper }}
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-weight: 600; font-size: 14px; color: var(--text-color, #333);">{{ session.get('admin_username', session.get('admin_name', 'Admin User')) }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted, #999);">Administrator</div>
+                </div>
+                <span style="font-size: 16px; color: var(--text-muted, #999);">▼</span>
+            </div>
+            
+            <!-- User Dropdown Menu -->
+            <div id="userDropdownMenu" style="
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background: var(--bg-white, white);
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                min-width: 200px;
+                z-index: 1001;
+                margin-top: 10px;
+                overflow: hidden;
+            ">
+                <a href="{{ url_for('admin.dashboard') }}" style="
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px 16px;
+                    color: var(--text-color, #333);
+                    text-decoration: none;
+                    transition: background 0.2s;
+                ">
+                    <span>👤</span> My Profile
+                </a>
+                <a href="{{ url_for('admin.settings') }}" style="
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px 16px;
+                    color: var(--text-color, #333);
+                    text-decoration: none;
+                    transition: background 0.2s;
+                ">
+                    <span>⚙️</span> Settings
+                </a>
+                <hr style="margin: 0; border-color: var(--border-color, #eee);">
+                <a href="{{ url_for('customer.index') }}" style="
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px 16px;
+                    color: var(--text-color, #333);
+                    text-decoration: none;
+                    transition: background 0.2s;
+                ">
+                    <span>🏠</span> View Store
+                </a>
+                <a href="{{ url_for('admin.admin_logout') }}" style="
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px 16px;
+                    color: #f44336;
+                    text-decoration: none;
+                    transition: background 0.2s;
+                ">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Breadcrumb Navigation -->
+{% block breadcrumb %}
+<div class="admin-breadcrumb" style="
+    margin-bottom: 20px;
+    padding: 10px 0;
+    font-size: 13px;
+    color: var(--text-muted, #666);
+">
+    <a href="{{ url_for('admin.dashboard') }}" style="color: var(--primary, #1a7a4a); text-decoration: none;">Home</a>
+    {% set parts = request.path.split('/') %}
+    {% for part in parts %}
+        {% if part and part != 'admin' %}
+            <span> / </span>
+            {% if loop.last %}
+                <span style="color: var(--text-color, #333); font-weight: 500;">{{ part|replace('_', ' ')|replace('-', ' ')|title }}</span>
+            {% else %}
+                <a href="{{ url_for('admin.dashboard') }}/{{ part }}" style="color: var(--text-muted, #666); text-decoration: none;">{{ part|replace('_', ' ')|replace('-', ' ')|title }}</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
+
+<style>
+    .admin-user-trigger:hover {
+        background: var(--hover-bg, #f5f5f5);
+    }
+    
+    .admin-user-menu a:hover {
+        background: var(--hover-bg, #f5f5f5);
+    }
+    
+    .admin-search input:focus {
+        outline: none;
+        border-color: var(--primary, #1a7a4a);
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .admin-header {
+            --bg-white: #16213e;
+            --border-color: #2a2a3e;
+            --text-color: #eee;
+            --text-muted: #aaa;
+            --hover-bg: #1a1a2e;
+        }
+        
+        .admin-search input {
+            background: #1a1a2e;
+            border-color: #2a2a3e;
+            color: #eee;
+        }
+        
+        .search-results {
+            background: #16213e;
+        }
+        
+        .admin-user-trigger:hover {
+            background: #1a1a2e;
+        }
+        
+        .admin-user-menu a:hover {
+            background: #1a1a2e;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .admin-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        .admin-header-actions {
+            justify-content: center;
+        }
+        .admin-search input {
+            width: 150px !important;
+        }
+        .admin-search input:focus {
+            width: 180px !important;
+        }
+        .admin-user-trigger > div:last-child {
+            display: none;
+        }
+        .admin-breadcrumb {
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .admin-header-actions {
+            gap: 12px;
+        }
+        .admin-search {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    // Toggle user dropdown menu
+    function toggleUserMenu(event) {
+        if (event) event.stopPropagation();
+        
+        const menu = document.getElementById('userDropdownMenu');
+        if (menu) {
+            const isVisible = menu.style.display === 'block';
+            // Close all other dropdowns first
+            closeAllDropdowns();
+            menu.style.display = isVisible ? 'none' : 'block';
+            
+            // Close when clicking outside
+            if (!isVisible) {
+                setTimeout(() => {
+                    const closeHandler = function(e) {
+                        if (!menu.contains(e.target) && !e.target.closest('.admin-user-trigger')) {
+                            menu.style.display = 'none';
+                            document.removeEventListener('click', closeHandler);
+                        }
+                    };
+                    document.addEventListener('click', closeHandler);
+                }, 10);
+            }
+        }
+    }
+    
+    // Toggle notifications dropdown
+    function toggleNotifications(event) {
+        if (event) event.stopPropagation();
+        
+        const dropdown = document.getElementById('notificationDropdown');
+        if (dropdown) {
+            const isVisible = dropdown.style.display === 'block';
+            // Close all other dropdowns first
+            closeAllDropdowns();
+            dropdown.style.display = isVisible ? 'none' : 'block';
+            
+            if (!isVisible) {
+                fetchNotifications();
+                
+                setTimeout(() => {
+                    const closeHandler = function(e) {
+                        if (!dropdown.contains(e.target) && !e.target.closest('.admin-notifications')) {
+                            dropdown.style.display = 'none';
+                            document.removeEventListener('click', closeHandler);
+                        }
+                    };
+                    document.addEventListener('click', closeHandler);
+                }, 10);
+            }
+        }
+    }
+    
+    // Close all dropdowns
+    function closeAllDropdowns() {
+        const userMenu = document.getElementById('userDropdownMenu');
+        const notifDropdown = document.getElementById('notificationDropdown');
+        if (userMenu) userMenu.style.display = 'none';
+        if (notifDropdown) notifDropdown.style.display = 'none';
+    }
+    
+    // Fetch notifications
+    function fetchNotifications() {
+        fetch('/api/admin/alerts')
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById('notificationList');
+                const badge = document.getElementById('notificationBadge');
+                
+                if (data.notifications && data.notifications.length > 0) {
+                    list.innerHTML = data.notifications.slice(0, 8).map(n => {
+                        const typeIcon = {new_order:'🛒', new_user:'👤', info:'ℹ️', system:'⚙️'}[n.type] || '🔔';
+                        return `<a href="${n.link || '/admin/alerts'}" style="
+                            display:block;padding:12px 16px;border-bottom:1px solid var(--border-color,#f0f0f0);
+                            text-decoration:none;color:var(--text-color,#333);
+                            background:${n.is_read ? 'transparent' : 'rgba(26,122,74,0.05)'};
+                            transition:background 0.2s;" 
+                            onmouseenter="this.style.background='var(--hover-bg,#f5f5f5)'"
+                            onmouseleave="this.style.background='${n.is_read ? 'transparent' : 'rgba(26,122,74,0.05)'}'">
+                            <div style="display:flex;gap:10px;align-items:flex-start;">
+                                <span style="font-size:18px;flex-shrink:0;">${typeIcon}</span>
+                                <div>
+                                    <div style="font-weight:${n.is_read ? 500 : 700};font-size:13px;">${escapeHtml(n.title)}</div>
+                                    <div style="font-size:11px;color:var(--text-muted,#666);margin-top:2px;">${escapeHtml(n.body)}</div>
+                                    <div style="font-size:10px;color:#999;margin-top:3px;">${n.created_at || ''}</div>
+                                </div>
+                                ${!n.is_read ? '<div style="width:7px;height:7px;background:#1a7a4a;border-radius:50%;margin-left:auto;flex-shrink:0;margin-top:4px;"></div>' : ''}
+                            </div>
+                        </a>`;
+                    }).join('');
+                    
+                    if (badge && data.unread_count > 0) {
+                        badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+                        badge.style.display = 'inline-block';
+                    } else if (badge) {
+                        badge.style.display = 'none';
+                    }
+                } else {
+                    list.innerHTML = '<div style="padding: 12px 16px; color: #999; text-align: center;">No new notifications</div>';
+                    if (badge) badge.style.display = 'none';
+                }
+            })
+            .catch(err => console.error('Error fetching notifications:', err));
+    }
+    
+    // Quick search functionality
+    let searchTimeout = null;
+    
+    function quickSearch(query) {
+        const resultsDiv = document.getElementById('searchResults');
+        
+        if (searchTimeout) clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            if (resultsDiv) resultsDiv.style.display = 'none';
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            fetch(`{{ url_for('api.api_search_products') if url_for is defined else "/api/admin/search" }}?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!resultsDiv) return;
+                    
+                    if (data.results && data.results.length > 0) {
+                        resultsDiv.innerHTML = data.results.map(item => `
+                            <a href="${escapeHtml(item.url)}" style="
+                                display: block;
+                                padding: 10px 12px;
+                                text-decoration: none;
+                                color: var(--text-color, #333);
+                                border-bottom: 1px solid var(--border-color, #f0f0f0);
+                                transition: background 0.2s;
+                            " onmouseenter="this.style.background='var(--hover-bg, #f5f5f5)'" onmouseleave="this.style.background='transparent'">
+                                <div style="font-weight: 500;">${escapeHtml(item.title)}</div>
+                                <div style="font-size: 11px; color: var(--text-muted, #999);">${escapeHtml(item.type)}</div>
+                            </a>
+                        `).join('');
+                        resultsDiv.style.display = 'block';
+                    } else {
+                        resultsDiv.innerHTML = '<div style="padding: 10px 12px; color: #999;">No results found</div>';
+                        resultsDiv.style.display = 'block';
+                    }
+                })
+                .catch(err => console.error('Search error:', err));
+        }, 300);
+    }
+    
+    // Escape HTML helper
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Close search results when clicking outside
+    document.addEventListener('click', function(e) {
+        const searchInput = document.getElementById('adminQuickSearch');
+        const resultsDiv = document.getElementById('searchResults');
+        if (searchInput && resultsDiv && !searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
+            resultsDiv.style.display = 'none';
+        }
+    });
+    
+    // Refresh notifications count periodically
+    let notifInterval = null;
+    
+    function fetchAdminAlertCount() {
+        fetch('/api/admin/alerts/count')
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('notificationBadge');
+                if (badge && data.count && data.count > 0) {
+                    badge.textContent = data.count > 99 ? '99+' : data.count;
+                    badge.style.display = 'inline-block';
+                } else if (badge) {
+                    badge.style.display = 'none';
+                }
+            })
+            .catch(err => console.error('Error fetching notification count:', err));
+    }
+
+    function initNotificationPolling() {
+        if (notifInterval) clearInterval(notifInterval);
+        fetchAdminAlertCount();
+        notifInterval = setInterval(fetchAdminAlertCount, 30000);
+    }
+    
+    // Re-fetch count when user returns to the tab
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') fetchAdminAlertCount();
+    });
+    
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        initNotificationPolling();
+        fetchNotifications();
+    });
+    
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+        if (notifInterval) clearInterval(notifInterval);
+    });
+    
+    function markAllAdminAlertsRead() {
+        fetch('/api/admin/alerts/mark-read', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({})
+        }).then(() => {
+            const badge = document.getElementById('notificationBadge');
+            if (badge) badge.style.display = 'none';
+            fetchNotifications();
+        }).catch(() => {});
+    }
+
+    // Make functions globally available
+    window.toggleUserMenu = toggleUserMenu;
+    window.toggleNotifications = toggleNotifications;
+    window.closeAllDropdowns = closeAllDropdowns;
+    window.quickSearch = quickSearch;
+    window.markAllAdminAlertsRead = markAllAdminAlertsRead;
+</script>

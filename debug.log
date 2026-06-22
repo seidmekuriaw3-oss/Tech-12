@@ -1,0 +1,32 @@
+2026-05-03 05:08:45,911 - app - INFO - ==================================================
+2026-05-03 05:08:45,915 - app - INFO - Ethiosadat Application Started
+2026-05-03 05:08:45,915 - app - INFO - ==================================================
+✅ Database package initialized successfully
+   - get_db: Database connection manager
+   - init_db: Database initializer
+   - close_db: Database connection closer
+   - Product: Product model
+   - Ad: Advertisement model
+   - Order: Order model
+Database initialized successfully
+
+============================================================
+ETHIOSADAT FURNITURE STORE
+============================================================
+Starting application...
+Host: 0.0.0.0
+Port: 5000
+Debug Mode: False
+============================================================
+
+Admin URL: http://0.0.0.0:5000/login
+WhatsApp: 251906020606
+
+============================================================
+Server is ready! Press CTRL+C to stop.
+============================================================
+
+ * Serving Flask app 'app'
+ * Debug mode: off
+Address already in use
+Port 5000 is in use by another program. Either identify and stop that program, or start the server with a different port.

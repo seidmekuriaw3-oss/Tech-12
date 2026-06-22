@@ -1,0 +1,495 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Products Report - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-bar {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .filter-bar input, .filter-bar select {
+        padding: 10px 14px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 8px;
+        font-size: 14px;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .filter-bar input {
+        flex: 1;
+        min-width: 200px;
+    }
+    .stat-card {
+        background: var(--bg-white, white);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+    .stat-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: var(--primary, #1a7a4a);
+    }
+    .stat-label {
+        color: var(--text-muted, #666);
+        font-size: 14px;
+        margin-top: 8px;
+    }
+    .stock-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .stock-high { background: #4caf50; color: white; }
+    .stock-medium { background: #ff9800; color: white; }
+    .stock-low { background: #f44336; color: white; }
+    .stock-out { background: #999; color: white; }
+    .category-badge {
+        background: var(--bg-hover, #f0f0f0);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--text-color, #333);
+    }
+    .export-buttons {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        justify-content: flex-end;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 24px;
+    }
+    .page-btn {
+        padding: 8px 14px;
+        border: 1px solid var(--border-color, #ddd);
+        background: var(--bg-white, white);
+        border-radius: 6px;
+        cursor: pointer;
+        color: var(--text-color, #333);
+    }
+    .page-btn.active {
+        background: #1a7a4a;
+        color: white;
+        border-color: #1a7a4a;
+    }
+    .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .progress-bar {
+        transition: width 0.5s ease;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .category-badge {
+            background: #1a1a2e;
+        }
+        .stat-card {
+            background: #16213e;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .filter-bar {
+            flex-direction: column;
+        }
+        .filter-bar select {
+            width: 100%;
+        }
+        .export-buttons {
+            justify-content: center;
+        }
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .product-table th, .product-table td {
+            padding: 8px;
+            font-size: 12px;
+        }
+    }
+    @media print {
+        .no-print { display: none; }
+        .product-table { font-size: 10px; }
+        .stat-card { box-shadow: none; border: 1px solid #ddd; background: white; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="products-report-container" style="padding: 20px;">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <a href="{{ url_for('admin.reports') }}" class="btn btn-outline" style="margin-bottom: 12px; display: inline-block;">← Back to Reports</a>
+            <h1 style="margin: 8px 0 4px;">📦 Products Report</h1>
+            <p style="color: var(--text-muted, #666); margin: 0;">Product inventory and performance analysis</p>
+        </div>
+        <div class="export-buttons no-print">
+            <button onclick="exportToCSV()" class="btn btn-primary">📥 Export to CSV</button>
+            <button onclick="window.print()" class="btn btn-outline">🖨️ Print</button>
+        </div>
+    </div>
+
+    <!-- Statistics Summary Cards -->
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="stat-card">
+            <div class="stat-value" id="totalProducts">{{ total_products|default(0) }}</div>
+            <div class="stat-label">📦 Total Products</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="totalCategories">{{ categories|length if categories else 0 }}</div>
+            <div class="stat-label">📂 Categories</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="totalValue">{{ total_value|default(0)|format_price_number }} ETB</div>
+            <div class="stat-label">💰 Total Inventory Value</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="lowStockCount">0</div>
+            <div class="stat-label">⚠️ Low Stock Items</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="outOfStockCount">0</div>
+            <div class="stat-label">❌ Out of Stock</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="featuredCount">0</div>
+            <div class="stat-label">⭐ Featured Products</div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar no-print">
+        <input type="text" id="searchProducts" placeholder="🔍 Search by name..." onkeyup="filterProducts()">
+        <select id="categoryFilter" onchange="filterProducts()">
+            <option value="all">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name_am }} ({{ cat.name }})</option>
+            {% endfor %}
+        </select>
+        <select id="stockFilter" onchange="filterProducts()">
+            <option value="all">All Stock</option>
+            <option value="high">In Stock (>10)</option>
+            <option value="medium">Low Stock (1-10)</option>
+            <option value="low">Out of Stock (0)</option>
+        </select>
+        <select id="sortBy" onchange="sortProducts()">
+            <option value="id">Sort by ID</option>
+            <option value="name">Sort by Name</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="stock">Sort by Stock</option>
+        </select>
+        <button onclick="resetFilters()" class="btn btn-outline">Reset</button>
+    </div>
+
+    <!-- Products Table -->
+    <div style="background: var(--bg-white, white); border-radius: 15px; overflow-x: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+        <table class="product-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: linear-gradient(135deg, #1a7a4a, #0f5232); color: white;">
+                    <th style="padding: 14px; text-align: left;">ID</th>
+                    <th style="padding: 14px; text-align: left;">Image</th>
+                    <th style="padding: 14px; text-align: left;">Name</th>
+                    <th style="padding: 14px; text-align: left;">Category</th>
+                    <th style="padding: 14px; text-align: right;">Price</th>
+                    <th style="padding: 14px; text-align: center;">Stock</th>
+                    <th style="padding: 14px; text-align: center;">Featured</th>
+                    <th style="padding: 14px; text-align: center;">Created</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody">
+                {% for product in products %}
+                <tr class="product-row" data-id="{{ product.id }}" data-category="{{ product.category_id }}" data-stock="{{ product.stock_quantity|default(0) }}" data-name="{{ product.name_am }}" data-price="{{ product.price }}" style="border-bottom: 1px solid var(--border-color, #eee);">
+                    <td style="padding: 12px;">{{ product.id }}</td>
+                    <td style="padding: 12px;">
+                        {% if product.thumbnail and product.thumbnail != '' %}
+                            <img src="{{ url_for('static', filename=(product.thumbnail if product.thumbnail[:8] == 'uploads/' else 'uploads/products/' ~ product.thumbnail)) }}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px;" 
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+                        {% else %}
+                            <div style="width: 45px; height: 45px; background: var(--bg-hover, #f5f5f5); display: flex; align-items: center; justify-content: center; border-radius: 6px;">🪑</div>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        <strong>{{ product.name_am }}</strong><br>
+                        <small style="color: var(--text-muted, #999);">{{ product.name }}</small>
+                    </td>
+                    <td style="padding: 12px;">
+                        <span class="category-badge">{{ product.category.name_am if product.category else '-' }}</span>
+                    </td>
+                    <td style="padding: 12px; text-align: right;">
+                        <strong style="color: var(--primary, #1a7a4a);">{{ format_price(product.price) }}</strong>
+                        {% if product.compare_price and product.compare_price > 0 %}
+                            <br><small style="text-decoration: line-through; color: var(--text-muted, #999);">{{ format_price(product.compare_price) }}</small>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        {% set stock = product.stock_quantity|default(0) %}
+                        <span class="stock-badge 
+                            {% if stock > 10 %}stock-high
+                            {% elif stock > 0 %}stock-medium
+                            {% else %}stock-out{% endif %}">
+                            {% if stock > 10 %}✓ {{ stock }}
+                            {% elif stock > 0 %}⚠️ {{ stock }}
+                            {% else %}✗ 0{% endif %}
+                        </span>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        {% if product.is_featured %}
+                            <span style="color: #ff9800;">⭐</span>
+                        {% else %}
+                            <span style="color: #ccc;">☆</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; text-align: center; font-size: 12px; color: var(--text-muted, #666);">
+                        {{ product.created_at.strftime('%Y-%m-%d') if product.created_at else '-' }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+
+    <!-- Category Breakdown Section -->
+    <div style="margin-top: 30px;">
+        <h3>📊 Category Breakdown</h3>
+        <div style="background: var(--bg-white, white); border-radius: 15px; padding: 20px; margin-top: 15px;">
+            {% if categories %}
+                {% for cat in categories %}
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>🏷️ {{ cat.name_am }} ({{ cat.name }})</span>
+                        <span>{{ cat.product_count }} products ({{ ((cat.product_count / total_products) * 100)|round(1) if total_products > 0 else 0 }}%)</span>
+                    </div>
+                    <div style="background: var(--bg-hover, #f0f0f0); border-radius: 10px; height: 8px; overflow: hidden;">
+                        <div class="progress-bar" style="width: 0%; background: linear-gradient(90deg, var(--primary, #1a7a4a), #0f5232); height: 100%; border-radius: 10px;"
+                             data-width="{{ (cat.product_count / total_products * 100) if total_products > 0 else 0 }}">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No category data available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentPage = 1;
+    const rowsPerPage = 15;
+
+    // Helper functions
+    function showToast(message, type) {
+        if (window.showToast) {
+            window.showToast(message, type);
+        } else {
+            alert(message);
+        }
+    }
+
+    // Load low stock and featured counts
+    document.addEventListener('DOMContentLoaded', function() {
+        loadProductStats();
+        animateProgressBars();
+        filterProducts();
+    });
+
+    function loadProductStats() {
+        fetch('{{ url_for('admin.reports') }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('lowStockCount').textContent = data.low_stock || 0;
+                    document.getElementById('outOfStockCount').textContent = data.out_of_stock || 0;
+                    document.getElementById('featuredCount').textContent = data.featured || 0;
+                }
+            })
+            .catch(err => console.error('Error loading product stats:', err));
+    }
+
+    function animateProgressBars() {
+        const progressBars = document.querySelectorAll('.progress-bar');
+        progressBars.forEach(bar => {
+            const width = bar.dataset.width || 0;
+            setTimeout(() => {
+                bar.style.width = width + '%';
+            }, 100);
+        });
+    }
+
+    // Filter products
+    function filterProducts() {
+        const searchTerm = document.getElementById('searchProducts').value.toLowerCase();
+        const categoryFilter = document.getElementById('categoryFilter').value;
+        const stockFilter = document.getElementById('stockFilter').value;
+        const rows = document.querySelectorAll('#productsTableBody .product-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const name = row.dataset.name?.toLowerCase() || '';
+            const category = row.dataset.category;
+            const stock = parseInt(row.dataset.stock) || 0;
+            
+            let matches = true;
+
+            if (searchTerm && !name.includes(searchTerm)) matches = false;
+            if (categoryFilter !== 'all' && category !== categoryFilter) matches = false;
+            if (stockFilter === 'high' && stock <= 10) matches = false;
+            if (stockFilter === 'medium' && (stock <= 0 || stock > 10)) matches = false;
+            if (stockFilter === 'low' && stock > 0) matches = false;
+
+            if (matches) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        updatePagination();
+    }
+
+    // Sort products
+    function sortProducts() {
+        const sortBy = document.getElementById('sortBy').value;
+        const tbody = document.getElementById('productsTableBody');
+        const rows = Array.from(tbody.querySelectorAll('.product-row')).filter(row => row.style.display !== 'none');
+
+        rows.sort((a, b) => {
+            if (sortBy === 'id') {
+                return parseInt(a.dataset.id) - parseInt(b.dataset.id);
+            } else if (sortBy === 'name') {
+                return a.dataset.name.localeCompare(b.dataset.name);
+            } else if (sortBy === 'price_asc') {
+                return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+            } else if (sortBy === 'price_desc') {
+                return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+            } else if (sortBy === 'stock') {
+                return (parseInt(b.dataset.stock) || 0) - (parseInt(a.dataset.stock) || 0);
+            }
+            return 0;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+        filterProducts();
+    }
+
+    function resetFilters() {
+        document.getElementById('searchProducts').value = '';
+        document.getElementById('categoryFilter').value = 'all';
+        document.getElementById('stockFilter').value = 'all';
+        document.getElementById('sortBy').value = 'id';
+        currentPage = 1;
+        filterProducts();
+    }
+
+    // Export to CSV
+    function exportToCSV() {
+        const rows = document.querySelectorAll('#productsTableBody .product-row:not([style*="display: none"])');
+        let csvContent = "\uFEFFID,Name (Amharic),Name (English),Category,Price,Compare Price,Stock,Featured\n";
+        
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const id = cells[0]?.textContent || '';
+            const nameAm = cells[2]?.querySelector('strong')?.textContent || '';
+            const nameEn = cells[2]?.querySelector('small')?.textContent || '';
+            const category = cells[3]?.textContent.trim() || '';
+            const price = cells[4]?.querySelector('strong')?.textContent.replace(' ETB', '') || '';
+            const comparePrice = cells[4]?.querySelector('small')?.textContent.replace(' ETB', '').trim() || '';
+            const stock = cells[5]?.textContent.replace('✓', '').replace('⚠️', '').replace('✗', '').trim() || '0';
+            const featured = cells[6]?.textContent.includes('⭐') ? 'Yes' : 'No';
+            
+            csvContent += `"${id}","${escapeCsv(nameAm)}","${escapeCsv(nameEn)}","${escapeCsv(category)}","${price}","${comparePrice}","${stock}","${featured}"\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', `products_report_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        showToast('Products exported successfully', 'success');
+    }
+    
+    function escapeCsv(text) {
+        if (!text) return '';
+        return text.replace(/"/g, '""');
+    }
+
+    // Pagination
+    function updatePagination() {
+        const rows = document.querySelectorAll('#productsTableBody .product-row');
+        const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+        const totalPages = Math.ceil(visibleRows.length / rowsPerPage);
+        const paginationDiv = document.getElementById('pagination');
+        
+        if (!paginationDiv || totalPages <= 1) {
+            if (paginationDiv) paginationDiv.innerHTML = '';
+            return;
+        }
+
+        let paginationHtml = '';
+        paginationHtml += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        }
+        
+        paginationHtml += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
+        
+        paginationDiv.innerHTML = paginationHtml;
+    }
+
+    function changePage(page) {
+        const rows = document.querySelectorAll('#productsTableBody .product-row');
+        const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+        const totalPages = Math.ceil(visibleRows.length / rowsPerPage);
+        
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        
+        visibleRows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        updatePagination();
+    }
+</script>
+{% endblock %}

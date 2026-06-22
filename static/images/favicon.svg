@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a73e8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d47a1;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow Filter -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.25)"/>
+    </filter>
+    
+    <!-- Sofa Gradient -->
+    <linearGradient id="sofaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e8e8e8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#bgGrad)" filter="url(#shadow)"/>
+  
+  <!-- Inner Decorative Ring -->
+  <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  
+  <!-- === Sofa Design === -->
+  
+  <!-- Sofa Backrest -->
+  <rect x="28" y="32" width="44" height="22" rx="6" fill="white" opacity="0.95"/>
+  
+  <!-- Sofa Base/Seat -->
+  <rect x="24" y="50" width="52" height="18" rx="5" fill="url(#sofaGrad)" filter="url(#shadow)"/>
+  
+  <!-- Armrest Left -->
+  <rect x="18" y="54" width="12" height="14" rx="3" fill="white" filter="url(#shadow)"/>
+  
+  <!-- Armrest Right -->
+  <rect x="70" y="54" width="12" height="14" rx="3" fill="white" filter="url(#shadow)"/>
+  
+  <!-- Backrest Detail/Horizontal Line -->
+  <line x1="32" y1="40" x2="68" y2="40" stroke="rgba(0,0,0,0.08)" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="35" y1="46" x2="65" y2="46" stroke="rgba(0,0,0,0.06)" stroke-width="1" stroke-linecap="round"/>
+  
+  <!-- Cushion Lines -->
+  <line x1="42" y1="54" x2="42" y2="64" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="50" y1="54" x2="50" y2="64" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="58" y1="54" x2="58" y2="64" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Armrest Details -->
+  <rect x="20" y="56" width="8" height="10" rx="2" fill="rgba(255,255,255,0.5)"/>
+  <rect x="72" y="56" width="8" height="10" rx="2" fill="rgba(255,255,255,0.5)"/>
+  
+  <!-- Subtle Highlight on Sofa -->
+  <rect x="28" y="35" width="44" height="3" rx="1.5" fill="rgba(255,255,255,0.3)"/>
+  
+  <!-- Decorative Pillow on left -->
+  <ellipse cx="35" cy="36" rx="6" ry="4" fill="rgba(255,255,255,0.4)" transform="rotate(-15 35 36)"/>
+  
+  <!-- Decorative Pillow on right -->
+  <ellipse cx="65" cy="36" rx="6" ry="4" fill="rgba(255,255,255,0.4)" transform="rotate(15 65 36)"/>
+  
+  <!-- Brand Letter -->
+  <text x="50" y="86" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold" font-size="11" fill="white" letter-spacing="1">
+    E
+  </text>
+  
+  <!-- Bottom Decorative Line -->
+  <line x1="30" y1="92" x2="70" y2="92" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+  
+  <!-- Small Decorative Dots -->
+  <circle cx="50" cy="10" r="1.5" fill="rgba(255,255,255,0.4)"/>
+  <circle cx="85" cy="25" r="1" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="15" cy="25" r="1" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="85" cy="80" r="1" fill="rgba(255,255,255,0.25)"/>
+  <circle cx="15" cy="80" r="1" fill="rgba(255,255,255,0.25)"/>
+</svg>

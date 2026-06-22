@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block title %}
+{% if lang == 'am' %}የምርጦቼ ዝርዝር{% elif lang == 'ar' %}قائمة الأمنيات{% else %}My Wishlist{% endif %}
+ — Ethiosadat Furniture
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.wl-hero {
+    background: linear-gradient(135deg,#1a7a4a,#0f5232);
+    border-radius: 20px;
+    padding: 36px 28px;
+    margin-bottom: 36px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.wl-hero-icon { font-size: 44px; flex-shrink: 0; }
+.wl-hero h1 { font-size: clamp(20px,4vw,28px); font-weight: 800; margin: 0 0 6px; }
+.wl-hero p  { font-size: 14px; opacity: 0.88; margin: 0; }
+.wl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+}
+.wl-card {
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 2px 14px rgba(26,122,74,0.08);
+    border: 1px solid rgba(26,122,74,0.1);
+    display: flex;
+    flex-direction: column;
+    transition: transform .22s, box-shadow .22s;
+}
+.wl-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(26,122,74,0.14);
+}
+.wl-img {
+    height: 200px;
+    background: #f7fbf8;
+    position: relative;
+    overflow: hidden;
+}
+.wl-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .4s;
+}
+.wl-card:hover .wl-img img { transform: scale(1.06); }
+.wl-img-placeholder {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; font-size: 56px; color: #c8dece;
+}
+.wl-remove {
+    position: absolute; top: 10px; right: 10px;
+    background: white; border: none; border-radius: 50%;
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+    color: #e53935;
+    transition: transform .2s, background .2s;
+    z-index: 2;
+}
+.wl-remove:hover { transform: scale(1.15); background: #ffeaea; }
+.wl-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+.wl-name {
+    font-size: 15px; font-weight: 600; color: #1a2e1e;
+    margin: 0 0 8px; line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+}
+.wl-price { font-size: 20px; font-weight: 800; color: #1a7a4a; margin-bottom: 12px; }
+.wl-btn {
+    width: 100%;
+    background: linear-gradient(135deg,#1a7a4a,#0f5232);
+    color: white; border: none;
+    padding: 11px; border-radius: 40px;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; margin-top: auto;
+    transition: transform .2s, box-shadow .2s;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.wl-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(26,122,74,0.36);
+}
+.wl-empty {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 24px;
+    border: 1px solid #d4ead8;
+}
+.wl-empty-icon { font-size: 64px; margin-bottom: 20px; }
+.wl-empty h2 { font-size: 22px; font-weight: 700; color: #1a2e1e; margin: 0 0 10px; }
+.wl-empty p  { font-size: 14px; color: #6a8f70; margin: 0 0 28px; }
+.wl-empty a {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg,#1a7a4a,#0f5232); color: white;
+    padding: 13px 32px; border-radius: 40px;
+    text-decoration: none; font-weight: 700; font-size: 14px;
+    box-shadow: 0 4px 16px rgba(26,122,74,0.28);
+    transition: transform .22s, box-shadow .22s;
+}
+.wl-empty a:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,122,74,0.38); }
+@media (max-width: 600px) {
+    .wl-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .wl-img { height: 160px; }
+    .wl-hero { padding: 24px 18px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wl-hero">
+    <div class="wl-hero-icon">❤️</div>
+    <div>
+        <h1>{% if lang == 'am' %}የምርጦቼ ዝርዝር{% elif lang == 'ar' %}قائمة الأمنيات{% else %}My Wishlist{% endif %}</h1>
+        <p>
+            {% if wishlist %}
+                {{ wishlist|length }}
+                {% if lang == 'am' %}ምርቶች ተቀምጠዋል{% elif lang == 'ar' %}منتج محفوظ{% else %}saved item{% if wishlist|length != 1 %}s{% endif %}{% endif %}
+            {% else %}
+                {% if lang == 'am' %}ምንም ምርት አልተቀመጠም{% elif lang == 'ar' %}لا توجد منتجات محفوظة{% else %}No saved products yet{% endif %}
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+{% if wishlist %}
+<div class="wl-grid">
+    {% for item in wishlist %}
+    <div class="wl-card" id="wl-card-{{ item.product_id }}">
+        <div class="wl-img">
+            {% if item.thumbnail and item.thumbnail != '' %}
+                <img src="{{ url_for('static', filename=item.thumbnail) }}"
+                     alt="{{ item.name_am if lang == 'am' else item.name }}"
+                     loading="lazy"
+                     onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'wl-img-placeholder\'>🪑</div>'">
+            {% else %}
+                <div class="wl-img-placeholder">🪑</div>
+            {% endif %}
+            <button class="wl-remove" title="Remove from wishlist"
+                    onclick="removeFromWishlist({{ item.product_id }})">❤️</button>
+        </div>
+        <div class="wl-body">
+            <div class="wl-name">
+                {{ item.name_am if lang == 'am' else (item.name_ar if lang == 'ar' else item.name) }}
+            </div>
+            <div class="wl-price">{{ format_price(item.price) }}</div>
+            <button class="wl-btn" onclick="if(window.addToCart) addToCart('{{ item.product_id }}', 1, this)">
+                🛒
+                {% if lang == 'am' %}ወደ ዝርዝር ጨምር{% elif lang == 'ar' %}أضف إلى السلة{% else %}Add to Cart{% endif %}
+            </button>
+            <a href="{{ url_for('customer.product_detail', product_id=item.product_id) }}"
+               style="display:block;text-align:center;margin-top:10px;font-size:12px;color:#6a8f70;text-decoration:none;">
+                {% if lang == 'am' %}ዝርዝር ይመልከቱ →{% elif lang == 'ar' %}عرض التفاصيل →{% else %}View Details →{% endif %}
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="wl-empty">
+    <div class="wl-empty-icon">💔</div>
+    <h2>{% if lang == 'am' %}ምርጦቼ ዝርዝር ባዶ ነው{% elif lang == 'ar' %}قائمة الأمنيات فارغة{% else %}Your Wishlist is Empty{% endif %}</h2>
+    <p>{% if lang == 'am' %}ምርቶቹን ለማሰስ ይጀምሩ{% elif lang == 'ar' %}تصفح منتجاتنا وابدأ الحفظ{% else %}Browse our products and save your favorites{% endif %}</p>
+    <a href="{{ url_for('customer.products') }}">
+        📦 {% if lang == 'am' %}ምርቶቹን ይመልከቱ{% elif lang == 'ar' %}استعرض المنتجات{% else %}Browse Products{% endif %}
+    </a>
+</div>
+{% endif %}
+
+<script>
+function removeFromWishlist(productId) {
+    fetch('/api/wishlist/remove', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({product_id: productId})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+        if (d.success) {
+            var card = document.getElementById('wl-card-' + productId);
+            if (card) {
+                card.style.transition = 'opacity .3s, transform .3s';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.9)';
+                setTimeout(function() {
+                    card.remove();
+                    var grid = document.querySelector('.wl-grid');
+                    if (grid && grid.children.length === 0) location.reload();
+                }, 320);
+            }
+            if (window.showToast) showToast('Removed from wishlist', 'info');
+        }
+    })
+    .catch(function() {});
+}
+</script>
+{% endblock %}

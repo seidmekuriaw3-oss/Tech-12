@@ -1,0 +1,535 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+        margin: 30px 0;
+    }
+    .stat-card {
+        background: var(--bg-white, white);
+        padding: 25px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #1a7a4a, #0f5232);
+    }
+    .stat-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+    .stat-value {
+        font-size: 36px;
+        font-weight: bold;
+        color: #1a7a4a;
+        margin: 10px 0;
+    }
+    .stat-label {
+        color: var(--text-muted, #666);
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+    .admin-menu {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 24px;
+        margin-top: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    .recent-section {
+        margin-top: 30px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+    .recent-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    .recent-card h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-color, #333);
+    }
+    .recent-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color-light, #f5f5f5);
+    }
+    .recent-item:last-child {
+        border-bottom: none;
+    }
+    .recent-item-name {
+        font-weight: 500;
+        color: var(--text-color, #333);
+    }
+    .recent-item-price {
+        color: #1a7a4a;
+        font-weight: 600;
+    }
+    .view-all {
+        margin-top: 15px;
+        text-align: center;
+    }
+    .welcome-section {
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white;
+        padding: 30px;
+        border-radius: 20px;
+        margin-bottom: 30px;
+    }
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+    }
+    .btn-small {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    .system-info {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .system-info {
+            background: #16213e;
+        }
+        .recent-item {
+            border-bottom-color: #2a2a3e;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        .recent-section {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        .stat-value {
+            font-size: 28px;
+        }
+        .welcome-section {
+            padding: 20px;
+        }
+        .action-buttons {
+            justify-content: center;
+        }
+        .system-info {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+    @media (max-width: 480px) {
+        .stat-card {
+            padding: 15px;
+        }
+        .stat-icon {
+            font-size: 36px;
+        }
+        .stat-value {
+            font-size: 24px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container" style="padding: 20px;">
+    
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h1 style="margin: 0 0 8px 0;">👑 Welcome Back, {{ session.get('admin_username', 'Admin') }}!</h1>
+                <p style="margin: 0; opacity: 0.9;">Here's what's happening with your store today.</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 30px;">
+                <span id="currentDateTime"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card" onclick="location.href='{{ url_for('admin.products') }}'">
+            <div class="stat-icon">📦</div>
+            <div class="stat-value">{{ stats.products_count|default(0) }}</div>
+            <div class="stat-label">Total Products</div>
+            <a href="{{ url_for('admin.products') }}" class="btn btn-outline btn-small">Manage →</a>
+        </div>
+        <div class="stat-card" onclick="location.href='{{ url_for('admin.ads') }}'">
+            <div class="stat-icon">📢</div>
+            <div class="stat-value">{{ stats.ads_count|default(0) }}</div>
+            <div class="stat-label">Advertisements</div>
+            <a href="{{ url_for('admin.ads') }}" class="btn btn-outline btn-small">Manage →</a>
+        </div>
+        <div class="stat-card" onclick="location.href='{{ url_for('admin.orders') }}'">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-value">{{ stats.total_orders|default(0) }}</div>
+            <div class="stat-label">Total Orders</div>
+            <a href="{{ url_for('admin.orders') }}" class="btn btn-outline btn-small">View →</a>
+        </div>
+        <div class="stat-card" onclick="location.href='{{ url_for('admin.reports') }}'">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="totalRevenue">{{ stats.total_revenue|default(0)|format_price_number }} ETB</div>
+            <div class="stat-label">Total Revenue</div>
+            <a href="{{ url_for('admin.reports') }}" class="btn btn-outline btn-small">Reports →</a>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">{{ stats.customers_count|default(0) }}</div>
+            <div class="stat-label">Registered Customers</div>
+            <span class="btn btn-outline btn-small" style="cursor:default;">Total Users</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🟢</div>
+            <div class="stat-value" id="liveVisitors">{{ stats.live_visitors|default(0) }}</div>
+            <div class="stat-label">Live Visitors (5 min)</div>
+            <span class="btn btn-outline btn-small" style="cursor:default;">Active Now</span>
+        </div>
+        <div class="stat-card" onclick="location.href='{{ url_for('admin.orders') }}'">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value">{{ stats.today_orders|default(0) }}</div>
+            <div class="stat-label">Orders Today</div>
+            <a href="{{ url_for('admin.orders') }}" class="btn btn-outline btn-small">View →</a>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👁️</div>
+            <div class="stat-value">{{ stats.total_page_views|default(0) }}</div>
+            <div class="stat-label">Total Page Views</div>
+            <span class="btn btn-outline btn-small" style="cursor:default;">All Time</span>
+        </div>
+    </div>
+
+    <!-- Pending Orders Alert -->
+    {% if stats.pending_orders|default(0) > 0 %}
+    <div style="background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div>
+            <span style="font-weight: bold;">⏳ {{ stats.pending_orders }} Pending Order(s)</span>
+            <span style="margin-left: 10px; color: #666;">Requires your attention</span>
+        </div>
+        <a href="{{ url_for('admin.orders') }}" class="btn btn-small" style="background: #ff9800; color: white;">View Pending Orders →</a>
+    </div>
+    {% endif %}
+
+    <!-- Recent Activity Section -->
+    <div class="recent-section">
+        <!-- Recent Products -->
+        <div class="recent-card">
+            <h3>
+                <span>🆕</span> Recent Products
+                <span style="font-size: 12px; margin-left: auto;">Last 5 added</span>
+            </h3>
+            {% if recent_products %}
+                {% for product in recent_products %}
+                <div class="recent-item">
+                    <div class="recent-item-name">{{ product.name_am }}</div>
+                    <div class="recent-item-price">{{ format_price(product.price) }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 30px; color: #999;">No products yet</div>
+            {% endif %}
+            <div class="view-all">
+                <a href="{{ url_for('admin.products') }}" class="btn btn-outline btn-small">View All Products →</a>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="recent-card">
+            <h3>
+                <span>🛒</span> Recent Orders
+                <span style="font-size: 12px; margin-left: auto;">Last 5 orders</span>
+            </h3>
+            {% if recent_orders %}
+                {% for order in recent_orders %}
+                <div class="recent-item">
+                    <div class="recent-item-name">#{{ order.order_number }} - {{ order.shipping_address.split(',')[0] if order.shipping_address else 'Customer' }}</div>
+                    <div class="recent-item-price">{{ format_price(order.total) }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 30px; color: #999;">No orders yet</div>
+            {% endif %}
+            <div class="view-all">
+                <a href="{{ url_for('admin.orders') }}" class="btn btn-outline btn-small">View All Orders →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order-Triggered Stock Alerts (flash when admin visits after an order) -->
+    {% if order_stock_alerts %}
+    <div id="orderStockAlerts" style="margin-top: 20px; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(244,67,54,0.25);">
+        <div style="background: linear-gradient(90deg, #b71c1c, #f44336); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 10px; justify-content: space-between;">
+            <span style="font-weight: 700; font-size: 15px;">🔔 Stock Alert — Triggered by Latest Order</span>
+            <button onclick="document.getElementById('orderStockAlerts').style.display='none'" style="background: rgba(255,255,255,0.25); border: none; color: white; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; font-size: 14px; line-height: 1;">✕</button>
+        </div>
+        <div style="background: #fff8f8; padding: 12px 20px;">
+            {% for alert in order_stock_alerts %}
+            <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #fce4e4;">
+                {% if alert.alert_level == 'critical' %}
+                <span style="background: #f44336; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap;">OUT OF STOCK</span>
+                {% else %}
+                <span style="background: #ff9800; color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap;">LOW STOCK</span>
+                {% endif %}
+                <span style="font-weight: 600;">{{ alert.name_am or alert.name }}</span>
+                <span style="margin-left: auto; color: #c62828; font-weight: 700;">{{ alert.stock_quantity }} remaining</span>
+            </div>
+            {% endfor %}
+            <div style="padding-top: 10px; text-align: right;">
+                <a href="{{ url_for('admin.products') }}" class="btn btn-small" style="background: #f44336; color: white;">Update Stock →</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Real-time Stock Alert Panel -->
+    {% if out_of_stock_products or low_stock_products %}
+    <div style="margin-top: 20px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.10);">
+        <!-- Panel header -->
+        <div style="background: linear-gradient(90deg, #e53935, #ff7043); color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 22px;">📦</span>
+            <div>
+                <div style="font-weight: 700; font-size: 16px;">Stock Alert Centre</div>
+                <div style="font-size: 12px; opacity: 0.9;">
+                    {% set total_alerts = (out_of_stock_products|length) + (low_stock_products|length) %}
+                    {{ total_alerts }} item{{ 's' if total_alerts != 1 else '' }} need{{ '' if total_alerts != 1 else 's' }} attention
+                    {% if out_of_stock_products %} — {{ out_of_stock_products|length }} critical{% endif %}
+                </div>
+            </div>
+            <div style="margin-left: auto;">
+                <a href="{{ url_for('admin.products') }}" style="background: rgba(255,255,255,0.25); color: white; padding: 6px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600;">Update Stock →</a>
+            </div>
+        </div>
+
+        <!-- Out of Stock (Critical) -->
+        {% if out_of_stock_products %}
+        <div style="background: #fff5f5; padding: 16px 24px; border-bottom: 2px solid #ffcdd2;">
+            <div style="font-weight: 700; color: #c62828; font-size: 13px; letter-spacing: 0.5px; margin-bottom: 12px;">🚫 OUT OF STOCK — CRITICAL</div>
+            {% for product in out_of_stock_products %}
+            <div style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid #fce4e4;">
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-weight: 600; color: #333; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        {{ product.name_am or product.name }}
+                    </div>
+                    {% if product.category_name %}
+                    <div style="font-size: 11px; color: #999; margin-top: 2px;">{{ product.category_name }}</div>
+                    {% endif %}
+                </div>
+                <div style="flex: 0 0 160px;">
+                    <div style="background: #ffcdd2; border-radius: 6px; height: 6px; overflow: hidden;">
+                        <div style="background: #f44336; height: 100%; width: 0%;"></div>
+                    </div>
+                    <div style="font-size: 11px; color: #c62828; margin-top: 3px; text-align: right; font-weight: 700;">0 / {{ product.low_stock_threshold }} threshold</div>
+                </div>
+                <a href="{{ url_for('admin.product_edit', pid=product.id) }}" style="background: #f44336; color: white; padding: 5px 12px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600; white-space: nowrap;">Restock</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Low Stock (Warning) -->
+        {% if low_stock_products %}
+        <div style="background: #fffde7; padding: 16px 24px;">
+            <div style="font-weight: 700; color: #e65100; font-size: 13px; letter-spacing: 0.5px; margin-bottom: 12px;">⚠️ LOW STOCK — WARNING</div>
+            {% for product in low_stock_products %}
+            {% set pct = [(product.stock_quantity / product.low_stock_threshold * 100)|int, 100]|min if product.low_stock_threshold > 0 else 100 %}
+            {% set bar_color = '#f44336' if pct < 30 else '#ff9800' if pct < 70 else '#ffc107' %}
+            <div style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid #fff9c4;">
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-weight: 600; color: #333; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        {{ product.name_am or product.name }}
+                    </div>
+                    {% if product.category_name %}
+                    <div style="font-size: 11px; color: #999; margin-top: 2px;">{{ product.category_name }}</div>
+                    {% endif %}
+                </div>
+                <div style="flex: 0 0 160px;">
+                    <div style="background: #f5f5f5; border-radius: 6px; height: 6px; overflow: hidden;">
+                        <div style="background: {{ bar_color }}; height: 100%; width: {{ pct }}%; transition: width 0.5s ease;"></div>
+                    </div>
+                    <div style="font-size: 11px; color: #795548; margin-top: 3px; text-align: right; font-weight: 600;">{{ product.stock_quantity }} / {{ product.low_stock_threshold }} threshold</div>
+                </div>
+                <a href="{{ url_for('admin.product_edit', pid=product.id) }}" style="background: #ff9800; color: white; padding: 5px 12px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600; white-space: nowrap;">Restock</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Quick Actions Menu -->
+    <div class="admin-menu">
+        <h3 style="margin-top: 0; margin-bottom: 20px;">⚡ Quick Actions</h3>
+        <div class="action-buttons">
+            <a href="{{ url_for('admin.product_create') }}" class="btn btn-primary">
+                <span>➕</span> Add Product
+            </a>
+            <a href="{{ url_for('admin.ad_create') }}" class="btn" style="background: #ff9800; color: white;">
+                <span>📢</span> Create Ad
+            </a>
+            <a href="{{ url_for('admin.orders') }}" class="btn btn-outline">
+                <span>🛒</span> View Orders
+            </a>
+            <a href="{{ url_for('admin.reports') }}" class="btn btn-outline">
+                <span>📊</span> Reports
+            </a>
+            <a href="{{ url_for('admin.settings') }}" class="btn btn-outline">
+                <span>⚙️</span> Settings
+            </a>
+            <a href="{{ url_for('admin.send_notification') }}" class="btn btn-outline">
+                <span>🔔</span> Send Notification
+            </a>
+            <a href="{{ url_for('admin.admin_logout') }}" class="btn btn-outline" style="border-color: #f44336; color: #f44336;">
+                <span>🚪</span> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- System Info -->
+    <div class="system-info">
+        <div style="font-size: 13px; color: var(--text-muted, #666);">
+            <span>🟢 System Status: </span>
+            <span id="systemStatus">Online</span>
+        </div>
+        <div style="font-size: 13px; color: var(--text-muted, #666);">
+            <span>📅 Last Backup: </span>
+            <span id="lastBackup">Not yet</span>
+        </div>
+        <div style="font-size: 13px; color: var(--text-muted, #666);">
+            <span>📦 Database Size: </span>
+            <span id="dbSize">Loading...</span>
+        </div>
+        <div style="font-size: 13px; color: var(--text-muted, #666);">
+            <span>👥 Total Customers: </span>
+            <span id="totalCustomers">{{ stats.customers_count|default(0) }}</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update current date and time
+    function updateDateTime() {
+        const now = new Date();
+        const formatted = now.toLocaleString('en-US', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const dateTimeSpan = document.getElementById('currentDateTime');
+        if (dateTimeSpan) dateTimeSpan.textContent = formatted;
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+
+    // Load total revenue
+    function loadTotalRevenue() {
+        fetch('{{ url_for('admin.reports') }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const revenueSpan = document.getElementById('totalRevenue');
+                    if (revenueSpan) {
+                        const revenue = data.total_revenue || 0;
+                        revenueSpan.textContent = revenue.toLocaleString() + ' ETB';
+                    }
+                }
+            })
+            .catch(err => console.error('Error loading revenue:', err));
+    }
+    loadTotalRevenue();
+
+    // Load database info
+    function loadDbInfo() {
+        fetch('{{ url_for('admin.dashboard') }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const dbSizeSpan = document.getElementById('dbSize');
+                    if (dbSizeSpan) dbSizeSpan.textContent = data.size || 'Unknown';
+                    const lastBackupSpan = document.getElementById('lastBackup');
+                    if (lastBackupSpan && data.last_backup) lastBackupSpan.textContent = data.last_backup;
+                }
+            })
+            .catch(err => console.error('Error loading DB info:', err));
+    }
+    loadDbInfo();
+
+    // Check system status
+    function checkSystemStatus() {
+        fetch('{{ url_for("utility.health_check") }}')
+            .then(response => {
+                const statusSpan = document.getElementById('systemStatus');
+                if (statusSpan) {
+                    if (response.ok) {
+                        statusSpan.innerHTML = '<span style="color: #4caf50;">● Online</span>';
+                    } else {
+                        statusSpan.innerHTML = '<span style="color: #ff9800;">● Degraded</span>';
+                    }
+                }
+            })
+            .catch(() => {
+                const statusSpan = document.getElementById('systemStatus');
+                if (statusSpan) statusSpan.innerHTML = '<span style="color: #f44336;">● Offline</span>';
+            });
+    }
+    checkSystemStatus();
+    setInterval(checkSystemStatus, 30000);
+
+    // Auto-refresh data every minute
+    let refreshInterval = setInterval(() => {
+        loadTotalRevenue();
+        loadDbInfo();
+    }, 60000);
+    
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+        if (refreshInterval) clearInterval(refreshInterval);
+    });
+</script>
+{% endblock %}

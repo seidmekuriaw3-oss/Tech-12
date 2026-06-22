@@ -1,0 +1,426 @@
+<!-- ==================== FLASH MESSAGES ==================== -->
+<!-- Reusable flash messages component with auto-dismiss -->
+
+{% if get_flashed_messages(with_categories=true) %}
+<div class="flash-messages-container" id="flashMessagesContainer">
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="flash-message flash-{{ category }}" role="alert" data-dismissible="true">
+        <div class="flash-icon">
+            {% if category == 'success' %}
+                ✅
+            {% elif category == 'error' or category == 'danger' %}
+                ❌
+            {% elif category == 'warning' %}
+                ⚠️
+            {% elif category == 'info' %}
+                ℹ️
+            {% else %}
+                📢
+            {% endif %}
+        </div>
+        <div class="flash-content">
+            {{ message }}
+        </div>
+        <button class="flash-close" onclick="this.parentElement.remove()" aria-label="Close">
+            &times;
+        </button>
+        <div class="flash-progress"></div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<style>
+    .flash-messages-container {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-width: 400px;
+        width: calc(100% - 40px);
+        pointer-events: none;
+    }
+    
+    .flash-message {
+        position: relative;
+        background: var(--bg-white, white);
+        border-radius: 16px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        animation: slideInRight 0.3s ease;
+        pointer-events: auto;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-left: 4px solid;
+    }
+    
+    .flash-success {
+        background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        border-left-color: #4caf50;
+        color: #2e7d32;
+    }
+    
+    .flash-error {
+        background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        border-left-color: #f44336;
+        color: #c62828;
+    }
+    
+    .flash-warning {
+        background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+        border-left-color: #ff9800;
+        color: #e65100;
+    }
+    
+    .flash-info {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        border-left-color: #1a7a4a;
+        color: #0f5232;
+    }
+    
+    .flash-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+    
+    .flash-content {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+    }
+    
+    .flash-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: inherit;
+        opacity: 0.6;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+    
+    .flash-close:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.1);
+    }
+    
+    .flash-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: rgba(0, 0, 0, 0.15);
+        width: 100%;
+        animation: progress 4s linear forwards;
+    }
+    
+    .flash-success .flash-progress {
+        background: #4caf50;
+    }
+    
+    .flash-error .flash-progress {
+        background: #f44336;
+    }
+    
+    .flash-warning .flash-progress {
+        background: #ff9800;
+    }
+    
+    .flash-info .flash-progress {
+        background: #1a7a4a;
+    }
+    
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes progress {
+        from {
+            width: 100%;
+        }
+        to {
+            width: 0%;
+        }
+    }
+    
+    /* Stacked messages animation */
+    .flash-message:nth-child(1) {
+        animation-delay: 0s;
+    }
+    .flash-message:nth-child(2) {
+        animation-delay: 0.05s;
+    }
+    .flash-message:nth-child(3) {
+        animation-delay: 0.1s;
+    }
+    
+    /* Mobile Styles */
+    @media (max-width: 768px) {
+        .flash-messages-container {
+            top: 70px;
+            right: 10px;
+            left: 10px;
+            max-width: none;
+            width: auto;
+        }
+        
+        .flash-message {
+            padding: 14px 16px;
+            border-radius: 12px;
+        }
+        
+        .flash-icon {
+            font-size: 20px;
+        }
+        
+        .flash-content {
+            font-size: 13px;
+        }
+    }
+    
+    /* Dark Mode */
+    @media (prefers-color-scheme: dark) {
+        .flash-success {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: #a5d6a7;
+        }
+        .flash-error {
+            background: linear-gradient(135deg, #b71c1c, #c62828);
+            color: #ffcdd2;
+        }
+        .flash-warning {
+            background: linear-gradient(135deg, #e65100, #ef6c00);
+            color: #ffe0b2;
+        }
+        .flash-info {
+            background: linear-gradient(135deg, #0f5232, #0f5232);
+            color: #bbdefb;
+        }
+    }
+    
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+        .flash-message,
+        .flash-progress {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    // Auto-dismiss flash messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash-message');
+        
+        flashMessages.forEach(flash => {
+            // Auto dismiss after 5 seconds
+            const timeoutId = setTimeout(() => {
+                dismissFlash(flash);
+            }, 5000);
+            flash.dataset.timeoutId = timeoutId;
+            
+            // Pause auto-dismiss on hover
+            flash.addEventListener('mouseenter', () => {
+                if (flash.dataset.timeoutId) {
+                    clearTimeout(parseInt(flash.dataset.timeoutId));
+                }
+                const progressBar = flash.querySelector('.flash-progress');
+                if (progressBar) {
+                    progressBar.style.animationPlayState = 'paused';
+                }
+            });
+            
+            flash.addEventListener('mouseleave', () => {
+                const newTimeoutId = setTimeout(() => {
+                    dismissFlash(flash);
+                }, 2000);
+                flash.dataset.timeoutId = newTimeoutId;
+                const progressBar = flash.querySelector('.flash-progress');
+                if (progressBar) {
+                    progressBar.style.animationPlayState = 'running';
+                }
+            });
+            
+            // Add click handler for manual close
+            const closeBtn = flash.querySelector('.flash-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    if (flash.dataset.timeoutId) {
+                        clearTimeout(parseInt(flash.dataset.timeoutId));
+                    }
+                    dismissFlash(flash);
+                });
+            }
+        });
+    });
+    
+    function dismissFlash(flash) {
+        if (!flash || !flash.parentNode) return;
+        
+        flash.style.animation = 'slideOutRight 0.3s ease forwards';
+        setTimeout(() => {
+            if (flash && flash.parentNode) flash.remove();
+            
+            // Remove container if no messages left
+            const container = document.getElementById('flashMessagesContainer');
+            if (container && container.children.length === 0) {
+                container.remove();
+            }
+        }, 300);
+    }
+    
+    // Add slideOut animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+        
+        @keyframes slideOutLeft {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Function to manually add flash message (for AJAX responses)
+    function addFlashMessage(message, category = 'info') {
+        if (!message) return null;
+        
+        let container = document.getElementById('flashMessagesContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'flashMessagesContainer';
+            container.className = 'flash-messages-container';
+            document.body.appendChild(container);
+        }
+        
+        const flash = document.createElement('div');
+        const categoryMap = {
+            'danger': 'error',
+            'error': 'error',
+            'success': 'success',
+            'warning': 'warning',
+            'info': 'info'
+        };
+        const mappedCategory = categoryMap[category] || category || 'info';
+        
+        flash.className = `flash-message flash-${mappedCategory}`;
+        flash.setAttribute('role', 'alert');
+        
+        const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+        
+        flash.innerHTML = `
+            <div class="flash-icon">${icons[mappedCategory] || '📢'}</div>
+            <div class="flash-content">${escapeHtml(message)}</div>
+            <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+            <div class="flash-progress"></div>
+        `;
+        
+        container.appendChild(flash);
+        
+        // Auto dismiss after 5 seconds
+        const timeoutId = setTimeout(() => {
+            if (flash.parentNode) dismissFlash(flash);
+        }, 5000);
+        flash.dataset.timeoutId = timeoutId;
+        
+        // Pause on hover
+        flash.addEventListener('mouseenter', () => {
+            if (flash.dataset.timeoutId) {
+                clearTimeout(parseInt(flash.dataset.timeoutId));
+            }
+            const progressBar = flash.querySelector('.flash-progress');
+            if (progressBar) {
+                progressBar.style.animationPlayState = 'paused';
+            }
+        });
+        
+        flash.addEventListener('mouseleave', () => {
+            const newTimeoutId = setTimeout(() => {
+                if (flash.parentNode) dismissFlash(flash);
+            }, 2000);
+            flash.dataset.timeoutId = newTimeoutId;
+            const progressBar = flash.querySelector('.flash-progress');
+            if (progressBar) {
+                progressBar.style.animationPlayState = 'running';
+            }
+        });
+        
+        // Close button handler
+        const closeBtn = flash.querySelector('.flash-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                if (flash.dataset.timeoutId) clearTimeout(parseInt(flash.dataset.timeoutId));
+                dismissFlash(flash);
+            });
+        }
+        
+        return flash;
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    function clearAllFlashMessages() {
+        const container = document.getElementById('flashMessagesContainer');
+        if (container) {
+            const messages = container.querySelectorAll('.flash-message');
+            messages.forEach(msg => {
+                if (msg.dataset.timeoutId) clearTimeout(parseInt(msg.dataset.timeoutId));
+                msg.remove();
+            });
+            container.remove();
+        }
+    }
+    
+    // Make functions globally available
+    window.addFlashMessage = addFlashMessage;
+    window.clearAllFlashMessages = clearAllFlashMessages;
+    window.dismissFlash = dismissFlash;
+</script>

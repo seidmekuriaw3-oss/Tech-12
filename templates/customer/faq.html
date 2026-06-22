@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}FAQ - Ethiosadat Furniture{% endblock %}
+{% block content %}
+<div style="max-width:900px;margin:40px auto;padding:0 20px;">
+    <h1 style="color:#1a7a4a;margin-bottom:30px;">
+        {% if lang == 'am' %}በጣም የሚጠየቁ ጥያቄዎች{% elif lang == 'ar' %}الأسئلة الشائعة{% else %}Frequently Asked Questions{% endif %}
+    </h1>
+
+    <div style="display:flex;flex-direction:column;gap:16px;">
+        {% set faqs_am = [
+            ('ምርቱን እንዴት ማዘዝ እችላለሁ?', 'ምርቱን ወደ ጋሪ ጨምረው ትዕዛዝ ያስገቡ። የስልክ ቁጥርዎን እና አድራሻዎን ያስገቡ።'),
+            ('ማጓጓዣ ዋጋ ስንት ነው?', 'ከ5,000 ብር በላይ ትዕዛዝ ላይ ነጻ ማጓጓዣ ይሰጣል። ከዚህ በታች 200 ብር ይሆናል።'),
+            ('ምርቱን መመለስ ይቻላል?', 'ምርቱን ከተቀበሉ በ7 ቀናት ውስጥ ማቅረብ ይቻላል። ምርቱ ሳይጠቅስ ወይም ሳይጎዳ መሆን አለበት።'),
+            ('ትዕዛዛቸውን እንዴት መከታተል እችላለሁ?', 'ወደ አካውንትዎ ገብተው "የእኔ ትዕዛዞች" ክፍልን ይጎብኙ።'),
+            ('ክፍያ እንዴት ይፈጸማል?', 'ምርቱ ሲደርስዎ ይከፍላሉ (Cash on Delivery)።'),
+        ] %}
+        {% set faqs_en = [
+            ('How do I place an order?', 'Add the product to your cart and submit your order. Enter your phone number and address.'),
+            ('What is the shipping cost?', 'Free shipping on orders over 5,000 ETB. Otherwise 200 ETB shipping fee.'),
+            ('Can I return a product?', 'Returns accepted within 7 days of receiving the item. Product must be unused and undamaged.'),
+            ('How can I track my order?', 'Log into your account and visit the "My Orders" section.'),
+            ('How is payment made?', 'Cash on Delivery — you pay when the product arrives.'),
+        ] %}
+        {% set faqs_ar = [
+            ('كيف أضع طلبًا؟', 'أضف المنتج إلى سلتك وقدم طلبك. أدخل رقم هاتفك وعنوانك.'),
+            ('ما هي تكلفة الشحن؟', 'شحن مجاني للطلبات التي تتجاوز 5,000 بر إثيوبي. وإلا 200 بر إثيوبي.'),
+            ('هل يمكنني إرجاع المنتج؟', 'يُقبل الإرجاع خلال 7 أيام من الاستلام. يجب أن يكون المنتج غير مستخدم وغير تالف.'),
+            ('كيف يمكنني تتبع طلبي؟', 'سجّل الدخول إلى حسابك وزر قسم "طلباتي".'),
+            ('كيف يتم الدفع؟', 'الدفع عند الاستلام — تدفع عند وصول المنتج.'),
+        ] %}
+        {% set faqs = faqs_am if lang == 'am' else (faqs_ar if lang == 'ar' else faqs_en) %}
+        {% for q, a in faqs %}
+        <div style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <h3 style="color:#333;margin:0 0 10px;font-size:1.05rem;">{{ q }}</h3>
+            <p style="color:#666;margin:0;line-height:1.6;">{{ a }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top:40px;text-align:center;">
+        <a href="{{ url_for('customer.contact') }}" style="background:#1a7a4a;color:#fff;padding:14px 32px;border-radius:30px;text-decoration:none;font-weight:600;">
+            {% if lang == 'am' %}ጥያቄ አለዎት?{% elif lang == 'ar' %}هل لديك سؤال؟{% else %}Have a Question?{% endif %}
+        </a>
+    </div>
+</div>
+{% endblock %}

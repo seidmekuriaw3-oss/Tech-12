@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Ethiosadat Furniture{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        max-width: 450px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    .login-card {
+        background: var(--bg-white, white);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .login-header .icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+    .login-header h2 {
+        margin: 0 0 8px 0;
+        color: #1a7a4a;
+    }
+    .login-header p {
+        color: var(--text-muted, #666);
+        margin: 0;
+        font-size: 14px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-color, #333);
+    }
+    .form-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #1a7a4a;
+        box-shadow: 0 0 0 3px rgba(26,122,74,0.1);
+    }
+    .form-group input.error {
+        border-color: #f44336;
+        background-color: #ffebee;
+    }
+    .error-message {
+        color: #f44336;
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
+    .btn-login {
+        width: 100%;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+    .btn-login.loading {
+        opacity: 0.7;
+        cursor: wait;
+        pointer-events: none;
+    }
+    .btn-login.loading::after {
+        content: '';
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-left: 10px;
+        border: 2px solid white;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .register-link {
+        text-align: center;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color, #eee);
+        color: var(--text-muted, #666);
+    }
+    .register-link a {
+        color: #1a7a4a;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+    .demo-info {
+        background: #e8f0fe;
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .demo-info:hover {
+        background: #d4e2fc;
+        transform: translateY(-2px);
+    }
+    .demo-info p {
+        margin: 5px 0;
+        font-size: 13px;
+        color: #1a7a4a;
+    }
+    @media (max-width: 480px) {
+        .login-container {
+            padding: 20px 15px;
+        }
+        .login-card {
+            padding: 24px;
+        }
+        .login-header h2 {
+            font-size: 24px;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        .login-card {
+            background: #1e1e2e;
+        }
+        .form-group input {
+            background: #2a2a3e;
+            border-color: #3a3a4e;
+            color: #eee;
+        }
+        .register-link {
+            border-color: #3a3a4e;
+        }
+        .demo-info {
+            background: #2a2a3e;
+        }
+        .demo-info:hover {
+            background: #3a3a4e;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        
+        <!-- Header -->
+        <div class="login-header">
+            <div class="icon">🔐</div>
+            <h2>Welcome Back!</h2>
+            <p>Login to your account to continue shopping</p>
+        </div>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="
+                    padding: 12px 16px;
+                    border-radius: 12px;
+                    margin-bottom: 20px;
+                    background: {% if category == 'error' or category == 'danger' %}#ffebee{% else %}#e8f0fe{% endif %};
+                    color: {% if category == 'error' or category == 'danger' %}#f44336{% else %}#1a7a4a{% endif %};
+                    border-left: 3px solid {% if category == 'error' or category == 'danger' %}#f44336{% else %}#1a7a4a{% endif %};
+                ">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+        
+        <!-- Login Form -->
+        <form id="loginForm" method="post" action="{{ url_for('customer.user_login') }}" onsubmit="return validateAndSubmit(event)">
+            <div class="form-group">
+                <label>📧 Email Address</label>
+                <input type="email" name="email" id="loginEmail" class="form-control" 
+                       placeholder="your@email.com" required autofocus>
+                <div class="error-message" id="emailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>🔒 Password</label>
+                <input type="password" name="password" id="loginPassword" class="form-control" 
+                       placeholder="Enter your password" required>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+            
+            <button type="submit" id="loginBtn" class="btn btn-primary btn-login">
+                Login →
+            </button>
+        </form>
+        
+        <!-- Register Link -->
+        <div class="register-link">
+            Don't have an account? <a href="{{ url_for('customer.user_register') }}">Create Account</a>
+        </div>
+        
+        <!-- Demo Info -->
+        <div class="demo-info" onclick="fillDemoCredentials()">
+            <p>💡 Demo Account</p>
+            <p style="font-size: 12px;">Email: customer@ethiosadat.com<br>Password: Demo@1234</p>
+            <p style="font-size: 11px; color: #666;">(Click here to auto-fill demo credentials)</p>
+        </div>
+        
+        <!-- Forgot Password Link -->
+        <div style="text-align: center; margin-top: 16px;">
+            <a href="{{ url_for('customer.forgot_password') }}" style="color: #1a7a4a; text-decoration: none; font-size: 13px;">
+                Forgot Password?
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateAndSubmit(event) {
+        event.preventDefault();
+        
+        // Clear previous errors
+        clearErrors();
+        
+        let isValid = true;
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+        
+        // Validate email
+        if (!email) {
+            showError('emailError', 'Please enter your email address');
+            document.getElementById('loginEmail').classList.add('error');
+            isValid = false;
+        } else if (!isValidEmail(email)) {
+            showError('emailError', 'Please enter a valid email address');
+            document.getElementById('loginEmail').classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate password
+        if (!password) {
+            showError('passwordError', 'Please enter your password');
+            document.getElementById('loginPassword').classList.add('error');
+            isValid = false;
+        }
+        
+        if (isValid) {
+            submitLogin();
+        }
+        
+        return false;
+    }
+    
+    function isValidEmail(email) {
+        const pattern = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        return pattern.test(email);
+    }
+    
+    function showError(elementId, message) {
+        const errorDiv = document.getElementById(elementId);
+        if (errorDiv) errorDiv.textContent = message;
+    }
+    
+    function clearErrors() {
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+    }
+    
+    function submitLogin() {
+        const submitBtn = document.getElementById('loginBtn');
+        
+        submitBtn.innerHTML = 'Logging in...';
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        
+        // Submit the form
+        document.getElementById('loginForm').submit();
+    }
+    
+    // Auto-fill demo credentials
+    function fillDemoCredentials() {
+        document.getElementById('loginEmail').value = 'customer@ethiosadat.com';
+        document.getElementById('loginPassword').value = 'Demo@1234';
+        
+        // Clear any existing errors
+        clearErrors();
+        
+        // Optional: highlight the fields briefly
+        const emailField = document.getElementById('loginEmail');
+        const passwordField = document.getElementById('loginPassword');
+        
+        emailField.style.transition = 'background 0.3s';
+        passwordField.style.transition = 'background 0.3s';
+        emailField.style.backgroundColor = '#e8f5e9';
+        passwordField.style.backgroundColor = '#e8f5e9';
+        
+        setTimeout(() => {
+            emailField.style.backgroundColor = '';
+            passwordField.style.backgroundColor = '';
+        }, 1000);
+    }
+    
+    // Remove loading state if page loads with error (form was submitted but failed)
+    window.addEventListener('load', function() {
+        const submitBtn = document.getElementById('loginBtn');
+        if (submitBtn && submitBtn.disabled && !submitBtn.innerHTML.includes('Login')) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Login →';
+            submitBtn.classList.remove('loading');
+        }
+    });
+    
+    // Make functions globally available
+    window.fillDemoCredentials = fillDemoCredentials;
+    window.validateAndSubmit = validateAndSubmit;
+</script>
+{% endblock %}

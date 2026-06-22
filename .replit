@@ -1,0 +1,79 @@
+modules = ["nodejs-24", "python-3.11", "postgresql-16"]
+
+[deployment]
+router = "application"
+deploymentTarget = "autoscale"
+run = ["gunicorn", "--bind=0.0.0.0:8080", "--reuse-port", "--workers=2", "--timeout=120", "wsgi:app"]
+
+[deployment.postBuild]
+args = ["pnpm", "store", "prune"]
+env = { "CI" = "true" }
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f 'python app.py' 2>/dev/null; sleep 2; while true; do python app.py; echo 'App exited, restarting in 3s...'; sleep 3; done"
+waitForPort = 5000
+
+[agent]
+stack = "BEST_EFFORT_FALLBACK"
+expertMode = true
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
+
+[[ports]]
+localPort = 3001
+externalPort = 3001
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
+localPort = 8081
+externalPort = 8081
+
+[[ports]]
+localPort = 8082
+externalPort = 3002
+
+[nix]
+channel = "stable-25_05"
+packages = ["freetype", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "psmisc", "tcl", "tk", "zlib"]
+
+[userenv]
+
+[userenv.shared]
+SECRET_KEY = "a6c50edaba0b2dbf5853169753ac4cb137da3a74cfd6e87e71590a0a81e9c2ae"
+FLASK_ENV = "development"
+DEBUG = "False"
+HOST = "0.0.0.0"
+PORT = "5000"
+ADMIN_PASSWORD = "1234"
+WHATSAPP_NUMBER = "251906020606"
+FREE_SHIPPING_THRESHOLD = "5000"
+SHIPPING_COST = "200"

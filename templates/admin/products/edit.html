@@ -1,0 +1,864 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Edit Product - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .form-section {
+        background: var(--bg-white, white);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .form-section h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
+        color: var(--primary, #1a7a4a);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-color, #333);
+    }
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #1a7a4a;
+        box-shadow: 0 0 0 3px rgba(26,122,74,0.1);
+    }
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+    .required-star {
+        color: #f44336;
+        margin-left: 4px;
+    }
+    .current-image {
+        margin-top: 12px;
+        padding: 12px;
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .current-image img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--border-color, #ddd);
+    }
+    .image-preview {
+        width: 150px;
+        height: 150px;
+        border: 2px dashed var(--border-color, #ddd);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 12px;
+        background: var(--bg-hover, #f9f9f9);
+        overflow: hidden;
+    }
+    .image-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+    }
+    .char-count {
+        font-size: 12px;
+        color: var(--text-muted, #666);
+        text-align: right;
+        margin-top: 4px;
+    }
+    .char-count.warning {
+        color: #ff9800;
+    }
+    .char-count.danger {
+        color: #f44336;
+    }
+    .discount-badge {
+        display: inline-block;
+        background: #4caf50;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-top: 8px;
+    }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 8px;
+    }
+    .checkbox-group input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+    .help-text {
+        font-size: 12px;
+        color: var(--text-muted, #666);
+        margin-top: 4px;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+        margin-top: 32px;
+        padding-bottom: 40px;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .form-section {
+            background: #16213e;
+        }
+        .form-control {
+            background: #1a1a2e;
+            border-color: #2a2a3e;
+            color: #eee;
+        }
+        .current-image {
+            background: #1a1a2e;
+        }
+        #slugPreview {
+            background: #1a1a2e;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        .form-section {
+            padding: 16px;
+        }
+        .action-buttons {
+            flex-direction: column;
+        }
+        .action-buttons .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    
+    <!-- Header -->
+    <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;">
+            <a href="{{ url_for('admin.products') }}" style="color: var(--text-muted, #666); text-decoration: none; font-size: 24px;">←</a>
+            <h1 style="margin: 0;">✏️ Edit Product</h1>
+        </div>
+        <p style="color: var(--text-muted, #666); margin: 0;">Update product information</p>
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" action="{{ url_for('admin.product_edit', pid=product.id) }}" enctype="multipart/form-data" id="productForm" onsubmit="return validateForm()">
+        
+        <!-- Basic Information Section -->
+        <div class="form-section">
+            <h3>
+                <span>📝</span> Basic Information
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Name (Amharic) <span class="required-star">*</span></label>
+                    <input type="text" 
+                           name="name_am" 
+                           id="name_am"
+                           class="form-control"
+                           required 
+                           maxlength="200"
+                           value="{{ product.name_am|default('') }}"
+                           placeholder="ምርት ስም በአማርኛ">
+                    <div id="nameAmCharCount" class="char-count">0 characters</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Name (English) <span class="required-star">*</span></label>
+                    <input type="text" 
+                           name="name_en" 
+                           id="name_en"
+                           class="form-control"
+                           required 
+                           maxlength="200"
+                           value="{{ product.name|default('') }}"
+                           placeholder="Product name in English">
+                    <div id="nameEnCharCount" class="char-count">0 characters</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Name (Arabic) <span style="color: #999;">(Optional)</span></label>
+                <input type="text" 
+                       name="name_ar" 
+                       id="name_ar"
+                       class="form-control"
+                       maxlength="200"
+                       value="{{ product.name_ar|default('') }}"
+                       placeholder="اسم المنتج بالعربية">
+            </div>
+            
+            <div class="form-group">
+                <label>Description (Amharic)</label>
+                <textarea name="description_am" 
+                          id="description_am"
+                          class="form-control"
+                          rows="4"
+                          maxlength="1000"
+                          placeholder="ምርት መግለጫ በአማርኛ...">{{ product.description_am|default('') }}</textarea>
+                <div id="descAmCharCount" class="char-count">0 / 1000 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Description (English)</label>
+                <textarea name="description_en" 
+                          id="description_en"
+                          class="form-control"
+                          rows="4"
+                          maxlength="1000"
+                          placeholder="Product description in English...">{{ product.description|default('') }}</textarea>
+                <div id="descEnCharCount" class="char-count">0 / 1000 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Description (Arabic) <span style="color: #999;">(Optional)</span></label>
+                <textarea name="description_ar" 
+                          id="description_ar"
+                          class="form-control"
+                          rows="3"
+                          maxlength="1000"
+                          placeholder="وصف المنتج بالعربية...">{{ product.description_ar|default('') }}</textarea>
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="form-section">
+            <h3>
+                <span>💰</span> Pricing
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Price (ETB) <span class="required-star">*</span></label>
+                    <input type="number" 
+                           name="price" 
+                           id="price"
+                           class="form-control"
+                           step="0.01" 
+                           required 
+                           min="0"
+                           value="{{ product.price|default('0') }}"
+                           placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label>Compare Price (ETB)</label>
+                    <input type="number" 
+                           name="compare_price" 
+                           id="compare_price"
+                           class="form-control"
+                           step="0.01" 
+                           min="0"
+                           value="{{ product.compare_price|default('') if product.compare_price else '' }}"
+                           placeholder="0.00">
+                    <div class="help-text">Original price before discount (leave empty if no discount)</div>
+                </div>
+            </div>
+            
+            <div id="discountPreview" style="display: none; margin-top: 12px;"></div>
+        </div>
+
+        <!-- Inventory Section -->
+        <div class="form-section">
+            <h3>
+                <span>📦</span> Inventory
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Category <span class="required-star">*</span></label>
+                    <select name="category_id" id="category_id" class="form-control" required>
+                        <option value="">-- Select Category --</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if product.category_id == category.id %}selected{% endif %}>
+                            {{ category.name_am }} ({{ category.name }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Stock Quantity</label>
+                    <input type="number" 
+                           name="stock_quantity" 
+                           id="stock_quantity"
+                           class="form-control"
+                           min="0"
+                           value="{{ product.stock_quantity|default('0') }}"
+                           placeholder="0">
+                    <div class="help-text">Number of items available (0 = out of stock)</div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>SKU <span style="color: #999;">(Optional)</span></label>
+                    <input type="text" 
+                           name="sku" 
+                           id="sku"
+                           class="form-control"
+                           value="{{ product.sku|default('') }}"
+                           placeholder="Unique product identifier">
+                </div>
+                
+                <div class="form-group">
+                    <label>Barcode <span style="color: #999;">(Optional)</span></label>
+                    <input type="text" 
+                           name="barcode" 
+                           id="barcode"
+                           class="form-control"
+                           value="{{ product.barcode|default('') }}"
+                           placeholder="Product barcode">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Material</label>
+                    <input type="text" 
+                           name="material" 
+                           id="material"
+                           class="form-control"
+                           value="{{ product.material|default('') }}"
+                           placeholder="e.g., Wood, Leather, Fabric">
+                </div>
+                
+                <div class="form-group">
+                    <label>Color</label>
+                    <input type="text" 
+                           name="color" 
+                           id="color"
+                           class="form-control"
+                           value="{{ product.color|default('') }}"
+                           placeholder="e.g., Brown, Black, White">
+                </div>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" name="is_featured" value="1" id="is_featured" {% if product.is_featured %}checked{% endif %}>
+                <label for="is_featured" style="margin: 0;">⭐ Feature this product on homepage</label>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" name="is_new" value="1" id="is_new" {% if product.is_new %}checked{% endif %}>
+                <label for="is_new" style="margin: 0;">🆕 Mark as New</label>
+            </div>
+        </div>
+
+        <!-- Dimensions Section -->
+        <div class="form-section">
+            <h3>
+                <span>📏</span> Dimensions & Weight <span style="color: #999;">(Optional)</span>
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Weight (kg)</label>
+                    <input type="number" 
+                           name="weight" 
+                           id="weight"
+                           class="form-control"
+                           step="0.01"
+                           min="0"
+                           value="{{ product.weight|default('') }}"
+                           placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label>Dimensions (LxWxH)</label>
+                    <input type="text" 
+                           name="dimensions" 
+                           id="dimensions"
+                           class="form-control"
+                           value="{{ product.dimensions|default('') }}"
+                           placeholder="e.g., 120x60x45 cm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Images Section -->
+        <div class="form-section">
+            <h3>
+                <span>🖼️</span> Product Images
+            </h3>
+            
+            {% if product.thumbnail and product.thumbnail != '' %}
+            <div class="current-image">
+                <img src="{{ url_for('static', filename=(product.thumbnail if product.thumbnail[:8] == 'uploads/' else 'uploads/products/' ~ product.thumbnail)) }}" alt="Current image" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'" style="max-width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px;">
+                <div>
+                    <p style="margin: 0 0 8px; font-size: 14px;">Current Image</p>
+                    <button type="button" class="btn btn-danger btn-small" onclick="deleteImage({{ product.id }})">🗑️ Remove Image</button>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label>Replace Main Image <span style="color:#999;">(Optional)</span></label>
+                <input type="file" 
+                       name="image" 
+                       id="product_image" 
+                       accept="image/*"
+                       style="width: 100%; padding: 8px;"
+                       onchange="previewImage(this)">
+                <div class="help-text">Leave empty to keep current image. Supported: JPG, PNG, WEBP (Max 5MB)</div>
+                <div class="image-preview" id="imagePreview" style="display: none;">
+                    <img id="previewImg" src="" alt="Preview">
+                </div>
+            </div>
+
+            <!-- Existing gallery images -->
+            {% set existing_gallery = [] %}
+            {% if product.images %}
+                {% set existing_gallery = product.images | tojson %}
+            {% endif %}
+            <div class="form-group" style="margin-top: 20px;">
+                <label>Current Gallery Images</label>
+                {% if product.images and product.images not in ('null','[]','') %}
+                <div id="existingGallery" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;">
+                    {# JS will render existing gallery thumbnails #}
+                </div>
+                <input type="hidden" name="keep_images" id="keepImages" value="{{ product.images }}">
+                <div class="help-text">Click ✕ to remove an image from the gallery.</div>
+                {% else %}
+                <p style="color:#999;font-size:13px;">No additional gallery images yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Additional gallery images upload -->
+            <div class="form-group" style="margin-top: 16px;">
+                <label>Add More Gallery Images <span style="color:#999;">(Optional)</span></label>
+                <div id="extraImagesDropZone" style="
+                    border: 2px dashed var(--border-color, #ddd);
+                    border-radius: 12px; padding: 24px 20px;
+                    text-align: center; cursor: pointer;
+                    background: var(--bg-hover, #f9f9f9); transition: all 0.3s;
+                " onclick="document.getElementById('extra_images').click()"
+                   ondragover="event.preventDefault(); this.style.borderColor='#1a7a4a'; this.style.background='#f0fff6';"
+                   ondragleave="this.style.borderColor=''; this.style.background='';"
+                   ondrop="handleExtraDrop(event)">
+                    <div style="font-size:30px;margin-bottom:6px;">📷</div>
+                    <p style="margin:0;color:var(--text-muted,#666);font-size:13px;">Click or drag &amp; drop extra photos</p>
+                    <p style="margin:3px 0 0;color:#aaa;font-size:11px;">Up to 10 images, max 5MB each</p>
+                </div>
+                <input type="file" name="extra_images" id="extra_images" accept="image/*" multiple style="display:none;" onchange="previewExtraImages(this)">
+                <div id="extraImagesGrid" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;"></div>
+                <div id="extraImagesCount" class="help-text" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- SEO Section -->
+        <div class="form-section">
+            <h3>
+                <span>🔍</span> SEO Settings
+            </h3>
+            
+            <div class="form-group">
+                <label>Meta Title</label>
+                <input type="text" 
+                       name="meta_title" 
+                       id="meta_title"
+                       class="form-control"
+                       maxlength="60"
+                       value="{{ product.meta_title|default('') }}"
+                       placeholder="SEO title for search engines">
+                <div id="metaTitleCharCount" class="char-count">0 / 60 characters</div>
+                <div class="help-text">Recommended length: 50-60 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Meta Description</label>
+                <textarea name="meta_description" 
+                          id="meta_description"
+                          class="form-control"
+                          rows="2"
+                          maxlength="160"
+                          placeholder="SEO description for search engines">{{ product.meta_description|default('') }}</textarea>
+                <div id="metaDescCharCount" class="char-count">0 / 160 characters</div>
+                <div class="help-text">Recommended length: 150-160 characters</div>
+            </div>
+            
+            <div id="slugPreview" style="margin-top: 12px; padding: 10px; background: var(--bg-hover, #f5f5f5); border-radius: 8px; font-size: 13px; color: var(--text-muted, #666);">
+                <span>🔗 Product URL: </span>
+                <span id="slugValue">/product/{{ product.name|lower|replace(' ', '-') if product.name else '-' }}</span>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="action-buttons">
+            <a href="{{ url_for('admin.products') }}" class="btn btn-outline" style="padding: 12px 24px; text-decoration: none;">Cancel</a>
+            <button type="submit" class="btn btn-primary" style="padding: 12px 32px; display: flex; align-items: center; gap: 8px; border: none; cursor: pointer;">
+                <span>💾</span> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // ==================== Helper Functions ====================
+    function showToast(message, type) {
+        if (window.showToast) {
+            window.showToast(message, type);
+        } else {
+            alert(message);
+        }
+    }
+
+    // ==================== Existing Gallery Thumbnails ====================
+    (function() {
+        var raw = '{{ product.images | tojson if product.images else "null" }}';
+        var gallery = document.getElementById('existingGallery');
+        var keepInput = document.getElementById('keepImages');
+        if (!gallery || !keepInput) return;
+        var imgs = [];
+        try {
+            var parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+            if (Array.isArray(parsed)) imgs = parsed;
+        } catch(e) {}
+        if (!imgs.length) return;
+
+        function render() {
+            gallery.innerHTML = '';
+            keepInput.value = JSON.stringify(imgs);
+            imgs.forEach(function(src, i) {
+                var wrap = document.createElement('div');
+                wrap.style.cssText = 'position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid #1a7a4a;background:#f5f5f5;';
+                var img = document.createElement('img');
+                var fullSrc = src.startsWith('http') ? src : '/static/' + src.replace(/^\/static\//, '');
+                img.src = fullSrc;
+                img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+                var btn = document.createElement('button');
+                btn.type = 'button'; btn.innerHTML = '✕'; btn.title = 'Remove';
+                btn.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.65);color:white;border:none;border-radius:50%;width:18px;height:18px;cursor:pointer;font-size:10px;padding:0;line-height:18px;';
+                btn.onclick = function() { imgs.splice(i, 1); render(); };
+                wrap.appendChild(img); wrap.appendChild(btn);
+                gallery.appendChild(wrap);
+            });
+        }
+        render();
+    })();
+
+    // ==================== Extra Images (Bulk Upload) ====================
+    var extraFilesStore = [];
+
+    function previewExtraImages(input) { addExtraFiles(Array.from(input.files)); }
+
+    function handleExtraDrop(event) {
+        event.preventDefault();
+        document.getElementById('extraImagesDropZone').style.borderColor = '';
+        document.getElementById('extraImagesDropZone').style.background = '';
+        addExtraFiles(Array.from(event.dataTransfer.files).filter(function(f){ return f.type.startsWith('image/'); }));
+    }
+
+    function addExtraFiles(files) {
+        files.forEach(function(file) {
+            if (extraFilesStore.length >= 10) { if (window.showToast) window.showToast('Max 10 images', 'warning'); return; }
+            if (file.size > 5 * 1024 * 1024) { if (window.showToast) window.showToast(file.name + ' too large', 'error'); return; }
+            extraFilesStore.push(file);
+        });
+        renderExtraPreviews(); syncExtraInput();
+    }
+
+    function removeExtraFile(idx) { extraFilesStore.splice(idx, 1); renderExtraPreviews(); syncExtraInput(); }
+
+    function renderExtraPreviews() {
+        var grid = document.getElementById('extraImagesGrid');
+        var countEl = document.getElementById('extraImagesCount');
+        if (!grid) return;
+        grid.innerHTML = '';
+        extraFilesStore.forEach(function(file, i) {
+            var wrap = document.createElement('div');
+            wrap.style.cssText = 'position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid #1a7a4a;background:#f5f5f5;';
+            var img = document.createElement('img');
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+            var reader = new FileReader();
+            reader.onload = function(e) { img.src = e.target.result; };
+            reader.readAsDataURL(file);
+            var btn = document.createElement('button');
+            btn.type = 'button'; btn.innerHTML = '✕';
+            btn.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.65);color:white;border:none;border-radius:50%;width:18px;height:18px;cursor:pointer;font-size:10px;padding:0;line-height:18px;';
+            btn.onclick = function() { removeExtraFile(i); };
+            wrap.appendChild(img); wrap.appendChild(btn);
+            grid.appendChild(wrap);
+        });
+        if (countEl) {
+            if (extraFilesStore.length > 0) {
+                countEl.textContent = extraFilesStore.length + ' new image' + (extraFilesStore.length > 1 ? 's' : '') + ' to upload';
+                countEl.style.display = 'block';
+            } else { countEl.style.display = 'none'; }
+        }
+    }
+
+    function syncExtraInput() {
+        var input = document.getElementById('extra_images');
+        if (!input) return;
+        var dt = new DataTransfer();
+        extraFilesStore.forEach(function(f) { dt.items.add(f); });
+        input.files = dt.files;
+    }
+
+    // ==================== Character Counters ====================
+    function updateCharCount(inputId, countId, maxLength = null) {
+        const input = document.getElementById(inputId);
+        const countSpan = document.getElementById(countId);
+        if (input && countSpan) {
+            const length = input.value.length;
+            countSpan.classList.remove('warning', 'danger');
+            
+            if (maxLength) {
+                countSpan.textContent = `${length} / ${maxLength} characters`;
+                if (length > maxLength) {
+                    countSpan.classList.add('danger');
+                } else if (length > maxLength * 0.8) {
+                    countSpan.classList.add('warning');
+                }
+            } else {
+                countSpan.textContent = `${length} characters`;
+            }
+        }
+    }
+
+    // Initialize character counters
+    const nameAm = document.getElementById('name_am');
+    const nameEn = document.getElementById('name_en');
+    const descAm = document.getElementById('description_am');
+    const descEn = document.getElementById('description_en');
+    const metaTitle = document.getElementById('meta_title');
+    const metaDesc = document.getElementById('meta_description');
+
+    if (nameAm) nameAm.addEventListener('input', () => updateCharCount('name_am', 'nameAmCharCount'));
+    if (nameEn) nameEn.addEventListener('input', () => updateCharCount('name_en', 'nameEnCharCount'));
+    if (descAm) descAm.addEventListener('input', () => updateCharCount('description_am', 'descAmCharCount', 1000));
+    if (descEn) descEn.addEventListener('input', () => updateCharCount('description_en', 'descEnCharCount', 1000));
+    if (metaTitle) metaTitle.addEventListener('input', () => updateCharCount('meta_title', 'metaTitleCharCount', 60));
+    if (metaDesc) metaDesc.addEventListener('input', () => updateCharCount('meta_description', 'metaDescCharCount', 160));
+
+    // Initial character counts
+    updateCharCount('name_am', 'nameAmCharCount');
+    updateCharCount('name_en', 'nameEnCharCount');
+    updateCharCount('description_am', 'descAmCharCount', 1000);
+    updateCharCount('description_en', 'descEnCharCount', 1000);
+    updateCharCount('meta_title', 'metaTitleCharCount', 60);
+    updateCharCount('meta_description', 'metaDescCharCount', 160);
+
+    // ==================== Image Preview ====================
+    function previewImage(input) {
+        const previewDiv = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const file = input.files[0];
+        
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Image size should be less than 5MB', 'error');
+                input.value = '';
+                return;
+            }
+            
+            if (!file.type.match('image.*')) {
+                showToast('Please select an image file', 'error');
+                input.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewDiv.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewDiv.style.display = 'none';
+        }
+    }
+
+    // ==================== Delete Image ====================
+    function deleteImage(productId) {
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            if (window.showLoading) window.showLoading(true);
+            
+            fetch('{{ url_for('admin.product_edit', pid=0) }}'.replace('/0', '/' + productId), {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Image removed successfully', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast(data.error || 'Failed to remove image', 'error');
+                }
+            })
+            .catch(() => showToast('Error removing image', 'error'))
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Remove Image', 'Are you sure you want to remove this product image?', callback);
+        } else {
+            if (confirm('Are you sure you want to remove this product image?')) callback();
+        }
+    }
+
+    // ==================== Discount Preview ====================
+    function updateDiscountPreview() {
+        const price = parseFloat(document.getElementById('price')?.value) || 0;
+        const comparePrice = parseFloat(document.getElementById('compare_price')?.value) || 0;
+        const previewDiv = document.getElementById('discountPreview');
+        
+        if (previewDiv && comparePrice > 0 && comparePrice > price) {
+            const discount = Math.round(((comparePrice - price) / comparePrice) * 100);
+            previewDiv.innerHTML = `
+                <div class="discount-badge">
+                    💸 ${discount}% OFF! Customers save ${(comparePrice - price).toFixed(2)} ETB
+                </div>
+            `;
+            previewDiv.style.display = 'block';
+        } else if (previewDiv) {
+            previewDiv.style.display = 'none';
+        }
+    }
+
+    const priceInput = document.getElementById('price');
+    const comparePriceInput = document.getElementById('compare_price');
+    if (priceInput) priceInput.addEventListener('input', updateDiscountPreview);
+    if (comparePriceInput) comparePriceInput.addEventListener('input', updateDiscountPreview);
+    updateDiscountPreview();
+
+    // ==================== Slug Generator ====================
+    function updateSlug() {
+        const nameEn = document.getElementById('name_en')?.value || '';
+        const slug = nameEn.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+        
+        const slugSpan = document.getElementById('slugValue');
+        if (slugSpan) {
+            if (slug) {
+                slugSpan.textContent = `/product/${slug}`;
+                slugSpan.style.color = '#1a7a4a';
+            } else {
+                slugSpan.textContent = '-';
+                slugSpan.style.color = '#999';
+            }
+        }
+    }
+    
+    if (nameEn) nameEn.addEventListener('input', updateSlug);
+    updateSlug();
+
+    // ==================== Form Validation ====================
+    function validateForm() {
+        const nameAmVal = document.getElementById('name_am')?.value.trim();
+        const nameEnVal = document.getElementById('name_en')?.value.trim();
+        const categoryId = document.getElementById('category_id')?.value;
+        const priceVal = document.getElementById('price')?.value;
+        
+        if (!nameAmVal) {
+            showToast('Please enter product name in Amharic', 'error');
+            document.getElementById('name_am').focus();
+            return false;
+        }
+        
+        if (!nameEnVal) {
+            showToast('Please enter product name in English', 'error');
+            document.getElementById('name_en').focus();
+            return false;
+        }
+        
+        if (!categoryId) {
+            showToast('Please select a category', 'error');
+            document.getElementById('category_id').focus();
+            return false;
+        }
+        
+        if (!priceVal || parseFloat(priceVal) <= 0) {
+            showToast('Please enter a valid price', 'error');
+            document.getElementById('price').focus();
+            return false;
+        }
+        
+        return true;
+    }
+
+    // ==================== Unsaved Changes Warning ====================
+    let formChanged = false;
+    
+    function markFormChanged() {
+        formChanged = true;
+    }
+    
+    formInputs?.forEach(input => {
+        input.addEventListener('input', markFormChanged);
+    });
+    
+    window.addEventListener('beforeunload', (e) => {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+            return e.returnValue;
+        }
+    });
+    
+    form?.addEventListener('submit', () => {
+        formChanged = false;
+    });
+</script>
+{% endblock %}

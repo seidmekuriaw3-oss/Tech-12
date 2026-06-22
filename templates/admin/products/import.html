@@ -1,0 +1,588 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Import Products - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .import-container {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .import-card {
+        background: var(--bg-white, white);
+        border-radius: 16px;
+        padding: 28px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .import-card h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
+        color: var(--primary, #1a7a4a);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+    }
+
+    /* ── Drop zone ── */
+    .drop-zone {
+        border: 2px dashed #1a7a4a;
+        border-radius: 12px;
+        padding: 44px 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.2s;
+        background: rgba(26,122,74,0.03);
+        position: relative;
+        user-select: none;
+    }
+    .drop-zone.drag-over {
+        background: rgba(26,122,74,0.1);
+        border-color: #0f5232;
+    }
+    .drop-zone.has-file {
+        border-color: #4caf50;
+        background: rgba(76,175,80,0.04);
+    }
+    .drop-zone input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+    .drop-zone-icon { font-size: 44px; margin-bottom: 10px; }
+    .drop-zone-label { font-size: 15px; font-weight: 600; color: #1a7a4a; margin-bottom: 5px; }
+    .drop-zone-hint  { font-size: 12px; color: var(--text-muted,#999); }
+    .file-name-display {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #2e7d32;
+        font-weight: 500;
+        min-height: 18px;
+    }
+
+    /* ── Submit row ── */
+    .submit-row {
+        display: flex;
+        gap: 14px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .btn-import {
+        min-width: 170px;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: opacity 0.2s;
+    }
+    .btn-import:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    /* CSS spinner that replaces button icon while loading */
+    .spinner {
+        display: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255,255,255,0.4);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        flex-shrink: 0;
+    }
+    .btn-import.loading .spinner   { display: block; }
+    .btn-import.loading .btn-icon  { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Processing bar below button */
+    .processing-bar {
+        display: none;
+        margin-top: 14px;
+        padding: 12px 16px;
+        background: rgba(26,122,74,0.07);
+        border-radius: 10px;
+        border-left: 4px solid #1a7a4a;
+    }
+    .processing-bar.show { display: block; }
+    .processing-bar p {
+        margin: 0 0 8px 0;
+        font-size: 13px;
+        color: #1a7a4a;
+        font-weight: 500;
+    }
+    .bar-track {
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    .bar-fill {
+        height: 100%;
+        width: 40%;
+        background: linear-gradient(90deg, #1a7a4a, #42a5f5);
+        border-radius: 3px;
+        animation: indeterminate 1.4s ease infinite;
+        transform-origin: left center;
+    }
+    @keyframes indeterminate {
+        0%   { transform: scaleX(0.3) translateX(-100%); }
+        50%  { transform: scaleX(0.6) translateX(60%); }
+        100% { transform: scaleX(0.3) translateX(300%); }
+    }
+
+    /* ── Success banner ── */
+    .success-banner {
+        background: #e8f5e9;
+        border: 1px solid #a5d6a7;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+    .success-banner .icon { font-size: 26px; line-height: 1; }
+    .success-banner strong { color: #2e7d32; font-size: 15px; display: block; }
+    .success-banner a { color: #2e7d32; font-size: 13px; }
+
+    /* ── Warning banner (image fallbacks) ── */
+    .warn-banner {
+        background: #fff8e1;
+        border: 1px solid #ffe082;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+    }
+    .warn-banner p { margin: 0 0 6px 0; color: #e65100; font-weight: 600; font-size: 13px; }
+    .warn-banner ul { margin: 0; padding-left: 18px; }
+    .warn-banner li { font-size: 12px; color: #bf360c; margin-bottom: 3px; }
+
+    /* ── Error table ── */
+    .error-section {
+        background: #fff5f5;
+        border: 1px solid #ffcdd2;
+        border-radius: 12px;
+        padding: 0;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    .error-section-header {
+        background: #ffebee;
+        padding: 12px 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid #ffcdd2;
+    }
+    .error-section-header span { font-size: 18px; }
+    .error-section-header h4 { margin: 0; color: #c62828; font-size: 14px; }
+    .error-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    .error-table th {
+        background: rgba(198,40,40,0.08);
+        color: #b71c1c;
+        padding: 9px 14px;
+        text-align: left;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .error-table td {
+        padding: 9px 14px;
+        border-bottom: 1px solid #ffebee;
+        vertical-align: middle;
+        color: #555;
+    }
+    .error-table tr:last-child td { border-bottom: none; }
+    .error-table tr:hover td { background: rgba(244,67,54,0.03); }
+    .row-num-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f44336;
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+        min-width: 32px;
+    }
+    .field-badge {
+        display: inline-block;
+        background: rgba(198,40,40,0.12);
+        color: #c62828;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+
+    /* ── Flash messages ── */
+    .flash-msg {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .flash-success { background:#e8f5e9; border:1px solid #a5d6a7; color:#2e7d32; }
+    .flash-error   { background:#ffebee; border:1px solid #ffcdd2; color:#c62828; }
+
+    /* ── Column reference table ── */
+    .columns-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    .columns-table th {
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white;
+        padding: 10px 14px;
+        text-align: left;
+        font-size: 12px;
+    }
+    .columns-table td {
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--border-color, #eee);
+        vertical-align: top;
+    }
+    .columns-table tr:last-child td { border-bottom: none; }
+    .columns-table tr:nth-child(even) td { background: var(--bg-hover, #f9f9f9); }
+    .badge-required {
+        display: inline-block; background: #f44336; color: white;
+        font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 700;
+    }
+    .badge-optional {
+        display: inline-block; background: #9e9e9e; color: white;
+        font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 600;
+    }
+    .category-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:5px; }
+    .chip {
+        background: var(--bg-hover,#f0f0f0); border-radius:20px;
+        padding:3px 10px; font-size:11px; color:var(--text-color,#555);
+    }
+
+    /* Tip box */
+    .tip-box {
+        margin-top: 16px;
+        padding: 12px 16px;
+        background: rgba(26,122,74,0.06);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #1a7a4a;
+        border-left: 3px solid #1a7a4a;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="import-container">
+
+    <!-- ── Page header ── -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px;">
+        <div>
+            <h1 style="margin-bottom:4px;">📥 Import Products</h1>
+            <p style="color:var(--text-muted,#666); margin:0;">
+                Upload a CSV file to bulk-import products. Images can be auto-downloaded from public URLs.
+            </p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="{{ url_for('admin.import_products_sample') }}" class="btn btn-outline">📄 Sample CSV</a>
+            <a href="{{ url_for('admin.products') }}" class="btn btn-outline">← Products</a>
+        </div>
+    </div>
+
+    <!-- ── Success banner ── -->
+    {% if import_success %}
+    <div class="success-banner">
+        <div class="icon">✅</div>
+        <div>
+            <strong>{{ import_success }} product(s) imported successfully!</strong>
+            {% if row_errors|default([])|length > 0 %}
+            <span style="font-size:13px; color:#555;">
+                {{ row_errors|length }} row(s) below were skipped — see error details.
+            </span>
+            {% endif %}
+            <a href="{{ url_for('admin.products') }}">View all products →</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ── Image download warnings ── -->
+    {% if image_warnings %}
+    <div class="warn-banner">
+        <p>⚠️ {{ image_warnings|length }} image(s) could not be downloaded — placeholder used:</p>
+        <ul>
+            {% for w in image_warnings %}
+            <li>{{ w }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- ── Row-level errors: table format ── -->
+    {% if row_errors %}
+    <div class="error-section">
+        <div class="error-section-header">
+            <span>❌</span>
+            <h4>{{ row_errors|length }} row(s) skipped — fix and re-upload to import them</h4>
+        </div>
+        <table class="error-table">
+            <thead>
+                <tr>
+                    <th style="width:80px;">Row</th>
+                    <th style="width:140px;">Field</th>
+                    <th>Error</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for err in row_errors %}
+                <tr>
+                    <td><span class="row-num-badge">{{ err.row }}</span></td>
+                    <td><span class="field-badge">{{ err.field }}</span></td>
+                    <td>{{ err.message }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- ── Flash messages ── -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-msg {{ 'flash-success' if category == 'success' else 'flash-error' }}">
+        {{ '✅' if category == 'success' else '⚠️' }}
+        <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- ── Upload card ── -->
+    <div class="import-card">
+        <h3>📂 Upload CSV File</h3>
+
+        <form method="POST" enctype="multipart/form-data" id="importForm"
+              action="{{ url_for('admin.import_products') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            <div class="drop-zone" id="dropZone">
+                <input type="file" name="csv_file" id="csvFileInput"
+                       accept=".csv,text/csv" required>
+                <div class="drop-zone-icon" id="dropIcon">📋</div>
+                <div class="drop-zone-label">Click or drag &amp; drop your CSV file here</div>
+                <div class="drop-zone-hint">
+                    Only .csv files · Max 2 MB · Max 500 rows ·
+                    Images downloaded automatically from image_url column
+                </div>
+                <div class="file-name-display" id="fileNameDisplay"></div>
+            </div>
+
+            <!-- Processing indicator (shown while server is working) -->
+            <div class="processing-bar" id="processingBar">
+                <p id="processingLabel">⏳ Uploading and processing your CSV…</p>
+                <div class="bar-track"><div class="bar-fill"></div></div>
+            </div>
+
+            <div class="submit-row">
+                <button type="submit" class="btn btn-primary btn-import" id="submitBtn">
+                    <div class="spinner"></div>
+                    <span class="btn-icon">📤</span>
+                    <span class="btn-label">Import Products</span>
+                </button>
+                <span style="font-size:12px; color:var(--text-muted,#999); max-width:420px; line-height:1.5;">
+                    All rows are validated first. Rows with errors are skipped;
+                    valid rows are saved atomically (all succeed or none).
+                </span>
+            </div>
+        </form>
+    </div>
+
+    <!-- ── Column reference card ── -->
+    <div class="import-card">
+        <h3>📋 CSV Column Reference</h3>
+
+        <table class="columns-table">
+            <thead>
+                <tr>
+                    <th style="width:160px;">Column</th>
+                    <th style="width:100px;">Required?</th>
+                    <th>Description &amp; Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>name_en</code></td>
+                    <td><span class="badge-required">Required</span></td>
+                    <td>Product name in English — <em>Luxury Sofa</em></td>
+                </tr>
+                <tr>
+                    <td><code>name_am</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td>Product name in Amharic — <em>ቅርጫ ሶፋ</em></td>
+                </tr>
+                <tr>
+                    <td><code>name_ar</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td>Product name in Arabic — <em>صوفا فاخرة</em></td>
+                </tr>
+                <tr>
+                    <td><code>price</code></td>
+                    <td><span class="badge-required">Required</span></td>
+                    <td>Selling price in ETB — must be &gt; 0 — <em>15000</em></td>
+                </tr>
+                <tr>
+                    <td><code>compare_price</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td>Original / struck-through price — <em>20000</em></td>
+                </tr>
+                <tr>
+                    <td><code>stock</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td>Stock quantity (defaults to 0) — <em>10</em></td>
+                </tr>
+                <tr>
+                    <td><code>category</code></td>
+                    <td><span class="badge-required">Required</span></td>
+                    <td>
+                        Category name — case-insensitive, English or Amharic. Available:
+                        <div class="category-chips">
+                            {% for cat in categories %}
+                            <span class="chip">{{ cat.name_am or cat.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>image_url</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td>
+                        Public HTTPS URL of a product image (JPEG, PNG, WebP, GIF · max 5 MB).
+                        The image is downloaded and saved locally. If the download fails the
+                        product is still imported with a placeholder icon.
+                        <br><em style="font-size:11px; color:#888;">https://example.com/sofa.jpg</em>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>description_en</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td>Product description in English</td>
+                </tr>
+                <tr>
+                    <td><code>description_am</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td>Product description in Amharic</td>
+                </tr>
+                <tr>
+                    <td><code>featured</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td><code>yes</code> / <code>1</code> / <code>true</code> to mark as featured</td>
+                </tr>
+                <tr>
+                    <td><code>is_new</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td><code>yes</code> / <code>1</code> / <code>true</code> to mark as new arrival</td>
+                </tr>
+                <tr>
+                    <td><code>sku</code></td>
+                    <td><span class="badge-optional">Optional</span></td>
+                    <td>Stock keeping unit code — <em>SKU-001</em></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="tip-box">
+            💡 <strong>Category matching is case-insensitive.</strong>
+            Typing <code>sofa</code>, <code>Sofa</code>, or <code>SOFA</code> all work.
+            You can also use the Amharic name (e.g. <code>ሶፋ</code>).
+            Download the <a href="{{ url_for('admin.import_products_sample') }}">sample CSV</a>
+            to see a ready-to-use template with all columns.
+        </div>
+    </div>
+
+</div>
+
+<script>
+(function () {
+    const dropZone   = document.getElementById('dropZone');
+    const fileInput  = document.getElementById('csvFileInput');
+    const fileLabel  = document.getElementById('fileNameDisplay');
+    const dropIcon   = document.getElementById('dropIcon');
+    const submitBtn  = document.getElementById('submitBtn');
+    const btnLabel   = submitBtn.querySelector('.btn-label');
+    const procBar    = document.getElementById('processingBar');
+    const procLabel  = document.getElementById('processingLabel');
+
+    function markFile(file) {
+        fileLabel.textContent = '📎 ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+        dropZone.classList.add('has-file');
+        dropZone.classList.remove('drag-over');
+        dropIcon.textContent = '✅';
+    }
+
+    fileInput.addEventListener('change', function () {
+        if (this.files.length > 0) markFile(this.files[0]);
+    });
+
+    dropZone.addEventListener('dragover',  function (e) { e.preventDefault(); this.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', function ()  { this.classList.remove('drag-over'); });
+    dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+        }
+    });
+
+    document.getElementById('importForm').addEventListener('submit', function (e) {
+        if (!fileInput.files.length) {
+            e.preventDefault();
+            if (window.showToast) window.showToast('Please select a CSV file first.', 'warning');
+            else alert('Please select a CSV file first.');
+            return;
+        }
+
+        const f = fileInput.files[0];
+
+        if (!f.name.toLowerCase().endsWith('.csv')) {
+            e.preventDefault();
+            if (window.showToast) window.showToast('Only .csv files are accepted.', 'error');
+            else alert('Only .csv files are accepted.');
+            return;
+        }
+
+        if (f.size > 2 * 1024 * 1024) {
+            e.preventDefault();
+            if (window.showToast) window.showToast('File exceeds 2 MB limit.', 'error');
+            else alert('File exceeds 2 MB limit.');
+            return;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        btnLabel.textContent = 'Importing…';
+        procBar.classList.add('show');
+
+        // Update label when image_url column might trigger downloads
+        setTimeout(function () {
+            procLabel.textContent = '⏳ Downloading images and saving products…';
+        }, 1500);
+    });
+})();
+</script>
+{% endblock %}

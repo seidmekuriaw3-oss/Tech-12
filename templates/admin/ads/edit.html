@@ -1,0 +1,551 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Edit Advertisement - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .preview-container {
+        border: 2px dashed #ddd;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        margin-top: 16px;
+        background: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+    .preview-container.has-media {
+        border-color: #1a7a4a;
+        background: #f0f7ff;
+    }
+    .media-preview {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+        margin-top: 12px;
+    }
+    .current-media {
+        background: #e8f0fe;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+    .current-media h4 {
+        margin: 0 0 12px 0;
+        color: #1a7a4a;
+    }
+    .current-media img, .current-media video {
+        max-width: 100%;
+        max-height: 150px;
+        border-radius: 8px;
+    }
+    .char-count {
+        font-size: 12px;
+        color: #666;
+        text-align: right;
+        margin-top: 4px;
+    }
+    .char-count.warning {
+        color: #ff9800;
+    }
+    .char-count.danger {
+        color: #f44336;
+    }
+    .form-section {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .form-section h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+        color: #1a7a4a;
+    }
+    .delete-media-btn {
+        background: #f44336;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 8px;
+        font-size: 12px;
+    }
+    .delete-media-btn:hover {
+        background: #d32f2f;
+    }
+    .required-star {
+        color: #f44336;
+        margin-left: 4px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+    }
+    @media (max-width: 768px) {
+        .form-section {
+            padding: 16px;
+        }
+        .preview-container {
+            min-height: 150px;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        .form-section {
+            background: #1a1a2e;
+            border-color: #2a2a3e;
+        }
+        .form-section h3 {
+            border-bottom-color: #2a2a3e;
+        }
+        .preview-container {
+            background: #16213e;
+            border-color: #2a2a3e;
+        }
+        .preview-container.has-media {
+            background: #1a2a3e;
+        }
+        .current-media {
+            background: #1a2a3e;
+        }
+        input, textarea, select {
+            background: #16213e;
+            border-color: #2a2a3e;
+            color: #eee;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <!-- Header -->
+    <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;">
+            <a href="{{ url_for('admin.ads') }}" style="color: #666; text-decoration: none; font-size: 24px;" aria-label="Back to ads list">←</a>
+            <h1 style="margin: 0; font-size: 1.8rem;">✏️ Edit Advertisement</h1>
+        </div>
+        <p style="color: #666; margin: 0;">Update your advertisement details</p>
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" action="{{ url_for('admin.ad_edit', aid=ad.id) }}" enctype="multipart/form-data" id="adForm" onsubmit="return validateForm()">
+        <input type="hidden" name="_method" value="PUT">
+        
+        <!-- Current Media Display -->
+        {% if ad.image and ad.image|trim != '' %}
+        <div class="current-media">
+            <h4>📎 Current Media</h4>
+            <div style="text-align: center;">
+                {% if ad.image.endswith(('.mp4', '.webm', '.mov', '.avi', '.ogg')) %}
+                    <video src="{{ url_for('static', filename=(ad.image if ad.image[:8] == 'uploads/' else 'uploads/ads/' ~ ad.image)) }}" controls style="max-width: 100%; max-height: 150px; border-radius: 8px;" poster="{{ url_for('static', filename='images/placeholder.png') }}" onerror="this.onerror=null; this.poster=`{{ url_for('static', filename='images/placeholder.png') }}`;"></video>
+                {% else %}
+                    <img src="{{ url_for('static', filename=(ad.image if ad.image[:8] == 'uploads/' else 'uploads/ads/' ~ ad.image)) }}" alt="Current ad media" style="max-width: 100%; max-height: 150px; border-radius: 8px;" onerror="this.onerror=null; this.src=`{{ url_for('static', filename='images/placeholder.png') }}`;">
+                {% endif %}
+                <div style="margin-top: 8px;">
+                    <button type="button" class="delete-media-btn" data-ad-id="{{ ad.id }}" onclick="deleteMedia(this.dataset.adId)">🗑️ Remove Media</button>
+                    <small style="display: block; margin-top: 8px; color: #666;">Upload new media below to replace</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Advertisement Text Section -->
+        <div class="form-section">
+            <h3>📝 Advertisement Text</h3>
+            
+            <div class="form-group">
+                <label>
+                    Ad Text <span class="required-star">*</span>
+                </label>
+                <textarea name="ad_text" 
+                          id="ad_text" 
+                          rows="5" 
+                          required
+                          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; resize: vertical; font-family: inherit;"
+                          maxlength="500"
+                          onkeyup="updateCharCount()">{{ ad.description if ad.description else '' }}</textarea>
+                <div id="charCount" class="char-count">0 / 500 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Title (Optional)</label>
+                <input type="text" 
+                       name="title" 
+                       id="ad_title"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="e.g., Summer Sale, New Arrivals, Limited Offer"
+                       maxlength="100"
+                       value="{{ ad.title if ad.title else '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label>Link URL (Optional)</label>
+                <input type="url" 
+                       name="link" 
+                       id="ad_link"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="https://ethiosadat.com/category/sale"
+                       value="{{ ad.link if ad.link else '' }}">
+                <small style="color: #666; display: block; margin-top: 4px;">Clicking the ad will redirect to this URL</small>
+            </div>
+        </div>
+
+        <!-- Multi-language Section -->
+        <div class="form-section">
+            <h3>🌐 Multi-language Support (Optional)</h3>
+            
+            <div class="form-group">
+                <label>Title (አማርኛ)</label>
+                <input type="text" 
+                       name="title_am" 
+                       id="title_am"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="የማስታወቂያ ርዕስ በአማርኛ"
+                       value="{{ ad.title_am if ad.title_am else '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label>Title (العربية)</label>
+                <input type="text" 
+                       name="title_ar" 
+                       id="title_ar"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="عنوان الإعلان بالعربية"
+                       value="{{ ad.title_ar if ad.title_ar else '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label>Description (አማርኛ)</label>
+                <textarea name="description_am" 
+                          id="description_am"
+                          rows="3"
+                          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"
+                          placeholder="የማስታወቂያ ጽሑፍ በአማርኛ">{{ ad.description_am if ad.description_am else '' }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Description (العربية)</label>
+                <textarea name="description_ar" 
+                          id="description_ar"
+                          rows="3"
+                          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"
+                          placeholder="نص الإعلان بالعربية">{{ ad.description_ar if ad.description_ar else '' }}</textarea>
+            </div>
+        </div>
+
+        <!-- Media Section -->
+        <div class="form-section">
+            <h3>🖼️ Update Media (Optional)</h3>
+            
+            <div class="form-group">
+                <label>Upload New Media</label>
+                <input type="file" 
+                       name="media" 
+                       id="ad_media" 
+                       accept="image/*,video/*"
+                       style="width: 100%; padding: 8px;"
+                       onchange="previewMedia(this)">
+                <small style="color: #666; display: block; margin-top: 8px;">
+                    Leave empty to keep current media. Supported: JPG, PNG, GIF, WEBP, MP4, WebM (Max 16MB)
+                </small>
+            </div>
+            
+            <!-- Media Preview -->
+            <div id="previewContainer" class="preview-container">
+                <div style="color: #999; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">📷</div>
+                    <p>No new media selected</p>
+                    <small>Upload new image or video to replace current media</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Settings Section -->
+        <div class="form-section">
+            <h3>📅 Date Settings (Optional)</h3>
+            
+            <div class="form-group">
+                <label>Start Date</label>
+                <input type="datetime-local" 
+                       name="start_date" 
+                       id="start_date"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       value="{% if ad.start_date %}{% if ad.start_date is string %}{{ ad.start_date.replace(' ', 'T')[:16] }}{% else %}{{ ad.start_date.strftime('%Y-%m-%dT%H:%M') }}{% endif %}{% endif %}">
+                <small style="color: #666;">Leave empty to start immediately</small>
+            </div>
+            
+            <div class="form-group">
+                <label>End Date</label>
+                <input type="datetime-local" 
+                       name="end_date" 
+                       id="end_date"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       value="{% if ad.end_date %}{% if ad.end_date is string %}{{ ad.end_date.replace(' ', 'T')[:16] }}{% else %}{{ ad.end_date.strftime('%Y-%m-%dT%H:%M') }}{% endif %}{% endif %}">
+                <small style="color: #666;">Leave empty for no expiration</small>
+            </div>
+        </div>
+
+        <!-- Display Settings Section -->
+        <div class="form-section">
+            <h3>⚙️ Display Settings</h3>
+            
+            <div class="form-group">
+                <label>Sort Order</label>
+                <input type="number" 
+                       name="sort_order" 
+                       id="sort_order"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       value="{{ ad.sort_order if ad.sort_order is not none else 0 }}"
+                       min="0">
+                <small style="color: #666; display: block; margin-top: 4px;">Lower numbers appear first. Use 0, 1, 2, 3... to order your ads</small>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" name="is_active" value="1" {% if ad.is_active %}checked{% endif %} style="margin-right: 10px; width: auto;">
+                    Active
+                </label>
+                <small style="color: #666; display: block; margin-top: 4px;">Inactive ads won't be visible to customers</small>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div style="display: flex; gap: 16px; justify-content: flex-end; margin-top: 32px; padding-bottom: 40px;">
+            <a href="{{ url_for('admin.ads') }}" class="btn btn-outline" style="padding: 12px 24px; text-decoration: none;">Cancel</a>
+            <button type="submit" class="btn btn-primary" style="padding: 12px 32px; display: flex; align-items: center; gap: 8px; border: none; cursor: pointer;">
+                <span>💾</span> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Character counter
+    function updateCharCount() {
+        const textarea = document.getElementById('ad_text');
+        const countSpan = document.getElementById('charCount');
+        if (!textarea || !countSpan) return;
+        
+        const length = textarea.value.length;
+        const maxLength = 500;
+        
+        countSpan.textContent = `${length} / ${maxLength} characters`;
+        
+        countSpan.classList.remove('warning', 'danger');
+        if (length > maxLength) {
+            countSpan.classList.add('danger');
+        } else if (length > maxLength * 0.8) {
+            countSpan.classList.add('warning');
+        }
+    }
+
+    // Preview media from file upload
+    function previewMedia(input) {
+        const previewContainer = document.getElementById('previewContainer');
+        if (!previewContainer) return;
+        
+        const file = input.files[0];
+        
+        if (file) {
+            // Check file size (16MB = 16 * 1024 * 1024)
+            if (file.size > 16 * 1024 * 1024) {
+                if (window.showToast) {
+                    window.showToast('File size must be less than 16MB', 'error');
+                } else {
+                    alert('File size must be less than 16MB');
+                }
+                input.value = '';
+                resetPreview();
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                let mediaHtml = '';
+                
+                if (file.type.startsWith('image/')) {
+                    mediaHtml = `
+                        <div style="text-align: center;">
+                            <img src="${e.target.result}" class="media-preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: contain;">
+                            <p style="margin-top: 12px; color: #4caf50;">✓ New image selected: ${escapeHtml(file.name)}</p>
+                            <small style="color: #ff9800; display: block; margin-top: 4px;">This will replace the current media when saved</small>
+                        </div>
+                    `;
+                } else if (file.type.startsWith('video/')) {
+                    mediaHtml = `
+                        <div style="text-align: center;">
+                            <video src="${e.target.result}" class="media-preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;" controls></video>
+                            <p style="margin-top: 12px; color: #4caf50;">✓ New video selected: ${escapeHtml(file.name)}</p>
+                            <small style="color: #ff9800; display: block; margin-top: 4px;">This will replace the current media when saved</small>
+                        </div>
+                    `;
+                } else {
+                    mediaHtml = `<p style="color: #f44336; text-align: center;">❌ Unsupported file type. Please upload an image or video.</p>`;
+                }
+                
+                previewContainer.innerHTML = mediaHtml;
+                previewContainer.classList.add('has-media');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            resetPreview();
+        }
+    }
+
+    function resetPreview() {
+        const previewContainer = document.getElementById('previewContainer');
+        if (!previewContainer) return;
+        
+        previewContainer.innerHTML = `
+            <div style="color: #999; text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 12px;">📷</div>
+                <p>No new media selected</p>
+                <small>Upload new image or video to replace current media</small>
+            </div>
+        `;
+        previewContainer.classList.remove('has-media');
+    }
+
+    // Delete media function
+    function deleteMedia(adId) {
+        if (!adId) return;
+        const deleteUrl = "{{ url_for('admin.ad_delete', aid=0) }}".replace('/0', `/${adId}`);
+        
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            if (window.showLoading) window.showLoading(true);
+            
+            fetch(deleteUrl, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showSuccess) {
+                        window.showSuccess('Media removed successfully');
+                    } else if (window.showToast) {
+                        window.showToast('Media removed successfully', 'success');
+                    }
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (window.showError) {
+                        window.showError(data.error || 'Failed to remove media');
+                    }
+                }
+            })
+            .catch(() => {
+                if (window.showError) window.showError('Error removing media');
+            })
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Delete Media', 'Are you sure you want to remove the media from this advertisement?', callback);
+        } else {
+            if (confirm('Are you sure you want to remove the media from this advertisement?')) {
+                callback();
+            }
+        }
+    }
+
+    // Form validation
+    function validateForm() {
+        const adText = document.getElementById('ad_text');
+        const adTextValue = adText ? adText.value.trim() : '';
+        
+        if (!adTextValue) {
+            if (window.showToast) {
+                window.showToast('Please enter advertisement text', 'error');
+            } else {
+                alert('Please enter advertisement text');
+            }
+            if (adText) adText.focus();
+            return false;
+        }
+        
+        if (adTextValue.length > 500) {
+            if (window.showToast) {
+                window.showToast('Advertisement text must be less than 500 characters', 'error');
+            } else {
+                alert('Advertisement text must be less than 500 characters');
+            }
+            if (adText) adText.focus();
+            return false;
+        }
+        
+        if (window.showToast) {
+            window.showToast('Saving changes...', 'info');
+        }
+        return true;
+    }
+
+    // Auto-save draft is disabled for safety
+    // Use manual save instead
+
+    // Escape HTML helper
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Initialize character count on load
+    const adText = document.getElementById('ad_text');
+    const adTitle = document.getElementById('ad_title');
+    const adLink = document.getElementById('ad_link');
+
+    // Initialize character count
+    updateCharCount();
+
+    // Confirm before leaving with unsaved changes
+    let formChanged = false;
+    
+    function markFormChanged() {
+        formChanged = true;
+    }
+    
+    const formInputs = document.querySelectorAll('#adForm input, #adForm textarea, #adForm select');
+    formInputs.forEach(el => {
+        el.addEventListener('input', markFormChanged);
+    });
+    
+    window.addEventListener('beforeunload', (e) => {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+            return e.returnValue;
+        }
+    });
+    
+    // Reset form changed flag on save
+    const adForm = document.getElementById('adForm');
+    if (adForm) {
+        adForm.addEventListener('submit', () => {
+            formChanged = false;
+        });
+    }
+
+    // Preview existing media on page load if any
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentMedia = document.querySelector('.current-media');
+        if (currentMedia) {
+            console.log('Current media loaded');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,596 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Settings - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .settings-card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        padding: 28px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    .settings-card h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
+        color: var(--primary, #1a7a4a);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--text-color, #333);
+    }
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        outline: none;
+        border-color: #1a7a4a;
+        box-shadow: 0 0 0 3px rgba(26,122,74,0.1);
+    }
+    .form-group small {
+        display: block;
+        margin-top: 6px;
+        color: var(--text-muted, #666);
+        font-size: 12px;
+    }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .checkbox-group input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+    .preview-box {
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 10px;
+        padding: 16px;
+        margin-top: 16px;
+        border: 1px solid var(--border-color, #eee);
+    }
+    .preview-box h4 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        color: var(--text-muted, #666);
+    }
+    .danger-zone {
+        border: 1px solid #ffebee;
+    }
+    .danger-zone h3 {
+        color: #f44336;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .preview-box {
+            background: #1a1a2e;
+        }
+        .danger-zone {
+            border-color: #4a1a1a;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .settings-card {
+            padding: 20px;
+        }
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        .action-buttons {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    
+    <!-- Header -->
+    <div style="margin-bottom: 24px;">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline" style="margin-bottom: 12px; display: inline-block;">← Back to Dashboard</a>
+        <h1 style="margin: 8px 0 4px 0;">⚙️ Admin Settings</h1>
+        <p style="color: var(--text-muted, #666); margin: 0;">Configure your store settings and preferences</p>
+    </div>
+
+    <!-- Main Settings Form -->
+    <form method="post" action="{{ url_for('admin.settings') }}" id="settingsForm" onsubmit="return validateForm()">
+        
+        <!-- General Settings -->
+        <div class="settings-card">
+            <h3>
+                <span>🏪</span> General Settings
+            </h3>
+            
+            <div class="form-group">
+                <label>Site Name</label>
+                <input type="text" name="site_name" id="site_name" value="{{ settings.site_name|default('Ethiosadat Furniture') }}" placeholder="Store name">
+                <small>This appears in browser tabs and page titles</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Site Description</label>
+                <input type="text" name="site_description" id="site_description" value="{{ settings.site_description|default('Quality Furniture at Affordable Prices') }}" placeholder="Store description">
+                <small>Used for SEO and meta descriptions</small>
+            </div>
+        </div>
+
+        <!-- Contact Settings -->
+        <div class="settings-card">
+            <h3>
+                <span>📞</span> Contact Information
+            </h3>
+            
+            <div class="form-group">
+                <label>Admin Email</label>
+                <input type="email" name="admin_email" id="admin_email" value="{{ settings.admin_email|default('admin@ethiosadat.com') }}" placeholder="admin@example.com">
+                <small>Used for notifications and support</small>
+            </div>
+            
+            <div class="form-group">
+                <label>WhatsApp Number</label>
+                <input type="tel" name="whatsapp_number" id="whatsapp_number" value="{{ settings.whatsapp_number|default('251906020606') }}" placeholder="251906020606">
+                <small>Format: 2519xxxxxxxx (without +)</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone_number" id="phone_number" value="{{ settings.phone_number|default('+251906020606') }}" placeholder="+251906020606">
+                <small>Displayed on contact page and footer</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Store Address</label>
+                <input type="text" name="store_address" id="store_address" value="{{ settings.store_address|default('Addis Ababa, Ethiopia') }}" placeholder="Store address">
+            </div>
+        </div>
+
+        <!-- Shipping Settings -->
+        <div class="settings-card">
+            <h3>
+                <span>🚚</span> Shipping Settings
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Free Shipping Threshold (ETB)</label>
+                    <input type="number" name="free_shipping_threshold" id="free_shipping_threshold" value="{{ settings.free_shipping_threshold|default('5000') }}" step="100" min="0">
+                    <small>Orders above this amount get free shipping</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Standard Shipping Cost (ETB)</label>
+                    <input type="number" name="shipping_cost" id="shipping_cost" value="{{ settings.shipping_cost|default('200') }}" step="10" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Currency & Language Settings -->
+        <div class="settings-card">
+            <h3>
+                <span>🌐</span> Localization
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Currency</label>
+                    <select name="currency" id="currency">
+                        <option value="ETB" {% if settings.currency == 'ETB' %}selected{% endif %}>ETB - Ethiopian Birr</option>
+                        <option value="USD" {% if settings.currency == 'USD' %}selected{% endif %}>USD - US Dollar</option>
+                    </select>
+                    <small>Default currency for your store</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Default Language</label>
+                    <select name="default_language" id="default_language">
+                        <option value="am" {% if settings.default_language == 'am' %}selected{% endif %}>አማርኛ (Amharic)</option>
+                        <option value="en" {% if settings.default_language == 'en' %}selected{% endif %}>English</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO Settings -->
+        <div class="settings-card">
+            <h3>
+                <span>🔍</span> SEO Settings
+            </h3>
+            
+            <div class="form-group">
+                <label>Meta Keywords</label>
+                <input type="text" name="meta_keywords" id="meta_keywords" value="{{ settings.meta_keywords|default('furniture, ethiosadat, addis ababa, sofa, bed') }}" placeholder="furniture, ethiosadat, addis ababa">
+                <small>Comma-separated keywords for search engines</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Google Analytics ID</label>
+                <input type="text" name="google_analytics" id="google_analytics" value="{{ settings.google_analytics|default('') }}" placeholder="G-XXXXXXXXXX">
+                <small>Optional - for tracking website traffic</small>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="settings-card">
+            <h3>
+                <span>👁️</span> Preview
+            </h3>
+            <div class="preview-box">
+                <h4>WhatsApp Link Preview</h4>
+                <p id="whatsappPreview" style="font-family: monospace; word-break: break-all;">
+                    https://wa.me/{{ settings.whatsapp_number|default('251906020606') }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button type="submit" class="btn btn-primary" style="padding: 12px 28px;">
+                💾 Save All Settings
+            </button>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline" style="padding: 12px 28px; text-decoration: none;">
+                Cancel
+            </a>
+            <button type="button" onclick="resetToDefaults()" class="btn btn-outline" style="border-color: #ff9800; color: #ff9800;">
+                🔄 Reset to Defaults
+            </button>
+        </div>
+    </form>
+
+    <!-- Change Password -->
+    <div class="settings-card" id="change-password">
+        <h3>
+            <span>🔑</span> Change Admin Password
+        </h3>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                {% if 'password' in message.lower() %}
+                <div style="padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;
+                    {% if category == 'success' %}background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7;
+                    {% else %}background:#ffebee; color:#c62828; border:1px solid #ef9a9a;{% endif %}">
+                    {{ message }}
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('admin.change_password') }}" onsubmit="return validatePasswordForm()">
+            <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" name="current_password" id="current_password" placeholder="Enter current password" autocomplete="current-password">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" name="new_password" id="new_password" placeholder="Min 8 characters" autocomplete="new-password">
+                    <small>At least 8 characters</small>
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" name="confirm_password" id="confirm_password" placeholder="Repeat new password" autocomplete="new-password">
+                </div>
+            </div>
+            <div style="margin-top: 4px;">
+                <button type="submit" class="btn btn-primary" style="padding: 11px 24px;">
+                    🔒 Update Password
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="settings-card danger-zone">
+        <h3>
+            <span>⚠️</span> Danger Zone
+        </h3>
+        
+        <div style="margin-bottom: 15px;">
+            <p style="color: var(--text-muted, #666); margin-bottom: 15px;">These actions cannot be undone. Be careful!</p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" onclick="clearCache()" class="btn btn-outline">🗑️ Clear Cache</button>
+                <button type="button" onclick="backupDatabase()" class="btn btn-outline">💾 Backup Database</button>
+                <button type="button" onclick="rebuildIndexes()" class="btn btn-outline">🔧 Rebuild Indexes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Preview WhatsApp number
+    const whatsappInput = document.getElementById('whatsapp_number');
+    const whatsappPreview = document.getElementById('whatsappPreview');
+    
+    if (whatsappInput && whatsappPreview) {
+        whatsappInput.addEventListener('input', function() {
+            let number = this.value.replace(/[^0-9]/g, '');
+            if (number.startsWith('0')) number = '251' + number.substring(1);
+            if (!number.startsWith('251') && number.length > 0) number = '251' + number;
+            whatsappPreview.textContent = `https://wa.me/${number || '251906020606'}`;
+        });
+    }
+
+    // Validate form
+    function validateForm() {
+        const whatsapp = document.getElementById('whatsapp_number')?.value || '';
+        const email = document.getElementById('admin_email')?.value || '';
+        const threshold = document.getElementById('free_shipping_threshold')?.value;
+        
+        // Validate WhatsApp number
+        if (whatsapp) {
+            const cleanNumber = whatsapp.replace(/[^0-9]/g, '');
+            if (cleanNumber.length < 10 && cleanNumber.length > 0) {
+                if (window.showToast) {
+                    window.showToast('Please enter a valid WhatsApp number', 'error');
+                } else {
+                    alert('Please enter a valid WhatsApp number');
+                }
+                return false;
+            }
+        }
+        
+        // Validate email
+        if (email && !isValidEmail(email)) {
+            if (window.showToast) {
+                window.showToast('Please enter a valid email address', 'error');
+            } else {
+                alert('Please enter a valid email address');
+            }
+            return false;
+        }
+        
+        // Validate shipping threshold
+        if (threshold && parseInt(threshold) < 0) {
+            if (window.showToast) {
+                window.showToast('Shipping threshold must be a positive number', 'error');
+            } else {
+                alert('Shipping threshold must be a positive number');
+            }
+            return false;
+        }
+        
+        // Show loading state
+        const submitBtn = document.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-sm"></span> Saving...';
+        }
+        
+        return true;
+    }
+    
+    function isValidEmail(email) {
+        const re = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        return re.test(email);
+    }
+
+    // Reset to defaults
+    function resetToDefaults() {
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            document.getElementById('site_name').value = 'Ethiosadat Furniture';
+            document.getElementById('site_description').value = 'Quality Furniture at Affordable Prices';
+            document.getElementById('admin_email').value = 'admin@ethiosadat.com';
+            document.getElementById('whatsapp_number').value = '251906020606';
+            document.getElementById('phone_number').value = '+251906020606';
+            document.getElementById('store_address').value = 'Addis Ababa, Ethiopia';
+            document.getElementById('free_shipping_threshold').value = '5000';
+            document.getElementById('shipping_cost').value = '200';
+            document.getElementById('currency').value = 'ETB';
+            document.getElementById('default_language').value = 'am';
+            document.getElementById('meta_keywords').value = 'furniture, ethiosadat, addis ababa, sofa, bed';
+            
+            if (window.showToast) {
+                window.showToast('Settings reset to defaults', 'success');
+            } else {
+                alert('Settings reset to defaults');
+            }
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Reset Settings', 'Are you sure you want to reset all settings to default values?', callback);
+        } else {
+            if (confirm('Are you sure you want to reset all settings to default values?')) callback();
+        }
+    }
+
+    // Clear cache
+    function clearCache() {
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            if (window.showLoading) window.showLoading(true);
+            
+            fetch('{{ url_for('admin.clear_cache') }}', {
+                method: 'POST',
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showToast) {
+                        window.showToast('Cache cleared successfully', 'success');
+                    } else {
+                        alert('Cache cleared successfully');
+                    }
+                } else {
+                    throw new Error(data.error || 'Failed to clear cache');
+                }
+            })
+            .catch(() => {
+                if (window.showToast) {
+                    window.showToast('Failed to clear cache', 'error');
+                } else {
+                    alert('Failed to clear cache');
+                }
+            })
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Clear Cache', 'Are you sure you want to clear the system cache?', callback);
+        } else {
+            if (confirm('Are you sure you want to clear the system cache?')) callback();
+        }
+    }
+
+    // Backup database
+    function backupDatabase() {
+        if (window.showLoading) window.showLoading(true);
+        
+        fetch('{{ url_for('admin.backup_database') }}', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ethiosadat_backup_${new Date().toISOString().slice(0,19)}.db`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            if (window.showToast) {
+                window.showToast('Database backup completed', 'success');
+            }
+        })
+        .catch(() => {
+            if (window.showToast) {
+                window.showToast('Backup failed', 'error');
+            } else {
+                alert('Backup failed');
+            }
+        })
+        .finally(() => {
+            if (window.showLoading) window.showLoading(false);
+        });
+    }
+    
+    // Rebuild database indexes
+    function rebuildIndexes() {
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            if (window.showLoading) window.showLoading(true);
+            
+            fetch('{{ url_for('admin.dashboard') }}', {
+                method: 'POST',
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showToast) {
+                        window.showToast('Indexes rebuilt successfully', 'success');
+                    } else {
+                        alert('Indexes rebuilt successfully');
+                    }
+                } else {
+                    throw new Error(data.error || 'Failed to rebuild indexes');
+                }
+            })
+            .catch(() => {
+                if (window.showToast) {
+                    window.showToast('Failed to rebuild indexes', 'error');
+                } else {
+                    alert('Failed to rebuild indexes');
+                }
+            })
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Rebuild Indexes', 'This may take a few minutes. Are you sure you want to rebuild all database indexes?', callback);
+        } else {
+            if (confirm('This may take a few minutes. Are you sure you want to rebuild all database indexes?')) callback();
+        }
+    }
+    
+    // Reset button loading state if needed
+    window.addEventListener('load', function() {
+        const submitBtn = document.querySelector('button[type="submit"]');
+        if (submitBtn && submitBtn.disabled) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '💾 Save All Settings';
+        }
+    });
+    
+    // Validate change password form
+    function validatePasswordForm() {
+        const current = document.getElementById('current_password')?.value || '';
+        const newPw = document.getElementById('new_password')?.value || '';
+        const confirm = document.getElementById('confirm_password')?.value || '';
+
+        if (!current || !newPw || !confirm) {
+            window.showToast ? window.showToast('All password fields are required.', 'error') : alert('All password fields are required.');
+            return false;
+        }
+        if (newPw.length < 8) {
+            window.showToast ? window.showToast('New password must be at least 8 characters.', 'error') : alert('New password must be at least 8 characters.');
+            return false;
+        }
+        if (newPw !== confirm) {
+            window.showToast ? window.showToast('Passwords do not match.', 'error') : alert('Passwords do not match.');
+            return false;
+        }
+        const btn = document.querySelector('#change-password button[type="submit"]');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-sm"></span> Updating...'; }
+        return true;
+    }
+
+    // Make functions globally available
+    window.resetToDefaults = resetToDefaults;
+    window.clearCache = clearCache;
+    window.backupDatabase = backupDatabase;
+    window.rebuildIndexes = rebuildIndexes;
+    window.validateForm = validateForm;
+    window.validatePasswordForm = validatePasswordForm;
+</script>
+{% endblock %}

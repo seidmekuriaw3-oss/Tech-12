@@ -1,0 +1,439 @@
+<!-- ==================== FOOTER ==================== -->
+<!-- Website footer with links, contact info, and social media -->
+
+<footer class="site-footer" role="contentinfo">
+    <div class="footer-container">
+        
+        <!-- Main Footer Content -->
+        <div class="footer-grid">
+            
+            <!-- About Section -->
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <span>🪑</span> Ethiosadat Furniture
+                </h3>
+                <p class="footer-description">
+                    {% if lang == 'am' %}
+                    ጥራት ያለው የቤት እቃ በተመጣጣኝ ዋጋ። ቤትዎን ወደሚያምር እና ምቹ ቦታ እንለውጣለን።
+                    {% else %}
+                    Quality furniture at affordable prices. Transforming houses into beautiful and comfortable homes.
+                    {% endif %}
+                </p>
+                <div class="footer-social">
+                    <a href="https://www.facebook.com/ethiosadat" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <span>📘</span>
+                    </a>
+                    <a href="https://www.instagram.com/ethiosadat" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <span>📷</span>
+                    </a>
+                    <a href="https://wa.me/{{ settings.whatsapp_number|default('251906020606') }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                        <span>💬</span>
+                    </a>
+                    <a href="https://t.me/ethiosadat" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                        <span>📨</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    🔗 {% if lang == 'am' %}ፈጣን አገናኞች{% else %}Quick Links{% endif %}
+                </h3>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('customer.index') }}">🏠 {% if lang == 'am' %}መነሻ{% else %}Home{% endif %}</a></li>
+                    <li><a href="{{ url_for('customer.products') }}">📦 {% if lang == 'am' %}ምርቶች{% else %}Products{% endif %}</a></li>
+                    <li><a href="{{ url_for('customer.about') }}">ℹ️ {% if lang == 'am' %}ስለ እኛ{% else %}About Us{% endif %}</a></li>
+                    <li><a href="{{ url_for('customer.contact') }}">📞 {% if lang == 'am' %}አግኙን{% else %}Contact{% endif %}</a></li>
+                    <li><a href="{{ url_for('customer.faq') }}">❓ {% if lang == 'am' %}በየጥ{% else %}FAQ{% endif %}</a></li>
+                </ul>
+            </div>
+            
+            <!-- Customer Service -->
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    🛠️ {% if lang == 'am' %}የደንበኛ አገልግሎት{% else %}Customer Service{% endif %}
+                </h3>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('customer.shipping_info') }}">🚚 {% if lang == 'am' %}ማጓጓዝ መረጃ{% else %}Shipping Info{% endif %}</a></li>
+                    <li><a href="{{ url_for('customer.returns_policy') }}">🔄 {% if lang == 'am' %}መመለስ እና መለዋወጥ{% else %}Returns & Exchanges{% endif %}</a></li>
+                    <li><a href="{{ url_for('customer.privacy') }}">🔒 {% if lang == 'am' %}ግላዊነት ፖሊሲ{% else %}Privacy Policy{% endif %}</a></li>
+                    <li><a href="{{ url_for('customer.terms') }}">📜 {% if lang == 'am' %}ውሎች እና ሁኔታዎች{% else %}Terms & Conditions{% endif %}</a></li>
+                    <li><a href="#">🗺️ {% if lang == 'am' %}የገጽ ካርታ{% else %}Sitemap{% endif %}</a></li>
+                </ul>
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    📍 {% if lang == 'am' %}አግኙን{% else %}Contact Info{% endif %}
+                </h3>
+                <ul class="footer-contact">
+                    <li>
+                        <span class="contact-icon">📞</span>
+                        <a href="tel:+251906020606">+251 90 602 0606</a>
+                    </li>
+                    <li>
+                        <span class="contact-icon">💬</span>
+                        <a href="https://wa.me/{{ settings.whatsapp_number|default('251906020606') }}" target="_blank">
+                            {% if lang == 'am' %}ዋትሳፕ{% else %}WhatsApp{% endif %}
+                        </a>
+                    </li>
+                    <li>
+                        <span class="contact-icon">📧</span>
+                        <a href="mailto:info@ethiosadat.com">info@ethiosadat.com</a>
+                    </li>
+                    <li>
+                        <span class="contact-icon">📍</span>
+                        <span>{% if lang == 'am' %}አዲስ አበባ፣ ኢትዮጵያ{% else %}Addis Ababa, Ethiopia{% endif %}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Newsletter Section -->
+        <div class="footer-newsletter">
+            <h4>📧 {% if lang == 'am' %}ለዜና ደብዳቤ ይመዝገቡ{% else %}Subscribe to Newsletter{% endif %}</h4>
+            <div class="newsletter-form">
+                <input type="email" id="newsletterEmail" placeholder="{% if lang == 'am' %}ኢሜይል ያስገቡ{% else %}Enter your email{% endif %}" aria-label="Email for newsletter">
+                <button onclick="subscribeNewsletter()">{% if lang == 'am' %}ይመዝገቡ{% else %}Subscribe{% endif %}</button>
+            </div>
+            <p class="newsletter-note">
+                {% if lang == 'am' %}አዳዲስ ምርቶች እና ቅናሾችን ለማግኘት{% else %}Get latest products and offers{% endif %}
+            </p>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="footer-bottom">
+            <div class="footer-copyright">
+                &copy; {{ current_year }} Ethiosadat Furniture. 
+                {% if lang == 'am' %}መብቱ በህግ የተጠበቀ ነው።{% else %}All Rights Reserved.{% endif %}
+            </div>
+            <div class="footer-payments">
+                <span>💳 Cash on Delivery</span>
+                <span>🏦 Bank Transfer</span>
+                <span>📱 Telebirr</span>
+            </div>
+        </div>
+        
+    </div>
+</footer>
+
+<style>
+    .site-footer {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        color: #aaa;
+        padding: 50px 0 20px;
+        margin-top: 60px;
+        font-size: 14px;
+    }
+    
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 40px;
+        margin-bottom: 40px;
+    }
+    
+    .footer-title {
+        color: white;
+        font-size: 18px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .footer-description {
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: #aaa;
+    }
+    
+    .footer-social {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .footer-social a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        transition: all 0.3s;
+        font-size: 20px;
+        text-decoration: none;
+    }
+    
+    .footer-social a:hover {
+        background: #1a7a4a;
+        transform: translateY(-3px);
+    }
+    
+    .footer-links, .footer-contact {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .footer-links li, .footer-contact li {
+        margin-bottom: 12px;
+    }
+    
+    .footer-links a, .footer-contact a {
+        color: #aaa;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .footer-links a:hover, .footer-contact a:hover {
+        color: #1a7a4a;
+        transform: translateX(5px);
+    }
+    
+    .footer-contact li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .contact-icon {
+        font-size: 18px;
+        min-width: 24px;
+    }
+    
+    .footer-newsletter {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 30px 0;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .footer-newsletter h4 {
+        color: white;
+        margin: 0 0 15px 0;
+        font-size: 16px;
+    }
+    
+    .newsletter-form {
+        display: flex;
+        max-width: 400px;
+        margin: 0 auto;
+        gap: 10px;
+    }
+    
+    .newsletter-form input {
+        flex: 1;
+        padding: 12px 16px;
+        border: none;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.3s;
+    }
+    
+    .newsletter-form input:focus {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .newsletter-form input::placeholder {
+        color: #888;
+    }
+    
+    .newsletter-form button {
+        padding: 12px 24px;
+        background: #1a7a4a;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .newsletter-form button:hover {
+        background: #0f5232;
+        transform: translateY(-2px);
+    }
+    
+    .newsletter-note {
+        font-size: 12px;
+        color: #777;
+        margin-top: 12px;
+    }
+    
+    .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding-top: 20px;
+        font-size: 12px;
+    }
+    
+    .footer-copyright {
+        color: #777;
+    }
+    
+    .footer-payments {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .footer-payments span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .site-footer {
+            background: linear-gradient(135deg, #0f0f1a, #12121f);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .site-footer {
+            padding: 40px 0 20px;
+        }
+        .footer-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+        .footer-newsletter {
+            padding: 25px 0;
+        }
+        .newsletter-form {
+            flex-direction: column;
+            max-width: 300px;
+        }
+        .newsletter-form button {
+            width: 100%;
+        }
+        .footer-bottom {
+            flex-direction: column;
+            text-align: center;
+        }
+        .footer-payments {
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .footer-grid {
+            grid-template-columns: 1fr;
+            gap: 25px;
+            text-align: center;
+        }
+        .footer-title {
+            justify-content: center;
+        }
+        .footer-social {
+            justify-content: center;
+        }
+        .footer-contact li {
+            justify-content: center;
+        }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .footer-social a,
+        .footer-links a,
+        .newsletter-form button {
+            transition: none;
+        }
+        .footer-social a:hover {
+            transform: none;
+        }
+        .footer-links a:hover {
+            transform: none;
+        }
+    }
+</style>
+
+<script>
+    function subscribeNewsletter() {
+        const email = document.getElementById('newsletterEmail').value.trim();
+        
+        if (!email) {
+            if (window.showToast) {
+                window.showToast('Please enter your email address', 'warning');
+            } else {
+                alert('Please enter your email address');
+            }
+            return;
+        }
+        
+        if (!isValidEmail(email)) {
+            if (window.showToast) {
+                window.showToast('Please enter a valid email address', 'error');
+            } else {
+                alert('Please enter a valid email address');
+            }
+            return;
+        }
+        
+        if (window.showLoading) window.showLoading(true);
+        
+        fetch('{{ url_for('customer.contact') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (window.showToast) {
+                    window.showToast('Successfully subscribed to newsletter!', 'success');
+                }
+                document.getElementById('newsletterEmail').value = '';
+            } else {
+                if (window.showToast) {
+                    window.showToast(data.error || 'Subscription failed', 'error');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            if (window.showToast) {
+                window.showToast('Network error. Please try again.', 'error');
+            }
+        })
+        .finally(() => {
+            if (window.showLoading) window.showLoading(false);
+        });
+    }
+    
+    function isValidEmail(email) {
+        const pattern = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        return pattern.test(email);
+    }
+    
+    // Make functions globally available
+    window.subscribeNewsletter = subscribeNewsletter;
+</script>

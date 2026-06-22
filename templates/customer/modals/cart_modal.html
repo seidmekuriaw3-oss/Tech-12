@@ -1,0 +1,608 @@
+<!-- ==================== CART MODAL COMPONENT ==================== -->
+<!-- Mini cart modal/slideout for quick cart viewing -->
+
+<div id="cartModal" class="cart-modal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 450px;
+    background: var(--bg-white, white);
+    z-index: 10000;
+    box-shadow: -5px 0 30px rgba(0,0,0,0.15);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-direction: column;
+">
+    
+    <!-- Modal Header -->
+    <div class="cart-modal-header" style="
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    ">
+        <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+            <span>🛒</span>
+            <span>{% if lang == 'am' %}የእቃ ጋሪ{% else %}Shopping Cart{% endif %}</span>
+            <span id="cartItemCount" class="cart-badge" style="
+                background: rgba(255,255,255,0.2);
+                padding: 2px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+            ">0</span>
+        </h3>
+        <button class="close-modal" onclick="closeCartModal()" style="
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='none'">
+            &times;
+        </button>
+    </div>
+    
+    <!-- Cart Items Container -->
+    <div class="cart-modal-body" id="cartModalBody" style="
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    ">
+        <!-- Loading State -->
+        <div id="cartLoading" class="cart-loading" style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        ">
+            <div class="spinner" style="
+                width: 40px;
+                height: 40px;
+                border: 3px solid var(--border-color, #f0f0f0);
+                border-top-color: #1a7a4a;
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+                margin-bottom: 15px;
+            "></div>
+            <p style="color: var(--text-muted, #999);">{% if lang == 'am' %}በመጫን ላይ...{% else %}Loading cart...{% endif %}</p>
+        </div>
+        
+        <!-- Empty Cart State -->
+        <div id="emptyCart" class="empty-cart" style="
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        ">
+            <div style="font-size: 64px; margin-bottom: 16px;">🛒</div>
+            <h3 style="color: var(--text-color, #333); margin-bottom: 8px;">
+                {% if lang == 'am' %}ጋሪዎ ባዶ ነው{% else %}Your cart is empty{% endif %}
+            </h3>
+            <p style="color: var(--text-muted, #999); margin-bottom: 20px;">
+                {% if lang == 'am' %}ምርቶችን ይጨምሩ እና ወደ ጋሪ ይመልሱ{% else %}Add items to get started{% endif %}
+            </p>
+            <button onclick="closeCartModal()" class="btn btn-primary">
+                {% if lang == 'am' %}ግዢ ይቀጥሉ{% else %}Continue Shopping{% endif %}
+            </button>
+        </div>
+        
+        <!-- Cart Items List -->
+        <div id="cartItemsList" class="cart-items-list" style="display: none;">
+            <!-- Items will be dynamically inserted here -->
+        </div>
+    </div>
+    
+    <!-- Cart Footer with Totals -->
+    <div id="cartFooter" class="cart-modal-footer" style="
+        border-top: 1px solid var(--border-color, #eee);
+        padding: 20px;
+        background: var(--bg-white, white);
+        display: none;
+    ">
+        <!-- Subtotal -->
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--text-muted, #666);">{% if lang == 'am' %}ንዑስ ድምር{% else %}Subtotal{% endif %}:</span>
+            <span id="cartSubtotal" style="font-weight: 600; color: var(--text-color, #333);">0 ETB</span>
+        </div>
+        
+        <!-- Discount (for logged in users) -->
+        <div id="cartDiscountRow" style="display: flex; justify-content: space-between; margin-bottom: 12px; display: none;">
+            <span style="color: var(--text-muted, #666);">{% if lang == 'am' %}ቅናሽ (10%){% else %}Discount (10%){% endif %}:</span>
+            <span id="cartDiscount" style="color: #4caf50;">0 ETB</span>
+        </div>
+        
+        <!-- Shipping -->
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--text-muted, #666);">{% if lang == 'am' %}ማጓጓዝ{% else %}Shipping{% endif %}:</span>
+            <span id="cartShipping" style="color: #4caf50;">
+                {% if lang == 'am' %}ነጻ{% else %}Free{% endif %}
+            </span>
+        </div>
+        
+        <!-- Total -->
+        <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 2px solid var(--border-color, #eee);">
+            <span style="font-weight: bold; font-size: 18px; color: var(--text-color, #333);">{% if lang == 'am' %}ጠቅላላ{% else %}Total{% endif %}:</span>
+            <span id="cartTotal" style="font-weight: bold; font-size: 18px; color: #1a7a4a;">0 ETB</span>
+        </div>
+        
+        <!-- Free Shipping Progress Bar -->
+        <div id="freeShippingProgress" style="margin-top: 15px; display: none;">
+            <div style="font-size: 12px; color: var(--text-muted, #666); margin-bottom: 5px;">
+                <span>🚚</span>
+                <span id="shippingMessage"></span>
+            </div>
+            <div style="background: var(--border-color, #f0f0f0); border-radius: 10px; height: 6px; overflow: hidden;">
+                <div id="shippingProgressBar" style="
+                    width: 0%;
+                    height: 100%;
+                    background: linear-gradient(90deg, #4caf50, #8bc34a);
+                    transition: width 0.3s;
+                "></div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <button onclick="closeCartModal()" class="btn btn-outline" style="flex: 1;">
+                {% if lang == 'am' %}ቀጥል{% else %}Continue{% endif %}
+            </button>
+            <a href="{{ url_for('cart.checkout') }}" class="btn btn-primary" style="flex: 1; text-align: center; text-decoration: none;">
+                🛒 {% if lang == 'am' %}ግዢ አስገባ{% else %}Checkout{% endif %}
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Overlay -->
+<div id="cartModalOverlay" class="cart-modal-overlay" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+"></div>
+
+<style>
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    .cart-item {
+        display: flex;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color-light, #f0f0f0);
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .cart-item-image {
+        width: 70px;
+        height: 70px;
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 12px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    
+    .cart-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .cart-item-details {
+        flex: 1;
+    }
+    
+    .cart-item-name {
+        font-weight: 500;
+        margin-bottom: 4px;
+        font-size: 14px;
+        color: var(--text-color, #333);
+    }
+    
+    .cart-item-price {
+        color: #1a7a4a;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    
+    .cart-item-quantity {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .quantity-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--bg-hover, #f0f0f0);
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.2s;
+        color: var(--text-color, #333);
+    }
+    
+    .quantity-btn:hover {
+        background: var(--border-color, #e0e0e0);
+    }
+    
+    .cart-item-quantity-input {
+        width: 45px;
+        text-align: center;
+        border: 1px solid var(--border-color, #e0e0e0);
+        border-radius: 8px;
+        padding: 5px;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    
+    .cart-item-remove {
+        background: none;
+        border: none;
+        color: var(--text-muted, #999);
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0 8px;
+        transition: color 0.2s;
+    }
+    
+    .cart-item-remove:hover {
+        color: #f44336;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .cart-item {
+            border-bottom-color: #2a2a3e;
+        }
+        .cart-item-quantity-input {
+            background: #1a1a2e;
+            border-color: #2a2a3e;
+        }
+        .quantity-btn {
+            background: #1a1a2e;
+        }
+        .quantity-btn:hover {
+            background: #2a2a3e;
+        }
+    }
+    
+    /* Animations */
+    .cart-item-removing {
+        animation: slideOut 0.3s ease forwards;
+    }
+    
+    @keyframes slideOut {
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .cart-modal {
+            max-width: 100% !important;
+        }
+        .cart-item-image {
+            width: 55px;
+            height: 55px;
+        }
+        .cart-item-name {
+            font-size: 13px;
+        }
+        .cart-item-quantity-input {
+            width: 40px;
+        }
+    }
+</style>
+
+<script>
+    let cartModalCart = [];
+    
+    // Open cart modal
+    function openCartModal() {
+        const modal = document.getElementById('cartModal');
+        const overlay = document.getElementById('cartModalOverlay');
+        
+        if (modal && overlay) {
+            modal.style.display = 'flex';
+            overlay.style.display = 'block';
+            
+            setTimeout(() => {
+                modal.style.transform = 'translateX(0)';
+                overlay.style.opacity = '1';
+            }, 10);
+            
+            fetchCartData();
+        }
+    }
+    
+    // Close cart modal
+    function closeCartModal() {
+        const modal = document.getElementById('cartModal');
+        const overlay = document.getElementById('cartModalOverlay');
+        
+        if (modal) modal.style.transform = 'translateX(100%)';
+        if (overlay) overlay.style.opacity = '0';
+        
+        setTimeout(() => {
+            if (modal) modal.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+        }, 300);
+    }
+    
+    // Fetch cart data from server
+    function fetchCartData() {
+        showCartLoading();
+        
+        fetch('{{ url_for('api.api_get_cart') }}')
+            .then(response => response.text())
+            .then(text => {
+                if (!text || !text.trim()) { showCartError(); return; }
+                const data = JSON.parse(text);
+                if (data.success) {
+                    cartModalCart = data.items || [];
+                    renderCartModal(data);
+                } else {
+                    showCartError();
+                }
+            })
+            .catch(() => showCartError());
+    }
+    
+    function showCartLoading() {
+        const loadingDiv = document.getElementById('cartLoading');
+        const emptyDiv = document.getElementById('emptyCart');
+        const itemsDiv = document.getElementById('cartItemsList');
+        const footerDiv = document.getElementById('cartFooter');
+        
+        if (loadingDiv) loadingDiv.style.display = 'flex';
+        if (emptyDiv) emptyDiv.style.display = 'none';
+        if (itemsDiv) itemsDiv.style.display = 'none';
+        if (footerDiv) footerDiv.style.display = 'none';
+    }
+    
+    function showCartError() {
+        const loadingDiv = document.getElementById('cartLoading');
+        const emptyDiv = document.getElementById('emptyCart');
+        
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        if (emptyDiv) {
+            emptyDiv.style.display = 'flex';
+            emptyDiv.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+                <h3 style="color: var(--text-color, #333);">Error Loading Cart</h3>
+                <p style="color: var(--text-muted, #999);">Please try again later</p>
+                <button onclick="closeCartModal()" class="btn btn-primary">Close</button>
+            `;
+        }
+    }
+    
+    function renderCartModal(data) {
+        const cart = data.items || [];
+        const subtotal = data.subtotal || 0;
+        const discount = data.discount || 0;
+        const shipping = data.shipping_cost || 0;
+        const total = data.total || 0;
+        
+        const loadingDiv = document.getElementById('cartLoading');
+        const emptyDiv = document.getElementById('emptyCart');
+        const itemsDiv = document.getElementById('cartItemsList');
+        const footerDiv = document.getElementById('cartFooter');
+        
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        
+        const itemCountBadge = document.getElementById('cartItemCount');
+        if (itemCountBadge) itemCountBadge.textContent = cart.length;
+        
+        if (cart.length === 0) {
+            if (emptyDiv) emptyDiv.style.display = 'flex';
+            if (itemsDiv) itemsDiv.style.display = 'none';
+            if (footerDiv) footerDiv.style.display = 'none';
+            return;
+        }
+        
+        if (emptyDiv) emptyDiv.style.display = 'none';
+        if (itemsDiv) itemsDiv.style.display = 'block';
+        if (footerDiv) footerDiv.style.display = 'block';
+        
+        // Render cart items
+        if (itemsDiv) {
+            itemsDiv.innerHTML = cart.map(item => `
+                <div class="cart-item" data-id="${item.product_id}">
+                    <div class="cart-item-image">
+                        ${item.thumbnail ? `<img src="{{ url_for('static', filename='') }}${item.thumbnail}" alt="${escapeHtml(item.name)}" onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">` : '<div style="display: flex; align-items: center; justify-content: center; height: 100%;">🪑</div>'}
+                    </div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-name">${escapeHtml(item.name_am || item.name)}</div>
+                        <div class="cart-item-price">${formatPriceNumber(item.price)} ETB</div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn" onclick="modalChangeQty(this, -1)">-</button>
+                            <input type="text" class="cart-item-quantity-input" value="${item.quantity}"
+                                   data-id="${item.product_id}" readonly>
+                            <button class="quantity-btn" onclick="modalChangeQty(this, 1)">+</button>
+                        </div>
+                    </div>
+                    <button class="cart-item-remove" onclick="removeCartItem('${item.product_id}')" title="Remove">&times;</button>
+                </div>
+            `).join('');
+        }
+        
+        // Update totals
+        const subtotalSpan = document.getElementById('cartSubtotal');
+        const discountSpan = document.getElementById('cartDiscount');
+        const discountRow = document.getElementById('cartDiscountRow');
+        const shippingSpan = document.getElementById('cartShipping');
+        const totalSpan = document.getElementById('cartTotal');
+        
+        if (subtotalSpan) subtotalSpan.textContent = formatPriceNumber(subtotal) + ' ETB';
+        if (discountSpan) discountSpan.textContent = '- ' + formatPriceNumber(discount) + ' ETB';
+        if (discountRow && discount > 0) discountRow.style.display = 'flex';
+        
+        if (shippingSpan) {
+            if (shipping === 0) {
+                shippingSpan.innerHTML = '<span style="color: #4caf50;">Free</span>';
+            } else {
+                shippingSpan.textContent = formatPriceNumber(shipping) + ' ETB';
+            }
+        }
+        if (totalSpan) totalSpan.textContent = formatPriceNumber(total) + ' ETB';
+        
+        // Update free shipping progress
+        updateFreeShippingProgress(subtotal);
+    }
+    
+    function formatPriceNumber(price) {
+        if (price === undefined || price === null) return '0';
+        const num = parseFloat(price);
+        if (isNaN(num)) return '0';
+        return num.toLocaleString('en-US');
+    }
+    
+    function updateFreeShippingProgress(subtotal) {
+        const threshold = 5000;
+        const progressDiv = document.getElementById('freeShippingProgress');
+        
+        if (progressDiv && subtotal < threshold) {
+            progressDiv.style.display = 'block';
+            const remaining = threshold - subtotal;
+            const percent = (subtotal / threshold) * 100;
+            
+            const messageSpan = document.getElementById('shippingMessage');
+            const progressBar = document.getElementById('shippingProgressBar');
+            
+            if (messageSpan) messageSpan.innerHTML = `Add ${formatPriceNumber(remaining)} ETB more to get FREE shipping! 🚚`;
+            if (progressBar) progressBar.style.width = `${Math.min(percent, 100)}%`;
+        } else if (progressDiv) {
+            progressDiv.style.display = 'none';
+        }
+    }
+    
+    function modalChangeQty(btn, delta) {
+        const wrapper = btn.closest('.cart-item-quantity');
+        const input = wrapper.querySelector('.cart-item-quantity-input');
+        const productId = input.dataset.id;
+        const newQty = Math.max(1, (parseInt(input.value) || 1) + delta);
+        updateCartItemQuantity(productId, newQty);
+    }
+
+    function updateCartItemQuantity(productId, newQuantity) {
+        if (newQuantity < 1) {
+            removeCartItem(productId);
+            return;
+        }
+        
+        fetch('{{ url_for('api.api_cart_update') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                product_id: parseInt(productId),
+                quantity: newQuantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchCartData();
+                if (window.updateCartCount) window.updateCartCount();
+            } else {
+                if (window.showToast) window.showToast('Failed to update quantity', 'error');
+            }
+        })
+        .catch(error => console.error('Error updating cart:', error));
+    }
+    
+    function removeCartItem(productId) {
+        const itemElement = document.querySelector(`.cart-item[data-id="${productId}"]`);
+        if (itemElement) {
+            itemElement.classList.add('cart-item-removing');
+        }
+        
+        fetch('{{ url_for('api.api_cart_remove') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ product_id: parseInt(productId) })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchCartData();
+                if (window.updateCartCount) window.updateCartCount();
+                if (window.showToast) window.showToast('Item removed from cart', 'success');
+            } else {
+                if (window.showToast) window.showToast('Failed to remove item', 'error');
+            }
+        })
+        .catch(error => console.error('Error removing item:', error));
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeCartModal();
+        }
+    });
+    
+    // Close modal on overlay click
+    const overlay = document.getElementById('cartModalOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', closeCartModal);
+    }
+    
+    // Make functions globally available
+    window.openCartModal = openCartModal;
+    window.closeCartModal = closeCartModal;
+    window.modalChangeQty = modalChangeQty;
+    window.updateCartItemQuantity = updateCartItemQuantity;
+    window.removeCartItem = removeCartItem;
+</script>

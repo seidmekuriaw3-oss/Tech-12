@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% block title %}Track Order{% if order %} #{{ order.order_number }}{% endif %} - Ethiosadat{% endblock %}
+
+{% block extra_css %}
+<style>
+    .track-wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px 60px; }
+
+    .track-header {
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        border-radius: 20px;
+        padding: 32px 24px;
+        color: white;
+        text-align: center;
+        margin-bottom: 28px;
+    }
+    .track-header h1 { margin: 0 0 8px; font-size: 1.6rem; }
+    .track-header p  { margin: 0; opacity: .88; }
+
+    .search-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(0,0,0,.09);
+        padding: 28px 24px;
+        margin-bottom: 24px;
+    }
+    .search-row { display: flex; gap: 10px; }
+    .search-input {
+        flex: 1;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 1rem;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+        outline: none;
+        transition: border-color .2s;
+    }
+    .search-input:focus { border-color: #1a7a4a; }
+    .search-btn {
+        background: #1a7a4a;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 22px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background .2s;
+    }
+    .search-btn:hover { background: #1557b0; }
+
+    .card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.07); padding: 24px; margin-bottom: 18px; }
+    .card-title { font-size: 1rem; font-weight: 700; color: #333; margin: 0 0 18px; padding-bottom: 12px; border-bottom: 2px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: 36px; }
+    .timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 2px; background: #e0e0e0; }
+    .tl-item { position: relative; margin-bottom: 28px; }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-dot {
+        position: absolute;
+        left: -30px;
+        top: 2px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        color: #999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px #e0e0e0;
+    }
+    .tl-dot.done { background: #4caf50; color: white; box-shadow: 0 0 0 2px #4caf50; }
+    .tl-dot.active { background: #1a7a4a; color: white; box-shadow: 0 0 0 3px rgba(26,122,74,.25); animation: tl-pulse 1.5s infinite; }
+    .tl-dot.cancel { background: #f44336; color: white; box-shadow: 0 0 0 2px #f44336; }
+    @keyframes tl-pulse { 0%,100%{box-shadow:0 0 0 3px rgba(26,122,74,.25)} 50%{box-shadow:0 0 0 7px rgba(26,122,74,.08)} }
+    .tl-title { font-weight: 700; color: #333; font-size: .95rem; margin-bottom: 3px; }
+    .tl-title.active { color: #1a7a4a; }
+    .tl-desc { color: #777; font-size: .85rem; line-height: 1.5; }
+
+    /* Order summary */
+    .order-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .meta-item label { font-size: .75rem; color: #999; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 3px; }
+    .meta-item span { font-weight: 600; color: #333; font-size: .93rem; }
+
+    .status-badge { display: inline-block; padding: 4px 14px; border-radius: 50px; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+    .s-pending { background: #fff3e0; color: #e65100; }
+    .s-processing { background: #e3f2fd; color: #0f5232; }
+    .s-shipped { background: #f3e5f5; color: #6a1b9a; }
+    .s-delivered { background: #e8f5e9; color: #2e7d32; }
+    .s-cancelled { background: #ffebee; color: #c62828; }
+
+    .item-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+    .item-row:last-child { border-bottom: none; }
+    .item-thumb { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; background: #f0f0f0; flex-shrink: 0; }
+    .item-thumb-ph { width: 48px; height: 48px; border-radius: 8px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .item-info { flex: 1; }
+    .item-name { font-weight: 600; color: #222; font-size: .88rem; }
+    .item-qty  { color: #888; font-size: .8rem; }
+    .item-price { font-weight: 700; color: #1a7a4a; font-size: .88rem; white-space: nowrap; }
+
+    .btn-wa { display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: white; text-decoration: none; border-radius: 12px; padding: 12px 22px; font-weight: 700; width: 100%; justify-content: center; box-sizing: border-box; }
+
+    @media (max-width: 540px) {
+        .search-row { flex-direction: column; }
+        .order-meta { grid-template-columns: 1fr; }
+        .track-header h1 { font-size: 1.3rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="track-wrap">
+
+    <div class="track-header">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔍</div>
+        <h1>Track Your Order</h1>
+        <p>Enter your order number to see real-time status updates</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="search-card">
+        <p style="margin: 0 0 14px; color: #555; font-size: .93rem;">Enter the order number from your confirmation message:</p>
+        <form method="GET" action="{{ url_for('customer.track_order_public') }}">
+            <div class="search-row">
+                <input type="text" name="order" class="search-input"
+                       placeholder="e.g. 20260516-ABC123"
+                       value="{{ request.args.get('order', '') }}"
+                       required>
+                <button type="submit" class="search-btn">🔍 Track</button>
+            </div>
+        </form>
+    </div>
+
+    {% if error %}
+    <div class="card" style="border-left: 5px solid #f44336; background: #fff8f8;">
+        <p style="margin: 0; color: #c62828; font-weight: 600;">❌ {{ error }}</p>
+    </div>
+    {% endif %}
+
+    {% if order %}
+
+    <!-- Status Overview -->
+    <div class="card">
+        <div class="card-title">📦 Order Status</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+            <div>
+                <div style="font-size: 1.2rem; font-weight: 700; color: #222;">Order #{{ order.order_number }}</div>
+                <div style="font-size: .85rem; color: #888; margin-top: 4px;">
+                    Placed {{ order.created_at.strftime('%B %d, %Y') if order.created_at else '' }}
+                </div>
+            </div>
+            <span class="status-badge s-{{ order.status }}">
+                {% if order.status == 'pending' %}⏳ Pending
+                {% elif order.status == 'processing' %}🔄 Processing
+                {% elif order.status == 'shipped' %}🚚 Shipped
+                {% elif order.status == 'delivered' %}✅ Delivered
+                {% elif order.status == 'cancelled' %}❌ Cancelled
+                {% else %}{{ order.status|title }}
+                {% endif %}
+            </span>
+        </div>
+
+        <!-- Timeline -->
+        {% if order.status != 'cancelled' %}
+        {% set steps = [
+            ('pending',    '⏳', 'Order Placed',    'Your order has been received and is being reviewed.'),
+            ('processing', '🔄', 'Processing',      'Our team is preparing your items for delivery.'),
+            ('shipped',    '🚚', 'Out for Delivery', 'Your order is on its way to you!'),
+            ('delivered',  '✅', 'Delivered',        'Order delivered successfully. Thank you for shopping with us!'),
+        ] %}
+        {% set step_keys = ['pending', 'processing', 'shipped', 'delivered'] %}
+        {% set current_idx = step_keys.index(order.status) if order.status in step_keys else 0 %}
+        <div class="timeline">
+            {% for key, icon, title, desc in steps %}
+            {% set i = loop.index0 %}
+            <div class="tl-item">
+                <div class="tl-dot {% if i < current_idx %}done{% elif i == current_idx %}active{% endif %}">
+                    {{ icon }}
+                </div>
+                <div class="tl-title {% if i == current_idx %}active{% endif %}">{{ title }}</div>
+                <div class="tl-desc">{{ desc }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="background: #fff3f3; border-radius: 10px; padding: 16px; color: #c62828; font-weight: 600;">
+            ❌ This order was cancelled. Please contact support if you have questions.
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Order Details -->
+    <div class="card">
+        <div class="card-title">📋 Order Information</div>
+        <div class="order-meta">
+            <div class="meta-item">
+                <label>Total Amount</label>
+                <span style="color: #1a7a4a;">{{ "{:,.0f}".format(order.total) }} ETB</span>
+            </div>
+            <div class="meta-item">
+                <label>Payment</label>
+                <span>{{ order.payment_method|title if order.payment_method else 'Cash on Delivery' }}</span>
+            </div>
+            <div class="meta-item">
+                <label>City</label>
+                <span>{{ order.shipping_city or 'Addis Ababa' }}</span>
+            </div>
+            <div class="meta-item">
+                <label>Items</label>
+                <span>{{ items|length }} item{% if items|length != 1 %}s{% endif %}</span>
+            </div>
+            {% if order.shipping_phone %}
+            <div class="meta-item">
+                <label>Contact Phone</label>
+                <span>{{ order.shipping_phone }}</span>
+            </div>
+            {% endif %}
+            {% if order.shipping_address %}
+            <div class="meta-item" style="grid-column: 1/-1;">
+                <label>Delivery Address</label>
+                <span>{{ order.shipping_address }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Items -->
+    {% if items %}
+    <div class="card">
+        <div class="card-title">🛍️ Items</div>
+        {% for item in items %}
+        <div class="item-row">
+            {% if item.thumbnail %}
+            <img src="{{ url_for('static', filename=item.thumbnail) }}" alt="{{ item.name }}" class="item-thumb"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="item-thumb-ph" style="display:none;">🪑</div>
+            {% else %}
+            <div class="item-thumb-ph">🪑</div>
+            {% endif %}
+            <div class="item-info">
+                <div class="item-name">{{ item.name_am or item.name }}</div>
+                <div class="item-qty">Qty: {{ item.quantity }}</div>
+            </div>
+            <div class="item-price">{{ "{:,.0f}".format(item.price_at_time * item.quantity) }} ETB</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- WhatsApp Support -->
+    <a href="https://wa.me/{{ whatsapp_number }}?text=Hello!+I+need+help+with+order+%23{{ order.order_number }}"
+       target="_blank" class="btn-wa">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        💬 Contact Support via WhatsApp
+    </a>
+
+    {% endif %}
+
+</div>
+{% endblock %}

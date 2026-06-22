@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Ethiosadat Furniture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .email-wrapper {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .header {
+            background: linear-gradient(135deg, #1a7a4a, #0f5232);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 8px 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .welcome-box {
+            background: linear-gradient(135deg, #e8f0fe, #d4e2fc);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .welcome-icon {
+            font-size: 56px;
+            margin-bottom: 10px;
+        }
+        .discount-badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 16px 0;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .feature-item {
+            text-align: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .feature-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .feature-desc {
+            font-size: 11px;
+            color: #666;
+        }
+        .btn {
+            display: inline-block;
+            background: #1a7a4a;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            margin: 10px 5px;
+            font-weight: 600;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #1a7a4a;
+            color: #1a7a4a;
+        }
+        .btn-outline:hover {
+            background: #1a7a4a;
+            color: white;
+        }
+        .btn:hover {
+            background: #0f5232;
+        }
+        .info-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+            font-size: 13px;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+        .footer p {
+            margin: 8px 0;
+            color: #666;
+            font-size: 12px;
+        }
+        .whatsapp-link {
+            color: #25D366;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            .content {
+                padding: 20px;
+            }
+            .header {
+                padding: 20px;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .discount-badge {
+                font-size: 14px;
+                padding: 6px 16px;
+            }
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a2e;
+            }
+            .email-wrapper {
+                background: #1e1e2e;
+            }
+            .content {
+                color: #eee;
+            }
+            .welcome-box {
+                background: #1a2a3e;
+            }
+            .feature-item {
+                background: #2a2a3e;
+            }
+            .feature-desc {
+                color: #aaa;
+            }
+            .info-box {
+                background: #4a3a1a;
+            }
+            .footer {
+                background: #16213e;
+                border-top-color: #2a2a3e;
+            }
+            .footer p {
+                color: #aaa;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="email-wrapper">
+            
+            <!-- Header -->
+            <div class="header">
+                <h1>🪑 Ethiosadat Furniture</h1>
+                <p>Welcome to the Family!</p>
+            </div>
+            
+            <!-- Content -->
+            <div class="content">
+                
+                <!-- Greeting -->
+                <h2>Welcome {{ user_name }}! 👋</h2>
+                <p>Thank you for joining the Ethiosadat Furniture family! We're excited to have you on board and can't wait to help you find the perfect furniture for your home.</p>
+                
+                <!-- Welcome Box with Discount -->
+                <div class="welcome-box">
+                    <div class="welcome-icon">🎉</div>
+                    <h3 style="margin: 0 0 8px 0;">Special Welcome Offer!</h3>
+                    <div class="discount-badge">🎁 10% OFF Your First Order</div>
+                    <p style="margin: 12px 0 0; font-size: 13px;">
+                        Use code: <strong style="background: white; padding: 4px 12px; border-radius: 20px; color: #1a7a4a;">WELCOME10</strong>
+                    </p>
+                    <p style="margin: 8px 0 0; font-size: 12px; opacity: 0.8;">
+                        *Valid for 30 days. Minimum order 1000 ETB.
+                    </p>
+                </div>
+                
+                <!-- What You Get Section -->
+                <h3>✨ What You Get as a Member</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">💰</div>
+                        <div class="feature-title">Members-Only Discounts</div>
+                        <div class="feature-desc">10% off on all products</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🚚</div>
+                        <div class="feature-title">Free Delivery</div>
+                        <div class="feature-desc">On orders over 5000 ETB</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⭐</div>
+                        <div class="feature-title">Early Access</div>
+                        <div class="feature-desc">To new arrivals and sales</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔧</div>
+                        <div class="feature-title">Priority Support</div>
+                        <div class="feature-desc">Fast customer service</div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div style="text-align: center;">
+                    <a href="{{ shop_url }}" class="btn">🛍️ Start Shopping →</a>
+                    <a href="{{ branches_url }}" class="btn btn-outline">📍 Find a Store</a>
+                </div>
+                
+                <!-- Popular Categories -->
+                <div style="margin: 24px 0;">
+                    <h3>📂 Popular Categories</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                        <a href="{{ shop_url }}?category=ሶፋ" style="background: #f0f0f0; padding: 6px 14px; border-radius: 30px; text-decoration: none; color: #333; font-size: 13px;">🛋️ Sofa</a>
+                        <a href="{{ shop_url }}?category=አልጋ" style="background: #f0f0f0; padding: 6px 14px; border-radius: 30px; text-decoration: none; color: #333; font-size: 13px;">🛏️ Bed</a>
+                        <a href="{{ shop_url }}?category=መጅሊስ" style="background: #f0f0f0; padding: 6px 14px; border-radius: 30px; text-decoration: none; color: #333; font-size: 13px;">🪑 Mejlis</a>
+                        <a href="{{ shop_url }}?category=መጋረጃ" style="background: #f0f0f0; padding: 6px 14px; border-radius: 30px; text-decoration: none; color: #333; font-size: 13px;">🚪 Curtain</a>
+                        <a href="{{ shop_url }}?category=ቁምሳጥን" style="background: #f0f0f0; padding: 6px 14px; border-radius: 30px; text-decoration: none; color: #333; font-size: 13px;">🗄️ Wardrobe</a>
+                    </div>
+                </div>
+                
+                <!-- Tips for New Members -->
+                <div class="info-box">
+                    <p style="margin: 0; font-weight: 600;">💡 Tips for Getting Started</p>
+                    <ul style="margin: 8px 0 0; padding-left: 20px; font-size: 12px;">
+                        <li>Complete your profile to get personalized recommendations</li>
+                        <li>Add items to cart and use code <strong>WELCOME10</strong> at checkout</li>
+                        <li>Follow us on social media for exclusive deals</li>
+                        <li>Join our WhatsApp channel for instant updates</li>
+                    </ul>
+                </div>
+                
+                <!-- Need Help -->
+                <div style="margin-top: 24px; padding: 16px; background: #e8f0fe; border-radius: 12px;">
+                    <p style="margin: 0; color: #1a7a4a; font-size: 13px;">
+                        📌 Need help getting started? We're here for you!
+                    </p>
+                    <p style="margin: 8px 0 0; font-size: 13px;">
+                        💬 <a href="https://wa.me/251906020606" class="whatsapp-link">Chat on WhatsApp</a> | 
+                        📞 <a href="tel:+251906020606" style="color: #1a7a4a; text-decoration: none;">Call: 0906 020606</a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <p>📍 Addis Ababa, Ethiopia</p>
+                <p>📞 +251 90 602 0606 | 📧 info@ethiosadat.com</p>
+                <p>🕒 Monday - Saturday: 9:00 AM - 6:00 PM</p>
+                <p style="margin-top: 16px;">
+                    <a href="https://wa.me/251906020606" style="color: #25D366; text-decoration: none;">💬 WhatsApp</a> | 
+                    <a href="https://www.facebook.com/ethiosadat" style="color: #1877f2; text-decoration: none;">📘 Facebook</a> | 
+                    <a href="https://www.instagram.com/ethiosadat" style="color: #e4405f; text-decoration: none;">📷 Instagram</a>
+                </p>
+                <p style="font-size: 11px; color: #999;">
+                    &copy; 2024 Ethiosadat Furniture. All rights reserved.
+                </p>
+                <p style="font-size: 11px; color: #999;">
+                    You received this email because you created an account with Ethiosadat Furniture.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

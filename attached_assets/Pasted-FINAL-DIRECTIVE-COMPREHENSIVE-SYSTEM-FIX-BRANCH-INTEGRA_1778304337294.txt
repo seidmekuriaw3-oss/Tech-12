@@ -1,0 +1,46 @@
+FINAL DIRECTIVE: COMPREHENSIVE SYSTEM FIX & BRANCH INTEGRATION
+
+​"I am providing you with the final and most detailed instructions to fix the remaining critical issues. You previously misunderstood the '9 branches' as Git branches, but they are the physical showroom locations of the business. You must implement the following tasks now:
+
+​1. Implement the 'Our Branches' Page (The 9 Locations)
+
+​You must create a dedicated page for the business branches.
+
+​Data Source: Use the content from templates/branches.html which lists 9 locations: Merkato Mars, Betel, Furi Nok, Dire Dawa Meskeleña, Dire Dawa Mall, Asosa, Butajira, Shire, and Semera.
+
+​Task: Ensure the route @app.route('/branches') exists and correctly renders the template.
+
+​Navigation: Add 'Our Branches' (ቅርንጫፎቻችን) to the main Header Navigation and the Footer.
+
+​Translation: Ensure the branch names and descriptions are available in English, Amharic, and Arabic.
+
+​2. Fix the Admin 'Loop' & Saving Issue (Priority High)
+
+​The Admin panel is currently broken. Buttons for 'Add Product', 'Edit Product', and 'Save' are not working—they simply refresh the page.
+
+​The Bug: There is a mismatch between the HTML name="" attributes in the forms and the request.form.get() keys in your Python code.
+
+​Action: 1.  Audit app.py and routes/admin_routes.py. 2.  Ensure that db.session.add() and db.session.commit() are being called for all multilingual fields (name_am, name_ar, description_am, description_ar, etc.). 3.  Fix the Redirect Loop: Ensure the success message is flashed and the user is redirected to the product list only after a successful save. 
+
+​3. Fix the 'Publish' & 'Featured' Toggles
+
+​The Issue: Toggling a product as 'Featured' or 'Published' does not update the database.
+
+​Action: Fix the backend logic (likely an AJAX or POST route) to correctly update the is_published and is_featured columns in the Product table.
+
+​4. Full-Screen Video Background Fix (CSS)
+The Issue: The Hero section video is too small and does not cover the background.
+Action: Update the CSS for the video container to ensure a true full-screen experience.
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+}
+5. Technical Verification
+Audit All Links: Manually check every link in the Admin sidebar (Orders, Categories, Users). Ensure they all lead to working pages.
+DB Encoding: Confirm that Amharic and Arabic characters are being stored in the database without becoming '???' symbols.
+Execute these fixes now. Start by acknowledging that you understand the 9 branches are physical locations, then proceed with the coding fixes."

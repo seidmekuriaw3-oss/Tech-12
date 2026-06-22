@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Ethiosadat Furniture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .email-wrapper {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .header {
+            background: linear-gradient(135deg, #1a7a4a, #0f5232);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 8px 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .order-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .order-info h2 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            color: #1a7a4a;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+        .info-value {
+            color: #333;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .items-table th {
+            text-align: left;
+            padding: 12px;
+            background: #f0f0f0;
+            font-weight: 600;
+        }
+        .items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .total-row {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        .total-row td {
+            padding: 12px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .customer-info {
+            margin: 24px 0;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-pending {
+            background: #ff9800;
+            color: white;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+        .footer p {
+            margin: 8px 0;
+            color: #666;
+            font-size: 12px;
+        }
+        .btn {
+            display: inline-block;
+            background: #1a7a4a;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            margin: 20px 0;
+        }
+        .btn:hover {
+            background: #0f5232;
+        }
+        .whatsapp-link {
+            color: #25D366;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            .content {
+                padding: 20px;
+            }
+            .header {
+                padding: 20px;
+            }
+            .items-table th, .items-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="email-wrapper">
+            
+            <!-- Header -->
+            <div class="header">
+                <h1>🪑 Ethiosadat Furniture</h1>
+                <p>Order Confirmation</p>
+            </div>
+            
+            <!-- Content -->
+            <div class="content">
+                
+                <!-- Greeting -->
+                <h2>Dear {{ customer_name }},</h2>
+                <p>Thank you for your order! Your order has been received and is being processed.</p>
+                
+                <!-- Order Information -->
+                <div class="order-info">
+                    <h2>📋 Order Summary</h2>
+                    <div class="info-row">
+                        <span class="info-label">Order Number:</span>
+                        <span class="info-value"><strong>#{{ order_number }}</strong></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Order Date:</span>
+                        <span class="info-value">{{ order_date }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Payment Method:</span>
+                        <span class="info-value">{{ payment_method|default('Cash on Delivery') }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Order Status:</span>
+                        <span class="info-value">
+                            <span class="status-badge status-pending">Pending</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Order Items -->
+                <h3>🛍️ Order Items</h3>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>x{{ item.quantity }}</td>
+                            <td>{{ item.price }} ETB</td>
+                            <td>{{ item.total }} ETB</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="total-row">
+                            <td colspan="3" style="text-align: right; font-weight: 600;">Subtotal:</td>
+                            <td style="font-weight: 600;">{{ subtotal }} ETB</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: right;">Shipping:</td>
+                            <td>{% if shipping == 0 %}Free{% else %}{{ shipping }} ETB{% endif %}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="3" style="text-align: right; font-weight: 600; font-size: 16px;">Total:</td>
+                            <td style="font-weight: 600; font-size: 16px; color: #1a7a4a;">{{ total }} ETB</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Customer Information -->
+                <div class="customer-info">
+                    <h3>📞 Customer Information</h3>
+                    <div class="info-row">
+                        <span class="info-label">Name:</span>
+                        <span class="info-value">{{ customer_name }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Phone:</span>
+                        <span class="info-value">
+                            {{ customer_phone }}
+                            <a href="https://wa.me/{{ customer_phone|replace('+', '')|replace('-', '')|replace(' ', '') }}" 
+                               class="whatsapp-link" target="_blank">(Chat on WhatsApp 💬)</a>
+                        </span>
+                    </div>
+                    {% if customer_address %}
+                    <div class="info-row">
+                        <span class="info-label">Address:</span>
+                        <span class="info-value">{{ customer_address }}</span>
+                    </div>
+                    {% endif %}
+                    {% if customer_email %}
+                    <div class="info-row">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">{{ customer_email }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Shipping Information -->
+                <div class="customer-info">
+                    <h3>🚚 Shipping Information</h3>
+                    <p>We will contact you via WhatsApp to confirm delivery details.</p>
+                    <p>Estimated delivery: 2-5 business days</p>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div style="text-align: center;">
+                    <a href="{{ order_tracking_url }}" class="btn">Track Your Order →</a>
+                </div>
+                
+                <!-- Additional Info -->
+                <div style="margin-top: 24px; padding: 16px; background: #e8f0fe; border-radius: 12px;">
+                    <p style="margin: 0; color: #1a7a4a; font-size: 13px;">
+                        📌 Need help? Contact us on <a href="https://wa.me/251906020606" style="color: #25D366;">WhatsApp</a> 
+                        or call us at <a href="tel:+251906020606" style="color: #1a7a4a;">0906 020606</a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <p>📍 Addis Ababa, Ethiopia</p>
+                <p>📞 +251 90 602 0606 | 📧 info@ethiosadat.com</p>
+                <p>🕒 Monday - Saturday: 9:00 AM - 6:00 PM</p>
+                <p style="margin-top: 16px;">
+                    <a href="https://wa.me/251906020606" style="color: #25D366; text-decoration: none;">💬 WhatsApp</a> | 
+                    <a href="https://www.facebook.com/ethiosadat" style="color: #1877f2; text-decoration: none;">📘 Facebook</a> | 
+                    <a href="https://www.instagram.com/ethiosadat" style="color: #e4405f; text-decoration: none;">📷 Instagram</a>
+                </p>
+                <p style="font-size: 11px; color: #999;">&copy; 2024 Ethiosadat Furniture. All rights reserved.</p>
+                <p style="font-size: 11px; color: #999;">
+                    This is an automated message. Please do not reply to this email.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

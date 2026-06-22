@@ -1,0 +1,537 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Manage Advertisements - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ads-header {
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: white;
+    }
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+    .stat-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: #1a7a4a;
+    }
+    .stat-label {
+        color: #666;
+        font-size: 14px;
+        margin-top: 8px;
+    }
+    .ad-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        border-left: 4px solid #1a7a4a;
+    }
+    .ad-card:hover {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        transform: translateX(5px);
+    }
+    .ad-card.inactive {
+        border-left-color: #999;
+        opacity: 0.7;
+    }
+    .ad-text {
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+    }
+    .ad-meta {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        align-items: center;
+        font-size: 12px;
+        color: #666;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #eee;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .status-active {
+        background: #4caf50;
+        color: white;
+    }
+    .status-inactive {
+        background: #999;
+        color: white;
+    }
+    .media-preview {
+        width: 80px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .filter-bar {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .filter-bar input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        min-width: 200px;
+    }
+    .filter-bar select {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    .btn-icon {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 5px;
+        transition: all 0.2s;
+    }
+    .btn-icon:hover {
+        transform: scale(1.1);
+    }
+    .btn-edit {
+        color: #ff9800;
+    }
+    .btn-delete {
+        color: #f44336;
+    }
+    .btn-toggle {
+        color: #1a7a4a;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 12px;
+    }
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 30px;
+    }
+    .page-btn {
+        padding: 8px 14px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .page-btn.active {
+        background: #1a7a4a;
+        color: white;
+        border-color: #1a7a4a;
+    }
+    @media (max-width: 768px) {
+        .ads-header {
+            padding: 20px;
+        }
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .ad-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .filter-bar {
+            flex-direction: column;
+        }
+        .filter-bar input, .filter-bar select {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ads-container">
+    <!-- Header -->
+    <div class="ads-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <h1 style="margin: 0 0 10px 0;">📢 Advertisements</h1>
+                <p style="margin: 0; opacity: 0.9;">Manage your store advertisements and promotions</p>
+            </div>
+            <a href="{{ url_for('admin.ad_create') }}" class="btn btn-primary" style="background: white; color: #1a7a4a;">
+                <span style="font-size: 18px;">➕</span> Create New Ad
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_ads|default(0) }}</div>
+            <div class="stat-label">Total Ads</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ active_ads|default(0) }}</div>
+            <div class="stat-label">Active Ads</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ inactive_ads|default(0) }}</div>
+            <div class="stat-label">Inactive Ads</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ ads_with_media|default(0) }}</div>
+            <div class="stat-label">With Media</div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <input type="text" id="searchAds" placeholder="🔍 Search advertisements..." onkeyup="filterAds()">
+        <select id="statusFilter" onchange="filterAds()">
+            <option value="all">All Status</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Inactive Only</option>
+        </select>
+        <select id="mediaFilter" onchange="filterAds()">
+            <option value="all">All Media</option>
+            <option value="has_media">Has Media</option>
+            <option value="no_media">No Media</option>
+        </select>
+        <button onclick="resetFilters()" class="btn btn-outline">Reset</button>
+    </div>
+
+    <!-- Ads List -->
+    <div id="adsList">
+        {% if ads %}
+            {% for ad in ads %}
+            <div class="ad-card {% if not ad.is_active %}inactive{% endif %}" 
+                 data-id="{{ ad.id }}"
+                 data-status="{% if ad.is_active %}active{% else %}inactive{% endif %}"
+                 data-has-media="{% if ad.image %}true{% else %}false{% endif %}"
+                 data-search="{{ ad.title }} {{ ad.description }}">
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">
+                    <div style="flex: 1;">
+                        {% if ad.title %}
+                        <h3 style="margin: 0 0 10px 0;">{{ ad.title }}</h3>
+                        {% endif %}
+                        <div class="ad-text">{{ ad.description }}</div>
+                        <div class="ad-meta">
+                            <span>📅 Created: {{ ad.created_at.strftime('%Y-%m-%d %H:%M') if ad.created_at else 'N/A' }}</span>
+                            <span>🆔 ID: #{{ ad.id }}</span>
+                            <span>🔢 Sort Order: {{ ad.sort_order|default(0) }}</span>
+                            {% if ad.link %}
+                            <span>🔗 <a href="{{ ad.link }}" target="_blank" style="color: #1a7a4a;">View Link</a></span>
+                            {% endif %}
+                            <span class="status-badge {% if ad.is_active %}status-active{% else %}status-inactive{% endif %}">
+                                {% if ad.is_active %}🟢 Active{% else %}🔴 Inactive{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {% if ad.image %}
+                    <div>
+                        {% if ad.image.endswith(('.mp4', '.webm', '.mov', '.avi')) %}
+                            <video class="media-preview" muted poster="{{ url_for('static', filename='images/placeholder.png') }}" onerror="this.onerror=null; this.poster='{{ url_for('static', filename='images/placeholder.png') }}'">
+                                <source src="{{ url_for('static', filename=(ad.image if ad.image[:8] == 'uploads/' else 'uploads/ads/' ~ ad.image)) }}" type="video/mp4">
+                            </video>
+                        {% else %}
+                            <img src="{{ url_for('static', filename=(ad.image if ad.image[:8] == 'uploads/' else 'uploads/ads/' ~ ad.image)) }}" class="media-preview" alt="Ad media" loading="lazy" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="action-buttons">
+                        <a href="{{ url_for('admin.ad_edit', aid=ad.id) }}" class="btn-icon btn-edit" title="Edit">✏️</a>
+                        <button onclick="toggleAdStatus({{ ad.id }}, this)" class="btn-icon btn-toggle" title="Toggle Status">
+                            {% if ad.is_active %}🔘{% else %}⚪{% endif %}
+                        </button>
+                        <button onclick="deleteAd({{ ad.id }})" class="btn-icon btn-delete" title="Delete">🗑️</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+            <div class="pagination" id="pagination"></div>
+            {% endif %}
+            
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📢</div>
+            <h3>No Advertisements Yet</h3>
+            <p>Create your first advertisement to promote your products.</p>
+            <a href="{{ url_for('admin.ad_create') }}" class="btn btn-primary" style="margin-top: 20px;">➕ Create New Ad</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Filter ads
+    function filterAds() {
+        const searchTerm = document.getElementById('searchAds').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const mediaFilter = document.getElementById('mediaFilter').value;
+        const ads = document.querySelectorAll('.ad-card');
+        let visibleCount = 0;
+
+        ads.forEach(ad => {
+            const searchText = ad.dataset.search?.toLowerCase() || '';
+            const status = ad.dataset.status;
+            const hasMedia = ad.dataset.hasMedia === 'true';
+            
+            let match = true;
+            
+            if (searchTerm && !searchText.includes(searchTerm)) match = false;
+            if (statusFilter === 'active' && status !== 'active') match = false;
+            if (statusFilter === 'inactive' && status !== 'inactive') match = false;
+            if (mediaFilter === 'has_media' && !hasMedia) match = false;
+            if (mediaFilter === 'no_media' && hasMedia) match = false;
+            
+            if (match) {
+                ad.style.display = '';
+                visibleCount++;
+            } else {
+                ad.style.display = 'none';
+            }
+        });
+        
+        updatePagination();
+        
+        // Update result count
+        let resultMsg = document.getElementById('filterResult');
+        if (!resultMsg) {
+            const filterBar = document.querySelector('.filter-bar');
+            if (filterBar) {
+                resultMsg = document.createElement('div');
+                resultMsg.id = 'filterResult';
+                resultMsg.style.marginTop = '10px';
+                resultMsg.style.fontSize = '12px';
+                resultMsg.style.color = '#666';
+                filterBar.parentNode.insertBefore(resultMsg, filterBar.nextSibling);
+            }
+        }
+        if (resultMsg) {
+            resultMsg.textContent = `${visibleCount} advertisement(s) found`;
+        }
+    }
+
+    function resetFilters() {
+        document.getElementById('searchAds').value = '';
+        document.getElementById('statusFilter').value = 'all';
+        document.getElementById('mediaFilter').value = 'all';
+        currentPage = 1;
+        filterAds();
+    }
+
+    // Delete ad
+    function deleteAd(adId) {
+        if (!adId) return;
+        
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            if (window.showLoading) window.showLoading(true);
+            
+            fetch('{{ url_for('admin.ad_delete', aid=0) }}'.replace('/0', '/' + adId), {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    if (window.showSuccess) {
+                        window.showSuccess('Advertisement deleted successfully');
+                    } else if (window.showToast) {
+                        window.showToast('Advertisement deleted successfully', 'success');
+                    }
+                    const adElement = document.querySelector(`.ad-card[data-id="${adId}"]`);
+                    if (adElement) adElement.remove();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    throw new Error('Delete failed');
+                }
+            })
+            .catch(() => {
+                if (window.showError) window.showError('Failed to delete advertisement');
+            })
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Delete Advertisement', 'Are you sure you want to delete this advertisement?', callback);
+        } else {
+            if (confirm('Are you sure you want to delete this advertisement?')) callback();
+        }
+    }
+
+    // Toggle ad status
+    function toggleAdStatus(adId, button) {
+        if (!adId || !button) return;
+        
+        const adCard = button.closest('.ad-card');
+        const isCurrentlyActive = adCard?.dataset.status === 'active';
+        const newStatus = isCurrentlyActive ? 'inactive' : 'active';
+        
+        if (window.showLoading) window.showLoading(true);
+        
+        fetch('{{ url_for('admin.ad_toggle', aid=0) }}'.replace('/0', '/' + adId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ is_active: !isCurrentlyActive })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (adCard) {
+                    adCard.dataset.status = newStatus;
+                    if (newStatus === 'active') {
+                        adCard.classList.remove('inactive');
+                        button.innerHTML = '🔘';
+                    } else {
+                        adCard.classList.add('inactive');
+                        button.innerHTML = '⚪';
+                    }
+                    const statusBadge = adCard.querySelector('.status-badge');
+                    if (statusBadge) {
+                        statusBadge.className = `status-badge ${newStatus === 'active' ? 'status-active' : 'status-inactive'}`;
+                        statusBadge.innerHTML = newStatus === 'active' ? '🟢 Active' : '🔴 Inactive';
+                    }
+                }
+                if (window.showSuccess) {
+                    window.showSuccess(`Ad ${newStatus}d successfully`);
+                } else if (window.showToast) {
+                    window.showToast(`Ad ${newStatus}d successfully`, 'success');
+                }
+            } else {
+                if (window.showError) window.showError(data.error || 'Failed to update status');
+            }
+        })
+        .catch(() => {
+            if (window.showError) window.showError('Error updating status');
+        })
+        .finally(() => {
+            if (window.showLoading) window.showLoading(false);
+        });
+    }
+
+    // Pagination
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function updatePagination() {
+        const ads = document.querySelectorAll('.ad-card');
+        const visibleAds = Array.from(ads).filter(ad => ad.style.display !== 'none');
+        const totalPages = Math.ceil(visibleAds.length / rowsPerPage);
+        const paginationDiv = document.getElementById('pagination');
+        
+        if (!paginationDiv || totalPages <= 1) {
+            if (paginationDiv) paginationDiv.innerHTML = '';
+            return;
+        }
+
+        let paginationHtml = '';
+        paginationHtml += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        }
+        
+        paginationHtml += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
+        
+        paginationDiv.innerHTML = paginationHtml;
+        
+        // Show/hide ads based on current page
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        
+        visibleAds.forEach((ad, index) => {
+            if (index >= start && index < end) {
+                ad.style.display = '';
+            } else {
+                ad.style.display = 'none';
+            }
+        });
+    }
+
+    function changePage(page) {
+        const ads = document.querySelectorAll('.ad-card');
+        const visibleAds = Array.from(ads).filter(ad => ad.style.display !== 'none');
+        const totalPages = Math.ceil(visibleAds.length / rowsPerPage);
+        
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        updatePagination();
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        filterAds();
+        
+        // Video preview on hover
+        const videos = document.querySelectorAll('.media-preview');
+        videos.forEach(video => {
+            if (video.tagName === 'VIDEO') {
+                video.addEventListener('mouseenter', () => video.play());
+                video.addEventListener('mouseleave', () => {
+                    video.pause();
+                    video.currentTime = 0;
+                });
+            }
+        });
+    });
+    
+    // Make functions globally available
+    window.filterAds = filterAds;
+    window.resetFilters = resetFilters;
+    window.deleteAd = deleteAd;
+    window.toggleAdStatus = toggleAdStatus;
+</script>
+{% endblock %}

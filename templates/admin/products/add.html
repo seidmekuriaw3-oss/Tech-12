@@ -1,0 +1,518 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Add Product - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: var(--bg-white, white);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .form-section h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
+        color: var(--primary, #1a7a4a);
+    }
+    .image-preview {
+        width: 150px;
+        height: 150px;
+        border: 2px dashed var(--border-color, #ddd);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 12px;
+        background: var(--bg-hover, #f9f9f9);
+        overflow: hidden;
+    }
+    .image-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+    }
+    .char-count {
+        font-size: 12px;
+        color: var(--text-muted, #666);
+        text-align: right;
+        margin-top: 4px;
+    }
+    .char-count.warning {
+        color: #ff9800;
+    }
+    .char-count.danger {
+        color: #f44336;
+    }
+    .required-star {
+        color: #f44336;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .form-section {
+            background: #16213e;
+        }
+        .image-preview {
+            background: #1a1a2e;
+        }
+        input, textarea, select {
+            background: #1a1a2e;
+            border-color: #2a2a3e;
+            color: #eee;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .form-section {
+            padding: 16px;
+        }
+        .action-buttons {
+            flex-direction: column;
+        }
+        .action-buttons .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    
+    <!-- Header -->
+    <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;">
+            <a href="{{ url_for('admin.products') }}" style="color: var(--text-muted, #666); text-decoration: none; font-size: 24px;">←</a>
+            <h1 style="margin: 0;">➕ Add New Product</h1>
+        </div>
+        <p style="color: var(--text-muted, #666); margin: 0;">Create a new product for your store</p>
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" action="{{ url_for('admin.product_create') }}" enctype="multipart/form-data" id="productForm" onsubmit="return validateForm()">
+        
+        <!-- Basic Information Section -->
+        <div class="form-section">
+            <h3>📝 Basic Information</h3>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">
+                    Name (Amharic) <span class="required-star">*</span>
+                </label>
+                <input type="text" 
+                       name="name_am" 
+                       id="name_am"
+                       required 
+                       maxlength="200"
+                       style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                       placeholder="ምርት ስም በአማርኛ">
+                <div id="nameAmCharCount" class="char-count">0 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">
+                    Name (English) <span class="required-star">*</span>
+                </label>
+                <input type="text" 
+                       name="name_en" 
+                       id="name_en"
+                       required 
+                       maxlength="200"
+                       style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                       placeholder="Product name in English">
+                <div id="nameEnCharCount" class="char-count">0 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">Name (Arabic) <span style="color: #999;">(Optional)</span></label>
+                <input type="text" 
+                       name="name_ar" 
+                       id="name_ar"
+                       maxlength="200"
+                       style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                       placeholder="اسم المنتج بالعربية">
+            </div>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">Description (Amharic)</label>
+                <textarea name="description_am" 
+                          id="description_am"
+                          rows="4" 
+                          maxlength="1000"
+                          style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; resize: vertical; background: var(--bg-white, white); color: var(--text-color, #333);"
+                          placeholder="ምርት መግለጫ በአማርኛ..."></textarea>
+                <div id="descAmCharCount" class="char-count">0 / 1000 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">Description (English)</label>
+                <textarea name="description_en" 
+                          id="description_en"
+                          rows="4" 
+                          maxlength="1000"
+                          style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; resize: vertical; background: var(--bg-white, white); color: var(--text-color, #333);"
+                          placeholder="Product description in English..."></textarea>
+                <div id="descEnCharCount" class="char-count">0 / 1000 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">Description (Arabic) <span style="color: #999;">(Optional)</span></label>
+                <textarea name="description_ar" 
+                          id="description_ar"
+                          rows="3" 
+                          maxlength="1000"
+                          style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; resize: vertical; background: var(--bg-white, white); color: var(--text-color, #333);"
+                          placeholder="وصف المنتج بالعربية..."></textarea>
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="form-section">
+            <h3>💰 Pricing</h3>
+            
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">
+                        Price (ETB) <span class="required-star">*</span>
+                    </label>
+                    <input type="number" 
+                           name="price" 
+                           id="price"
+                           step="0.01" 
+                           required 
+                           min="0"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                           placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">Compare Price (ETB)</label>
+                    <input type="number" 
+                           name="compare_price" 
+                           id="compare_price"
+                           step="0.01" 
+                           min="0"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                           placeholder="Original price for discount display">
+                    <small style="color: var(--text-muted, #666);">Original price before discount (leave empty if no discount)</small>
+                </div>
+            </div>
+            
+            <div id="discountPreview" style="display: none; margin-top: 12px; padding: 10px; background: #e8f0fe; border-radius: 8px;">
+                <span>💸 Discount: <strong id="discountPercent">0</strong>% OFF</span>
+            </div>
+        </div>
+
+        <!-- Inventory Section -->
+        <div class="form-section">
+            <h3>📦 Inventory</h3>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">Category <span class="required-star">*</span></label>
+                <select name="category_id" id="category_id" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; background: var(--bg-white, white); color: var(--text-color, #333);">
+                    <option value="">-- Select Category --</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name_am }} ({{ category.name }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">SKU <span style="color: #999;">(Optional)</span></label>
+                <input type="text" 
+                       name="sku" 
+                       id="sku"
+                       style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                       placeholder="Unique product identifier">
+            </div>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">Stock Quantity</label>
+                <input type="number" 
+                       name="stock_quantity"
+                       id="stock_quantity"
+                       value="0"
+                       min="0"
+                       style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);">
+                <small style="color: var(--text-muted, #666);">Number of items in stock (0 = out of stock)</small>
+            </div>
+            
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">Material</label>
+                    <input type="text" 
+                           name="material" 
+                           id="material"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                           placeholder="e.g., Wood, Leather, Fabric">
+                </div>
+                
+                <div class="form-group">
+                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">Color</label>
+                    <input type="text" 
+                           name="color" 
+                           id="color"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                           placeholder="e.g., Brown, Black, White">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">
+                    <input type="checkbox" name="is_featured" value="1" id="is_featured" style="margin-right: 8px;">
+                    Feature this product
+                </label>
+                <small style="color: var(--text-muted, #666);">Featured products appear on the homepage</small>
+            </div>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">
+                    <input type="checkbox" name="is_new" value="1" id="is_new" style="margin-right: 8px;">
+                    Mark as New
+                </label>
+                <small style="color: var(--text-muted, #666);">Shows "New" badge on the product</small>
+            </div>
+        </div>
+
+        <!-- Images Section -->
+        <div class="form-section">
+            <h3>🖼️ Product Images</h3>
+            
+            <div class="form-group">
+                <label style="font-weight: 600; display: block; margin-bottom: 8px;">Main Image</label>
+                <input type="file" 
+                       name="image" 
+                       id="product_image" 
+                       accept="image/*"
+                       style="width: 100%; padding: 8px;"
+                       onchange="previewImage(this)">
+                <small style="color: var(--text-muted, #666); display: block; margin-top: 8px;">
+                    Supported formats: JPG, PNG, GIF, WEBP (Max 5MB)
+                </small>
+                
+                <div class="image-preview" id="imagePreview">
+                    <div style="text-align: center; color: #999;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🖼️</div>
+                        <small>Image preview will appear here</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dimensions Section -->
+        <div class="form-section">
+            <h3>📏 Dimensions & Weight <span style="color: #999;">(Optional)</span></h3>
+            
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">Weight (kg)</label>
+                    <input type="number" 
+                           name="weight" 
+                           id="weight"
+                           step="0.01"
+                           min="0"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                           placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label style="font-weight: 600; display: block; margin-bottom: 8px;">Dimensions (LxWxH)</label>
+                    <input type="text" 
+                           name="dimensions" 
+                           id="dimensions"
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border-color, #ddd); border-radius: 8px; font-size: 14px; background: var(--bg-white, white); color: var(--text-color, #333);"
+                           placeholder="e.g., 120x60x45 cm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="action-buttons" style="display: flex; gap: 16px; justify-content: flex-end; margin-top: 32px; padding-bottom: 40px;">
+            <a href="{{ url_for('admin.products') }}" class="btn btn-outline" style="padding: 12px 24px; text-decoration: none;">Cancel</a>
+            <button type="submit" class="btn btn-primary" style="padding: 12px 32px; display: flex; align-items: center; gap: 8px; border: none; cursor: pointer;">
+                <span>💾</span> Save Product
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Character counters
+    function updateCharCount(inputId, countId, maxLength = null) {
+        const input = document.getElementById(inputId);
+        const countSpan = document.getElementById(countId);
+        if (input && countSpan) {
+            const length = input.value.length;
+            countSpan.classList.remove('warning', 'danger');
+            
+            if (maxLength) {
+                countSpan.textContent = `${length} / ${maxLength} characters`;
+                if (length > maxLength) {
+                    countSpan.classList.add('danger');
+                } else if (length > maxLength * 0.8) {
+                    countSpan.classList.add('warning');
+                }
+            } else {
+                countSpan.textContent = `${length} characters`;
+            }
+        }
+    }
+
+    // Add event listeners for character counters
+    const nameAm = document.getElementById('name_am');
+    const nameEn = document.getElementById('name_en');
+    const descAm = document.getElementById('description_am');
+    const descEn = document.getElementById('description_en');
+    
+    if (nameAm) nameAm.addEventListener('input', () => updateCharCount('name_am', 'nameAmCharCount'));
+    if (nameEn) nameEn.addEventListener('input', () => updateCharCount('name_en', 'nameEnCharCount'));
+    if (descAm) descAm.addEventListener('input', () => updateCharCount('description_am', 'descAmCharCount', 1000));
+    if (descEn) descEn.addEventListener('input', () => updateCharCount('description_en', 'descEnCharCount', 1000));
+
+    // Initialize character counts
+    updateCharCount('name_am', 'nameAmCharCount');
+    updateCharCount('name_en', 'nameEnCharCount');
+    updateCharCount('description_am', 'descAmCharCount', 1000);
+    updateCharCount('description_en', 'descEnCharCount', 1000);
+
+    // Image preview
+    function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        const file = input.files[0];
+        
+        if (file) {
+            // Validate file size (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                if (window.showToast) {
+                    window.showToast('Image size should be less than 5MB', 'error');
+                } else {
+                    alert('Image size should be less than 5MB');
+                }
+                input.value = '';
+                return;
+            }
+            
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                if (window.showToast) {
+                    window.showToast('Please select an image file', 'error');
+                } else {
+                    alert('Please select an image file');
+                }
+                input.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: cover;">`;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.innerHTML = `
+                <div style="text-align: center; color: #999;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🖼️</div>
+                    <small>Image preview will appear here</small>
+                </div>
+            `;
+        }
+    }
+
+    // Calculate discount preview
+    function updateDiscountPreview() {
+        const price = parseFloat(document.getElementById('price')?.value) || 0;
+        const comparePrice = parseFloat(document.getElementById('compare_price')?.value) || 0;
+        const discountPreview = document.getElementById('discountPreview');
+        
+        if (discountPreview && comparePrice > 0 && comparePrice > price) {
+            const discount = Math.round(((comparePrice - price) / comparePrice) * 100);
+            document.getElementById('discountPercent').textContent = discount;
+            discountPreview.style.display = 'block';
+        } else if (discountPreview) {
+            discountPreview.style.display = 'none';
+        }
+    }
+
+    const priceInput = document.getElementById('price');
+    const comparePriceInput = document.getElementById('compare_price');
+    
+    if (priceInput) priceInput.addEventListener('input', updateDiscountPreview);
+    if (comparePriceInput) comparePriceInput.addEventListener('input', updateDiscountPreview);
+
+    // Ensure stock value is properly saved
+    function ensureStockValue() {
+        const stockInput = document.getElementById('stock_quantity');
+        if (stockInput && (stockInput.value === '' || stockInput.value === null)) {
+            stockInput.value = 0;
+        }
+    }
+
+    // Form validation
+    function validateForm() {
+        const nameAm = document.getElementById('name_am')?.value.trim();
+        const nameEn = document.getElementById('name_en')?.value.trim();
+        const categoryId = document.getElementById('category_id')?.value;
+        const price = document.getElementById('price')?.value;
+        
+        // Ensure stock has a value
+        ensureStockValue();
+        
+        if (!nameAm) {
+            if (window.showToast) {
+                window.showToast('Please enter product name in Amharic', 'error');
+            } else {
+                alert('Please enter product name in Amharic');
+            }
+            document.getElementById('name_am').focus();
+            return false;
+        }
+        
+        if (!nameEn) {
+            if (window.showToast) {
+                window.showToast('Please enter product name in English', 'error');
+            } else {
+                alert('Please enter product name in English');
+            }
+            document.getElementById('name_en').focus();
+            return false;
+        }
+        
+        if (!categoryId) {
+            if (window.showToast) {
+                window.showToast('Please select a category', 'error');
+            } else {
+                alert('Please select a category');
+            }
+            document.getElementById('category_id').focus();
+            return false;
+        }
+        
+        if (!price || parseFloat(price) <= 0) {
+            if (window.showToast) {
+                window.showToast('Please enter a valid price', 'error');
+            } else {
+                alert('Please enter a valid price');
+            }
+            document.getElementById('price').focus();
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Stock input event listener
+    const stockInput = document.getElementById('stock_quantity');
+    if (stockInput) {
+        stockInput.addEventListener('blur', function() {
+            if (this.value === '' || this.value === null) {
+                this.value = 0;
+            }
+        });
+    }
+</script>
+{% endblock %}

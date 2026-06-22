@@ -1,0 +1,583 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Product Details - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .detail-card {
+        background: var(--bg-white, white);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .detail-card h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border-color, #f0f0f0);
+        color: var(--primary, #1a7a4a);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .detail-row {
+        display: flex;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color-light, #f5f5f5);
+    }
+    .detail-label {
+        width: 160px;
+        font-weight: 600;
+        color: var(--text-muted, #666);
+    }
+    .detail-value {
+        flex: 1;
+        color: var(--text-color, #333);
+    }
+    .product-image-main {
+        text-align: center;
+        padding: 20px;
+        background: var(--bg-hover, #f8f9fa);
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+    .product-image-main img {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .status-active {
+        background: #4caf50;
+        color: white;
+    }
+    .status-inactive {
+        background: #999;
+        color: white;
+    }
+    .stock-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .stock-high {
+        background: #4caf50;
+        color: white;
+    }
+    .stock-medium {
+        background: #ff9800;
+        color: white;
+    }
+    .stock-low {
+        background: #f44336;
+        color: white;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    .text-muted {
+        color: var(--text-muted, #999);
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .product-image-main {
+            background: #1a1a2e;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        .detail-row {
+            flex-direction: column;
+        }
+        .detail-label {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+        .action-buttons {
+            justify-content: center;
+        }
+    }
+    @media print {
+        .no-print { display: none; }
+        .detail-card { box-shadow: none; border: 1px solid #ddd; background: white; }
+        body { background: white; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="product-detail-container">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <a href="{{ url_for('admin.products') }}" class="btn btn-outline" style="margin-bottom: 12px; display: inline-block;">← Back to Products</a>
+            <h1 style="margin: 8px 0 4px;">📦 Product Details</h1>
+            <p style="color: var(--text-muted, #666); margin: 0;">View and manage product information</p>
+        </div>
+        <div class="action-buttons no-print">
+            <a href="{{ url_for('admin.product_edit', pid=product.id) }}" class="btn btn-primary">✏️ Edit Product</a>
+            <button onclick="duplicateProduct({{ product.id }})" class="btn btn-outline">📋 Duplicate</button>
+            <button onclick="window.print()" class="btn btn-outline">🖨️ Print</button>
+            <button onclick="deleteProduct({{ product.id }}, '{{ product.name_am|escapejs }}')" class="btn btn-danger">🗑️ Delete</button>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <!-- Product Images Section -->
+        <div class="detail-card">
+            <h3>
+                <span>🖼️</span> Product Images
+            </h3>
+            <div class="product-image-main">
+                {% if product.thumbnail and product.thumbnail != '' %}
+                    <img src="{{ url_for('static', filename=(product.thumbnail if product.thumbnail[:8] == 'uploads/' else 'uploads/products/' ~ product.thumbnail)) }}" alt="{{ product.name_am }}" id="mainProductImage" 
+                         onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+                {% else %}
+                    <div style="font-size: 80px; padding: 40px;">🪑</div>
+                    <p style="color: var(--text-muted, #999);">No image uploaded</p>
+                {% endif %}
+            </div>
+            {% if product.thumbnail and product.thumbnail != '' %}
+            <div style="text-align: center;">
+                <button onclick="deleteImage({{ product.id }})" class="btn btn-outline btn-small">🗑️ Remove Image</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Basic Information -->
+        <div class="detail-card">
+            <h3>
+                <span>📝</span> Basic Information
+            </h3>
+            <div class="detail-row">
+                <div class="detail-label">Product ID:</div>
+                <div class="detail-value"><strong>#{{ product.id }}</strong></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Name (Amharic):</div>
+                <div class="detail-value">{{ product.name_am }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Name (English):</div>
+                <div class="detail-value">{{ product.name }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Name (Arabic):</div>
+                <div class="detail-value">{{ product.name_ar|default('-') }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Category:</div>
+                <div class="detail-value">
+                    <span class="category-badge" style="background: var(--bg-hover, #f0f0f0); padding: 4px 12px; border-radius: 20px; font-size: 13px;">
+                        {{ product.category.name_am if product.category else 'Uncategorized' }}
+                    </span>
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Status:</div>
+                <div class="detail-value">
+                    <span class="status-badge {% if product.is_active %}status-active{% else %}status-inactive{% endif %}">
+                        {% if product.is_active %}✓ Active{% else %}✗ Inactive{% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Featured:</div>
+                <div class="detail-value">
+                    {% if product.is_featured %}
+                        <span style="color: #ff9800;">⭐ Featured Product</span>
+                    {% else %}
+                        <span style="color: var(--text-muted, #999);">☆ Not Featured</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">New:</div>
+                <div class="detail-value">
+                    {% if product.is_new %}
+                        <span style="color: #4caf50;">🆕 New Arrival</span>
+                    {% else %}
+                        <span class="text-muted">Regular</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Section -->
+    <div class="detail-card">
+        <h3>
+            <span>💰</span> Pricing
+        </h3>
+        <div class="info-grid" style="margin-bottom: 0;">
+            <div>
+                <div class="detail-row">
+                    <div class="detail-label">Current Price:</div>
+                    <div class="detail-value"><strong style="font-size: 20px; color: #1a7a4a;">{{ format_price(product.price) }}</strong></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Compare Price:</div>
+                    <div class="detail-value">
+                        {% if product.compare_price and product.compare_price > 0 %}
+                            <span style="text-decoration: line-through; color: var(--text-muted, #999);">{{ format_price(product.compare_price) }}</span>
+                        {% else %}
+                            <span class="text-muted">No discount</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div>
+                {% if product.compare_price and product.compare_price > product.price %}
+                <div class="detail-row">
+                    <div class="detail-label">Discount:</div>
+                    <div class="detail-value">
+                        <span style="background: #4caf50; color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px;">
+                            🔥 {{ ((product.compare_price - product.price) / product.compare_price * 100)|round }}% OFF
+                        </span>
+                        <span style="margin-left: 8px;">Save {{ format_price(product.compare_price - product.price) }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Section -->
+    <div class="detail-card">
+        <h3>
+            <span>📦</span> Inventory
+        </h3>
+        <div class="info-grid" style="margin-bottom: 0;">
+            <div>
+                <div class="detail-row">
+                    <div class="detail-label">Stock Quantity:</div>
+                    <div class="detail-value">
+                        {% set stock = product.stock_quantity|default(0) %}
+                        <span class="stock-badge 
+                            {% if stock > 10 %}stock-high
+                            {% elif stock > 0 %}stock-medium
+                            {% else %}stock-low{% endif %}">
+                            {% if stock > 10 %}✓ {{ stock }} in stock
+                            {% elif stock > 0 %}⚠️ Only {{ stock }} left
+                            {% else %}✗ Out of stock{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">SKU:</div>
+                    <div class="detail-value">{{ product.sku|default('-') }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Barcode:</div>
+                    <div class="detail-value">{{ product.barcode|default('-') }}</div>
+                </div>
+            </div>
+            <div>
+                <div class="detail-row">
+                    <div class="detail-label">Material:</div>
+                    <div class="detail-value">{{ product.material|default('-') }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Color:</div>
+                    <div class="detail-value">{{ product.color|default('-') }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Weight:</div>
+                    <div class="detail-value">{{ product.weight|default('-') }} kg</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Dimensions:</div>
+                    <div class="detail-value">{{ product.dimensions|default('-') }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Last Updated:</div>
+            <div class="detail-value">{{ product.updated_at.strftime('%Y-%m-%d %H:%M') if product.updated_at else 'N/A' }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Created:</div>
+            <div class="detail-value">{{ product.created_at.strftime('%Y-%m-%d %H:%M') if product.created_at else 'N/A' }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Views:</div>
+            <div class="detail-value">{{ product.views|default(0) }} views</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Sales:</div>
+            <div class="detail-value">{{ product.sales_count|default(0) }} units sold</div>
+        </div>
+    </div>
+
+    <!-- Descriptions -->
+    <div class="detail-card">
+        <h3>
+            <span>📄</span> Descriptions
+        </h3>
+        <div class="detail-row">
+            <div class="detail-label">Description (Amharic):</div>
+            <div class="detail-value">
+                {% if product.description_am %}
+                    <div style="line-height: 1.6; white-space: pre-wrap;">{{ product.description_am }}</div>
+                {% else %}
+                    <span class="text-muted">No description available</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Description (English):</div>
+            <div class="detail-value">
+                {% if product.description %}
+                    <div style="line-height: 1.6; white-space: pre-wrap;">{{ product.description }}</div>
+                {% else %}
+                    <span class="text-muted">No description available</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Description (Arabic):</div>
+            <div class="detail-value">
+                {% if product.description_ar %}
+                    <div style="line-height: 1.6; white-space: pre-wrap; direction: rtl; text-align: right;">{{ product.description_ar }}</div>
+                {% else %}
+                    <span class="text-muted">No description available</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- SEO Section -->
+    {% if product.meta_title or product.meta_description %}
+    <div class="detail-card">
+        <h3>
+            <span>🔍</span> SEO Settings
+        </h3>
+        <div class="detail-row">
+            <div class="detail-label">Meta Title:</div>
+            <div class="detail-value">{{ product.meta_title|default('-') }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Meta Description:</div>
+            <div class="detail-value">{{ product.meta_description|default('-') }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Product URL:</div>
+            <div class="detail-value">
+                <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" target="_blank" style="color: #1a7a4a;">
+                    /product/{{ product.id }}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="detail-card no-print">
+        <h3>
+            <span>⚡</span> Quick Actions
+        </h3>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="{{ url_for('customer.product_detail', product_id=product.id) }}" target="_blank" class="btn btn-outline">👁️ View on Store</a>
+            <button onclick="toggleFeatured({{ product.id }})" class="btn btn-outline">
+                {% if product.is_featured %}☆ Remove Featured{% else %}⭐ Make Featured{% endif %}
+            </button>
+            <button onclick="updateStock({{ product.id }})" class="btn btn-outline">📦 Update Stock</button>
+            <a href="{{ url_for('admin.product_edit', pid=product.id) }}" class="btn btn-primary">✏️ Edit Product</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Helper function for price formatting
+    function formatPriceLocal(price) {
+        if (price === undefined || price === null) return '0 ETB';
+        const num = parseFloat(price);
+        if (isNaN(num)) return '0 ETB';
+        return num.toLocaleString('en-US') + ' ETB';
+    }
+
+    // Delete product
+    function deleteProduct(productId, productName) {
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            window.location.href = '{{ url_for('admin.product_delete', pid=0) }}'.replace('/0', '/' + productId);
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Delete Product', `Are you sure you want to delete "${productName}"? This action cannot be undone.`, callback);
+        } else {
+            if (confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) callback();
+        }
+    }
+
+    // Delete image
+    function deleteImage(productId) {
+        const confirmFn = window.showConfirm || confirm;
+        const callback = () => {
+            if (window.showLoading) window.showLoading(true);
+            
+            fetch('{{ url_for('admin.product_edit', pid=0) }}'.replace('/0', '/' + productId), {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showSuccess) {
+                        window.showSuccess('Image removed successfully');
+                    } else if (window.showToast) {
+                        window.showToast('Image removed successfully', 'success');
+                    }
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (window.showError) window.showError(data.error || 'Failed to remove image');
+                }
+            })
+            .catch(() => {
+                if (window.showError) window.showError('Error removing image');
+            })
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        };
+        
+        if (window.showConfirm) {
+            window.showConfirm('Remove Image', 'Are you sure you want to remove this product image?', callback);
+        } else {
+            if (confirm('Are you sure you want to remove this product image?')) callback();
+        }
+    }
+
+    // Duplicate product
+    function duplicateProduct(productId) {
+        if (window.showLoading) window.showLoading(true);
+        
+        fetch('{{ url_for('admin.product_create', pid=0) }}'.replace('/0', '/' + productId), {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (window.showSuccess) {
+                    window.showSuccess('Product duplicated successfully');
+                } else if (window.showToast) {
+                    window.showToast('Product duplicated successfully', 'success');
+                }
+                setTimeout(() => {
+                    window.location.href = '{{ url_for('admin.product_edit', pid=0) }}'.replace('/0', '/' + data.new_id);
+                }, 1000);
+            } else {
+                if (window.showError) window.showError(data.error || 'Failed to duplicate');
+            }
+        })
+        .catch(() => {
+            if (window.showError) window.showError('Error duplicating product');
+        })
+        .finally(() => {
+            if (window.showLoading) window.showLoading(false);
+        });
+    }
+
+    // Toggle featured status
+    function toggleFeatured(productId) {
+        if (window.showLoading) window.showLoading(true);
+        
+        fetch('{{ url_for('admin.product_toggle_featured', pid=0) }}'.replace('/0', '/' + productId), {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (window.showSuccess) {
+                    window.showSuccess(data.is_featured ? 'Product featured' : 'Product unfeatured');
+                } else if (window.showToast) {
+                    window.showToast(data.is_featured ? 'Product featured' : 'Product unfeatured', 'success');
+                }
+                setTimeout(() => location.reload(), 500);
+            } else {
+                if (window.showError) window.showError(data.error || 'Failed to update');
+            }
+        })
+        .catch(() => {
+            if (window.showError) window.showError('Error updating featured status');
+        })
+        .finally(() => {
+            if (window.showLoading) window.showLoading(false);
+        });
+    }
+
+    // Update stock
+    function updateStock(productId) {
+        const newStock = prompt('Enter new stock quantity:', '{{ product.stock_quantity|default(0) }}');
+        if (newStock !== null && !isNaN(parseInt(newStock))) {
+            if (window.showLoading) window.showLoading(true);
+            
+            fetch('{{ url_for('admin.product_update_stock', pid=0) }}'.replace('/0', '/' + productId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ stock_quantity: parseInt(newStock) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (window.showSuccess) {
+                        window.showSuccess('Stock updated successfully');
+                    } else if (window.showToast) {
+                        window.showToast('Stock updated successfully', 'success');
+                    }
+                    setTimeout(() => location.reload(), 500);
+                } else {
+                    if (window.showError) window.showError(data.error || 'Failed to update stock');
+                }
+            })
+            .catch(() => {
+                if (window.showError) window.showError('Error updating stock');
+            })
+            .finally(() => {
+                if (window.showLoading) window.showLoading(false);
+            });
+        }
+    }
+</script>
+{% endblock %}

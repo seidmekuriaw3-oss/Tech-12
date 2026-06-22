@@ -1,0 +1,606 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account - Ethiosadat Furniture{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        max-width: 550px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    .register-card {
+        background: var(--bg-white, white);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .register-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        color: #1a7a4a;
+    }
+    .register-card h2 {
+        margin-bottom: 8px;
+        color: var(--text-color, #333);
+    }
+    .register-subtitle {
+        color: var(--text-muted, #666);
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-color, #333);
+    }
+    .form-group input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s;
+        background: var(--bg-white, white);
+        color: var(--text-color, #333);
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #1a7a4a;
+        box-shadow: 0 0 0 3px rgba(26,122,74,0.1);
+    }
+    .form-group input.error {
+        border-color: #f44336;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    .btn-register {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(26,122,74,0.4);
+    }
+    .btn-register:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    .btn-login {
+        width: 100%;
+        padding: 14px;
+        background: transparent;
+        border: 2px solid #1a7a4a;
+        color: #1a7a4a;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 12px;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+    .btn-login:hover {
+        background: rgba(26,122,74,0.05);
+        transform: translateY(-2px);
+    }
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 25px 0;
+        color: var(--text-muted, #999);
+        font-size: 13px;
+    }
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border-color, #ddd);
+    }
+    .divider span {
+        padding: 0 15px;
+    }
+    .terms {
+        text-align: left;
+        margin: 20px 0;
+        font-size: 12px;
+        color: var(--text-muted, #666);
+    }
+    .terms a {
+        color: #1a7a4a;
+        text-decoration: none;
+    }
+    .terms a:hover {
+        text-decoration: underline;
+    }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 15px 0;
+    }
+    .checkbox-group input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+    .error-message {
+        background: #ffebee;
+        color: #c62828;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border-left: 4px solid #f44336;
+        text-align: left;
+        font-size: 14px;
+    }
+    .success-message {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border-left: 4px solid #4caf50;
+        text-align: left;
+        font-size: 14px;
+    }
+    .info-message {
+        background: #e3f2fd;
+        color: #0f5232;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border-left: 4px solid #1a7a4a;
+        text-align: left;
+        font-size: 14px;
+    }
+    .field-error {
+        font-size: 12px;
+        color: #f44336;
+        margin-top: 5px;
+        display: block;
+    }
+    .password-strength {
+        margin-top: 8px;
+        height: 4px;
+        background: var(--border-color, #eee);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .password-strength-bar {
+        height: 100%;
+        width: 0%;
+        transition: width 0.3s ease;
+        border-radius: 4px;
+    }
+    .strength-weak { background: #f44336; width: 33%; }
+    .strength-medium { background: #ff9800; width: 66%; }
+    .strength-strong { background: #4caf50; width: 100%; }
+    .strength-text {
+        font-size: 11px;
+        margin-top: 4px;
+        color: var(--text-muted, #666);
+    }
+    .spinner-sm {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
+        margin-right: 8px;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    @media (max-width: 768px) {
+        .register-card {
+            padding: 30px 20px;
+        }
+        .register-icon {
+            font-size: 48px;
+        }
+        .register-card h2 {
+            font-size: 22px;
+        }
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        .success-message {
+            background: #1a3a2a;
+            color: #81c784;
+        }
+        .error-message {
+            background: #4a1a1a;
+            color: #ef9a9a;
+        }
+        .info-message {
+            background: #1a3a5c;
+            color: #64b5f6;
+        }
+        .password-strength {
+            background: #2a2a3e;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-icon">📝</div>
+        <h2>Create Account</h2>
+        <p class="register-subtitle">Join us and get 10% discount on your first order!</p>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="{% if category == 'error' or category == 'danger' %}error-message{% elif category == 'success' %}success-message{% else %}info-message{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+        
+        <!-- Registration Form -->
+        <form method="post" action="{{ url_for('customer.user_register') }}" id="registerForm" onsubmit="return handleSubmit(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name <span style="color: #f44336;">*</span></label>
+                    <input type="text" 
+                           name="full_name" 
+                           id="full_name" 
+                           placeholder="Your full name" 
+                           required>
+                    <div class="field-error" id="nameError"></div>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" 
+                           name="phone" 
+                           id="phone" 
+                           placeholder="0912345678">
+                    <div class="field-error" id="phoneError"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Email Address <span style="color: #f44336;">*</span></label>
+                <input type="email" 
+                       name="email" 
+                       id="email" 
+                       placeholder="your@email.com" 
+                       required>
+                <div class="field-error" id="emailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Password <span style="color: #f44336;">*</span></label>
+                <input type="password" 
+                       name="password" 
+                       id="password" 
+                       placeholder="Create a strong password" 
+                       required>
+                <div class="password-strength" id="passwordStrength">
+                    <div class="password-strength-bar" id="strengthBar"></div>
+                </div>
+                <div class="strength-text" id="strengthText"></div>
+                <div class="field-error" id="passwordError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Confirm Password <span style="color: #f44336;">*</span></label>
+                <input type="password" 
+                       name="confirm_password" 
+                       id="confirm_password" 
+                       placeholder="Confirm your password" 
+                       required>
+                <div class="field-error" id="confirmError"></div>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" name="agree_terms" id="agree_terms" required>
+                <label for="agree_terms" style="margin: 0; font-weight: normal; font-size: 13px;">
+                    I agree to the <a href="{{ url_for('customer.terms') }}" target="_blank">Terms of Service</a> and 
+                    <a href="{{ url_for('customer.privacy') }}" target="_blank">Privacy Policy</a>
+                </label>
+            </div>
+            
+            <button type="submit" class="btn-register" id="registerBtn">
+                Create Account
+            </button>
+        </form>
+        
+        <div class="divider">
+            <span>already have an account?</span>
+        </div>
+        
+        <a href="{{ url_for('customer.user_login') }}" class="btn-login">
+            Sign In Instead
+        </a>
+    </div>
+</div>
+
+<script>
+    // Password strength checker
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+    
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        
+        if (password.length >= 6) strength++;
+        if (password.length >= 10) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        
+        if (strength <= 2) return { level: 'weak', text: 'Weak password' };
+        if (strength <= 4) return { level: 'medium', text: 'Medium password' };
+        return { level: 'strong', text: 'Strong password' };
+    }
+    
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            const result = checkPasswordStrength(this.value);
+            
+            strengthBar.className = 'password-strength-bar';
+            
+            if (result.level === 'weak') {
+                strengthBar.classList.add('strength-weak');
+                strengthText.textContent = result.text;
+                strengthText.style.color = '#f44336';
+            } else if (result.level === 'medium') {
+                strengthBar.classList.add('strength-medium');
+                strengthText.textContent = result.text;
+                strengthText.style.color = '#ff9800';
+            } else if (result.level === 'strong') {
+                strengthBar.classList.add('strength-strong');
+                strengthText.textContent = result.text;
+                strengthText.style.color = '#4caf50';
+            }
+            
+            if (!this.value) {
+                strengthBar.style.width = '0%';
+                strengthText.textContent = '';
+            }
+        });
+    }
+    
+    // Real-time validation
+    function validateField(field) {
+        const value = field.value.trim();
+        const errorDiv = document.getElementById(field.id + 'Error');
+        
+        if (field.id === 'full_name') {
+            if (!value) {
+                errorDiv.textContent = 'Full name is required';
+                return false;
+            } else if (value.length < 2) {
+                errorDiv.textContent = 'Name must be at least 2 characters';
+                return false;
+            } else {
+                errorDiv.textContent = '';
+                return true;
+            }
+        }
+        
+        if (field.id === 'email') {
+            const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+            if (!value) {
+                errorDiv.textContent = 'Email address is required';
+                return false;
+            } else if (!emailRegex.test(value)) {
+                errorDiv.textContent = 'Please enter a valid email address';
+                return false;
+            } else {
+                errorDiv.textContent = '';
+                return true;
+            }
+        }
+        
+        if (field.id === 'phone') {
+            if (value) {
+                const phoneRegex = /^(09|07)[0-9]{8}$/;
+                if (!phoneRegex.test(value.replace(/[\s\-\(\)\+]/g, ''))) {
+                    errorDiv.textContent = 'Enter a valid Ethiopian phone number (e.g., 0912345678)';
+                    return false;
+                }
+            }
+            errorDiv.textContent = '';
+            return true;
+        }
+        
+        if (field.id === 'password') {
+            if (!value) {
+                errorDiv.textContent = 'Password is required';
+                return false;
+            } else if (value.length < 6) {
+                errorDiv.textContent = 'Password must be at least 6 characters';
+                return false;
+            } else {
+                errorDiv.textContent = '';
+                return true;
+            }
+        }
+        
+        return true;
+    }
+    
+    // Add real-time validation listeners
+    const fullNameInput = document.getElementById('full_name');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    
+    if (fullNameInput) fullNameInput.addEventListener('blur', () => validateField(fullNameInput));
+    if (emailInput) emailInput.addEventListener('blur', () => validateField(emailInput));
+    if (phoneInput) phoneInput.addEventListener('blur', () => validateField(phoneInput));
+    
+    // Handle form submission
+    function handleSubmit(event) {
+        const fullName = document.getElementById('full_name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const agreeTerms = document.getElementById('agree_terms').checked;
+        const btn = document.getElementById('registerBtn');
+        
+        // Validate all fields
+        let isValid = true;
+        
+        if (!fullName) {
+            showFieldError('full_name', 'Full name is required');
+            isValid = false;
+        }
+        
+        if (!email) {
+            showFieldError('email', 'Email address is required');
+            isValid = false;
+        } else if (!isValidEmail(email)) {
+            showFieldError('email', 'Please enter a valid email address');
+            isValid = false;
+        }
+        
+        if (phone && !isValidPhone(phone)) {
+            showFieldError('phone', 'Enter a valid Ethiopian phone number');
+            isValid = false;
+        }
+        
+        if (!password) {
+            showFieldError('password', 'Password is required');
+            isValid = false;
+        } else if (password.length < 6) {
+            showFieldError('password', 'Password must be at least 6 characters');
+            isValid = false;
+        }
+        
+        if (password !== confirmPassword) {
+            const confirmError = document.getElementById('confirmError');
+            if (confirmError) confirmError.textContent = 'Passwords do not match';
+            isValid = false;
+        }
+        
+        if (!agreeTerms) {
+            showMessage('Please agree to the Terms of Service and Privacy Policy', 'error');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            return false;
+        }
+        
+        // Show loading state
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-sm"></span> Creating Account...';
+        
+        return true;
+    }
+    
+    function showFieldError(fieldId, message) {
+        const errorDiv = document.getElementById(fieldId + 'Error');
+        if (errorDiv) errorDiv.textContent = message;
+    }
+    
+    function isValidEmail(email) {
+        const re = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        return re.test(email);
+    }
+    
+    function isValidPhone(phone) {
+        const cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
+        const re = /^(09|07)[0-9]{8}$/;
+        return re.test(cleaned);
+    }
+    
+    // Show temporary message
+    function showMessage(message, type) {
+        const existingMsg = document.querySelector('.temp-message');
+        if (existingMsg) existingMsg.remove();
+        
+        const msgDiv = document.createElement('div');
+        msgDiv.className = type === 'error' ? 'error-message temp-message' : 'info-message temp-message';
+        msgDiv.textContent = message;
+        
+        const form = document.getElementById('registerForm');
+        if (form && form.parentNode) {
+            form.parentNode.insertBefore(msgDiv, form);
+        }
+        
+        setTimeout(() => {
+            msgDiv.style.opacity = '0';
+            msgDiv.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                if (msgDiv && msgDiv.parentNode) msgDiv.remove();
+            }, 300);
+        }, 4000);
+    }
+    
+    // Auto-hide flash messages after 5 seconds
+    setTimeout(() => {
+        const messages = document.querySelectorAll('.error-message, .success-message, .info-message');
+        messages.forEach(msg => {
+            if (!msg.classList.contains('temp-message')) {
+                setTimeout(() => {
+                    msg.style.opacity = '0';
+                    msg.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => {
+                        if (msg && msg.parentNode) msg.remove();
+                    }, 300);
+                }, 5000);
+            }
+        });
+    }, 100);
+    
+    // Remove loading state if page loads with error
+    window.addEventListener('load', function() {
+        const btn = document.getElementById('registerBtn');
+        if (btn && btn.disabled && !btn.innerHTML.includes('Create')) {
+            btn.disabled = false;
+            btn.innerHTML = 'Create Account';
+        }
+    });
+    
+    // Enter key submit handler
+    const inputs = ['full_name', 'email', 'phone', 'password', 'confirm_password'];
+    inputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const form = document.getElementById('registerForm');
+                    if (form) form.submit();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

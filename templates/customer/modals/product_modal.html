@@ -1,0 +1,671 @@
+<!-- ==================== PRODUCT QUICK VIEW MODAL ==================== -->
+<!-- Quick view modal for products without leaving the page -->
+
+<div id="productModal" class="product-modal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10001;
+    align-items: center;
+    justify-content: center;
+">
+    <!-- Modal Overlay -->
+    <div class="product-overlay" style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    "></div>
+    
+    <!-- Modal Container -->
+    <div class="product-container" style="
+        position: relative;
+        background: var(--bg-white, white);
+        border-radius: 24px;
+        width: 90%;
+        max-width: 1000px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: productModalFadeIn 0.3s ease;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    ">
+        
+        <!-- Close Button -->
+        <button class="close-product-modal" onclick="closeProductModal()" style="
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        " onmouseover="this.style.background='rgba(0,0,0,0.7)'; this.style.transform='scale(1.1)'"
+           onmouseout="this.style.background='rgba(0,0,0,0.5)'; this.style.transform='scale(1)'">
+            &times;
+        </button>
+        
+        <!-- Loading State -->
+        <div id="productModalLoading" class="product-loading" style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px;
+            text-align: center;
+        ">
+            <div class="spinner" style="
+                width: 50px;
+                height: 50px;
+                border: 4px solid var(--border-color, #f0f0f0);
+                border-top-color: #1a7a4a;
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+                margin-bottom: 20px;
+            "></div>
+            <p style="color: var(--text-muted, #999);">{% if lang == 'am' %}በመጫን ላይ...{% else %}Loading product...{% endif %}</p>
+        </div>
+        
+        <!-- Product Content -->
+        <div id="productModalContent" class="product-content" style="display: none;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                
+                <!-- Product Images Section -->
+                <div class="product-images-section" style="padding: 24px;">
+                    <!-- Main Image -->
+                    <div class="main-image-container" style="
+                        background: var(--bg-hover, #f8f9fa);
+                        border-radius: 16px;
+                        overflow: hidden;
+                        position: relative;
+                        cursor: pointer;
+                        text-align: center;
+                    ">
+                        <img id="modalMainImage" src="" alt="Product image" style="
+                            width: 100%;
+                            height: auto;
+                            object-fit: cover;
+                            transition: transform 0.3s;
+                        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    </div>
+                    
+                    <!-- Thumbnails -->
+                    <div id="modalThumbnails" class="thumbnails-container" style="
+                        display: flex;
+                        gap: 12px;
+                        margin-top: 16px;
+                        overflow-x: auto;
+                        padding-bottom: 8px;
+                    "></div>
+                </div>
+                
+                <!-- Product Info Section -->
+                <div class="product-info-section" style="padding: 24px;">
+                    <!-- Category Badge -->
+                    <div id="modalCategory" class="product-category" style="
+                        display: inline-block;
+                        background: #e8f0fe;
+                        color: #1a7a4a;
+                        padding: 4px 12px;
+                        border-radius: 20px;
+                        font-size: 12px;
+                        margin-bottom: 16px;
+                    "></div>
+                    
+                    <!-- Product Name -->
+                    <h2 id="modalName" style="margin: 0 0 12px 0; font-size: 24px; color: var(--text-color, #333);"></h2>
+                    
+                    <!-- Rating -->
+                    <div id="modalRating" class="product-rating" style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;"></div>
+                    
+                    <!-- Price -->
+                    <div class="product-price" style="margin-bottom: 20px;">
+                        <span id="modalPrice" style="font-size: 28px; font-weight: bold; color: #1a7a4a;"></span>
+                        <span id="modalOldPrice" style="text-decoration: line-through; color: var(--text-muted, #999); margin-left: 12px;"></span>
+                        <span id="modalDiscount" class="discount-badge" style="
+                            background: #f44336;
+                            color: white;
+                            padding: 4px 10px;
+                            border-radius: 20px;
+                            font-size: 12px;
+                            margin-left: 12px;
+                            display: none;
+                        "></span>
+                    </div>
+                    
+                    <!-- Stock Status -->
+                    <div id="modalStock" class="stock-status" style="margin-bottom: 20px;"></div>
+                    
+                    <!-- Description -->
+                    <div class="product-description" style="margin-bottom: 24px;">
+                        <h4 style="margin: 0 0 8px 0; color: var(--text-color, #333);">{% if lang == 'am' %}መግለጫ{% else %}Description{% endif %}</h4>
+                        <p id="modalDescription" style="color: var(--text-muted, #666); line-height: 1.6;"></p>
+                    </div>
+                    
+                    <!-- Quantity Selector -->
+                    <div class="quantity-selector" style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+                        <span style="font-weight: 500; color: var(--text-color, #333);">{% if lang == 'am' %}ብዛት{% else %}Quantity{% endif %}:</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button onclick="decrementQuantity()" class="quantity-btn" style="
+                                width: 36px;
+                                height: 36px;
+                                border-radius: 50%;
+                                background: var(--bg-hover, #f0f0f0);
+                                border: none;
+                                font-size: 18px;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                color: var(--text-color, #333);
+                            " onmouseover="this.style.background='var(--border-color, #e0e0e0)'" onmouseout="this.style.background='var(--bg-hover, #f0f0f0)'">-</button>
+                            <input type="number" id="modalQuantity" value="1" min="1" max="99" style="
+                                width: 60px;
+                                text-align: center;
+                                padding: 8px;
+                                border: 1px solid var(--border-color, #ddd);
+                                border-radius: 8px;
+                                background: var(--bg-white, white);
+                                color: var(--text-color, #333);
+                            ">
+                            <button onclick="incrementQuantity()" class="quantity-btn" style="
+                                width: 36px;
+                                height: 36px;
+                                border-radius: 50%;
+                                background: var(--bg-hover, #f0f0f0);
+                                border: none;
+                                font-size: 18px;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                color: var(--text-color, #333);
+                            " onmouseover="this.style.background='var(--border-color, #e0e0e0)'" onmouseout="this.style.background='var(--bg-hover, #f0f0f0)'">+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 12px;">
+                        <button onclick="addToCartFromModal()" id="modalAddToCartBtn" class="btn btn-primary" style="flex: 1; padding: 14px;">
+                            🛒 {% if lang == 'am' %}ጋሪ ጨምር{% else %}Add to Cart{% endif %}
+                        </button>
+                        <a href="#" id="modalViewDetailsBtn" class="btn btn-outline" style="padding: 14px 24px; text-decoration: none;">
+                            🔍 {% if lang == 'am' %}ዝርዝር{% else %}Details{% endif %}
+                        </a>
+                    </div>
+                    
+                    <!-- Share Links -->
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color, #eee);">
+                        <span style="font-size: 12px; color: var(--text-muted, #999);">{% if lang == 'am' %}አጋራ{% else %}Share{% endif %}:</span>
+                        <div style="display: flex; gap: 12px; margin-top: 8px;">
+                            <a href="#" onclick="shareProduct('facebook')" style="color: #1877f2; text-decoration: none;">📘 Facebook</a>
+                            <a href="#" onclick="shareProduct('whatsapp')" style="color: #25D366; text-decoration: none;">💬 WhatsApp</a>
+                            <a href="#" onclick="shareProduct('twitter')" style="color: #1da1f2; text-decoration: none;">🐦 Twitter</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes productModalFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    .thumbnails-container::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .thumbnails-container::-webkit-scrollbar-track {
+        background: var(--border-color, #f0f0f0);
+        border-radius: 4px;
+    }
+    
+    .thumbnails-container::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+    }
+    
+    .thumbnail-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+    }
+    
+    .thumbnail-img:hover {
+        transform: scale(1.05);
+    }
+    
+    .thumbnail-img.active {
+        border-color: #1a7a4a;
+    }
+    
+    @media (max-width: 768px) {
+        .product-container > div > div {
+            grid-template-columns: 1fr !important;
+        }
+        .product-images-section {
+            padding: 16px !important;
+        }
+        .product-info-section {
+            padding: 16px !important;
+            padding-top: 0 !important;
+        }
+        #modalName {
+            font-size: 20px !important;
+        }
+        #modalPrice {
+            font-size: 24px !important;
+        }
+        .main-image-container {
+            max-height: 300px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .product-container {
+            width: 95%;
+        }
+        .thumbnail-img {
+            width: 50px;
+            height: 50px;
+        }
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+        }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .product-container {
+            animation: none;
+        }
+        .main-image-container img:hover {
+            transform: none !important;
+        }
+    }
+</style>
+
+<script>
+    let currentProduct = null;
+    let currentQuantity = 1;
+    
+    // Open product modal
+    function openProductModal(productId) {
+        const modal = document.getElementById('productModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Show loading, hide content
+            const loadingDiv = document.getElementById('productModalLoading');
+            const contentDiv = document.getElementById('productModalContent');
+            if (loadingDiv) loadingDiv.style.display = 'flex';
+            if (contentDiv) contentDiv.style.display = 'none';
+            
+            // Fetch product data
+            fetchProductData(productId);
+        }
+    }
+    
+    // Close product modal
+    function closeProductModal() {
+        const modal = document.getElementById('productModal');
+        if (modal) modal.style.display = 'none';
+        document.body.style.overflow = '';
+        currentQuantity = 1;
+    }
+    
+    // Fetch product data from API
+    function fetchProductData(productId) {
+        fetch('{{ url_for('api.api_get_product', pid=0) }}'.replace('/0', '/' + productId))
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentProduct = data.product;
+                    renderProductModal(data.product);
+                } else {
+                    if (window.showToast) window.showToast('Product not found', 'error');
+                    closeProductModal();
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching product:', error);
+                if (window.showToast) window.showToast('Error loading product', 'error');
+                closeProductModal();
+            });
+    }
+    
+    // Render product modal with data
+    function renderProductModal(product) {
+        // Update product info
+        const categoryEl = document.getElementById('modalCategory');
+        const nameEl = document.getElementById('modalName');
+        const priceEl = document.getElementById('modalPrice');
+        const oldPriceEl = document.getElementById('modalOldPrice');
+        const discountEl = document.getElementById('modalDiscount');
+        const stockEl = document.getElementById('modalStock');
+        const descEl = document.getElementById('modalDescription');
+        const mainImageEl = document.getElementById('modalMainImage');
+        const detailsBtn = document.getElementById('modalViewDetailsBtn');
+        
+        if (categoryEl) categoryEl.textContent = product.category_name || 'Uncategorized';
+        if (nameEl) nameEl.textContent = product.name_am || product.name;
+
+        // Member discount: if logged in apply 10%
+        const isLoggedIn = {{ 'true' if session.get('user_id') else 'false' }};
+        const basePrice = parseFloat(product.price);
+        const memberPrice = isLoggedIn ? Math.round(basePrice * 0.9 * 100) / 100 : basePrice;
+
+        if (priceEl) priceEl.textContent = formatPriceNumber(memberPrice) + ' ETB';
+
+        // Show original price as strikethrough when member discount applies
+        if (isLoggedIn) {
+            if (oldPriceEl) { oldPriceEl.textContent = formatPriceNumber(basePrice) + ' ETB'; }
+            if (discountEl) { discountEl.textContent = '-10%'; discountEl.style.display = 'inline-block'; discountEl.style.background = 'linear-gradient(135deg,#4caf50,#388e3c)'; }
+            // Member badge
+            let mb = document.getElementById('modalMemberBadge');
+            if (!mb) {
+                mb = document.createElement('div');
+                mb.id = 'modalMemberBadge';
+                mb.style.cssText = 'margin:8px 0;padding:8px 12px;background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border-radius:10px;border-left:4px solid #4caf50;font-size:12px;color:#2e7d32;font-weight:700;';
+                mb.innerHTML = '🏷️ Member Price — You save ' + formatPriceNumber(basePrice - memberPrice) + ' ETB!';
+                const priceBox = priceEl ? priceEl.closest('.product-price') : null;
+                if (priceBox) priceBox.after(mb);
+            } else {
+                mb.innerHTML = '🏷️ Member Price — You save ' + formatPriceNumber(basePrice - memberPrice) + ' ETB!';
+                mb.style.display = 'block';
+            }
+        } else {
+            // Old product compare_price discount
+            if (product.compare_price && product.compare_price > product.price) {
+                if (oldPriceEl) oldPriceEl.textContent = formatPriceNumber(product.compare_price) + ' ETB';
+                const discount = Math.round(((product.compare_price - product.price) / product.compare_price) * 100);
+                if (discountEl) { discountEl.textContent = `-${discount}%`; discountEl.style.display = 'inline-block'; }
+            } else {
+                if (oldPriceEl) oldPriceEl.textContent = '';
+                if (discountEl) discountEl.style.display = 'none';
+            }
+            // Login nudge in modal
+            let mb = document.getElementById('modalMemberBadge');
+            if (!mb) {
+                mb = document.createElement('div');
+                mb.id = 'modalMemberBadge';
+                mb.style.cssText = 'margin:8px 0;padding:8px 12px;background:#fff8e1;border-radius:10px;border-left:4px solid #ffc107;font-size:12px;color:#555;';
+                mb.innerHTML = '🔓 <a href="/login" style="color:#1a7a4a;font-weight:700;">Login</a> to get <strong style="color:#f59e0b;">10% off</strong>!';
+                const priceBox = priceEl ? priceEl.closest('.product-price') : null;
+                if (priceBox) priceBox.after(mb);
+            } else {
+                mb.style.display = 'block';
+            }
+        }
+        
+        // Stock status
+        // null/undefined means unlimited stock; only 0 means truly out of stock
+        const rawStock = product.stock_quantity;
+        const isUnlimited = (rawStock === null || rawStock === undefined);
+        const stock = isUnlimited ? null : rawStock;
+        const addToCartBtn = document.getElementById('modalAddToCartBtn');
+
+        if (stockEl) {
+            if (isUnlimited || stock > 10) {
+                stockEl.innerHTML = '<span style="color: #4caf50;">✓ In Stock</span>';
+            } else if (stock > 0) {
+                stockEl.innerHTML = '<span style="color: #ff9800;">⚠️ Only ' + stock + ' left in stock</span>';
+            } else {
+                // stock === 0: explicitly out of stock
+                stockEl.innerHTML = '<span style="color: #f44336;">✗ Out of Stock</span>';
+                if (addToCartBtn) {
+                    addToCartBtn.disabled = true;
+                    addToCartBtn.style.opacity = '0.5';
+                }
+            }
+        }
+        
+        // Description
+        const description = product.description_am || product.description || 'No description available.';
+        if (descEl) descEl.textContent = description;
+        
+        // Rating
+        const ratingEl = document.getElementById('modalRating');
+        if (ratingEl) {
+            if (product.rating && product.rating > 0) {
+                const stars = renderStars(product.rating);
+                ratingEl.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 4px; color: #ff9800;">${stars}</div>
+                    <span style="color: var(--text-muted, #999);">(${product.reviews || 0} reviews)</span>
+                `;
+            } else {
+                ratingEl.innerHTML = '<span style="color: var(--text-muted, #999);">No reviews yet</span>';
+            }
+        }
+        
+        // Main image
+        if (mainImageEl) {
+            if (product.thumbnail) {
+                mainImageEl.src = '{{ url_for("static", filename="") }}' + product.thumbnail;
+            } else {
+                mainImageEl.src = '{{ url_for("static", filename="images/placeholder.png") }}';
+            }
+            mainImageEl.onerror = function() { 
+                this.src = '{{ url_for("static", filename="images/placeholder.png") }}'; 
+            };
+        }
+        
+        // Thumbnails (if multiple images)
+        const thumbnailsContainer = document.getElementById('modalThumbnails');
+        if (thumbnailsContainer) {
+            if (product.images && product.images.length > 0) {
+                let imagesArray = [];
+                try {
+                    imagesArray = JSON.parse(product.images);
+                } catch(e) {
+                    imagesArray = [product.thumbnail];
+                }
+                
+                if (imagesArray.length > 1) {
+                    thumbnailsContainer.innerHTML = imagesArray.map((img, idx) => `
+                        <img src="{{ url_for('static', filename='') }}${img}" class="thumbnail-img ${idx === 0 ? 'active' : ''}" 
+                             onclick="changeMainImage('{{ url_for('static', filename='') }}${img}', this)">
+                    `).join('');
+                } else {
+                    thumbnailsContainer.innerHTML = '';
+                }
+            } else {
+                thumbnailsContainer.innerHTML = '';
+            }
+        }
+        
+        // View details link
+        if (detailsBtn) {
+            detailsBtn.href = '{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0', '/' + product.id);
+        }
+        
+        // Reset quantity
+        currentQuantity = 1;
+        const quantityInput = document.getElementById('modalQuantity');
+        if (quantityInput) quantityInput.value = 1;
+        
+        // Enable add to cart button — allow if unlimited (null) or stock > 0
+        if (addToCartBtn && (isUnlimited || stock > 0)) {
+            addToCartBtn.disabled = false;
+            addToCartBtn.style.opacity = '1';
+        }
+        
+        // Show content, hide loading
+        const loadingDiv = document.getElementById('productModalLoading');
+        const contentDiv = document.getElementById('productModalContent');
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        if (contentDiv) contentDiv.style.display = 'block';
+    }
+    
+    function formatPriceNumber(price) {
+        if (price === undefined || price === null) return '0';
+        const num = parseFloat(price);
+        if (isNaN(num)) return '0';
+        return num.toLocaleString('en-US');
+    }
+    
+    // Change main image when thumbnail clicked
+    function changeMainImage(imageUrl, element) {
+        const mainImage = document.getElementById('modalMainImage');
+        if (mainImage) mainImage.src = imageUrl;
+        
+        // Update active thumbnail
+        document.querySelectorAll('.thumbnail-img').forEach(thumb => {
+            thumb.classList.remove('active');
+        });
+        if (element) element.classList.add('active');
+    }
+    
+    // Render star ratings
+    function renderStars(rating) {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5;
+        let stars = '';
+        for (let i = 0; i < fullStars; i++) stars += '★';
+        if (halfStar) stars += '½';
+        for (let i = stars.length; i < 5; i++) stars += '☆';
+        return stars;
+    }
+    
+    // Quantity controls
+    function incrementQuantity() {
+        const maxStock = currentProduct?.stock_quantity || 99;
+        if (currentQuantity < maxStock) {
+            currentQuantity++;
+            const quantityInput = document.getElementById('modalQuantity');
+            if (quantityInput) quantityInput.value = currentQuantity;
+        } else {
+            if (window.showToast) window.showToast(`Only ${maxStock} items available`, 'warning');
+        }
+    }
+    
+    function decrementQuantity() {
+        if (currentQuantity > 1) {
+            currentQuantity--;
+            const quantityInput = document.getElementById('modalQuantity');
+            if (quantityInput) quantityInput.value = currentQuantity;
+        }
+    }
+    
+    // Add to cart from modal
+    function addToCartFromModal() {
+        if (!currentProduct) return;
+        
+        const btn = document.getElementById('modalAddToCartBtn');
+        const originalText = btn ? btn.innerHTML : '';
+        
+        if (btn) {
+            btn.innerHTML = '⏳ Adding...';
+            btn.disabled = true;
+        }
+        
+        if (window.addToCart) {
+            window.addToCart(currentProduct.id, currentQuantity, btn);
+        }
+        
+        setTimeout(() => {
+            if (btn) {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }, 1000);
+        
+        // Close modal after adding
+        setTimeout(() => {
+            closeProductModal();
+        }, 800);
+    }
+    
+    // Share product
+    function shareProduct(platform) {
+        if (!currentProduct) return;
+        
+        const url = window.location.origin + '{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0', '/' + currentProduct.id);
+        const text = `Check out ${currentProduct.name_am || currentProduct.name} at Ethiosadat Furniture!`;
+        
+        let shareUrl = '';
+        if (platform === 'facebook') {
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        } else if (platform === 'whatsapp') {
+            shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+        } else if (platform === 'twitter') {
+            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        }
+        
+        if (shareUrl) {
+            window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+    }
+    
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('productModal');
+            if (modal && modal.style.display === 'flex') {
+                closeProductModal();
+            }
+        }
+    });
+    
+    // Close modal on overlay click
+    const overlay = document.querySelector('.product-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', closeProductModal);
+    }
+    
+    // Quantity input validation
+    const quantityInput = document.getElementById('modalQuantity');
+    if (quantityInput) {
+        quantityInput.addEventListener('change', function() {
+            let val = parseInt(this.value);
+            const maxStock = currentProduct?.stock_quantity || 99;
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > maxStock) {
+                val = maxStock;
+                if (window.showToast) window.showToast(`Only ${maxStock} items available`, 'warning');
+            }
+            currentQuantity = val;
+            this.value = val;
+        });
+    }
+    
+    // Make functions globally available
+    window.openProductModal = openProductModal;
+    window.closeProductModal = closeProductModal;
+    window.changeMainImage = changeMainImage;
+    window.incrementQuantity = incrementQuantity;
+    window.decrementQuantity = decrementQuantity;
+    window.addToCartFromModal = addToCartFromModal;
+    window.shareProduct = shareProduct;
+</script>

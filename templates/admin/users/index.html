@@ -1,0 +1,158 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Users Management - Admin{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="margin: 0; font-size: 24px; color: var(--text-color, #333);">👥 Users Management</h1>
+            <p style="margin: 6px 0 0 0; color: var(--text-muted, #666);">{{ users|length }} total users</p>
+        </div>
+    </div>
+
+    <div style="background: var(--bg-white, white); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow: hidden;">
+        
+        <div style="padding: 16px 20px; border-bottom: 1px solid var(--border-color, #eee); display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <input type="text" id="userSearch" oninput="filterUsers()" placeholder="🔍 Search by name, email or phone..." 
+                   style="flex: 1; min-width: 200px; padding: 10px 14px; border: 1px solid var(--border-color, #ddd); border-radius: 10px; font-size: 14px; background: var(--bg-hover, #f9f9f9);">
+            <select id="statusFilter" onchange="filterUsers()" style="padding: 10px 14px; border: 1px solid var(--border-color, #ddd); border-radius: 10px; font-size: 14px; background: var(--bg-hover, #f9f9f9);">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;" id="usersTable">
+                <thead>
+                    <tr style="background: var(--bg-hover, #f5f5f5);">
+                        <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-muted, #666); font-size: 13px;">#</th>
+                        <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-muted, #666); font-size: 13px;">User</th>
+                        <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-muted, #666); font-size: 13px;">Phone</th>
+                        <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-muted, #666); font-size: 13px;">Role</th>
+                        <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-muted, #666); font-size: 13px;">Status</th>
+                        <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-muted, #666); font-size: 13px;">Joined</th>
+                        <th style="padding: 12px 16px; text-align: center; font-weight: 600; color: var(--text-muted, #666); font-size: 13px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    {% for user in users %}
+                    <tr class="user-row" 
+                        data-name="{{ (user.full_name or '')|lower }}"
+                        data-email="{{ user.email|lower }}"
+                        data-phone="{{ user.phone or '' }}"
+                        data-status="{{ 'admin' if user.is_admin else ('active' if user.is_active else 'inactive') }}"
+                        style="border-bottom: 1px solid var(--border-color, #eee);">
+                        <td style="padding: 12px 16px; color: var(--text-muted, #999); font-size: 13px;">{{ user.id }}</td>
+                        <td style="padding: 12px 16px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 38px; height: 38px; border-radius: 50%; background: {{ '#1a7a4a' if user.is_admin else '#4caf50' }}; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 15px; flex-shrink: 0;">
+                                    {{ (user.full_name or user.email)[0]|upper }}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-color, #333);">{{ user.full_name or '—' }}</div>
+                                    <div style="font-size: 12px; color: var(--text-muted, #999);">{{ user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding: 12px 16px; color: var(--text-color, #333);">{{ user.phone or '—' }}</td>
+                        <td style="padding: 12px 16px;">
+                            {% if user.is_admin %}
+                            <span style="background: #e3f2fd; color: #0f5232; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">🛡️ Admin</span>
+                            {% else %}
+                            <span style="background: #f3e5f5; color: #6a1b9a; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">👤 User</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px 16px;">
+                            {% if user.is_active %}
+                            <span style="background: #e8f5e9; color: #2e7d32; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">✅ Active</span>
+                            {% else %}
+                            <span style="background: #ffebee; color: #c62828; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">❌ Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px 16px; color: var(--text-muted, #666); font-size: 13px;">
+                            {{ user.created_at.strftime('%Y-%m-%d') if user.created_at else '—' }}
+                        </td>
+                        <td style="padding: 12px 16px; text-align: center;">
+                            {% if not user.is_admin %}
+                            <div style="display: flex; gap: 8px; justify-content: center;">
+                                <button onclick="toggleUser({{ user.id }}, this)"
+                                    data-active="{{ user.is_active }}"
+                                    style="padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; background: {{ '#fff3e0' if user.is_active else '#e8f5e9' }}; color: {{ '#e65100' if user.is_active else '#2e7d32' }};">
+                                    {{ '🔒 Deactivate' if user.is_active else '🔓 Activate' }}
+                                </button>
+                                <button onclick="deleteUser({{ user.id }}, '{{ user.full_name or user.email }}')"
+                                    style="padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; background: #ffebee; color: #c62828;">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                            {% else %}
+                            <span style="color: var(--text-muted, #999); font-size: 12px;">Protected</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="padding: 40px; text-align: center; color: var(--text-muted, #999);">
+                            No users found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function filterUsers() {
+    const search = document.getElementById('userSearch').value.toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+    document.querySelectorAll('.user-row').forEach(row => {
+        const name = row.dataset.name;
+        const email = row.dataset.email;
+        const phone = row.dataset.phone;
+        const rowStatus = row.dataset.status;
+        const matchSearch = !search || name.includes(search) || email.includes(search) || phone.includes(search);
+        const matchStatus = !status || rowStatus === status;
+        row.style.display = (matchSearch && matchStatus) ? '' : 'none';
+    });
+}
+
+function toggleUser(uid, btn) {
+    const isActive = parseInt(btn.dataset.active);
+    const action = isActive ? 'deactivate' : 'activate';
+    if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+
+    fetch(`/admin/users/toggle/${uid}`, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.error || 'Action failed');
+        }
+    })
+    .catch(() => alert('Network error'));
+}
+
+function deleteUser(uid, name) {
+    if (!confirm(`Permanently delete user "${name}"? This cannot be undone.`)) return;
+
+    fetch(`/admin/users/delete/${uid}`, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.error || 'Delete failed');
+        }
+    })
+    .catch(() => alert('Network error'));
+}
+</script>
+{% endblock %}

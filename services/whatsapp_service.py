@@ -1,0 +1,398 @@
+import os
+import urllib.parse
+import re
+from datetime import datetime
+
+
+# Get WhatsApp number from environment variable with fallback
+WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251906020606')
+BACKUP_WHATSAPP_NUMBERS = ['251906080606', '251906090606']
+
+
+class WhatsAppService:
+    """Service class for WhatsApp messaging integration"""
+    
+    @staticmethod
+    def format_phone_number(phone):
+        """
+        Format phone number for WhatsApp (remove spaces, dashes, leading zeros).
+        
+        Args:
+            phone (str): Raw phone number
+        
+        Returns:
+            str: Formatted phone number
+        """
+        if not phone:
+            return WHATSAPP_NUMBER
+        
+        # Convert to string if needed
+        phone = str(phone)
+        
+        # Remove spaces, dashes, and other separators
+        cleaned = re.sub(r'[\s\-\(\)\+]', '', phone)
+        
+        # Remove leading '0' or '00' for Ethiopian numbers
+        if cleaned.startswith('00'):
+            cleaned = cleaned[2:]
+        elif cleaned.startswith('0'):
+            cleaned = cleaned[1:]
+        
+        # Ensure it starts with country code
+        if not cleaned.startswith('251'):
+            cleaned = '251' + cleaned
+        
+        return cleaned
+    
+    @staticmethod
+    def validate_phone_number(phone):
+        """
+        Validate Ethiopian phone number format.
+        
+        Args:
+            phone (str): Phone number to validate
+        
+        Returns:
+            bool: True if valid, False otherwise
+        """
+        if not phone:
+            return False
+        
+        # Remove any formatting
+        cleaned = re.sub(r'[\s\-\(\)\+]', '', str(phone))
+        
+        # Check Ethiopian phone number pattern
+        # 09xxxxxxxx or 07xxxxxxxx or 2519xxxxxxxx
+        pattern = r'^(09|07|2519)[0-9]{8}$'
+        return bool(re.match(pattern, cleaned))
+    
+    @staticmethod
+    def get_store_numbers():
+        """
+        Get all store WhatsApp numbers.
+        
+        Returns:
+            list: List of store phone numbers
+        """
+        return [WHATSAPP_NUMBER] + BACKUP_WHATSAPP_NUMBERS
+    
+    @staticmethod
+    def send_order_message(customer_name, customer_phone, items, total, order_number=None):
+        """
+        Prepare WhatsApp order message.
+        
+        Args:
+            customer_name (str): Customer's full name
+            customer_phone (str): Customer's phone number
+            items (list): List of ordered items with 'name', 'quantity', 'price'
+            total (float): Order total amount
+            order_number (str, optional): Order number
+        
+        Returns:
+            str: WhatsApp URL with encoded message
+        """
+        try:
+            message = "🛍️ *NEW ORDER - Ethiosadat Furniture*\n"
+            message += "=" * 40 + "\n\n"
+            
+            if order_number:
+                message += f"📋 *Order #:* {order_number}\n"
+            
+            message += f"👤 *Customer:* {customer_name}\n"
+            message += f"📞 *Phone:* {customer_phone}\n"
+            message += f"📅 *Date:* {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n"
+            message += "─" * 35 + "\n"
+            message += "*ORDER ITEMS:*\n"
+            message += "─" * 35 + "\n"
+            
+            subtotal = 0
+            for i, item in enumerate(items, 1):
+                item_total = item['quantity'] * item.get('discounted_price', item['price'])
+                subtotal += item_total
+                message += f"{i}. {item.get('name', item.get('product_name', 'Product'))}\n"
+                message += f"   {item['quantity']} x {item['price']} ETB = {item_total} ETB\n\n"
+            
+            message += "─" * 35 + "\n"
+            message += f"💰 *Subtotal:* {subtotal} ETB\n"
+            
+            # Add discount if applicable
+            if 'discount' in items or total < subtotal:
+                discount = subtotal - total
+                message += f"🎉 *Discount:* {discount} ETB\n"
+            
+            message += f"💵 *TOTAL:* {total} ETB\n"
+            message += "=" * 40 + "\n"
+            message += "🙏 Thank you for shopping with Ethiosadat!\n"
+            message += "📞 For inquiries, call: +251906020606"
+            
+            encoded = urllib.parse.quote(message)
+            phone = WhatsAppService.format_phone_number(WHATSAPP_NUMBER)
+            return f"https://wa.me/{phone}?text={encoded}"
+            
+        except Exception as e:
+            print(f"Error preparing order message: {e}")
+            return f"https://wa.me/{WHATSAPP_NUMBER}"
+    
+    @staticmethod
+    def send_contact_message(name, email, phone, message_text):
+        """
+        Prepare WhatsApp contact message.
+        
+        Args:
+            name (str): Sender's name
+            email (str): Sender's email (optional)
+            phone (str): Sender's phone number (optional)
+            message_text (str): Contact message
+        
+        Returns:
+            str: WhatsApp URL with encoded message
+        """
+        try:
+            msg = "📬 *New Contact Message - Ethiosadat Furniture*\n"
+            msg += "=" * 40 + "\n\n"
+            msg += f"👤 *Name:* {name}\n"
+            
+            if email:
+                msg += f"📧 *Email:* {email}\n"
+            if phone:
+                msg += f"📞 *Phone:* {phone}\n"
+            
+            msg += "\n" + "─" * 35 + "\n"
+            msg += f"💬 *Message:*\n{message_text}\n"
+            msg += "=" * 40 + "\n"
+            msg += "🕒 We will respond within 24 hours.\n"
+            msg += "📞 Call us: +251906020606"
+            
+            encoded = urllib.parse.quote(msg)
+            phone = WhatsAppService.format_phone_number(WHATSAPP_NUMBER)
+            return f"https://wa.me/{phone}?text={encoded}"
+            
+        except Exception as e:
+            print(f"Error preparing contact message: {e}")
+            return f"https://wa.me/{WHATSAPP_NUMBER}"
+    
+    @staticmethod
+    def send_custom_message(to_phone, message):
+        """
+        Send a custom message to any WhatsApp number.
+        
+        Args:
+            to_phone (str): Recipient's phone number
+            message (str): Message content
+        
+        Returns:
+            str: WhatsApp URL with encoded message
+        """
+        try:
+            encoded = urllib.parse.quote(message)
+            phone = WhatsAppService.format_phone_number(to_phone)
+            return f"https://wa.me/{phone}?text={encoded}"
+        except Exception as e:
+            print(f"Error preparing custom message: {e}")
+            return None
+    
+    @staticmethod
+    def send_invoice(order_number, customer_name, customer_phone, items, subtotal, shipping, total, discount=0):
+        """
+        Prepare detailed invoice message.
+        
+        Args:
+            order_number (str): Order number
+            customer_name (str): Customer name
+            customer_phone (str): Customer phone
+            items (list): List of order items
+            subtotal (float): Order subtotal
+            shipping (float): Shipping cost
+            total (float): Order total
+            discount (float): Discount amount
+        
+        Returns:
+            str: WhatsApp URL with encoded invoice
+        """
+        try:
+            message = "🧾 *INVOICE - Ethiosadat Furniture*\n"
+            message += "=" * 40 + "\n\n"
+            message += f"📋 *Order #:* {order_number}\n"
+            message += f"👤 *Customer:* {customer_name}\n"
+            message += f"📞 *Phone:* {customer_phone}\n"
+            message += f"📅 *Date:* {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n"
+            message += "─" * 35 + "\n"
+            message += "*ORDER SUMMARY*\n"
+            message += "─" * 35 + "\n"
+            
+            for item in items:
+                item_name = item.get('name', item.get('product_name', 'Product'))
+                item_total = item['quantity'] * item.get('price_at_time', item.get('price', 0))
+                message += f"• {item_name}\n"
+                message += f"  {item['quantity']} x {item.get('price_at_time', item.get('price', 0))} ETB = {item_total} ETB\n\n"
+            
+            message += "─" * 35 + "\n"
+            message += f"💰 *Subtotal:* {subtotal} ETB\n"
+            
+            if discount > 0:
+                message += f"🎉 *Discount (10%):* {discount} ETB\n"
+            
+            message += f"🚚 *Shipping:* {shipping} ETB\n"
+            message += "=" * 35 + "\n"
+            message += f"💵 *TOTAL PAID:* {total} ETB\n"
+            message += "=" * 35 + "\n\n"
+            message += "✅ Thank you for your purchase!\n"
+            message += "🔗 Track your order: ethiosadat.com/orders\n"
+            message += "📞 Questions? Call: +251906020606"
+            
+            encoded = urllib.parse.quote(message)
+            phone = WhatsAppService.format_phone_number(customer_phone)
+            return f"https://wa.me/{phone}?text={encoded}"
+            
+        except Exception as e:
+            print(f"Error preparing invoice: {e}")
+            return f"https://wa.me/{WHATSAPP_NUMBER}"
+    
+    @staticmethod
+    def send_status_update(order_number, customer_phone, status, notes=''):
+        """
+        Send order status update notification.
+        
+        Args:
+            order_number (str): Order number
+            customer_phone (str): Customer's phone number
+            status (str): Order status
+            notes (str): Additional notes
+        
+        Returns:
+            str: WhatsApp URL with encoded message
+        """
+        status_emojis = {
+            'pending': '⏳',
+            'confirmed': '✅',
+            'processing': '⚙️',
+            'shipped': '🚚',
+            'delivered': '🎉',
+            'cancelled': '❌'
+        }
+        
+        status_texts = {
+            'pending': 'Your order has been received and is pending confirmation.',
+            'confirmed': 'Your order has been confirmed! We are preparing it for shipment.',
+            'processing': 'Your order is being processed and packed.',
+            'shipped': 'Great news! Your order has been shipped and is on its way.',
+            'delivered': 'Your order has been delivered. Enjoy your furniture!',
+            'cancelled': 'Your order has been cancelled. Contact us for more information.'
+        }
+        
+        try:
+            emoji = status_emojis.get(status, '📦')
+            text = status_texts.get(status, f'Order status updated to: {status}')
+            
+            message = f"{emoji} *Order Status Update - Ethiosadat Furniture*\n"
+            message += "=" * 40 + "\n\n"
+            message += f"📋 *Order #:* {order_number}\n"
+            message += f"📊 *Status:* {status.upper()}\n\n"
+            message += f"{text}\n\n"
+            
+            if notes:
+                message += f"📝 *Notes:* {notes}\n\n"
+            
+            message += "🔗 Track your order: ethiosadat.com/orders\n"
+            message += "📞 Questions? Call us: +251906020606\n"
+            message += "🙏 Thank you for shopping with Ethiosadat!"
+            
+            encoded = urllib.parse.quote(message)
+            phone = WhatsAppService.format_phone_number(customer_phone)
+            return f"https://wa.me/{phone}?text={encoded}"
+            
+        except Exception as e:
+            print(f"Error preparing status update: {e}")
+            return None
+    
+    @staticmethod
+    def get_qr_code(size=200):
+        """
+        Generate WhatsApp QR code link for business.
+        
+        Args:
+            size (int): QR code size in pixels
+        
+        Returns:
+            str: QR code URL (using API)
+        """
+        phone = WhatsAppService.format_phone_number(WHATSAPP_NUMBER)
+        return f"https://api.qrserver.com/v1/create-qr-code/?size={size}x{size}&data=https://wa.me/{phone}"
+    
+    @staticmethod
+    def get_whatsapp_link(phone=None, message=None):
+        """
+        Generate WhatsApp link with optional pre-filled message.
+        
+        Args:
+            phone (str, optional): Phone number (defaults to store number)
+            message (str, optional): Pre-filled message
+        
+        Returns:
+            str: WhatsApp URL
+        """
+        target_phone = WhatsAppService.format_phone_number(phone or WHATSAPP_NUMBER)
+        
+        if message:
+            encoded = urllib.parse.quote(message)
+            return f"https://wa.me/{target_phone}?text={encoded}"
+        
+        return f"https://wa.me/{target_phone}"
+    
+    @staticmethod
+    def get_click_to_chat_html(phone=None, button_text="Chat on WhatsApp", button_class="btn-whatsapp"):
+        """
+        Generate HTML for WhatsApp click-to-chat button.
+        
+        Args:
+            phone (str, optional): Phone number
+            button_text (str): Button text
+            button_class (str): CSS class for button
+        
+        Returns:
+            str: HTML button code
+        """
+        link = WhatsAppService.get_whatsapp_link(phone)
+        return f'<a href="{link}" target="_blank" class="{button_class}"><i class="fab fa-whatsapp"></i> {button_text}</a>'
+    
+    @staticmethod
+    def send_bulk_messages(phone_numbers, message):
+        """
+        Generate links for sending same message to multiple numbers.
+        
+        Args:
+            phone_numbers (list): List of phone numbers
+            message (str): Message to send
+        
+        Returns:
+            list: List of WhatsApp URLs
+        """
+        links = []
+        for phone in phone_numbers:
+            link = WhatsAppService.send_custom_message(phone, message)
+            if link:
+                links.append(link)
+        return links
+
+
+# ==================== BACKWARD COMPATIBILITY ====================
+
+# Keep function versions for backward compatibility
+def send_order_message(customer_name, customer_phone, items, total, order_number=None):
+    """Backward compatibility function"""
+    return WhatsAppService.send_order_message(customer_name, customer_phone, items, total, order_number)
+
+
+def send_contact_message(name, email, phone, message_text):
+    """Backward compatibility function"""
+    return WhatsAppService.send_contact_message(name, email, phone, message_text)
+
+
+def send_invoice_message(order_number, customer_name, customer_phone, items, subtotal, shipping, total, discount=0):
+    """Backward compatibility function for invoice"""
+    return WhatsAppService.send_invoice(order_number, customer_name, customer_phone, items, subtotal, shipping, total, discount)
+
+
+def send_status_update_message(order_number, customer_phone, status, notes=''):
+    """Backward compatibility function for status update"""
+    return WhatsAppService.send_status_update(order_number, customer_phone, status, notes)

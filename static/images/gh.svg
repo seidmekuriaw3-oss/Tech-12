@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a73e8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d47a1;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow Filter -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.3)"/>
+    </filter>
+    
+    <!-- Inner Glow -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="96" fill="url(#grad)"/>
+  
+  <!-- Inner Decorative Ring -->
+  <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+  
+  <!-- === Furniture Icon (Sofa with Details) === -->
+  
+  <!-- Sofa Backrest -->
+  <rect x="45" y="55" width="110" height="30" rx="8" fill="white" opacity="0.95" filter="url(#shadow)"/>
+  
+  <!-- Sofa Base -->
+  <rect x="40" y="80" width="120" height="45" rx="10" fill="white" opacity="0.95" filter="url(#shadow)"/>
+  
+  <!-- Armrest Left -->
+  <rect x="30" y="90" width="30" height="35" rx="6" fill="white" filter="url(#shadow)"/>
+  
+  <!-- Armrest Right -->
+  <rect x="140" y="90" width="30" height="35" rx="6" fill="white" filter="url(#shadow)"/>
+  
+  <!-- Cushion Lines -->
+  <line x1="70" y1="95" x2="70" y2="120" stroke="#ddd" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  <line x1="100" y1="95" x2="100" y2="120" stroke="#ddd" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  <line x1="130" y1="95" x2="130" y2="120" stroke="#ddd" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  
+  <!-- Backrest Detail Lines -->
+  <line x1="60" y1="65" x2="140" y2="65" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="65" y1="75" x2="135" y2="75" stroke="rgba(0,0,0,0.08)" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Decorative Pillows -->
+  <ellipse cx="65" cy="70" rx="15" ry="10" fill="rgba(255,255,255,0.5)" transform="rotate(-15 65 70)"/>
+  <ellipse cx="135" cy="70" rx="15" ry="10" fill="rgba(255,255,255,0.5)" transform="rotate(15 135 70)"/>
+  
+  <!-- Small decorative stars/sparkles -->
+  <text x="25" y="45" font-family="Arial" font-size="14" fill="rgba(255,255,255,0.5)" filter="url(#glow)">✦</text>
+  <text x="170" y="50" font-family="Arial" font-size="12" fill="rgba(255,255,255,0.4)" filter="url(#glow)">✦</text>
+  <text x="35" y="160" font-family="Arial" font-size="10" fill="rgba(255,255,255,0.3)">✦</text>
+  <text x="165" y="155" font-family="Arial" font-size="11" fill="rgba(255,255,255,0.35)">✦</text>
+  
+  <!-- Small dots decoration -->
+  <circle cx="50" cy="140" r="2" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="150" cy="140" r="2" fill="rgba(255,255,255,0.3)"/>
+  
+  <!-- Brand Name - Ethiosadat -->
+  <text x="100" y="170" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="bold" font-size="15" fill="white" letter-spacing="1.5" filter="url(#glow)">
+    ETHIOSADAT
+  </text>
+  
+  <!-- Tagline - Furniture -->
+  <text x="100" y="186" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="rgba(255,255,255,0.7)" letter-spacing="1">
+    FURNITURE
+  </text>
+  
+  <!-- Bottom Decorative Line -->
+  <line x1="55" y1="192" x2="145" y2="192" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+</svg>

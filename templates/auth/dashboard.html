@@ -1,0 +1,1726 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard - Ethiosadat Furniture{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ════════════════════════════════════════════
+   DASHBOARD LAYOUT
+════════════════════════════════════════════ */
+.db-wrap {
+    display: flex;
+    min-height: calc(100vh - 80px);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+    gap: 24px;
+}
+
+/* ── Sidebar ── */
+.db-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+}
+.db-sidebar-inner {
+    position: sticky;
+    top: 88px;
+}
+.db-user-card {
+    background: linear-gradient(135deg, #0f2a6e 0%, #1a7a4a 60%, #0f5232 100%);
+    border-radius: 20px;
+    padding: 22px 18px;
+    color: #fff;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+}
+.db-user-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+}
+.db-avatar {
+    width: 58px; height: 58px;
+    background: rgba(255,255,255,0.18);
+    border: 2px solid rgba(255,255,255,0.35);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 800;
+    margin-bottom: 12px;
+    position: relative; z-index: 1;
+}
+.db-user-name {
+    font-size: 15px; font-weight: 700;
+    margin: 0 0 3px;
+    position: relative; z-index: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.db-user-email {
+    font-size: 11px; opacity: 0.78;
+    margin: 0 0 10px;
+    position: relative; z-index: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.db-discount-badge {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px; font-weight: 700;
+    display: inline-block;
+    position: relative; z-index: 1;
+}
+
+/* Sidebar nav */
+.db-nav {
+    background: #fff;
+    border-radius: 18px;
+    padding: 8px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+}
+.db-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    transition: all 0.18s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    text-decoration: none;
+    position: relative;
+}
+.db-nav-item:hover { background: #f0f4ff; color: #1a7a4a; }
+.db-nav-item.active {
+    background: linear-gradient(90deg, rgba(26,122,74,0.12), rgba(26,122,74,0.06));
+    color: #1a7a4a; font-weight: 700;
+}
+.db-nav-item.active::before {
+    content: '';
+    position: absolute; left: 0; top: 8px; bottom: 8px;
+    width: 3px; background: #1a7a4a; border-radius: 0 3px 3px 0;
+}
+.db-nav-icon { font-size: 17px; width: 22px; text-align: center; }
+.db-nav-badge {
+    margin-left: auto;
+    background: #1a7a4a; color: #fff;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px;
+    min-width: 18px; text-align: center;
+}
+.db-nav-divider { height: 1px; background: #f0f0f0; margin: 6px 8px; }
+.db-nav-item.logout { color: #e53935; }
+.db-nav-item.logout:hover { background: #fff5f5; }
+
+/* ── Main Content ── */
+.db-main { flex: 1; min-width: 0; }
+
+/* Panel */
+.db-panel { display: none; }
+.db-panel.active { display: block; }
+
+/* ── Top Mobile Header ── */
+.db-mobile-tabs {
+    display: none;
+    background: #fff;
+    border-radius: 18px;
+    padding: 6px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    overflow-x: auto;
+    gap: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.db-mobile-tabs::-webkit-scrollbar { display: none; }
+.db-tab-btn {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 3px; padding: 8px 14px;
+    border-radius: 12px; border: none; background: none;
+    cursor: pointer; font-size: 11px; font-weight: 600;
+    color: #888; white-space: nowrap; transition: all 0.18s;
+    flex-shrink: 0;
+}
+.db-tab-btn .tab-icon { font-size: 18px; }
+.db-tab-btn.active {
+    background: linear-gradient(135deg, #1a7a4a, #1557b0);
+    color: #fff;
+}
+
+/* ════════════════════════════════════════════
+   SECTION HEADERS
+════════════════════════════════════════════ */
+.section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+}
+.section-title {
+    font-size: 18px; font-weight: 800; color: #1a1a2e;
+    display: flex; align-items: center; gap: 8px;
+    margin: 0;
+}
+
+/* ════════════════════════════════════════════
+   OVERVIEW - STATS
+════════════════════════════════════════════ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.stat-card {
+    border-radius: 18px;
+    padding: 20px 16px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+.stat-card.blue  { background: linear-gradient(135deg,#e8f0fe,#dce8fc); border: 1px solid #c5d8fb; }
+.stat-card.green { background: linear-gradient(135deg,#e8f5e9,#d5efd7); border: 1px solid #b8e0bb; }
+.stat-card.amber { background: linear-gradient(135deg,#fff8e1,#fef3c7); border: 1px solid #fde68a; }
+.stat-card.red   { background: linear-gradient(135deg,#ffebee,#fce4e4); border: 1px solid #f5c6ca; }
+.stat-num { font-size: 30px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+.stat-card.blue  .stat-num  { color: #1a7a4a; }
+.stat-card.green .stat-num  { color: #2e7d32; }
+.stat-card.amber .stat-num  { color: #d97706; }
+.stat-card.red   .stat-num  { color: #c62828; }
+.stat-lbl { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── Quick Actions ── */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.qa-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    text-decoration: none;
+    color: #333;
+    transition: all 0.2s;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    display: block;
+}
+.qa-card:hover { border-color: #1a7a4a; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,122,74,0.12); }
+.qa-icon { font-size: 26px; margin-bottom: 6px; }
+.qa-label { font-size: 12px; font-weight: 600; color: #555; }
+
+/* ── Recent Orders in Overview ── */
+.recent-section {
+    background: #fff;
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+}
+
+/* ════════════════════════════════════════════
+   ORDERS
+════════════════════════════════════════════ */
+.order-filters {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px;
+}
+.filter-btn {
+    padding: 7px 18px; border-radius: 20px; border: 1.5px solid #e0e0e0;
+    background: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+    color: #666; transition: all 0.18s;
+}
+.filter-btn:hover { border-color: #1a7a4a; color: #1a7a4a; }
+.filter-btn.active { background: #1a7a4a; color: #fff; border-color: #1a7a4a; }
+
+.order-item {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    border: 1.5px solid transparent;
+    transition: all 0.2s;
+    text-decoration: none;
+    cursor: pointer;
+}
+.order-item:hover { border-color: #1a7a4a; box-shadow: 0 4px 20px rgba(26,122,74,0.12); }
+.order-num { font-size: 14px; font-weight: 700; color: #1a7a4a; margin-bottom: 4px; }
+.order-date { font-size: 12px; color: #aaa; }
+.order-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.order-total { font-size: 15px; font-weight: 800; color: #222; }
+.status-pill {
+    font-size: 11px; font-weight: 700; padding: 4px 12px;
+    border-radius: 20px; white-space: nowrap;
+}
+.sp-pending    { background: #fff3e0; color: #e65100; }
+.sp-confirmed  { background: #e3f2fd; color: #0f5232; }
+.sp-processing { background: #f3e5f5; color: #6a1b9a; }
+.sp-shipped    { background: #ede7f6; color: #4527a0; }
+.sp-delivered  { background: #e8f5e9; color: #1b5e20; }
+.sp-cancelled  { background: #ffebee; color: #b71c1c; }
+
+/* ════════════════════════════════════════════
+   WISHLIST
+════════════════════════════════════════════ */
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+}
+.wl-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    transition: all 0.2s;
+    position: relative;
+}
+.wl-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.wl-img {
+    width: 100%; aspect-ratio: 1;
+    object-fit: cover; display: block;
+    background: #f5f5f5;
+}
+.wl-img-placeholder {
+    width: 100%; aspect-ratio: 1;
+    background: linear-gradient(135deg, #f0f4ff, #e8f0fe);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+}
+.wl-body { padding: 12px 14px; }
+.wl-name { font-size: 13px; font-weight: 600; color: #222; margin-bottom: 6px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.wl-price { font-size: 14px; font-weight: 800; color: #1a7a4a; margin-bottom: 10px; }
+.wl-compare { font-size: 12px; color: #aaa; text-decoration: line-through; margin-left: 4px; }
+.wl-actions { display: flex; gap: 6px; }
+.wl-btn {
+    flex: 1; padding: 7px 0; border-radius: 10px; font-size: 12px; font-weight: 700;
+    cursor: pointer; border: none; transition: all 0.18s; text-align: center;
+    text-decoration: none; display: block;
+}
+.wl-btn-cart { background: #1a7a4a; color: #fff; }
+.wl-btn-cart:hover { background: #1557b0; }
+.wl-btn-remove { background: #fff0f0; color: #e53935; border: 1.5px solid #ffd0d0; }
+.wl-btn-remove:hover { background: #ffe0e0; }
+.wl-remove-abs {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(255,255,255,0.9); border: none;
+    border-radius: 50%; width: 30px; height: 30px;
+    cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.15s;
+}
+.wl-remove-abs:hover { background: #fff; transform: scale(1.1); }
+
+/* ════════════════════════════════════════════
+   PROFILE TAB
+════════════════════════════════════════════ */
+.profile-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+}
+.prof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.prof-field {
+    background: #f8f9fc;
+    border-radius: 13px;
+    padding: 14px 16px;
+    border-left: 3px solid #1a7a4a;
+}
+.prof-field.span2 { grid-column: 1 / -1; }
+.pf-label { font-size: 10px; font-weight: 700; color: #9ba3b8; text-transform: uppercase;
+    letter-spacing: 0.6px; margin-bottom: 5px; }
+.pf-value { font-size: 15px; font-weight: 600; color: #222; }
+.pf-value.muted { color: #bbb; font-style: italic; font-weight: 400; }
+.pf-value.discount { color: #43a047; }
+
+/* ════════════════════════════════════════════
+   TRACK ORDER
+════════════════════════════════════════════ */
+.track-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    max-width: 600px;
+}
+.track-input-row {
+    display: flex; gap: 10px;
+}
+.track-input {
+    flex: 1; padding: 13px 16px;
+    border: 1.5px solid #e0e0e0; border-radius: 12px;
+    font-size: 15px; font-weight: 600;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+.track-input:focus { border-color: #1a7a4a; box-shadow: 0 0 0 3px rgba(26,122,74,0.12); }
+.track-btn {
+    padding: 13px 24px; background: linear-gradient(135deg,#1a7a4a,#0f5232);
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+}
+.track-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,122,74,0.35); }
+
+.track-result { margin-top: 24px; }
+.track-progress {
+    display: flex; justify-content: space-between;
+    position: relative; margin: 28px 0;
+}
+.track-progress::before {
+    content: '';
+    position: absolute; top: 18px; left: 0; right: 0; height: 3px;
+    background: #e0e0e0; z-index: 0;
+}
+.track-step {
+    display: flex; flex-direction: column; align-items: center;
+    flex: 1; position: relative; z-index: 1;
+}
+.ts-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #e0e0e0; color: #aaa;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700;
+    border: 3px solid #e0e0e0;
+    transition: all 0.3s; margin-bottom: 8px;
+}
+.ts-dot.done { background: #1a7a4a; border-color: #1a7a4a; color: #fff; }
+.ts-dot.current { background: #fff; border-color: #1a7a4a; color: #1a7a4a; box-shadow: 0 0 0 4px rgba(26,122,74,0.15); }
+.ts-label { font-size: 10px; font-weight: 700; color: #aaa; text-align: center; white-space: nowrap; }
+.ts-label.done, .ts-label.current { color: #1a7a4a; }
+
+.track-info-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-top: 16px;
+}
+.ti-card {
+    background: #f8f9fc; border-radius: 12px; padding: 14px;
+}
+.ti-label { font-size: 10px; font-weight: 700; color: #9ba3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.ti-value { font-size: 14px; font-weight: 700; color: #222; }
+
+/* ════════════════════════════════════════════
+   SETTINGS TAB
+════════════════════════════════════════════ */
+.settings-section {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px 28px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+}
+.settings-title {
+    font-size: 15px; font-weight: 700; color: #333;
+    margin: 0 0 18px; padding-bottom: 14px;
+    border-bottom: 1.5px solid #f0f0f0;
+    display: flex; align-items: center; gap: 8px;
+}
+.form-group { margin-bottom: 16px; }
+.form-group label {
+    display: block; font-size: 13px; font-weight: 600; color: #555;
+    margin-bottom: 7px;
+}
+.form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid #e0e0e0; border-radius: 11px;
+    font-size: 14px; color: #333; background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box; outline: none;
+}
+.form-group input:focus, .form-group textarea:focus {
+    border-color: #1a7a4a; box-shadow: 0 0 0 3px rgba(26,122,74,0.12);
+}
+.form-group input[readonly] { background: #f8f8f8; color: #aaa; cursor: not-allowed; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-note { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+.btn-save {
+    background: linear-gradient(135deg, #1a7a4a, #0f5232);
+    color: #fff; border: none; padding: 12px 28px;
+    border-radius: 11px; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+}
+.btn-save:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(26,122,74,0.38); }
+.btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn-secondary {
+    background: #f0f2f8; color: #555; border: none;
+    padding: 12px 22px; border-radius: 11px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.18s;
+}
+.btn-secondary:hover { background: #e4e7f0; }
+.btn-danger {
+    background: linear-gradient(135deg, #e53935, #b71c1c);
+    color: #fff; border: none; padding: 12px 24px;
+    border-radius: 11px; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+}
+.btn-danger:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(229,57,53,0.35); }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+
+.whatsapp-btn {
+    background: linear-gradient(135deg,#25d366,#128c7e);
+    color: #fff; border: none; padding: 12px 22px;
+    border-radius: 11px; font-size: 14px; font-weight: 700;
+    cursor: pointer; text-decoration: none; display: inline-flex;
+    align-items: center; gap: 7px; transition: all 0.2s;
+}
+.whatsapp-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(37,211,102,0.35); }
+
+/* ════════════════════════════════════════════
+   EMPTY STATES
+════════════════════════════════════════════ */
+.empty-state {
+    text-align: center; padding: 50px 20px;
+    background: #fff; border-radius: 20px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+.empty-icon { font-size: 56px; margin-bottom: 14px; }
+.empty-state h3 { font-size: 17px; font-weight: 700; color: #333; margin: 0 0 8px; }
+.empty-state p { font-size: 14px; color: #aaa; margin: 0 0 20px; }
+
+/* ── Spinner ── */
+.spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.5s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Toast ── */
+.db-toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #333; color: #fff; padding: 12px 24px; border-radius: 30px;
+    font-size: 14px; font-weight: 600; z-index: 9999;
+    opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap;
+}
+.db-toast.success { background: #43a047; }
+.db-toast.error   { background: #e53935; }
+.db-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Danger zone ── */
+.danger-zone {
+    border: 1.5px solid #ffcdd2;
+    border-radius: 16px; padding: 20px 22px;
+    background: #fff9f9;
+}
+.danger-zone-title { color: #c62828; font-size: 14px; font-weight: 700; margin: 0 0 8px; }
+.danger-zone-desc  { color: #888; font-size: 13px; margin: 0 0 14px; }
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+@media (max-width: 860px) {
+    .db-wrap { flex-direction: column; padding: 12px 12px 80px; gap: 14px; }
+    .db-sidebar { width: 100%; }
+    .db-sidebar-inner { position: static; }
+    .db-user-card { display: none; }
+    .db-nav { display: none; }
+    .db-mobile-tabs { display: flex; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .quick-actions { grid-template-columns: repeat(4, 1fr); }
+    .prof-grid { grid-template-columns: 1fr; }
+    .prof-field.span2 { grid-column: auto; }
+    .form-row { grid-template-columns: 1fr; }
+    .track-info-grid { grid-template-columns: 1fr; }
+    .wishlist-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .quick-actions { grid-template-columns: repeat(4, 1fr); }
+    .qa-icon { font-size: 20px; }
+    .qa-label { font-size: 10px; }
+    .track-input-row { flex-direction: column; }
+    .wishlist-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
+
+/* ── Dark mode ── */
+@media (prefers-color-scheme: dark) {
+    .db-nav, .profile-card, .recent-section, .settings-section, .track-card,
+    .order-item, .wl-card, .empty-state { background: #14142a; }
+    .db-nav-item { color: #ccc; }
+    .db-nav-item:hover { background: #1e1e3a; color: #7eb3ff; }
+    .db-nav-item.active { background: rgba(26,122,74,0.18); color: #7eb3ff; }
+    .stat-card.blue  { background: linear-gradient(135deg,#1a2a4e,#1e3460); }
+    .stat-card.green { background: linear-gradient(135deg,#1a2e1c,#1e3820); }
+    .stat-card.amber { background: linear-gradient(135deg,#2e2010,#3e2c12); }
+    .stat-card.red   { background: linear-gradient(135deg,#2e1010,#3e1414); }
+    .qa-card { background: #14142a; color: #ddd; }
+    .prof-field { background: #1a1a2e; }
+    .pf-value { color: #ddd; }
+    .section-title { color: #ddd; }
+    .form-group input, .form-group textarea { background: #1a1a2e; border-color: #2a2a3e; color: #eee; }
+    .btn-secondary { background: #2a2a3e; color: #bbb; }
+    .ti-card { background: #1a1a2e; }
+    .ti-value { color: #ddd; }
+    .db-mobile-tabs { background: #14142a; }
+    .db-tab-btn { color: #888; }
+    .order-num { color: #7eb3ff; }
+    .filter-btn { background: #1a1a2e; border-color: #2a2a3e; color: #aaa; }
+    .filter-btn.active { background: #1a7a4a; border-color: #1a7a4a; color: #fff; }
+    .settings-title { color: #ddd; border-color: #2a2a3e; }
+    .danger-zone { background: #2a1010; border-color: #5c2020; }
+    .danger-zone-title { color: #ef9a9a; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ════════════════════════ TOAST ════════════════════════ -->
+<div class="db-toast" id="dbToast"></div>
+
+<div class="db-wrap">
+
+<!-- ════════════════════════ SIDEBAR ════════════════════════ -->
+<aside class="db-sidebar">
+    <div class="db-sidebar-inner">
+        <!-- User Card -->
+        <div class="db-user-card">
+            <div class="db-avatar">{{ (user.full_name or 'U')[0]|upper }}</div>
+            <p class="db-user-name">{{ user.full_name or 'Member' }}</p>
+            <p class="db-user-email">{{ user.email }}</p>
+            <span class="db-discount-badge">🎉 10% Member Discount</span>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="db-nav">
+            <button class="db-nav-item active" id="snav-overview" onclick="switchPanel('overview')">
+                <span class="db-nav-icon">📊</span> Overview
+            </button>
+            <button class="db-nav-item" id="snav-orders" onclick="switchPanel('orders')">
+                <span class="db-nav-icon">📦</span> My Orders
+                {% if order_stats.total and order_stats.total|int > 0 %}
+                <span class="db-nav-badge">{{ order_stats.total|int }}</span>
+                {% endif %}
+            </button>
+            <button class="db-nav-item" id="snav-wishlist" onclick="switchPanel('wishlist')">
+                <span class="db-nav-icon">❤️</span> Wishlist
+                {% if wishlist_items %}
+                <span class="db-nav-badge">{{ wishlist_items|length }}</span>
+                {% endif %}
+            </button>
+            <button class="db-nav-item" id="snav-track" onclick="switchPanel('track')">
+                <span class="db-nav-icon">🔍</span> Track Order
+            </button>
+            <div class="db-nav-divider"></div>
+            <button class="db-nav-item" id="snav-profile" onclick="switchPanel('profile')">
+                <span class="db-nav-icon">👤</span> My Profile
+            </button>
+            <button class="db-nav-item" id="snav-settings" onclick="switchPanel('settings')">
+                <span class="db-nav-icon">⚙️</span> Settings
+            </button>
+            <button class="db-nav-item" id="snav-rewards" onclick="switchPanel('rewards')" style="position:relative;">
+                <span class="db-nav-icon">🏆</span> Rewards
+                {% if loyalty_points > 0 %}
+                <span style="margin-left:auto;background:#f59e0b;color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;">{{ loyalty_points }} pts</span>
+                {% endif %}
+            </button>
+            <button class="db-nav-item" id="snav-notifs" onclick="switchPanel('notifs');markAllNotifsRead();" style="position:relative;">
+                <span class="db-nav-icon">🔔</span> Notifications
+                <span id="snavNotifBadge" style="margin-left:auto;background:#f44336;color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;display:none;">0</span>
+            </button>
+            <div class="db-nav-divider"></div>
+            <a class="db-nav-item" href="{{ url_for('cart.view_cart') }}">
+                <span class="db-nav-icon">🛒</span> My Cart
+            </a>
+            <a class="db-nav-item" href="{{ url_for('customer.products') }}">
+                <span class="db-nav-icon">🛍️</span> Shop
+            </a>
+            <div class="db-nav-divider"></div>
+            <a class="db-nav-item logout" href="{{ url_for('customer.user_logout') }}"
+               onclick="return confirm('Logout from your account?')">
+                <span class="db-nav-icon">🚪</span> Logout
+            </a>
+        </nav>
+    </div>
+</aside>
+
+<!-- ════════════════════════ MAIN ════════════════════════ -->
+<main class="db-main">
+
+    <!-- Mobile Tabs -->
+    <div class="db-mobile-tabs" id="mobileTabs">
+        <button class="db-tab-btn active" id="mnav-overview" onclick="switchPanel('overview')">
+            <span class="tab-icon">📊</span>Overview
+        </button>
+        <button class="db-tab-btn" id="mnav-orders" onclick="switchPanel('orders')">
+            <span class="tab-icon">📦</span>Orders
+        </button>
+        <button class="db-tab-btn" id="mnav-wishlist" onclick="switchPanel('wishlist')">
+            <span class="tab-icon">❤️</span>Wishlist
+        </button>
+        <button class="db-tab-btn" id="mnav-track" onclick="switchPanel('track')">
+            <span class="tab-icon">🔍</span>Track
+        </button>
+        <button class="db-tab-btn" id="mnav-profile" onclick="switchPanel('profile')">
+            <span class="tab-icon">👤</span>Profile
+        </button>
+        <button class="db-tab-btn" id="mnav-settings" onclick="switchPanel('settings')">
+            <span class="tab-icon">⚙️</span>Settings
+        </button>
+        <button class="db-tab-btn" id="mnav-rewards" onclick="switchPanel('rewards')">
+            <span class="tab-icon">🏆</span>Rewards
+        </button>
+        <button class="db-tab-btn" id="mnav-notifs" onclick="switchPanel('notifs');markAllNotifsRead();" style="position:relative;">
+            <span class="tab-icon">🔔</span>Alerts
+            <span id="mnavNotifBadge" style="position:absolute;top:2px;right:2px;background:#f44336;color:#fff;border-radius:50%;font-size:8px;font-weight:900;padding:1px 3px;display:none;">0</span>
+        </button>
+    </div>
+
+    <!-- ── Flash Messages ── -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="{{ 'flash-success-db' if category not in ('error','danger') else 'flash-error-db' }}"
+             id="flash{{ loop.index }}"
+             style="padding:12px 18px;border-radius:13px;margin-bottom:14px;font-size:14px;font-weight:600;
+             {% if category in ('error','danger') %}background:#ffebee;color:#c62828;border-left:4px solid #f44336;
+             {% else %}background:#e8f5e9;color:#2e7d32;border-left:4px solid #4caf50;{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endwith %}
+
+    <!-- ══════════════════════════════════════
+         PANEL 1: OVERVIEW
+    ══════════════════════════════════════ -->
+    <div class="db-panel active" id="panel-overview">
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <a class="stat-card blue" href="javascript:void(0)" onclick="switchPanel('orders')">
+                <div class="stat-num">{{ order_stats.total|int if order_stats.total else 0 }}</div>
+                <div class="stat-lbl">Total Orders</div>
+            </a>
+            <a class="stat-card green" href="javascript:void(0)" onclick="switchPanel('orders'); filterOrders('delivered')">
+                <div class="stat-num">{{ order_stats.delivered|int if order_stats.delivered else 0 }}</div>
+                <div class="stat-lbl">Delivered</div>
+            </a>
+            <a class="stat-card amber" href="javascript:void(0)" onclick="switchPanel('orders'); filterOrders('pending')">
+                <div class="stat-num">{{ order_stats.pending|int if order_stats.pending else 0 }}</div>
+                <div class="stat-lbl">Pending</div>
+            </a>
+            <a class="stat-card red" href="javascript:void(0)" onclick="switchPanel('orders'); filterOrders('cancelled')">
+                <div class="stat-num">{{ order_stats.cancelled|int if order_stats.cancelled else 0 }}</div>
+                <div class="stat-lbl">Cancelled</div>
+            </a>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a class="qa-card" href="{{ url_for('customer.products') }}">
+                <div class="qa-icon">🛍️</div>
+                <div class="qa-label">Shop Now</div>
+            </a>
+            <a class="qa-card" href="{{ url_for('cart.view_cart') }}">
+                <div class="qa-icon">🛒</div>
+                <div class="qa-label">My Cart</div>
+            </a>
+            <a class="qa-card" href="javascript:void(0)" onclick="switchPanel('wishlist')">
+                <div class="qa-icon">❤️</div>
+                <div class="qa-label">Wishlist</div>
+            </a>
+            <a class="qa-card" href="javascript:void(0)" onclick="switchPanel('track')">
+                <div class="qa-icon">🔍</div>
+                <div class="qa-label">Track Order</div>
+            </a>
+            <a class="qa-card" href="javascript:void(0)" onclick="switchPanel('rewards')">
+                <div class="qa-icon">🏆</div>
+                <div class="qa-label">Rewards <span style="background:#f59e0b;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:20px;vertical-align:middle;">{{ loyalty_points|default(0)|int }} pts</span></div>
+            </a>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="recent-section">
+            <div class="section-head">
+                <h2 class="section-title">📦 Recent Orders</h2>
+                <button class="filter-btn active" onclick="switchPanel('orders')" style="font-size:12px;">
+                    View All →
+                </button>
+            </div>
+            {% if orders %}
+                {% for order in orders[:5] %}
+                <a class="order-item" href="{{ url_for('customer.order_detail', order_id=order.id) }}">
+                    <div>
+                        <div class="order-num">Order #{{ order.order_number }}</div>
+                        <div class="order-date">
+                            🕐 {% if order.created_at %}
+                                {% if order.created_at is string %}{{ order.created_at[:10] }}
+                                {% else %}{{ order.created_at.strftime('%b %d, %Y') }}{% endif %}
+                            {% else %}N/A{% endif %}
+                        </div>
+                    </div>
+                    <div class="order-right">
+                        <div class="order-total">{{ order.total|int }} ETB</div>
+                        <span class="status-pill sp-{{ order.status }}">
+                            {% if order.status=='pending'    %}⏳ Pending
+                            {% elif order.status=='confirmed'%}✅ Confirmed
+                            {% elif order.status=='processing'%}⚙️ Processing
+                            {% elif order.status=='shipped'  %}🚚 Shipped
+                            {% elif order.status=='delivered'%}🎉 Delivered
+                            {% elif order.status=='cancelled'%}❌ Cancelled
+                            {% else %}{{ order.status|title }}{% endif %}
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div style="text-align:center;padding:30px;color:#aaa;">
+                    <div style="font-size:40px;margin-bottom:10px;">📭</div>
+                    <p style="margin:0;">No orders yet. <a href="{{ url_for('customer.products') }}" style="color:#1a7a4a;font-weight:700;">Start shopping →</a></p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Spending Summary -->
+        {% if order_stats.total_spent and order_stats.total_spent|float > 0 %}
+        <div class="recent-section">
+            <div class="section-head">
+                <h2 class="section-title">💰 Spending Summary</h2>
+            </div>
+            <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:160px;">
+                    <div style="font-size:11px;font-weight:700;color:#9ba3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Total Spent</div>
+                    <div style="font-size:28px;font-weight:900;color:#1a7a4a;">{{ order_stats.total_spent|int }} <span style="font-size:14px;color:#aaa;">ETB</span></div>
+                </div>
+                <div style="flex:1;min-width:160px;">
+                    <div style="font-size:11px;font-weight:700;color:#9ba3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Member Since</div>
+                    <div style="font-size:15px;font-weight:700;color:#333;">
+                        {% if user.created_at %}
+                            {% if user.created_at is string %}{{ user.created_at[:10] }}
+                            {% else %}{{ user.created_at.strftime('%B %Y') }}{% endif %}
+                        {% else %}N/A{% endif %}
+                    </div>
+                </div>
+                <div style="flex:1;min-width:160px;">
+                    <div style="font-size:11px;font-weight:700;color:#9ba3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Your Discount</div>
+                    <div style="font-size:22px;font-weight:900;color:#43a047;">10% OFF</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL 2: ORDERS
+    ══════════════════════════════════════ -->
+    <div class="db-panel" id="panel-orders">
+        <div class="section-head">
+            <h2 class="section-title">📦 My Orders</h2>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="order-filters">
+            <button class="filter-btn active" id="filter-all" onclick="filterOrders('all')">All ({{ orders|length }})</button>
+            <button class="filter-btn" id="filter-pending" onclick="filterOrders('pending')">⏳ Pending</button>
+            <button class="filter-btn" id="filter-processing" onclick="filterOrders('processing')">⚙️ Processing</button>
+            <button class="filter-btn" id="filter-shipped" onclick="filterOrders('shipped')">🚚 Shipped</button>
+            <button class="filter-btn" id="filter-delivered" onclick="filterOrders('delivered')">🎉 Delivered</button>
+            <button class="filter-btn" id="filter-cancelled" onclick="filterOrders('cancelled')">❌ Cancelled</button>
+        </div>
+
+        <!-- Orders List -->
+        <div id="orders-list">
+            {% if orders %}
+                {% for order in orders %}
+                <a class="order-item" data-status="{{ order.status }}"
+                   href="{{ url_for('customer.order_detail', order_id=order.id) }}">
+                    <div>
+                        <div class="order-num">Order #{{ order.order_number }}</div>
+                        <div class="order-date">
+                            🕐 {% if order.created_at %}
+                                {% if order.created_at is string %}{{ order.created_at[:10] }}
+                                {% else %}{{ order.created_at.strftime('%b %d, %Y') }}{% endif %}
+                            {% else %}N/A{% endif %}
+                        </div>
+                        {% if order.shipping_city %}
+                        <div class="order-date" style="margin-top:2px;">📍 {{ order.shipping_city }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="order-right">
+                        <div class="order-total">{{ order.total|int }} ETB</div>
+                        <span class="status-pill sp-{{ order.status }}">
+                            {% if order.status=='pending'    %}⏳ Pending
+                            {% elif order.status=='confirmed'%}✅ Confirmed
+                            {% elif order.status=='processing'%}⚙️ Processing
+                            {% elif order.status=='shipped'  %}🚚 Shipped
+                            {% elif order.status=='delivered'%}🎉 Delivered
+                            {% elif order.status=='cancelled'%}❌ Cancelled
+                            {% else %}{{ order.status|title }}{% endif %}
+                        </span>
+                        <span style="font-size:18px;color:#ccc;">›</span>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <h3>No orders yet</h3>
+                    <p>Place your first order and track it here.</p>
+                    <a href="{{ url_for('customer.products') }}" class="btn-save" style="text-decoration:none;display:inline-block;">🛍️ Start Shopping</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- No results for filter -->
+        <div id="no-filter-results" style="display:none;" class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>No orders found</h3>
+            <p>No orders match this filter.</p>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL 3: WISHLIST
+    ══════════════════════════════════════ -->
+    <div class="db-panel" id="panel-wishlist">
+        <div class="section-head">
+            <h2 class="section-title">❤️ My Wishlist
+                {% if wishlist_items %}<span style="background:#e53935;color:#fff;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:700;">{{ wishlist_items|length }}</span>{% endif %}
+            </h2>
+        </div>
+
+        {% if wishlist_items %}
+        <div class="wishlist-grid">
+            {% for item in wishlist_items %}
+            <div class="wl-card" id="wl-{{ item.product_id }}">
+                <a href="{{ url_for('customer.product_detail', product_id=item.product_id) }}">
+                    {% if item.thumbnail %}
+                    <img class="wl-img"
+                         src="{{ url_for('static', filename='uploads/products/' + item.thumbnail) }}"
+                         alt="{{ item.name }}"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="wl-img-placeholder" style="display:none;">🛋️</div>
+                    {% else %}
+                    <div class="wl-img-placeholder">🛋️</div>
+                    {% endif %}
+                </a>
+                <button class="wl-remove-abs" onclick="removeWishlist({{ item.product_id }})" title="Remove">✕</button>
+                <div class="wl-body">
+                    <div class="wl-name">
+                        {% if lang == 'am' and item.name_am %}{{ item.name_am }}
+                        {% elif lang == 'ar' and item.name_ar %}{{ item.name_ar }}
+                        {% else %}{{ item.name }}{% endif %}
+                    </div>
+                    <div class="wl-price">
+                        {{ item.price|int }} ETB
+                        {% if item.compare_price and item.compare_price|int > item.price|int %}
+                        <span class="wl-compare">{{ item.compare_price|int }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="wl-actions">
+                        <a class="wl-btn wl-btn-cart"
+                           href="{{ url_for('cart.go_add_to_cart', product_id=item.product_id) }}">
+                            🛒 Add to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">💔</div>
+            <h3>Your wishlist is empty</h3>
+            <p>Save items you love by tapping the heart icon on products.</p>
+            <a href="{{ url_for('customer.products') }}" class="btn-save" style="text-decoration:none;display:inline-block;">🛍️ Browse Products</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL 4: TRACK ORDER
+    ══════════════════════════════════════ -->
+    <div class="db-panel" id="panel-track">
+        <div class="section-head">
+            <h2 class="section-title">🔍 Track My Order</h2>
+        </div>
+
+        <div class="track-card">
+            <p style="color:#666;font-size:14px;margin:0 0 20px;">Enter your order number to see the current status and delivery progress.</p>
+            <div class="track-input-row">
+                <input class="track-input" id="trackInput" type="text"
+                       placeholder="e.g. ETH-2026-00123"
+                       onkeydown="if(event.key==='Enter') doTrack()">
+                <button class="track-btn" onclick="doTrack()" id="trackBtn">🔍 Track</button>
+            </div>
+            <div id="trackError" style="display:none;color:#e53935;font-size:13px;margin-top:10px;font-weight:600;"></div>
+
+            <!-- Quick links to user orders -->
+            {% if orders %}
+            <div style="margin-top:18px;padding-top:16px;border-top:1px solid #f0f0f0;">
+                <div style="font-size:12px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Your Recent Orders</div>
+                {% for order in orders[:5] %}
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8f8f8;cursor:pointer;"
+                     onclick="document.getElementById('trackInput').value='{{ order.order_number }}'; doTrack()">
+                    <span style="font-size:13px;font-weight:600;color:#1a7a4a;">{{ order.order_number }}</span>
+                    <span class="status-pill sp-{{ order.status }}" style="font-size:10px;">
+                        {% if order.status=='pending'%}⏳{% elif order.status=='delivered'%}🎉{% elif order.status=='shipped'%}🚚{% elif order.status=='cancelled'%}❌{% else %}⚙️{% endif %}
+                        {{ order.status|title }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Track Result -->
+            <div class="track-result" id="trackResult" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL 5: PROFILE
+    ══════════════════════════════════════ -->
+    <div class="db-panel" id="panel-profile">
+        <div class="section-head">
+            <h2 class="section-title">👤 My Profile</h2>
+            <button class="btn-save" onclick="switchPanel('settings')" style="font-size:13px;padding:9px 18px;">✏️ Edit Profile</button>
+        </div>
+
+        <!-- Profile Info Display -->
+        <div class="profile-card">
+            <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px;flex-wrap:wrap;">
+                <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1a7a4a,#0f5232);
+                    color:#fff;font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;
+                    box-shadow:0 6px 20px rgba(26,122,74,0.3);flex-shrink:0;">
+                    {{ (user.full_name or 'U')[0]|upper }}
+                </div>
+                <div>
+                    <h3 style="margin:0 0 4px;font-size:20px;font-weight:800;color:#1a1a2e;">{{ user.full_name or 'Member' }}</h3>
+                    <p style="margin:0 0 8px;color:#888;font-size:13px;">{{ user.email }}</p>
+                    <span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">🎉 10% Member Discount</span>
+                </div>
+            </div>
+            <div class="prof-grid">
+                <div class="prof-field">
+                    <div class="pf-label">Full Name</div>
+                    <div class="pf-value {% if not user.full_name %}muted{% endif %}">{{ user.full_name or 'Not set' }}</div>
+                </div>
+                <div class="prof-field">
+                    <div class="pf-label">Email Address</div>
+                    <div class="pf-value">{{ user.email }}</div>
+                </div>
+                <div class="prof-field">
+                    <div class="pf-label">Phone Number</div>
+                    <div class="pf-value {% if not user.phone %}muted{% endif %}">{{ user.phone or 'Not set' }}</div>
+                </div>
+                <div class="prof-field">
+                    <div class="pf-label">City</div>
+                    <div class="pf-value {% if not user.city %}muted{% endif %}">{{ user.city or 'Not set' }}</div>
+                </div>
+                <div class="prof-field span2">
+                    <div class="pf-label">Delivery Address</div>
+                    <div class="pf-value {% if not user.address %}muted{% endif %}">{{ user.address or 'Not set' }}</div>
+                </div>
+                <div class="prof-field" style="border-left-color:#aaa;">
+                    <div class="pf-label">Member Since</div>
+                    <div class="pf-value">
+                        {% if user.created_at %}
+                            {% if user.created_at is string %}{{ user.created_at[:10] }}
+                            {% else %}{{ user.created_at.strftime('%B %d, %Y') }}{% endif %}
+                        {% else %}N/A{% endif %}
+                    </div>
+                </div>
+                <div class="prof-field" style="border-left-color:#43a047;">
+                    <div class="pf-label">Member Discount</div>
+                    <div class="pf-value discount">10% on all orders</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Shortcuts -->
+        <div class="recent-section">
+            <div class="section-head">
+                <h2 class="section-title" style="font-size:15px;">💬 Quick Support</h2>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="https://wa.me/{{ user.phone or '251906020606' }}?text=Hello+Ethiosadat+Furniture"
+                   target="_blank" class="whatsapp-btn">
+                    💬 WhatsApp Support
+                </a>
+                <a href="{{ url_for('customer.contact') }}" class="btn-secondary"
+                   style="display:inline-flex;align-items:center;gap:7px;padding:12px 20px;border-radius:11px;text-decoration:none;font-weight:700;font-size:14px;">
+                    📞 Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL 6: SETTINGS
+    ══════════════════════════════════════ -->
+    <div class="db-panel" id="panel-settings">
+        <div class="section-head">
+            <h2 class="section-title">⚙️ Settings</h2>
+        </div>
+
+        <!-- Edit Profile -->
+        <div class="settings-section">
+            <div class="settings-title">✏️ Edit Profile</div>
+            <form id="profileForm" onsubmit="submitProfile(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name <span style="color:#e53935">*</span></label>
+                        <input type="text" id="sf-name" name="full_name"
+                               value="{{ user.full_name or '' }}" required
+                               placeholder="Your full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" value="{{ user.email }}" readonly>
+                        <div class="form-note">Email cannot be changed</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="sf-phone" name="phone"
+                               value="{{ user.phone or '' }}" placeholder="09xxxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" id="sf-city" name="city"
+                               value="{{ user.city or '' }}" placeholder="Addis Ababa">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <textarea id="sf-address" name="address" rows="3"
+                              placeholder="Your full delivery address…">{{ user.address or '' }}</textarea>
+                </div>
+                <div class="btn-row">
+                    <button type="submit" class="btn-save" id="profileSaveBtn">💾 Save Changes</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Change Password -->
+        <div class="settings-section">
+            <div class="settings-title">🔒 Change Password</div>
+            <div style="max-width:400px;">
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="pw-new" placeholder="Min. 6 characters" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="pw-confirm" placeholder="Repeat password" autocomplete="new-password">
+                </div>
+                <div class="btn-row">
+                    <button class="btn-save" id="pwSaveBtn" onclick="submitPassword()">🔒 Update Password</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Language -->
+        <div class="settings-section">
+            <div class="settings-title">🌐 Language / ቋንቋ</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="{{ url_for('utility.set_language', lang='am') }}"
+                   class="{{ 'btn-save' if lang == 'am' else 'btn-secondary' }}"
+                   style="text-decoration:none;display:inline-block;padding:11px 22px;border-radius:11px;font-weight:700;font-size:14px;">
+                    🇪🇹 አማርኛ
+                </a>
+                <a href="{{ url_for('utility.set_language', lang='en') }}"
+                   class="{{ 'btn-save' if lang == 'en' else 'btn-secondary' }}"
+                   style="text-decoration:none;display:inline-block;padding:11px 22px;border-radius:11px;font-weight:700;font-size:14px;">
+                    🇬🇧 English
+                </a>
+                <a href="{{ url_for('utility.set_language', lang='ar') }}"
+                   class="{{ 'btn-save' if lang == 'ar' else 'btn-secondary' }}"
+                   style="text-decoration:none;display:inline-block;padding:11px 22px;border-radius:11px;font-weight:700;font-size:14px;">
+                    🇸🇦 العربية
+                </a>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="settings-section">
+            <div class="settings-title" style="color:#c62828;">⚠️ Danger Zone</div>
+            <div class="danger-zone">
+                <div class="danger-zone-title">Delete Account</div>
+                <div class="danger-zone-desc">Once deleted, all your data, orders, and wishlist will be permanently removed. This action cannot be undone.</div>
+                <button class="btn-danger" onclick="doDeleteAccount()">🗑️ Delete My Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL 8: NOTIFICATIONS
+    ══════════════════════════════════════ -->
+    <div class="db-panel" id="panel-notifs">
+        <div class="section-head">
+            <h2 class="section-title">🔔 Notifications</h2>
+            <button onclick="markAllNotifsRead()" id="markAllBtn"
+                    style="background:#1a7a4a;color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;">
+                ✅ Mark All Read
+            </button>
+        </div>
+        <div id="notifList" style="display:flex;flex-direction:column;gap:10px;">
+            <div style="text-align:center;padding:40px;color:#aaa;">
+                <div style="font-size:40px;margin-bottom:10px;">⏳</div>
+                <p>Loading notifications…</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANEL 7: REWARDS
+    ══════════════════════════════════════ -->
+    <div class="db-panel" id="panel-rewards">
+        <div class="section-head">
+            <h2 class="section-title">🏆 Loyalty Rewards</h2>
+        </div>
+
+        <!-- Points Hero Card -->
+        {% set pts = loyalty_points|default(0)|int %}
+        {% if pts < 50 %}{% set tier = 'Bronze' %}{% set tier_icon = '🥉' %}{% set tier_color = '#cd7f32' %}{% set next_tier = 50 %}{% set next_name = 'Silver' %}
+        {% elif pts < 200 %}{% set tier = 'Silver' %}{% set tier_icon = '🥈' %}{% set tier_color = '#9e9e9e' %}{% set next_tier = 200 %}{% set next_name = 'Gold' %}
+        {% elif pts < 500 %}{% set tier = 'Gold' %}{% set tier_icon = '🥇' %}{% set tier_color = '#f59e0b' %}{% set next_tier = 500 %}{% set next_name = 'Platinum' %}
+        {% else %}{% set tier = 'Platinum' %}{% set tier_icon = '💎' %}{% set tier_color = '#7c3aed' %}{% set next_tier = pts %}{% set next_name = '' %}{% endif %}
+
+        <div style="background:linear-gradient(135deg,#0f2a6e 0%,#1a7a4a 60%,#0f5232 100%);border-radius:22px;padding:28px 24px;color:#fff;margin-bottom:22px;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(255,255,255,0.07);border-radius:50%;"></div>
+            <div style="position:absolute;bottom:-20px;left:60px;width:80px;height:80px;background:rgba(255,255,255,0.05);border-radius:50%;"></div>
+            <div style="display:flex;align-items:center;gap:14px;position:relative;z-index:1;">
+                <div style="font-size:48px;line-height:1;">{{ tier_icon }}</div>
+                <div>
+                    <div style="font-size:11px;font-weight:700;letter-spacing:1px;opacity:0.75;text-transform:uppercase;">Your Tier</div>
+                    <div style="font-size:22px;font-weight:900;">{{ tier }} Member</div>
+                </div>
+                <div style="margin-left:auto;text-align:right;">
+                    <div style="font-size:11px;font-weight:700;opacity:0.75;text-transform:uppercase;">Points Balance</div>
+                    <div style="font-size:38px;font-weight:900;line-height:1;">{{ pts }}</div>
+                    <div style="font-size:12px;opacity:0.75;">pts</div>
+                </div>
+            </div>
+            {% if next_name %}
+            <div style="margin-top:18px;position:relative;z-index:1;">
+                <div style="display:flex;justify-content:space-between;font-size:11px;opacity:0.8;margin-bottom:5px;">
+                    <span>{{ pts }} pts</span>
+                    <span>{{ next_tier }} pts → {{ next_name }}</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.2);border-radius:10px;height:8px;overflow:hidden;">
+                    <div style="background:#fff;height:100%;border-radius:10px;width:{{ [((pts / next_tier) * 100)|int, 100]|min }}%;transition:width 0.5s;"></div>
+                </div>
+                <div style="font-size:11px;opacity:0.75;margin-top:5px;">{{ next_tier - pts }} more points to reach {{ next_name }}</div>
+            </div>
+            {% else %}
+            <div style="margin-top:14px;font-size:13px;opacity:0.85;font-weight:600;position:relative;z-index:1;">🎉 You've reached the highest tier — Platinum!</div>
+            {% endif %}
+        </div>
+
+        <!-- How to Earn -->
+        <div class="recent-section" style="margin-bottom:18px;">
+            <div class="section-head" style="margin-bottom:14px;">
+                <h3 class="section-title" style="font-size:15px;">💡 How to Earn Points</h3>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
+                <div style="background:#e8f5e9;border-radius:14px;padding:16px;text-align:center;">
+                    <div style="font-size:28px;margin-bottom:6px;">🛍️</div>
+                    <div style="font-weight:800;color:#2e7d32;font-size:13px;">1 pt / 100 ETB</div>
+                    <div style="font-size:11px;color:#666;margin-top:3px;">Earned on every delivered order</div>
+                </div>
+                <div style="background:#e8f0fe;border-radius:14px;padding:16px;text-align:center;">
+                    <div style="font-size:28px;margin-bottom:6px;">🥈</div>
+                    <div style="font-weight:800;color:#1a7a4a;font-size:13px;">50 pts = Silver</div>
+                    <div style="font-size:11px;color:#666;margin-top:3px;">Unlock Silver tier benefits</div>
+                </div>
+                <div style="background:#fff8e1;border-radius:14px;padding:16px;text-align:center;">
+                    <div style="font-size:28px;margin-bottom:6px;">🥇</div>
+                    <div style="font-weight:800;color:#d97706;font-size:13px;">200 pts = Gold</div>
+                    <div style="font-size:11px;color:#666;margin-top:3px;">Unlock Gold tier benefits</div>
+                </div>
+                <div style="background:#f3e8ff;border-radius:14px;padding:16px;text-align:center;">
+                    <div style="font-size:28px;margin-bottom:6px;">💎</div>
+                    <div style="font-weight:800;color:#7c3aed;font-size:13px;">500 pts = Platinum</div>
+                    <div style="font-size:11px;color:#666;margin-top:3px;">Unlock Platinum tier benefits</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Points History -->
+        <div class="recent-section">
+            <div class="section-head" style="margin-bottom:14px;">
+                <h3 class="section-title" style="font-size:15px;">📋 Points History</h3>
+            </div>
+            {% if loyalty_transactions %}
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                {% for tx in loyalty_transactions %}
+                <div style="display:flex;align-items:center;gap:14px;background:{% if tx.type=='earn' %}#e8f5e9{% else %}#fff3e0{% endif %};border-radius:14px;padding:14px 16px;">
+                    <div style="font-size:24px;flex-shrink:0;">{% if tx.type=='earn' %}⬆️{% else %}⬇️{% endif %}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                            {{ tx.description or ('Points earned' if tx.type=='earn' else 'Points used') }}
+                        </div>
+                        {% if tx.order_number %}
+                        <div style="font-size:11px;color:#888;margin-top:2px;">Order #{{ tx.order_number }}</div>
+                        {% endif %}
+                        <div style="font-size:11px;color:#aaa;margin-top:2px;">{{ tx.created_at }}</div>
+                    </div>
+                    <div style="font-size:18px;font-weight:900;flex-shrink:0;color:{% if tx.type=='earn' %}#2e7d32{% else %}#d97706{% endif %};">
+                        {% if tx.type=='earn' %}+{% else %}-{% endif %}{{ tx.points }} pts
+                    </div>
+                </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align:center;padding:40px 20px;color:#aaa;">
+                    <div style="font-size:50px;margin-bottom:12px;">🏆</div>
+                    <div style="font-weight:700;font-size:15px;color:#666;margin-bottom:6px;">No points yet</div>
+                    <div style="font-size:13px;">Complete your first order to start earning loyalty points!</div>
+                    <a href="{{ url_for('customer.products') }}"
+                       style="display:inline-block;margin-top:16px;background:#1a7a4a;color:#fff;padding:12px 28px;border-radius:12px;font-weight:700;text-decoration:none;">
+                        🛍️ Shop Now
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</main>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   PANEL SWITCHING
+═══════════════════════════════════════════════ */
+const PANELS = ['overview','orders','wishlist','track','profile','settings','rewards','notifs'];
+
+function switchPanel(name) {
+    PANELS.forEach(p => {
+        const el = document.getElementById('panel-' + p);
+        if (el) el.classList.toggle('active', p === name);
+
+        const snav = document.getElementById('snav-' + p);
+        if (snav) snav.classList.toggle('active', p === name);
+
+        const mnav = document.getElementById('mnav-' + p);
+        if (mnav) mnav.classList.toggle('active', p === name);
+    });
+    // Scroll to top of main on mobile
+    if (window.innerWidth < 860) window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+/* ═══════════════════════════════════════════════
+   ORDER FILTERING
+═══════════════════════════════════════════════ */
+function filterOrders(status) {
+    const items = document.querySelectorAll('#orders-list .order-item');
+    const noRes = document.getElementById('no-filter-results');
+    let visible = 0;
+
+    items.forEach(item => {
+        const s = item.dataset.status;
+        const show = status === 'all' || s === status;
+        item.style.display = show ? 'flex' : 'none';
+        if (show) visible++;
+    });
+
+    noRes.style.display = visible === 0 ? 'block' : 'none';
+
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    const target = document.getElementById('filter-' + status);
+    if (target) target.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════
+   WISHLIST REMOVE
+═══════════════════════════════════════════════ */
+function removeWishlist(productId) {
+    fetch('/api/wishlist/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ product_id: productId })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success !== false) {
+            const card = document.getElementById('wl-' + productId);
+            if (card) {
+                card.style.transition = 'opacity 0.3s, transform 0.3s';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    card.remove();
+                    const grid = document.querySelector('.wishlist-grid');
+                    if (grid && !grid.querySelector('.wl-card')) {
+                        grid.innerHTML = '';
+                        document.getElementById('panel-wishlist').querySelector('.wishlist-grid').outerHTML =
+                            '<div class="empty-state"><div class="empty-icon">💔</div><h3>Your wishlist is empty</h3><p>Save items you love by tapping the heart icon.</p><a href="/products" class="btn-save" style="text-decoration:none;display:inline-block;">🛍️ Browse Products</a></div>';
+                    }
+                }, 300);
+            }
+            showToast('Removed from wishlist', 'success');
+        } else {
+            showToast(d.error || 'Failed to remove', 'error');
+        }
+    })
+    .catch(() => showToast('Network error', 'error'));
+}
+
+/* ═══════════════════════════════════════════════
+   ORDER TRACKING
+═══════════════════════════════════════════════ */
+function doTrack() {
+    const input = document.getElementById('trackInput');
+    const orderNumber = input.value.trim();
+    const errEl = document.getElementById('trackError');
+    const resultEl = document.getElementById('trackResult');
+    const btn = document.getElementById('trackBtn');
+
+    if (!orderNumber) {
+        errEl.textContent = 'Please enter an order number.';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Tracking…';
+    resultEl.style.display = 'none';
+
+    fetch('/api/track-order?order_number=' + encodeURIComponent(orderNumber), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success && d.order) {
+            renderTrackResult(d.order, resultEl);
+        } else {
+            errEl.textContent = d.error || 'Order not found. Check the order number and try again.';
+            errEl.style.display = 'block';
+        }
+    })
+    .catch(() => {
+        // Fallback: redirect to track page
+        window.location.href = '/track-order/' + encodeURIComponent(orderNumber);
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = '🔍 Track';
+    });
+}
+
+function renderTrackResult(order, container) {
+    const steps = ['pending','confirmed','processing','shipped','delivered'];
+    const statusLabels = {
+        pending: 'Order Placed',
+        confirmed: 'Confirmed',
+        processing: 'Processing',
+        shipped: 'Shipped',
+        delivered: 'Delivered'
+    };
+    const stepIcons = { pending:'📋', confirmed:'✅', processing:'⚙️', shipped:'🚚', delivered:'🎉' };
+
+    const currentIdx = steps.indexOf(order.status);
+
+    let stepsHtml = steps.map((s, i) => {
+        let cls = i < currentIdx ? 'done' : (i === currentIdx ? 'current' : '');
+        let labelCls = i <= currentIdx ? (i === currentIdx ? 'current' : 'done') : '';
+        return `<div class="track-step">
+            <div class="ts-dot ${cls}">${stepIcons[s]}</div>
+            <div class="ts-label ${labelCls}">${statusLabels[s]}</div>
+        </div>`;
+    }).join('');
+
+    container.innerHTML = `
+        <div style="background:#f8f9fc;border-radius:16px;padding:20px;margin-top:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:8px;">
+                <div style="font-size:15px;font-weight:800;color:#1a7a4a;">Order #${order.order_number}</div>
+                <span class="status-pill sp-${order.status}">${order.status}</span>
+            </div>
+            <div class="track-progress">${stepsHtml}</div>
+            <div class="track-info-grid">
+                <div class="ti-card"><div class="ti-label">Total</div><div class="ti-value">${parseInt(order.total)} ETB</div></div>
+                <div class="ti-card"><div class="ti-label">Payment</div><div class="ti-value">${order.payment_method || 'COD'}</div></div>
+                <div class="ti-card"><div class="ti-label">City</div><div class="ti-value">${order.shipping_city || 'N/A'}</div></div>
+                <div class="ti-card"><div class="ti-label">Date</div><div class="ti-value">${(order.created_at||'').substring(0,10)}</div></div>
+            </div>
+        </div>`;
+    container.style.display = 'block';
+}
+
+/* ═══════════════════════════════════════════════
+   PROFILE SAVE (AJAX)
+═══════════════════════════════════════════════ */
+function submitProfile(e) {
+    e.preventDefault();
+    const btn = document.getElementById('profileSaveBtn');
+    const fullName = document.getElementById('sf-name').value.trim();
+    if (!fullName) { showToast('Full name is required', 'error'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Saving…';
+
+    const form = document.getElementById('profileForm');
+    const data = new FormData(form);
+
+    fetch('{{ url_for("customer.update_profile") }}', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: data
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            showToast('Profile updated successfully!', 'success');
+            setTimeout(() => location.reload(), 800);
+        } else {
+            showToast(d.error || 'Failed to save', 'error');
+        }
+    })
+    .catch(() => {
+        // Fallback: submit normally
+        form.submit();
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = '💾 Save Changes';
+    });
+}
+
+/* ═══════════════════════════════════════════════
+   PASSWORD CHANGE
+═══════════════════════════════════════════════ */
+function submitPassword() {
+    const pw  = document.getElementById('pw-new').value;
+    const pw2 = document.getElementById('pw-confirm').value;
+    const btn = document.getElementById('pwSaveBtn');
+
+    if (!pw || pw.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+    if (pw !== pw2) { showToast('Passwords do not match', 'error'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Updating…';
+
+    fetch('{{ url_for("customer.change_password") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ password: pw })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            document.getElementById('pw-new').value = '';
+            document.getElementById('pw-confirm').value = '';
+            showToast('Password updated successfully!', 'success');
+        } else {
+            showToast(d.error || 'Failed to update password', 'error');
+        }
+    })
+    .catch(() => showToast('Network error', 'error'))
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = '🔒 Update Password';
+    });
+}
+
+/* ═══════════════════════════════════════════════
+   DELETE ACCOUNT
+═══════════════════════════════════════════════ */
+function doDeleteAccount() {
+    const ok = confirm('⚠️ Delete your account?\n\nThis will permanently remove all your data, orders, and wishlist. This cannot be undone.');
+    if (!ok) return;
+    const pw = prompt('Enter your password to confirm account deletion:');
+    if (!pw) return;
+
+    fetch('{{ url_for("customer.delete_account") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ password: pw })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            alert('Account deleted. Goodbye!');
+            window.location.href = '{{ url_for("customer.index") }}';
+        } else {
+            showToast(d.error || 'Incorrect password', 'error');
+        }
+    })
+    .catch(() => showToast('Network error', 'error'));
+}
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATIONS PANEL
+═══════════════════════════════════════════════ */
+const NOTIF_ICONS = {
+    order:   '📦', welcome: '🎉', info: 'ℹ️',
+    success: '✅', warning: '⚠️', error: '❌'
+};
+const NOTIF_COLORS = {
+    order:   '#e8f0fe', welcome: '#e8f5e9', info: '#f3f4f6',
+    success: '#e8f5e9', warning: '#fff8e1', error: '#ffebee'
+};
+
+function loadNotifications() {
+    fetch('/api/notifications')
+        .then(r => r.json())
+        .then(d => {
+            const list = document.getElementById('notifList');
+            if (!list) return;
+            const badge = d.unread || 0;
+            updateNotifBadges(badge);
+            if (!d.notifications || d.notifications.length === 0) {
+                list.innerHTML = `<div style="text-align:center;padding:50px 20px;color:#aaa;">
+                    <div style="font-size:50px;margin-bottom:12px;">🔔</div>
+                    <div style="font-weight:700;color:#666;font-size:15px;margin-bottom:6px;">No notifications yet</div>
+                    <div style="font-size:13px;">We'll let you know about your orders and updates here.</div>
+                </div>`;
+                return;
+            }
+            list.innerHTML = d.notifications.map(n => {
+                const icon  = NOTIF_ICONS[n.type] || 'ℹ️';
+                const color = NOTIF_COLORS[n.type] || '#f3f4f6';
+                const unreadStyle = n.is_read ? '' : 'border-left:4px solid #1a7a4a;';
+                const link = n.link
+                    ? `onclick="window.location.href='${n.link}'"`
+                    : '';
+                return `<div style="background:${color};border-radius:14px;padding:14px 16px;cursor:${n.link ? 'pointer' : 'default'};
+                               ${unreadStyle}display:flex;gap:14px;align-items:flex-start;opacity:${n.is_read ? 0.7 : 1};"
+                          ${link}>
+                    <div style="font-size:24px;flex-shrink:0;margin-top:2px;">${icon}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:14px;font-weight:${n.is_read ? 600 : 800};color:#1a1a2e;">${escapeHtmlDb(n.title)}</div>
+                        <div style="font-size:12px;color:#555;margin-top:3px;">${escapeHtmlDb(n.body)}</div>
+                        <div style="font-size:10px;color:#aaa;margin-top:4px;">${n.created_at}</div>
+                    </div>
+                    ${!n.is_read ? `<div style="width:8px;height:8px;background:#1a7a4a;border-radius:50%;flex-shrink:0;margin-top:6px;"></div>` : ''}
+                </div>`;
+            }).join('');
+        })
+        .catch(() => {
+            const list = document.getElementById('notifList');
+            if (list) list.innerHTML = '<div style="text-align:center;padding:30px;color:#aaa;">Could not load notifications.</div>';
+        });
+}
+
+function markAllNotifsRead() {
+    fetch('/api/notifications/mark-read', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({})
+    }).then(() => {
+        updateNotifBadges(0);
+        loadNotifications();
+    }).catch(() => {});
+}
+
+function updateNotifBadges(count) {
+    ['snavNotifBadge','mnavNotifBadge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (count > 0) {
+            el.textContent = count > 99 ? '99+' : count;
+            el.style.display = 'inline-block';
+        } else {
+            el.style.display = 'none';
+        }
+    });
+    // Also sync the global bell badges in the header
+    if (typeof updateBellBadge === 'function') updateBellBadge(count);
+}
+
+function escapeHtmlDb(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Auto-refresh notifications panel every 15 s while it is open
+let _notifPollTimer = null;
+
+function startNotifPoll() {
+    if (_notifPollTimer) return;
+    _notifPollTimer = setInterval(loadNotifications, 15000);
+}
+
+function stopNotifPoll() {
+    if (_notifPollTimer) { clearInterval(_notifPollTimer); _notifPollTimer = null; }
+}
+
+// Load notifs when notifs panel is opened — patch after declaration
+document.addEventListener('DOMContentLoaded', function() {
+    const _orig = window.switchPanel || switchPanel;
+    window.switchPanel = function(name) {
+        _orig(name);
+        if (name === 'notifs') {
+            loadNotifications();
+            startNotifPoll();
+        } else {
+            stopNotifPoll();
+        }
+    };
+    // If the page URL already requests notifs tab, load now and start polling
+    if (new URLSearchParams(location.search).get('tab') === 'notifs') {
+        loadNotifications();
+        startNotifPoll();
+    }
+
+    // Stop polling when user leaves the page
+    window.addEventListener('beforeunload', stopNotifPoll);
+
+    // Pause/resume polling based on tab visibility
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            if (_notifPollTimer !== null) { stopNotifPoll(); startNotifPoll(); }
+            const tab = new URLSearchParams(location.search).get('tab');
+            if (tab === 'notifs') loadNotifications();
+        } else {
+            stopNotifPoll();
+        }
+    });
+});
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+function showToast(msg, type = 'success') {
+    const t = document.getElementById('dbToast');
+    t.textContent = msg;
+    t.className = 'db-toast ' + type + ' show';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ═══════════════════════════════════════════════
+   INIT: Set active tab from URL param
+═══════════════════════════════════════════════ */
+(function() {
+    const tab = '{{ active_tab }}';
+    if (tab && PANELS.includes(tab)) switchPanel(tab);
+
+    // Auto-dismiss flash messages
+    setTimeout(() => {
+        document.querySelectorAll('[id^="flash"]').forEach(el => {
+            el.style.transition = 'opacity 0.4s';
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 400);
+        });
+    }, 4000);
+})();
+</script>
+
+{% endblock %}

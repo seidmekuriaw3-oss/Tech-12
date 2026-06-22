@@ -1,0 +1,288 @@
+<!-- ==================== CATEGORY BAR COMPONENT ==================== -->
+<!-- Reusable category navigation bar for customer pages -->
+
+{% set categories = [
+    {'id': 'all', 'name_am': 'ሁሉም', 'name_en': 'All', 'icon': '🔄', 'color': '#1a7a4a'},
+    {'id': 'ሶፋ', 'name_am': 'ሶፋ', 'name_en': 'Sofa', 'icon': '🛋️', 'color': '#ff9800'},
+    {'id': 'አልጋ', 'name_am': 'አልጋ', 'name_en': 'Bed', 'icon': '🛏️', 'color': '#4caf50'},
+    {'id': 'መጅሊስ', 'name_am': 'መጅሊስ', 'name_en': 'Mejlis', 'icon': '🪑', 'color': '#9c27b0'},
+    {'id': 'መጋረጃ', 'name_am': 'መጋረጃ', 'name_en': 'Curtain', 'icon': '🚪', 'color': '#1a7a4a'},
+    {'id': 'ቁምሳጥን', 'name_am': 'ቁምሳጥን', 'name_en': 'Wardrobe', 'icon': '🗄️', 'color': '#f44336'},
+    {'id': 'ሌላ', 'name_am': 'ሌላ', 'name_en': 'Other', 'icon': '📦', 'color': '#795548'}
+] %}
+
+<div class="category-bar-container" style="margin: 20px 0;">
+    
+    <!-- Category Title -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+            <span>📂</span> 
+            <span>{% if lang == 'am' %}ምድቦች{% else %}Categories{% endif %}</span>
+        </h3>
+        
+        <!-- Scroll Buttons (Desktop) -->
+        <div class="category-scroll-buttons" style="display: none; gap: 8px;">
+            <button class="scroll-left" style="
+                background: var(--bg-white, white);
+                border: 1px solid var(--border-color, #ddd);
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
+                cursor: pointer;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            " onclick="scrollCategories(-200)">←</button>
+            <button class="scroll-right" style="
+                background: var(--bg-white, white);
+                border: 1px solid var(--border-color, #ddd);
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
+                cursor: pointer;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            " onclick="scrollCategories(200)">→</button>
+        </div>
+    </div>
+    
+    <!-- Category Chips / Horizontal Scroll -->
+    <div class="category-scroll-wrapper" style="position: relative; overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch;">
+        <div class="category-chips" style="display: flex; gap: 12px; flex-wrap: nowrap; min-width: min-content;">
+            {% for cat in categories %}
+            <a href="{{ url_for('customer.products', category=cat.id) }}" 
+               class="category-chip {% if current_category == cat.id %}active{% endif %}"
+               data-category="{{ cat.id }}"
+               style="
+                   display: inline-flex;
+                   align-items: center;
+                   gap: 8px;
+                   padding: 10px 20px;
+                   background: {% if current_category == cat.id %}linear-gradient(135deg, {{ cat.color }}, {{ cat.color }}dd){% else %}var(--bg-white, white){% endif %};
+                   color: {% if current_category == cat.id %}white{% else %}var(--text-color, #333){% endif %};
+                   text-decoration: none;
+                   border-radius: 40px;
+                   font-size: 14px;
+                   font-weight: 500;
+                   transition: all 0.3s ease;
+                   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                   white-space: nowrap;
+                   border: {% if current_category == cat.id %}none{% else %}1px solid var(--border-color, #e0e0e0){% endif %};
+               "
+               onmouseover="if (!this.classList.contains('active')) { this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'; }"
+               onmouseout="if (!this.classList.contains('active')) { this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.05)'; }">
+                <span style="font-size: 18px;">{{ cat.icon }}</span>
+                <span>{% if lang == 'am' %}{{ cat.name_am }}{% else %}{{ cat.name_en }}{% endif %}</span>
+                {% if cat.id != 'all' and category_stats and category_stats.get(cat.id) %}
+                <span class="count-badge" style="
+                    background: {% if current_category == cat.id %}rgba(255,255,255,0.2){% else %}rgba(0,0,0,0.05){% endif %};
+                    padding: 2px 8px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    margin-left: 4px;
+                ">{{ category_stats.get(cat.id) }}</span>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hide scrollbar but keep functionality */
+    .category-scroll-wrapper {
+        scrollbar-width: thin;
+        -ms-overflow-style: auto;
+    }
+    
+    .category-scroll-wrapper::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .category-scroll-wrapper::-webkit-scrollbar-track {
+        background: var(--border-color, #f0f0f0);
+        border-radius: 4px;
+    }
+    
+    .category-scroll-wrapper::-webkit-scrollbar-thumb {
+        background: var(--border-color-dark, #ccc);
+        border-radius: 4px;
+    }
+    
+    .category-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+        background: #999;
+    }
+    
+    /* Show scroll buttons on larger screens */
+    @media (min-width: 768px) {
+        .category-scroll-buttons {
+            display: flex !important;
+        }
+    }
+    
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+        .category-chip {
+            padding: 8px 16px !important;
+            font-size: 13px !important;
+        }
+        .category-chip span:first-child {
+            font-size: 16px !important;
+        }
+    }
+    
+    /* Active category animation */
+    .category-chip.active {
+        animation: categoryPop 0.3s ease;
+    }
+    
+    @keyframes categoryPop {
+        0% { transform: scale(0.95); }
+        100% { transform: scale(1); }
+    }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .category-chip {
+            transition: none !important;
+        }
+        .category-chip.active {
+            animation: none !important;
+        }
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .scroll-left, .scroll-right {
+            background: #1a1a2e !important;
+            border-color: #2a2a3e !important;
+            color: #eee !important;
+        }
+        .scroll-left:hover, .scroll-right:hover {
+            background: #2a2a3e !important;
+        }
+    }
+</style>
+
+<script>
+    // Scroll categories horizontally
+    function scrollCategories(distance) {
+        const wrapper = document.querySelector('.category-scroll-wrapper');
+        if (wrapper) {
+            wrapper.scrollBy({ left: distance, behavior: 'smooth' });
+        }
+    }
+    
+    // Highlight active category on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get current category from URL
+        const currentPath = window.location.pathname;
+        const categoryMatch = currentPath.match(/\/category\/(.+)/);
+        const currentCategory = categoryMatch ? decodeURIComponent(categoryMatch[1]) : null;
+        
+        if (currentCategory) {
+            const activeChip = document.querySelector(`.category-chip[data-category="${currentCategory}"]`);
+            if (activeChip) {
+                // Scroll to make active chip visible if needed
+                const wrapper = document.querySelector('.category-scroll-wrapper');
+                if (wrapper) {
+                    const chipRect = activeChip.getBoundingClientRect();
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    if (chipRect.left < wrapperRect.left || chipRect.right > wrapperRect.right) {
+                        activeChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
+                }
+            }
+        }
+    });
+    
+    // Add click tracking for categories (optional)
+    function trackCategoryClick(category) {
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'select_category', {
+                'event_category': 'engagement',
+                'event_label': category,
+                'value': 1
+            });
+        }
+        console.log('Category selected:', category);
+    }
+    
+    // Add click handlers to category chips
+    document.querySelectorAll('.category-chip').forEach(chip => {
+        // Remove existing listener to avoid duplicates
+        const newChip = chip.cloneNode(true);
+        if (chip.parentNode) {
+            chip.parentNode.replaceChild(newChip, chip);
+        }
+        
+        newChip.addEventListener('click', function(e) {
+            const category = this.dataset.category;
+            if (category) {
+                trackCategoryClick(category);
+            }
+        });
+    });
+</script>
+
+<!-- Alternative: Grid Layout for Mobile -->
+<style>
+    @media (max-width: 480px) {
+        .category-chips {
+            flex-wrap: wrap !important;
+            justify-content: center;
+        }
+        .category-scroll-wrapper {
+            overflow-x: visible !important;
+        }
+    }
+    
+    @media (min-width: 481px) and (max-width: 768px) {
+        .category-chips {
+            flex-wrap: wrap !important;
+            justify-content: center;
+        }
+        .category-scroll-wrapper {
+            overflow-x: visible !important;
+        }
+    }
+</style>
+
+<!-- Count badge update function (if category_stats is not provided) -->
+<script>
+    // Fetch category counts via AJAX if not provided
+    (function() {
+        if (typeof category_stats === 'undefined' || !category_stats || Object.keys(category_stats).length === 0) {
+            fetch('{{ url_for('api.api_categories') }}')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelectorAll('.category-chip').forEach(chip => {
+                            const category = chip.dataset.category;
+                            if (category && data.counts[category] && category !== 'all') {
+                                // Check if badge already exists
+                                let badge = chip.querySelector('.count-badge');
+                                if (!badge) {
+                                    badge = document.createElement('span');
+                                    badge.className = 'count-badge';
+                                    badge.style.cssText = `
+                                        background: rgba(0,0,0,0.05);
+                                        padding: 2px 8px;
+                                        border-radius: 20px;
+                                        font-size: 11px;
+                                        margin-left: 4px;
+                                    `;
+                                    chip.appendChild(badge);
+                                }
+                                badge.textContent = data.counts[category];
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Error fetching category counts:', err));
+        }
+    })();
+</script>

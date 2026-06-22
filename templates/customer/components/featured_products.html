@@ -1,0 +1,327 @@
+<!-- ==================== FEATURED PRODUCTS COMPONENT ==================== -->
+<!-- Reusable featured products section for customer pages -->
+
+{% if featured_products and featured_products|length > 0 %}
+<div class="featured-products-section" style="margin: 40px 0;">
+    
+    <!-- Section Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <h2 style="margin: 0 0 8px 0; display: flex; align-items: center; gap: 10px;">
+                <span>⭐</span> 
+                <span>{% if lang == 'am' %}የተመረጡ ምርቶች{% else %}Featured Products{% endif %}</span>
+            </h2>
+            <p style="color: var(--text-muted, #666); margin: 0;">
+                {% if lang == 'am' %}በጣም የተወደዱ እና የተመረጡ ምርቶቻችን{% else %}Our most loved and selected products{% endif %}
+            </p>
+        </div>
+        <a href="{{ url_for('customer.products') }}" class="btn btn-outline" style="display: flex; align-items: center; gap: 6px; text-decoration: none;">
+            <span>{% if lang == 'am' %}ሁሉንም ይመልከቱ{% else %}View All{% endif %}</span>
+            <span>→</span>
+        </a>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="featured-products-grid" style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 24px;
+    ">
+        {% for product in featured_products %}
+        <div class="featured-product-card" data-product-id="{{ product.id }}" style="
+            background: var(--bg-white, white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        " onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'"
+           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 10px rgba(0,0,0,0.08)'"
+           onclick="location.href='{{ url_for('customer.product_detail', product_id=product.id) }}'">
+            
+            <!-- Product Image -->
+            <div class="product-image-wrapper" style="position: relative; height: 220px; overflow: hidden; background: var(--bg-hover, #f8f9fa);">
+                {% if product.thumbnail and product.thumbnail != '' %}
+                    <img src="{{ url_for('static', filename=product.thumbnail) }}" 
+                         alt="{{ product.name_am }}"
+                         loading="lazy"
+                         style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+                         onmouseover="this.style.transform='scale(1.05)'"
+                         onmouseout="this.style.transform='scale(1)'"
+                         onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+                {% else %}
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 64px;">🪑</div>
+                {% endif %}
+                
+                <!-- Discount Badge -->
+                {% if product.compare_price and product.compare_price|float > product.price|float %}
+                {% set discount = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int %}
+                <div class="discount-badge" style="
+                    position: absolute;
+                    top: 12px;
+                    right: 12px;
+                    background: linear-gradient(135deg, #f44336, #d32f2f);
+                    color: white;
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                ">
+                    -{{ discount }}%
+                </div>
+                {% endif %}
+                
+                <!-- Stock Badge: only show Out of Stock when explicitly set to 0 -->
+                {% set stock = product.stock_quantity %}
+                {% if stock is not none and stock == 0 %}
+                <div class="stock-badge" style="
+                    position: absolute;
+                    top: 12px;
+                    left: 12px;
+                    background: rgba(0,0,0,0.7);
+                    color: white;
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 500;
+                ">
+                    {% if lang == 'am' %}ክምችት የለም{% else %}Out of Stock{% endif %}
+                </div>
+                {% elif stock is not none and stock < 5 and stock > 0 %}
+                <div class="stock-badge" style="
+                    position: absolute;
+                    top: 12px;
+                    left: 12px;
+                    background: #ff9800;
+                    color: white;
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 500;
+                ">
+                    {% if lang == 'am' %}የተወሰነ ክምችት{% else %}Low Stock{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Product Info -->
+            <div class="product-info" style="padding: 16px;">
+                <h3 class="product-title" style="
+                    margin: 0 0 8px 0;
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: var(--text-color, #333);
+                    line-height: 1.4;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                ">
+                    {{ product.name_am if lang == 'am' else product.name }}
+                </h3>
+                
+                <!-- Rating (if available) -->
+                {% if product.rating is defined and product.rating > 0 %}
+                <div class="product-rating" style="display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+                    <div class="stars" style="color: #ff9800; font-size: 12px;">
+                        {% set rating = product.rating|float %}
+                        {% for i in range(5) %}
+                            {% if i < rating|round(0, 'floor') %}
+                                ★
+                            {% elif i < rating %}
+                                ½
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span style="color: var(--text-muted, #999); font-size: 11px;">({{ product.reviews|default(0) }})</span>
+                </div>
+                {% endif %}
+                
+                <!-- Price -->
+                <div class="product-price" style="margin: 12px 0;">
+                    <span class="current-price" style="
+                        font-size: 20px;
+                        font-weight: bold;
+                        color: #1a7a4a;
+                    ">{{ format_price(product.price) }}</span>
+                    {% if product.compare_price and product.compare_price|float > product.price|float %}
+                    <span class="old-price" style="
+                        text-decoration: line-through;
+                        color: var(--text-muted, #999);
+                        font-size: 14px;
+                        margin-left: 8px;
+                    ">{{ format_price(product.compare_price) }}</span>
+                    {% endif %}
+                </div>
+                
+                <!-- Add to Cart Button -->
+                <button class="add-to-cart-btn" 
+                        data-id="{{ product.id }}"
+                        data-name="{{ product.name_am }}"
+                        data-price="{{ product.price }}"
+                        data-image="{{ product.thumbnail }}"
+                        onclick="event.stopPropagation(); if(window.addToCart) addToCart('{{ product.id }}', 1, this)"
+                        style="
+                            width: 100%;
+                            background: #1a7a4a;
+                            color: white;
+                            border: none;
+                            padding: 10px;
+                            border-radius: 30px;
+                            font-size: 14px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+                        "
+                        onmouseover="this.style.background='#0f5232'; this.style.transform='translateY(-2px)'"
+                        onmouseout="this.style.background='#1a7a4a'; this.style.transform='translateY(0)'">
+                    🛒 <span>{% if lang == 'am' %}ጨምር{% else %}Add to Cart{% endif %}</span>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .featured-products-placeholder {
+            background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+        }
+        .featured-products-placeholder h3 {
+            color: #ddd !important;
+        }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .featured-products-grid {
+            gap: 16px !important;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+        }
+        .product-title {
+            font-size: 14px !important;
+        }
+        .current-price {
+            font-size: 16px !important;
+        }
+        .add-to-cart-btn {
+            padding: 8px !important;
+            font-size: 12px !important;
+        }
+        .product-image-wrapper {
+            height: 180px !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .featured-products-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+        }
+        .product-info {
+            padding: 12px !important;
+        }
+        .product-image-wrapper {
+            height: 150px !important;
+        }
+    }
+    
+    /* Skeleton loading animation */
+    .featured-products-grid.loading .featured-product-card {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    
+    /* Fade in animation for products */
+    .featured-product-card {
+        animation: fadeInUp 0.4s ease forwards;
+        opacity: 0;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Staggered animation delay */
+    .featured-product-card:nth-child(1) { animation-delay: 0s; }
+    .featured-product-card:nth-child(2) { animation-delay: 0.05s; }
+    .featured-product-card:nth-child(3) { animation-delay: 0.1s; }
+    .featured-product-card:nth-child(4) { animation-delay: 0.15s; }
+    .featured-product-card:nth-child(5) { animation-delay: 0.2s; }
+    .featured-product-card:nth-child(6) { animation-delay: 0.25s; }
+    .featured-product-card:nth-child(7) { animation-delay: 0.3s; }
+    .featured-product-card:nth-child(8) { animation-delay: 0.35s; }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .featured-product-card {
+            animation: none;
+            opacity: 1;
+        }
+        .featured-product-card:hover {
+            transform: none !important;
+        }
+        .product-image-wrapper img:hover {
+            transform: none !important;
+        }
+    }
+</style>
+
+<script>
+    // Track featured product impressions (for analytics)
+    (function trackFeaturedImpressions() {
+        if (typeof gtag !== 'undefined') {
+            document.querySelectorAll('.featured-product-card').forEach((card, index) => {
+                const productId = card.dataset.productId;
+                if (productId) {
+                    gtag('event', 'view_item', {
+                        'event_category': 'engagement',
+                        'event_label': `featured_product_${productId}`,
+                        'value': index + 1
+                    });
+                }
+            });
+        }
+    })();
+</script>
+
+{% else %}
+<!-- Fallback when no featured products available -->
+<div class="featured-products-placeholder" style="
+    background: linear-gradient(135deg, #f5f7fa, #e4e8ec);
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    margin: 40px 0;
+">
+    <div style="font-size: 64px; margin-bottom: 16px;">⭐</div>
+    <h3 style="color: #666; margin-bottom: 8px;">
+        {% if lang == 'am' %}የተመረጡ ምርቶች የሉም{% else %}No Featured Products{% endif %}
+    </h3>
+    <p style="color: #999;">
+        {% if lang == 'am' %}በቅርቡ አዳዲስ ምርቶችን ይጠብቁ{% else %}Check back soon for featured products{% endif %}
+    </p>
+    {% if session.get('admin') %}
+    <a href="{{ url_for('admin.product_create') }}" class="btn btn-primary" style="margin-top: 16px; display: inline-block; text-decoration: none;">
+        {% if lang == 'am' %}ምርት ይጨምሩ{% else %}Add Product{% endif %}
+    </a>
+    {% endif %}
+</div>
+{% endif %}

@@ -1,0 +1,32 @@
+Act as an expert Full-Stack Developer specializing in Python (Flask), JavaScript (WebGL/Three.js), and Android WebView integration. I need to build a highly professional, accurate, and optimized Islamic Utility Suite to be integrated into my existing Flask e-commerce application.
+​[CRITICAL CODE QUALITY REQUIREMENT]
+​Generate CLEAN, MODULAR, and PRODUCTION-READY code.
+​Strictly REMOVE all comments from the provided code snippets. Do not include any # comments in Python, or // / /* */ comments in JavaScript/Service Workers. The output must be completely clean of any annotations.
+​[AUDIO ASSET INTEGRATION]
+​I have already downloaded the physical audio files and stored them locally in the project. Use these exact paths in your playback logic:
+​Standard Azan (For Dhuhr, Asr, Maghrib, Isha): static/audio/azan.mp3
+​Special Fajr Azan (Contains "As-salatu khayrun minan-nawm"): static/audio/fajrazan.mp3
+​[FEATURE 1: Location-Aware 5 Daily Prayer Times & Background Azan]
+​Backend (Flask/Python): 
+​Create a flexible Flask route/API endpoint that accepts latitude and longitude from the frontend.
+​Integrate the adhan Python library or use a reliable offline calculation method (e.g., Egyptian General Authority of Survey or Umm al-Qura method) to calculate the exact 5 daily prayer times (Fajr, Dhuhr, Asr, Maghrib, Isha) based on the user's coordinates.
+​Return the computed times in a structured JSON format.
+​Frontend (JavaScript & Service Workers): 
+​Request user HTML5 Geolocation permissions securely.
+​Build a beautiful, responsive dashboard UI displaying the current time, the next upcoming prayer, and a countdown timer.
+​Background Azan Notification: Implement a JavaScript Service Worker or Web Audio API background task. When the local device time hits a prayer time, it must trigger a local push notification and play the correct audio file—even if the WebView app or browser tab is minimized or running in the background.
+​Audio Routing Logic: If the triggered prayer time is Fajr, play static/audio/fajrazan.mp3. For the other four prayers, play static/audio/azan.mp3.
+​[FEATURE 2: Immersive 3D Qibla Direction Compass]
+​Sensor Integration (JavaScript): 
+​Use the HTML5 DeviceOrientationEvent API (deviceorientation or deviceorientationabsolute) to capture the smartphone's gyroscope and magnetometer real-time heading data.
+​Implement a fallback strategy for iOS (requesting DeviceOrientationEvent.requestPermission) and older Android devices.
+​Mathematical Calculation: 
+​Implement the great-circle navigation formula to calculate the precise Qibla bearing (\theta) from the user's current location to the Kaaba in Makkah (Latitude: 21.4225^\circ\text{ N}, Longitude: 39.8262^\circ\text{ E}).
+​3D UI/UX (WebGL/Three.js or CSS 3D): 
+​Render a sleek, modern, and highly responsive 3D compass dial or needle that rotates dynamically as the user moves or turns their smartphone.
+​Add a visual indicator (e.g., color shift to green or haptic feedback vibration) when the user's phone is pointing exactly in the correct Qibla direction.
+​[ARCHITECTURAL & PERFORMANCE REQUIREMENTS]
+​Database Alignment: Ensure any required state or user preferences are mapped cleanly using PostgreSQL syntax (SQLAlchemy compatible).
+​Asset Optimization: Provide a clean structure for handling audio and 3D assets via lightweight compression formats (like GLTF/GLB) suitable for mobile environments.
+​WebView Compatibility: Ensure all JavaScript APIs used (especially Service Workers, HTML5 Audio, and Device Orientation) are fully compatible with standard Android WebView containers.
+​Please generate the complete modular structure, including backend routes, frontend HTML/JS templates, and service workers now. Remember: NO COMMENTS inside the code.

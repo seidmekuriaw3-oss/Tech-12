@@ -1,0 +1,551 @@
+{% extends "admin/layouts/admin_base.html" %}
+
+{% block title %}Create Advertisement - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .preview-container {
+        border: 2px dashed #ddd;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        margin-top: 16px;
+        background: #f9f9f9;
+        transition: all 0.3s ease;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .preview-container.has-media {
+        border-color: #1a7a4a;
+        background: #f0f7ff;
+    }
+    .media-preview {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+        margin-top: 12px;
+    }
+    .char-count {
+        font-size: 12px;
+        color: #666;
+        text-align: right;
+        margin-top: 4px;
+    }
+    .char-count.warning {
+        color: #ff9800;
+    }
+    .char-count.danger {
+        color: #f44336;
+    }
+    .form-section {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .form-section h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+        color: #1a7a4a;
+    }
+    .tips-card {
+        background: #f5f5f5;
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 16px;
+    }
+    .tips-card h4 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        color: #ff9800;
+    }
+    .tips-card ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+    .tips-card li {
+        margin-bottom: 8px;
+        color: #666;
+    }
+    .required-star {
+        color: #f44336;
+        margin-left: 4px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+    }
+    @media (max-width: 768px) {
+        .form-section {
+            padding: 16px;
+        }
+        .preview-container {
+            min-height: 150px;
+        }
+    }
+    @media (prefers-color-scheme: dark) {
+        .form-section {
+            background: #1a1a2e;
+            border-color: #2a2a3e;
+        }
+        .form-section h3 {
+            border-bottom-color: #2a2a3e;
+        }
+        .preview-container {
+            background: #16213e;
+            border-color: #2a2a3e;
+        }
+        .preview-container.has-media {
+            background: #1a2a3e;
+            border-color: #1a7a4a;
+        }
+        .tips-card {
+            background: #16213e;
+        }
+        .tips-card li {
+            color: #aaa;
+        }
+        input, textarea, select {
+            background: #16213e;
+            border-color: #2a2a3e;
+            color: #eee;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <!-- Header -->
+    <div style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;">
+            <a href="{{ url_for('admin.ads') }}" style="color: #666; text-decoration: none; font-size: 24px;" aria-label="Back to ads list">←</a>
+            <h1 style="margin: 0; font-size: 1.8rem;">➕ Create New Advertisement</h1>
+        </div>
+        <p style="color: #666; margin: 0;">Create a new advertisement to display on your store homepage</p>
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" action="{{ url_for('admin.ad_create') }}" enctype="multipart/form-data" id="adForm" onsubmit="return validateForm()">
+        
+        <!-- Advertisement Text Section -->
+        <div class="form-section">
+            <h3>📝 Advertisement Text</h3>
+            
+            <div class="form-group">
+                <label>
+                    Ad Text <span class="required-star">*</span>
+                </label>
+                <textarea name="ad_text" 
+                          id="ad_text" 
+                          rows="5" 
+                          required
+                          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; resize: vertical; font-family: inherit;"
+                          placeholder="🎉 Special offer! Get up to 30% off on all furniture. Free delivery on orders over 5000 ETB!"
+                          maxlength="500"
+                          onkeyup="updateCharCount()"></textarea>
+                <div id="charCount" class="char-count">0 / 500 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Title (Optional)</label>
+                <input type="text" 
+                       name="title" 
+                       id="ad_title"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="e.g., Summer Sale, New Arrivals, Limited Offer"
+                       maxlength="100">
+            </div>
+            
+            <div class="form-group">
+                <label>Link URL (Optional)</label>
+                <input type="url" 
+                       name="link" 
+                       id="ad_link"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="https://ethiosadat.com/category/sale">
+                <small style="color: #666; display: block; margin-top: 4px;">Clicking the ad will redirect to this URL</small>
+            </div>
+        </div>
+
+        <!-- Multi-language Section (Optional) -->
+        <div class="form-section">
+            <h3>🌐 Multi-language Support (Optional)</h3>
+            
+            <div class="form-group">
+                <label>Title (አማርኛ)</label>
+                <input type="text" 
+                       name="title_am" 
+                       id="title_am"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="የማስታወቂያ ርዕስ በአማርኛ">
+            </div>
+            
+            <div class="form-group">
+                <label>Title (العربية)</label>
+                <input type="text" 
+                       name="title_ar" 
+                       id="title_ar"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="عنوان الإعلان بالعربية">
+            </div>
+            
+            <div class="form-group">
+                <label>Description (አማርኛ)</label>
+                <textarea name="description_am" 
+                          id="description_am"
+                          rows="3"
+                          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"
+                          placeholder="የማስታወቂያ ጽሑፍ በአማርኛ"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Description (العربية)</label>
+                <textarea name="description_ar" 
+                          id="description_ar"
+                          rows="3"
+                          style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"
+                          placeholder="نص الإعلان بالعربية"></textarea>
+            </div>
+        </div>
+
+        <!-- Media Section -->
+        <div class="form-section">
+            <h3>🖼️ Media (Image or Video)</h3>
+            
+            <div class="form-group">
+                <label>Upload Media</label>
+                <input type="file" 
+                       name="media" 
+                       id="ad_media" 
+                       accept="image/*,video/*"
+                       style="width: 100%; padding: 8px;"
+                       onchange="previewMedia(this)">
+                <small style="color: #666; display: block; margin-top: 8px;">
+                    Supported formats: JPG, PNG, GIF, WEBP, MP4, WebM (Max 16MB)
+                </small>
+            </div>
+            
+            <!-- Media Preview -->
+            <div id="previewContainer" class="preview-container">
+                <div style="color: #999; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">📷</div>
+                    <p>No media selected</p>
+                    <small>Upload an image or video to make your ad more engaging</small>
+                </div>
+            </div>
+            
+            <!-- Media URL (Alternative) -->
+            <div class="form-group" style="margin-top: 20px;">
+                <label>Or Use Media URL</label>
+                <input type="url" 
+                       name="media_url" 
+                       id="media_url"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="https://example.com/image.jpg"
+                       onchange="previewMediaFromUrl(this)">
+                <small style="color: #666; display: block; margin-top: 4px;">Enter a direct URL to an image or video</small>
+            </div>
+        </div>
+
+        <!-- Date Settings Section -->
+        <div class="form-section">
+            <h3>📅 Date Settings (Optional)</h3>
+            
+            <div class="form-group">
+                <label>Start Date</label>
+                <input type="datetime-local" 
+                       name="start_date" 
+                       id="start_date"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                <small style="color: #666;">Leave empty to start immediately</small>
+            </div>
+            
+            <div class="form-group">
+                <label>End Date</label>
+                <input type="datetime-local" 
+                       name="end_date" 
+                       id="end_date"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                <small style="color: #666;">Leave empty for no expiration</small>
+            </div>
+        </div>
+
+        <!-- Display Settings Section -->
+        <div class="form-section">
+            <h3>⚙️ Display Settings</h3>
+            
+            <div class="form-group">
+                <label>Sort Order</label>
+                <input type="number" 
+                       name="sort_order" 
+                       id="sort_order"
+                       value="0"
+                       style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                       placeholder="0"
+                       min="0">
+                <small style="color: #666; display: block; margin-top: 4px;">Lower numbers appear first. Use 0, 1, 2, 3... to order your ads</small>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" name="is_active" value="1" checked style="margin-right: 10px; width: auto;">
+                    Active
+                </label>
+                <small style="color: #666; display: block; margin-top: 4px;">Inactive ads won't be visible to customers</small>
+            </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="tips-card">
+            <h4>💡 Tips for Effective Ads</h4>
+            <ul>
+                <li>Keep your message clear and concise (50-100 characters works best)</li>
+                <li>Use eye-catching images (1280x720px recommended)</li>
+                <li>Include a strong call-to-action like "Shop Now" or "Learn More"</li>
+                <li>Highlight special offers and discounts (e.g., "30% OFF")</li>
+                <li>Update ads regularly to keep content fresh</li>
+                <li>Use emojis to make your ad stand out 🎉✨</li>
+                <li>Add end dates for seasonal promotions</li>
+            </ul>
+        </div>
+
+        <!-- Form Actions -->
+        <div style="display: flex; gap: 16px; justify-content: flex-end; margin-top: 32px; padding-bottom: 40px;">
+            <a href="{{ url_for('admin.ads') }}" class="btn btn-outline" style="padding: 12px 24px; text-decoration: none;">Cancel</a>
+            <button type="submit" class="btn btn-primary" style="padding: 12px 32px; display: flex; align-items: center; gap: 8px; border: none; cursor: pointer;">
+                <span>➕</span> Publish Advertisement
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Character counter
+    function updateCharCount() {
+        const textarea = document.getElementById('ad_text');
+        const countSpan = document.getElementById('charCount');
+        if (!textarea || !countSpan) return;
+        
+        const length = textarea.value.length;
+        const maxLength = 500;
+        
+        countSpan.textContent = `${length} / ${maxLength} characters`;
+        
+        countSpan.classList.remove('warning', 'danger');
+        if (length > maxLength) {
+            countSpan.classList.add('danger');
+        } else if (length > maxLength * 0.8) {
+            countSpan.classList.add('warning');
+        }
+    }
+
+    // Preview media from file upload
+    function previewMedia(input) {
+        const previewContainer = document.getElementById('previewContainer');
+        if (!previewContainer) return;
+        
+        const file = input.files[0];
+        
+        if (file) {
+            // Check file size (16MB = 16 * 1024 * 1024)
+            if (file.size > 16 * 1024 * 1024) {
+                if (window.showToast) {
+                    window.showToast('File size must be less than 16MB', 'error');
+                } else {
+                    alert('File size must be less than 16MB');
+                }
+                input.value = '';
+                resetPreview();
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                let mediaHtml = '';
+                
+                if (file.type.startsWith('image/')) {
+                    mediaHtml = `
+                        <div style="text-align: center;">
+                            <img src="${e.target.result}" class="media-preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: contain;">
+                            <p style="margin-top: 12px; color: #4caf50;">✓ Image loaded: ${escapeHtml(file.name)}</p>
+                        </div>
+                    `;
+                } else if (file.type.startsWith('video/')) {
+                    mediaHtml = `
+                        <div style="text-align: center;">
+                            <video src="${e.target.result}" class="media-preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;" controls></video>
+                            <p style="margin-top: 12px; color: #4caf50;">✓ Video loaded: ${escapeHtml(file.name)}</p>
+                        </div>
+                    `;
+                } else {
+                    mediaHtml = `<p style="color: #f44336; text-align: center;">❌ Unsupported file type. Please upload an image or video.</p>`;
+                }
+                
+                previewContainer.innerHTML = mediaHtml;
+                previewContainer.classList.add('has-media');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            resetPreview();
+        }
+    }
+
+    // Preview media from URL
+    function previewMediaFromUrl(input) {
+        const previewContainer = document.getElementById('previewContainer');
+        if (!previewContainer) return;
+        
+        const url = input.value.trim();
+        
+        if (url) {
+            const imageExtensions = /\.(jpg|jpeg|png|gif|webp|bmp)(\?.*)?$/i;
+            const videoExtensions = /\.(mp4|webm|mov|ogg)(\?.*)?$/i;
+            
+            if (imageExtensions.test(url)) {
+                previewContainer.innerHTML = `
+                    <div style="text-align: center;">
+                        <img src="${escapeHtml(url)}" class="media-preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: contain;" 
+                             onerror="this.onerror=null; this.parentElement.parentElement.innerHTML='<p style=\\'color:#f44336; text-align:center;\\'>❌ Failed to load image. Please check the URL.</p>'">
+                        <p style="margin-top: 12px; color: #4caf50;">✓ Image loaded from URL</p>
+                    </div>
+                `;
+                previewContainer.classList.add('has-media');
+            } else if (videoExtensions.test(url)) {
+                previewContainer.innerHTML = `
+                    <div style="text-align: center;">
+                        <video src="${escapeHtml(url)}" class="media-preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;" controls></video>
+                        <p style="margin-top: 12px; color: #4caf50;">✓ Video loaded from URL</p>
+                    </div>
+                `;
+                previewContainer.classList.add('has-media');
+            } else {
+                resetPreview();
+                if (window.showToast) {
+                    window.showToast('Unsupported URL format. Please use a direct link to an image or video.', 'warning');
+                }
+            }
+        } else {
+            resetPreview();
+        }
+    }
+
+    function resetPreview() {
+        const previewContainer = document.getElementById('previewContainer');
+        if (!previewContainer) return;
+        
+        previewContainer.innerHTML = `
+            <div style="color: #999; text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 12px;">📷</div>
+                <p>No media selected</p>
+                <small>Upload an image or video to make your ad more engaging</small>
+            </div>
+        `;
+        previewContainer.classList.remove('has-media');
+    }
+
+    // Form validation
+    function validateForm() {
+        const adText = document.getElementById('ad_text');
+        const adTextValue = adText ? adText.value.trim() : '';
+        
+        if (!adTextValue) {
+            if (window.showToast) {
+                window.showToast('Please enter advertisement text', 'error');
+            } else {
+                alert('Please enter advertisement text');
+            }
+            if (adText) adText.focus();
+            return false;
+        }
+        
+        if (adTextValue.length > 500) {
+            if (window.showToast) {
+                window.showToast('Advertisement text must be less than 500 characters', 'error');
+            } else {
+                alert('Advertisement text must be less than 500 characters');
+            }
+            if (adText) adText.focus();
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Auto-save draft is disabled for safety
+    // Use manual save instead
+
+    // Escape HTML helper
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Initialize character count on load
+    const adText = document.getElementById('ad_text');
+    const adTitle = document.getElementById('ad_title');
+    const adLink = document.getElementById('ad_link');
+
+    // Initialize character count
+    updateCharCount();
+
+    // Template examples
+    const exampleTemplates = [
+        "🎉 ልዩ ቅናሽ! እስከ 30% ቅናሽ በሁሉም ምርቶች ላይ!",
+        "🚚 ነጻ ማጓጓዝ ከ5000 ብር በላይ ግዢ ላይ!",
+        "✨ አዲስ የቤት እቃዎች ደርሰዋል! ዛሬውኑ ይጎብኙን",
+        "💝 የበዓል ልዩ ቅናሽ! ለቤተሰብዎ ምርጥ ስጦታ",
+        "🛋️ ሶፋ ልዩ ቅናሽ! የምርጥ ሶፋዎች ዋጋ ከ20,000 ብር ጀምሮ!"
+    ];
+    
+    // Add template selector
+    const adTextGroup = document.querySelector('#ad_text')?.closest('.form-group');
+    if (adTextGroup) {
+        const templateSelector = document.createElement('div');
+        templateSelector.className = 'form-group';
+        templateSelector.style.marginBottom = '8px';
+        templateSelector.innerHTML = `
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">📋 Quick Templates</label>
+            <select id="templateSelect" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                <option value="">-- Select a template --</option>
+                ${exampleTemplates.map(t => `<option value="${escapeHtml(t).replace(/"/g, '&quot;')}">${escapeHtml(t.substring(0, 60))}${t.length > 60 ? '...' : ''}</option>`).join('')}
+            </select>
+        `;
+        
+        adTextGroup.parentNode.insertBefore(templateSelector, adTextGroup);
+        
+        const templateSelect = document.getElementById('templateSelect');
+        if (templateSelect) {
+            templateSelect.addEventListener('change', function() {
+                if (this.value) {
+                    const textarea = document.getElementById('ad_text');
+                    if (textarea) {
+                        textarea.value = this.value;
+                        updateCharCount();
+                    }
+                    this.value = '';
+                }
+            });
+        }
+    }
+    
+    // Set default end date to 30 days from now
+    const endDateInput = document.getElementById('end_date');
+    if (endDateInput && !endDateInput.value) {
+        const defaultDate = new Date();
+        defaultDate.setDate(defaultDate.getDate() + 30);
+        endDateInput.value = defaultDate.toISOString().slice(0, 16);
+    }
+</script>
+{% endblock %}
