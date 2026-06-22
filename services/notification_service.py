@@ -16,7 +16,7 @@ def notify_user(user_id, title, body, type='info', link=''):
         db = get_db()
         cur = db.cursor()
         cur.execute(
-            "INSERT INTO user_notifications (user_id, title, body, type, link) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO user_notifications (user_id, title, body, type, link) VALUES (%s, %s, %s, %s, %s)",
             (user_id, title, body, type, link or '')
         )
         db.commit()
@@ -33,21 +33,21 @@ def get_user_notifications(user_id, limit=50):
         cur = db.cursor()
         cur.execute(
             "SELECT id, title, body, type, link, is_read, created_at "
-            "FROM user_notifications WHERE user_id = ? "
-            "ORDER BY created_at DESC LIMIT ?",
+            "FROM user_notifications WHERE user_id = %s "
+            "ORDER BY created_at DESC LIMIT %s",
             (user_id, limit)
         )
         rows = cur.fetchall()
         result = []
         for r in (rows or []):
             result.append({
-                'id':         r[0],
-                'title':      r[1],
-                'body':       r[2],
-                'type':       r[3],
-                'link':       r[4] or '',
-                'is_read':    bool(r[5]),
-                'created_at': str(r[6])[:16] if r[6] else '',
+                'id':         r['id'],
+                'title':      r['title'],
+                'body':       r['body'],
+                'type':       r['type'],
+                'link':       r['link'] or '',
+                'is_read':    bool(r['is_read']),
+                'created_at': str(r['created_at'])[:16] if r['created_at'] else '',
             })
         return result
     except Exception as e:
@@ -61,7 +61,7 @@ def get_user_unread_count(user_id):
         db = get_db()
         cur = db.cursor()
         cur.execute(
-            "SELECT COUNT(*) FROM user_notifications WHERE user_id = ? AND is_read = 0",
+            "SELECT COUNT(*) FROM user_notifications WHERE user_id = %s AND is_read = 0",
             (user_id,)
         )
         row = cur.fetchone()
@@ -77,12 +77,12 @@ def mark_user_notifications_read(user_id, notif_id=None):
         cur = db.cursor()
         if notif_id:
             cur.execute(
-                "UPDATE user_notifications SET is_read = 1 WHERE id = ? AND user_id = ?",
+                "UPDATE user_notifications SET is_read = 1 WHERE id = %s AND user_id = %s",
                 (notif_id, user_id)
             )
         else:
             cur.execute(
-                "UPDATE user_notifications SET is_read = 1 WHERE user_id = ?",
+                "UPDATE user_notifications SET is_read = 1 WHERE user_id = %s",
                 (user_id,)
             )
         db.commit()
@@ -101,7 +101,7 @@ def notify_admin(title, body, type='info', link='', ref_order_id=None, ref_user_
         cur = db.cursor()
         cur.execute(
             "INSERT INTO admin_alerts (title, body, type, link, ref_order_id, ref_user_id) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
+            "VALUES (%s, %s, %s, %s, %s, %s)",
             (title, body, type, link or '', ref_order_id, ref_user_id)
         )
         db.commit()
@@ -118,22 +118,22 @@ def get_admin_alerts(limit=60):
         cur = db.cursor()
         cur.execute(
             "SELECT id, title, body, type, link, ref_order_id, ref_user_id, is_read, created_at "
-            "FROM admin_alerts ORDER BY created_at DESC LIMIT ?",
+            "FROM admin_alerts ORDER BY created_at DESC LIMIT %s",
             (limit,)
         )
         rows = cur.fetchall()
         result = []
         for r in (rows or []):
             result.append({
-                'id':           r[0],
-                'title':        r[1],
-                'body':         r[2],
-                'type':         r[3],
-                'link':         r[4] or '',
-                'ref_order_id': r[5],
-                'ref_user_id':  r[6],
-                'is_read':      bool(r[7]),
-                'created_at':   str(r[8])[:16] if r[8] else '',
+                'id':           r['id'],
+                'title':        r['title'],
+                'body':         r['body'],
+                'type':         r['type'],
+                'link':         r['link'] or '',
+                'ref_order_id': r['ref_order_id'],
+                'ref_user_id':  r['ref_user_id'],
+                'is_read':      bool(r['is_read']),
+                'created_at':   str(r['created_at'])[:16] if r['created_at'] else '',
             })
         return result
     except Exception as e:
@@ -159,7 +159,7 @@ def mark_admin_alerts_read(alert_id=None):
         db = get_db()
         cur = db.cursor()
         if alert_id:
-            cur.execute("UPDATE admin_alerts SET is_read = 1 WHERE id = ?", (alert_id,))
+            cur.execute("UPDATE admin_alerts SET is_read = 1 WHERE id = %s", (alert_id,))
         else:
             cur.execute("UPDATE admin_alerts SET is_read = 1")
         db.commit()
