@@ -16,6 +16,7 @@ from database.db import get_db
 from routes.shared import calc_cart_totals, FREE_SHIPPING_THRESHOLD, SHIPPING_COST, USER_DISCOUNT_RATE
 import json
 from services.notification_service import notify_user, notify_admin
+from services.whatsapp_service import send_owner_order_notification
 
 cart_bp = Blueprint('cart', __name__)
 
@@ -465,6 +466,25 @@ def place_order():
             link=f'/admin/orders/{order_id}',
             ref_order_id=order_id,
             ref_user_id=session.get('user_id')
+        )
+    except Exception:
+        pass
+
+    # WhatsApp owner notification (background thread — never blocks order)
+    try:
+        customer_name = session.get('user_name', 'Customer')
+        wa_items = [
+            {'name': item['name'], 'name_am': item.get('name', ''),
+             'quantity': item['quantity'], 'price': item['price']}
+            for item in cart_items
+        ]
+        send_owner_order_notification(
+            order_number=order_number,
+            customer_name=customer_name,
+            customer_phone=shipping_phone,
+            items=wa_items,
+            total=total,
+            notes=notes
         )
     except Exception:
         pass

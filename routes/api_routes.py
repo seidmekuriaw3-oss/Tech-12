@@ -1307,6 +1307,22 @@ def api_submit_order():
         cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))
         db.commit()
 
+        # WhatsApp owner notification (background thread)
+        try:
+            from services.whatsapp_service import send_owner_order_notification
+            wa_items = [{'name': i.get('name', ''), 'name_am': i.get('name_am', ''),
+                         'quantity': i.get('quantity', 1), 'price': i.get('price', 0)} for i in items_list]
+            send_owner_order_notification(
+                order_number=order_number,
+                customer_name=customer_name,
+                customer_phone=customer_phone,
+                items=wa_items,
+                total=total,
+                notes=notes
+            )
+        except Exception:
+            pass
+
         return jsonify({
             'success': True,
             'message': 'Order placed successfully!',

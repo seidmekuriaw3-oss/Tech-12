@@ -1,11 +1,85 @@
 import os
 import urllib.parse
 import re
+import threading
 from datetime import datetime
 
 
 # Get WhatsApp number from environment variable with fallback
 WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251987957957')
+
+
+# ==================== OWNER NOTIFICATION (CallMeBot) ====================
+
+def _send_callmebot(phone: str, message: str, api_key: str):
+    """Fire-and-forget HTTP call to CallMeBot — runs in background thread."""
+    try:
+        import requests as _req
+        encoded = urllib.parse.quote(message)
+        url = f"https://api.callmebot.com/whatsapp.php?phone={phone}&text={encoded}&apikey={api_key}"
+        resp = _req.get(url, timeout=10)
+        if resp.status_code == 200:
+            print(f"✅ WhatsApp notification sent to {phone}")
+        else:
+            print(f"⚠️  CallMeBot response {resp.status_code}: {resp.text[:200]}")
+    except Exception as e:
+        print(f"⚠️  WhatsApp notification failed: {e}")
+
+
+def send_owner_order_notification(order_number: str, customer_name: str,
+                                   customer_phone: str, items: list,
+                                   total: float, notes: str = ''):
+    """
+    Send automatic WhatsApp notification to store owner when order is placed.
+    Requires CALLMEBOT_API_KEY environment variable (get it free from CallMeBot).
+    Runs in a background thread so it never blocks the order response.
+    """
+    api_key = os.environ.get('CALLMEBOT_API_KEY', '')
+    owner_phone = os.environ.get('WHATSAPP_NUMBER', WHATSAPP_NUMBER)
+
+    if not api_key:
+        print("ℹ️  CALLMEBOT_API_KEY not set — WhatsApp owner notification skipped.")
+        return
+
+    # Build the message
+    now = datetime.now().strftime('%Y-%m-%d %H:%M')
+    lines = [
+        "🛍️ *ትዕዛዝ ደረሰ — ሰሚራ ልብስ እስቶር*",
+        "━" * 32,
+        f"📋 ትዕዛዝ #: *{order_number}*",
+        f"📅 ቀን: {now}",
+        f"👤 ደንበኛ: *{customer_name}*",
+        f"📞 ስልክ: {customer_phone}",
+        "━" * 32,
+        "*የተዘዘ ምርቶች:*",
+    ]
+    for item in items:
+        name = item.get('name_am') or item.get('name', 'ምርት')
+        qty = item.get('quantity', 1)
+        price = item.get('price', item.get('price_at_time', 0))
+        lines.append(f"  • {name}  x{qty}  — {price:,.0f} ETB")
+
+    lines += [
+        "━" * 32,
+        f"💰 *ጠቅላላ: {total:,.0f} ETB*",
+    ]
+    if notes:
+        lines.append(f"📝 ማስታወሻ: {notes}")
+    lines += [
+        "━" * 32,
+        "✅ Admin: /admin/orders",
+        "📞 +251987957957",
+    ]
+    message = "\n".join(lines)
+
+    # Format phone: must start with + for CallMeBot
+    phone_fmt = owner_phone if owner_phone.startswith('+') else f"+{owner_phone}"
+
+    # Run in background so it never slows down the order
+    t = threading.Thread(target=_send_callmebot, args=(phone_fmt, message, api_key), daemon=True)
+    t.start()
+
+
 BACKUP_WHATSAPP_NUMBERS = ['251906080606', '251906090606']
 
 
