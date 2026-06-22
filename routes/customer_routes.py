@@ -1,5 +1,5 @@
 """
-Customer Routes for Ethiosadat Furniture
+Customer Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 
 Public-facing routes: home, products, categories, branches, auth,
 orders, wishlist, tracking, static info pages.
@@ -447,7 +447,7 @@ def contact():
         except Exception as e:
             print(f"Error saving contact: {e}")
 
-        whatsapp_msg = (f"📬 New Contact Message - Ethiosadat Furniture\n\n"
+        whatsapp_msg = (f"📬 New Contact Message - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ\n\n"
                         f"👤 Name: {name}\n")
         if email:
             whatsapp_msg += f"📧 Email: {email}\n"
@@ -600,12 +600,12 @@ def user_register():
             session['user_email'] = email
             session['user_phone'] = phone
 
-            flash('Registration successful! Welcome to Ethiosadat Furniture!', 'success')
+            flash('Registration successful! Welcome to ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ!', 'success')
 
             try:
                 notify_user(
                     user_id,
-                    '🎉 Welcome to Ethiosadat Furniture!',
+                    '🎉 Welcome to ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ!',
                     f'Hello {full_name}! Your account is ready. Enjoy 10% discount on all orders.',
                     type='welcome',
                     link='/dashboard'
@@ -975,7 +975,7 @@ def reset_password(token):
 
 # ==================== ORDER TRACKING ====================
 
-WHATSAPP_NUMBER = '251906020606'
+WHATSAPP_NUMBER = '251987957957'
 
 
 @customer_bp.route('/track-order', methods=['GET'])

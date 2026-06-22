@@ -1,5 +1,5 @@
 """
-Utility Routes for Ethiosadat Furniture
+Utility Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 
 Handles sitewide utility endpoints:
 - Language switching

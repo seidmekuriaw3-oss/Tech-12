@@ -1,5 +1,5 @@
 // ==================== ETHIOSADAT - MAIN JAVASCRIPT ====================
-// Professional Main JavaScript for Ethiosadat Furniture
+// Professional Main JavaScript for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 // Part 1 of 2: Core Functions, UI Components, Form Validation, Loading States
 
 // ==================== App Initialization ====================
@@ -1067,7 +1067,7 @@ function escapeHtml(text) {
 }
 
 // ==================== ETHIOSADAT - MAIN JAVASCRIPT ====================
-// Professional Main JavaScript for Ethiosadat Furniture
+// Professional Main JavaScript for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 // Part 2 of 2: Analytics, Preload, PWA, CSS Animations, Service Worker, Final Exports
 
 // ==================== Analytics (Basic) ====================

@@ -143,7 +143,7 @@
             
             <div class="form-group">
                 <label>Site Name</label>
-                <input type="text" name="site_name" id="site_name" value="{{ settings.site_name|default('Ethiosadat Furniture') }}" placeholder="Store name">
+                <input type="text" name="site_name" id="site_name" value="{{ settings.site_name|default('ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ') }}" placeholder="Store name">
                 <small>This appears in browser tabs and page titles</small>
             </div>
             
@@ -168,19 +168,19 @@
             
             <div class="form-group">
                 <label>WhatsApp Number</label>
-                <input type="tel" name="whatsapp_number" id="whatsapp_number" value="{{ settings.whatsapp_number|default('251906020606') }}" placeholder="251906020606">
+                <input type="tel" name="whatsapp_number" id="whatsapp_number" value="{{ settings.whatsapp_number|default('251987957957') }}" placeholder="251987957957">
                 <small>Format: 2519xxxxxxxx (without +)</small>
             </div>
             
             <div class="form-group">
                 <label>Phone Number</label>
-                <input type="tel" name="phone_number" id="phone_number" value="{{ settings.phone_number|default('+251906020606') }}" placeholder="+251906020606">
+                <input type="tel" name="phone_number" id="phone_number" value="{{ settings.phone_number|default('+251987957957') }}" placeholder="+251987957957">
                 <small>Displayed on contact page and footer</small>
             </div>
             
             <div class="form-group">
                 <label>Store Address</label>
-                <input type="text" name="store_address" id="store_address" value="{{ settings.store_address|default('Addis Ababa, Ethiopia') }}" placeholder="Store address">
+                <input type="text" name="store_address" id="store_address" value="{{ settings.store_address|default('ወሎ ደሴ ኩታበር, Ethiopia') }}" placeholder="Store address">
             </div>
         </div>
 
@@ -238,7 +238,7 @@
             
             <div class="form-group">
                 <label>Meta Keywords</label>
-                <input type="text" name="meta_keywords" id="meta_keywords" value="{{ settings.meta_keywords|default('furniture, ethiosadat, addis ababa, sofa, bed') }}" placeholder="furniture, ethiosadat, addis ababa">
+                <input type="text" name="meta_keywords" id="meta_keywords" value="{{ settings.meta_keywords|default('furniture, ethiosadat, ወሎ ደሴ ኩታበር, sofa, bed') }}" placeholder="furniture, ethiosadat, ወሎ ደሴ ኩታበር">
                 <small>Comma-separated keywords for search engines</small>
             </div>
             
@@ -257,7 +257,7 @@
             <div class="preview-box">
                 <h4>WhatsApp Link Preview</h4>
                 <p id="whatsappPreview" style="font-family: monospace; word-break: break-all;">
-                    https://wa.me/{{ settings.whatsapp_number|default('251906020606') }}
+                    https://wa.me/{{ settings.whatsapp_number|default('251987957957') }}
                 </p>
             </div>
         </div>
@@ -343,7 +343,7 @@
             let number = this.value.replace(/[^0-9]/g, '');
             if (number.startsWith('0')) number = '251' + number.substring(1);
             if (!number.startsWith('251') && number.length > 0) number = '251' + number;
-            whatsappPreview.textContent = `https://wa.me/${number || '251906020606'}`;
+            whatsappPreview.textContent = `https://wa.me/${number || '251987957957'}`;
         });
     }
 
@@ -405,17 +405,17 @@
     function resetToDefaults() {
         const confirmFn = window.showConfirm || confirm;
         const callback = () => {
-            document.getElementById('site_name').value = 'Ethiosadat Furniture';
+            document.getElementById('site_name').value = 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ';
             document.getElementById('site_description').value = 'Quality Furniture at Affordable Prices';
             document.getElementById('admin_email').value = 'admin@ethiosadat.com';
-            document.getElementById('whatsapp_number').value = '251906020606';
-            document.getElementById('phone_number').value = '+251906020606';
-            document.getElementById('store_address').value = 'Addis Ababa, Ethiopia';
+            document.getElementById('whatsapp_number').value = '251987957957';
+            document.getElementById('phone_number').value = '+251987957957';
+            document.getElementById('store_address').value = 'ወሎ ደሴ ኩታበር, Ethiopia';
             document.getElementById('free_shipping_threshold').value = '5000';
             document.getElementById('shipping_cost').value = '200';
             document.getElementById('currency').value = 'ETB';
             document.getElementById('default_language').value = 'am';
-            document.getElementById('meta_keywords').value = 'furniture, ethiosadat, addis ababa, sofa, bed';
+            document.getElementById('meta_keywords').value = 'furniture, ethiosadat, ወሎ ደሴ ኩታበር, sofa, bed';
             
             if (window.showToast) {
                 window.showToast('Settings reset to defaults', 'success');

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Ethiosadat Furniture{% endblock %}
+{% block title %}Home - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slider.css') }}">
@@ -606,7 +606,7 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="hero">
-    <h1>🪑 Ethiosadat Furniture</h1>
+    <h1>🪑 ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</h1>
     <p>{{ t.quality_tagline }}</p>
     <p>{{ t.free_shipping_msg }}</p>
 </div>
@@ -866,7 +866,7 @@
                         </g>
                     </svg>
                     <div class="idc-bearing" id="idc-bearing-val">4.6°</div>
-                    <div class="idc-bearing-sub" id="idc-bearing-sub">from Addis Ababa · North</div>
+                    <div class="idc-bearing-sub" id="idc-bearing-sub">from ወሎ ደሴ ኩታበር · North</div>
                 </div>
                 <a href="{{ url_for('islamic.islamic_suite') }}#qibla" class="idc-card-link">
                     Interactive Compass →
@@ -951,9 +951,9 @@
 <!-- About Section (Desktop only - shown based on platform) -->
 {% if show_about %}
 <div class="about-section">
-    <h2>🏢 About Ethiosadat Furniture</h2>
+    <h2>🏢 About ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</h2>
     <p>
-        Ethiosadat Furniture is a leading furniture retailer in Ethiopia, offering high-quality 
+        ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ is a leading furniture retailer in Ethiopia, offering high-quality 
         furniture at competitive prices. With multiple branches across the country, we serve 
         thousands of satisfied customers. Our mission is to provide comfortable, stylish, 
         and durable furniture that transforms houses into homes.
@@ -1025,7 +1025,7 @@
                 var sub = document.getElementById('idc-bearing-sub');
                 var needle = document.getElementById('idc-compass-needle');
                 if (val) val.textContent = b.toFixed(1)+'°';
-                if (sub) sub.textContent = 'from Addis Ababa · '+compassDir(b);
+                if (sub) sub.textContent = 'from ወሎ ደሴ ኩታበር · '+compassDir(b);
                 if (needle) needle.style.transform = 'rotate('+b+'deg)';
             })
             .catch(function(){});

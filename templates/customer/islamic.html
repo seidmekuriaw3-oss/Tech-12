@@ -560,7 +560,7 @@
             <span class="city-search-icon">🔍</span>
             <div class="city-dropdown" id="city-dropdown"></div>
         </div>
-        <div class="loc-bar" id="loc-bar">📍 Addis Ababa (default)</div>
+        <div class="loc-bar" id="loc-bar">📍 ወሎ ደሴ ኩታበር (default)</div>
         <div class="clock-wrap">
             <div class="clock-big" id="clock-now">--:--:--</div>
             <div class="clock-date"  id="clock-date">--</div>
@@ -971,7 +971,7 @@ function loadPrayerTimes(lat, lng) {
             const bar = document.getElementById('loc-bar');
             if (data.fallback) {
                 bar.className = 'loc-bar';
-                bar.textContent = '📍 Using default location: Addis Ababa, Ethiopia';
+                bar.textContent = '📍 Using default location: ወሎ ደሴ ኩታበር, Ethiopia';
             } else {
                 bar.className = 'loc-bar ok';
                 bar.textContent = `📍 Location: ${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;

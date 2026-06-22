@@ -48,7 +48,7 @@ ADDIS_FALLBACK = {
 }
 
 ETHIOPIAN_CITIES = [
-    {'name': 'Addis Ababa',        'lat': 8.9806,  'lng': 38.7578},
+    {'name': 'ወሎ ደሴ ኩታበር',        'lat': 8.9806,  'lng': 38.7578},
     {'name': 'Adama (Nazret)',      'lat': 8.5400,  'lng': 39.2700},
     {'name': 'Arba Minch',         'lat': 6.0333,  'lng': 37.5500},
     {'name': 'Assosa',             'lat': 10.0667, 'lng': 34.5333},

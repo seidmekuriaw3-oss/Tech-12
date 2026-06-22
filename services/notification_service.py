@@ -1,5 +1,5 @@
 """
-Notification Service for Ethiosadat Furniture
+Notification Service for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 In-app notifications stored in DB for both customers and admins.
 """
 

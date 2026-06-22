@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
                 <p>✅ Server is running!</p>
                 <p>የቤት እቃዎች በምቹ ዋጋ | Quality Furniture</p>
                 <hr>
-                <p>📞 <span class="phone">0906 020606</span></p>
+                <p>📞 <span class="phone">0987 957957</span></p>
                 <p>📍 Addis Ababa, Ethiopia</p>
             </div>
         </body>

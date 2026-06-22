@@ -469,21 +469,21 @@ def init_db():
     cur.execute("SELECT COUNT(*) FROM settings")
     if cur.fetchone()[0] == 0:
         default_settings = [
-            ('site_name', 'Ethiosadat Furniture'),
-            ('site_name_am', 'ኢትዮሳዳት ቤት ዕቃ'),
-            ('site_name_ar', 'إثيوصادات للأثاث'),
+            ('site_name', 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ'),
+            ('site_name_am', 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ የሴቶች እና የልጆች ልብስ እስቶር'),
+            ('site_name_ar', 'إثيوصادات للأثاث ووده سميرة'),
             ('site_description', 'Quality Furniture at Affordable Prices'),
             ('site_email', 'info@ethiosadat.com'),
-            ('site_phone', '+251906020606'),
+            ('site_phone', '+251987957957'),
             ('admin_email', 'admin@ethiosadat.com'),
-            ('phone_number', '+251906020606'),
-            ('store_address', 'Addis Ababa, Ethiopia'),
-            ('whatsapp_number', '251906020606'),
+            ('phone_number', '+251987957957'),
+            ('store_address', 'ወሎ ደሴ ኩታበር, Ethiopia'),
+            ('whatsapp_number', '251987957957'),
             ('free_shipping_threshold', '5000'),
             ('shipping_cost', '200'),
             ('currency', 'ETB'),
             ('default_language', 'am'),
-            ('meta_keywords', 'furniture, ethiosadat, addis ababa, sofa, bed'),
+            ('meta_keywords', 'furniture, ethiosadat, ወሎ ደሴ ኩታበር, sofa, bed'),
             ('google_analytics', ''),
         ]
         cur.executemany(
@@ -494,9 +494,9 @@ def init_db():
         extra_settings = [
             ('site_description', 'Quality Furniture at Affordable Prices'),
             ('admin_email', 'admin@ethiosadat.com'),
-            ('phone_number', '+251906020606'),
-            ('store_address', 'Addis Ababa, Ethiopia'),
-            ('meta_keywords', 'furniture, ethiosadat, addis ababa, sofa, bed'),
+            ('phone_number', '+251987957957'),
+            ('store_address', 'ወሎ ደሴ ኩታበር, Ethiopia'),
+            ('meta_keywords', 'furniture, ethiosadat, ወሎ ደሴ ኩታበር, sofa, bed'),
             ('google_analytics', ''),
         ]
         for key, value in extra_settings:
@@ -508,13 +508,13 @@ def init_db():
     cur.execute("SELECT COUNT(*) FROM branches")
     if cur.fetchone()[0] == 0:
         branches = [
-            ('መሀል መርካቶ ማርስ', 'ማርስ የገበያ ማእከል 2ኛ ፎቅ ሱቅ ቁጥር 230', 9.0100, 38.7450, '+251906020606', 1),
+            ('ወሎ ደሴ ኩታበር', 'ወሎ ደሴ ኩታበር', 11.1333, 39.6333, '+251987957957', 1),
             ('ቤተል', 'ቢጫ ፎቅ ጎን', 9.0080, 38.7600, '+251906080606', 2),
             ('ፉሪ ኖክ', 'ኖክ ማደያ ፊት ለፊት', 8.9900, 38.7300, '+251906090606', 3),
-            ('ድሬዳዋ መስቀለኛ', 'የሰይዶ ታክሲ ተራ ጋር', 9.5900, 41.8500, '+251906020606', 4),
+            ('ድሬዳዋ መስቀለኛ', 'የሰይዶ ታክሲ ተራ ጋር', 9.5900, 41.8500, '+251987957957', 4),
             ('ድሬዳዋ ሞል', 'ቢራ ሞል 1ኛ ፎቅ', 9.5950, 41.8550, '+251906080606', 5),
             ('አሶሳ', 'የተባበሩት ማዲያ ፊትለፊት', 10.0700, 34.5300, '+251906090606', 6),
-            ('ቡታጅራ', 'ቄጤማ መናኸሪያ ጎን', 8.1200, 38.3700, '+251906020606', 7),
+            ('ቡታጅራ', 'ቄጤማ መናኸሪያ ጎን', 8.1200, 38.3700, '+251987957957', 7),
             ('ሽሬ', 'ቶታል ማዲያ ፊትለፊት', 14.1000, 38.2800, '+251906080606', 8),
             ('ሰመራ', '', 11.7900, 41.0100, '+251906090606', 9),
         ]

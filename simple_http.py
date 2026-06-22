@@ -25,8 +25,8 @@ class EthiosadatHandler(BaseHTTPRequestHandler):
         <p>✅ Server is running successfully!</p>
         <p>Python 3.13 HTTP Server - Working without Flask</p>
         <hr>
-        <p>📞 Contact: 0906 020606</p>
-        <p>📍 Addis Ababa, Ethiopia</p>
+        <p>📞 Contact: 0987 957957</p>
+        <p>📍 ወሎ ደሴ ኩታበር, Ethiopia</p>
     </div>
 </body>
 </html>'''

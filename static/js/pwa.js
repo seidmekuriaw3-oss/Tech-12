@@ -527,7 +527,7 @@ class PushNotificationManager {
             }
         }
         
-        const notification = new Notification('Ethiosadat Furniture', {
+        const notification = new Notification('ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ', {
             body: 'Welcome to Ethiosadat! Discover our latest furniture collections.',
             icon: '/static/images/logo/logo-192.png',
             badge: '/static/images/logo/badge.png',

@@ -1,5 +1,5 @@
 // ==================== MODAL COMPONENT ====================
-// Professional Modal Dialog for Ethiosadat Furniture
+// Professional Modal Dialog for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 
 class Modal {
     constructor(options = {}) {

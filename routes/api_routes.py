@@ -1,5 +1,5 @@
 """
-API Routes for Ethiosadat Furniture
+API Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 
 This module contains all API endpoints for AJAX requests including:
 - Product search and filtering
@@ -881,9 +881,9 @@ def api_get_settings():
     return jsonify({
         'success': True,
         'settings': {
-            'site_name': settings.get('site_name', 'Ethiosadat Furniture'),
-            'site_phone': settings.get('site_phone', '+251906020606'),
-            'whatsapp_number': settings.get('whatsapp_number', '251906020606'),
+            'site_name': settings.get('site_name', 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ'),
+            'site_phone': settings.get('site_phone', '+251987957957'),
+            'whatsapp_number': settings.get('whatsapp_number', '251987957957'),
             'free_shipping_threshold': float(settings.get('free_shipping_threshold', 5000)),
             'shipping_cost': float(settings.get('shipping_cost', 200)),
             'currency': settings.get('currency', 'ETB')

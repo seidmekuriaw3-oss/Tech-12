@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Order Confirmed - Ethiosadat Furniture{% endblock %}
+{% block title %}Order Confirmed - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -201,7 +201,7 @@
     <div class="success-banner">
         <div class="success-icon">✅</div>
         <h1>Order Placed Successfully!</h1>
-        <p>Thank you for shopping with Ethiosadat Furniture</p>
+        <p>Thank you for shopping with ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</p>
         <div class="order-number-badge">Order #{{ order.order_number }}</div>
     </div>
 
@@ -285,7 +285,7 @@
             </div>
             <div class="info-item">
                 <label>Delivery City</label>
-                <span>{{ order.shipping_city or 'Addis Ababa' }}</span>
+                <span>{{ order.shipping_city or 'ወሎ ደሴ ኩታበር' }}</span>
             </div>
             {% if order.shipping_address %}
             <div class="info-item" style="grid-column: 1/-1;">

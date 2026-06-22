@@ -241,7 +241,7 @@ def test_checkout_route_post(client):
     response = client.post('/checkout', data={
         'customer_name': 'Test Customer',
         'customer_phone': '0912345678',
-        'customer_address': 'Addis Ababa',
+        'customer_address': 'ወሎ ደሴ ኩታበር',
         'customer_email': 'test@example.com'
     }, follow_redirects=True)
     assert response.status_code == 200

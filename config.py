@@ -53,7 +53,7 @@ class Config:
     # ============================================================
     
     # WhatsApp Business Integration
-    WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251906020606')
+    WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251987957957')
     
     # Admin Authentication
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '1234')

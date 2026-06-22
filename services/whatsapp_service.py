@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 # Get WhatsApp number from environment variable with fallback
-WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251906020606')
+WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251987957957')
 BACKUP_WHATSAPP_NUMBERS = ['251906080606', '251906090606']
 
 
@@ -92,7 +92,7 @@ class WhatsAppService:
             str: WhatsApp URL with encoded message
         """
         try:
-            message = "🛍️ *NEW ORDER - Ethiosadat Furniture*\n"
+            message = "🛍️ *NEW ORDER - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ*\n"
             message += "=" * 40 + "\n\n"
             
             if order_number:
@@ -123,7 +123,7 @@ class WhatsAppService:
             message += f"💵 *TOTAL:* {total} ETB\n"
             message += "=" * 40 + "\n"
             message += "🙏 Thank you for shopping with Ethiosadat!\n"
-            message += "📞 For inquiries, call: +251906020606"
+            message += "📞 For inquiries, call: +251987957957"
             
             encoded = urllib.parse.quote(message)
             phone = WhatsAppService.format_phone_number(WHATSAPP_NUMBER)
@@ -148,7 +148,7 @@ class WhatsAppService:
             str: WhatsApp URL with encoded message
         """
         try:
-            msg = "📬 *New Contact Message - Ethiosadat Furniture*\n"
+            msg = "📬 *New Contact Message - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ*\n"
             msg += "=" * 40 + "\n\n"
             msg += f"👤 *Name:* {name}\n"
             
@@ -161,7 +161,7 @@ class WhatsAppService:
             msg += f"💬 *Message:*\n{message_text}\n"
             msg += "=" * 40 + "\n"
             msg += "🕒 We will respond within 24 hours.\n"
-            msg += "📞 Call us: +251906020606"
+            msg += "📞 Call us: +251987957957"
             
             encoded = urllib.parse.quote(msg)
             phone = WhatsAppService.format_phone_number(WHATSAPP_NUMBER)
@@ -210,7 +210,7 @@ class WhatsAppService:
             str: WhatsApp URL with encoded invoice
         """
         try:
-            message = "🧾 *INVOICE - Ethiosadat Furniture*\n"
+            message = "🧾 *INVOICE - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ*\n"
             message += "=" * 40 + "\n\n"
             message += f"📋 *Order #:* {order_number}\n"
             message += f"👤 *Customer:* {customer_name}\n"
@@ -238,7 +238,7 @@ class WhatsAppService:
             message += "=" * 35 + "\n\n"
             message += "✅ Thank you for your purchase!\n"
             message += "🔗 Track your order: ethiosadat.com/orders\n"
-            message += "📞 Questions? Call: +251906020606"
+            message += "📞 Questions? Call: +251987957957"
             
             encoded = urllib.parse.quote(message)
             phone = WhatsAppService.format_phone_number(customer_phone)
@@ -284,7 +284,7 @@ class WhatsAppService:
             emoji = status_emojis.get(status, '📦')
             text = status_texts.get(status, f'Order status updated to: {status}')
             
-            message = f"{emoji} *Order Status Update - Ethiosadat Furniture*\n"
+            message = f"{emoji} *Order Status Update - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ*\n"
             message += "=" * 40 + "\n\n"
             message += f"📋 *Order #:* {order_number}\n"
             message += f"📊 *Status:* {status.upper()}\n\n"
@@ -294,7 +294,7 @@ class WhatsAppService:
                 message += f"📝 *Notes:* {notes}\n\n"
             
             message += "🔗 Track your order: ethiosadat.com/orders\n"
-            message += "📞 Questions? Call us: +251906020606\n"
+            message += "📞 Questions? Call us: +251987957957\n"
             message += "🙏 Thank you for shopping with Ethiosadat!"
             
             encoded = urllib.parse.quote(message)

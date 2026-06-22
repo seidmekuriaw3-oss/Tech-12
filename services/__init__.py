@@ -1,5 +1,5 @@
 """
-Services Package for Ethiosadat Furniture
+Services Package for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 
 This package contains all business logic services for:
 - Product management

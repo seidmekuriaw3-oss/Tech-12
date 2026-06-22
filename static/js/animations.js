@@ -1,5 +1,5 @@
 // ==================== ANIMATIONS.JS ====================
-// Professional Animations and Effects for Ethiosadat Furniture
+// Professional Animations and Effects for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 // Includes: Scroll animations, hover effects, loading animations, cart animations, etc.
 
 // ==================== DOM Ready ====================

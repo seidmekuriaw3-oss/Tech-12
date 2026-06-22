@@ -1,5 +1,5 @@
 """
-Cart Routes for Ethiosadat Furniture
+Cart Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 
 This module contains all cart-related routes including:
 - View cart
@@ -97,7 +97,7 @@ def view_cart():
     cursor = db.cursor()
     cursor.execute("SELECT key, value FROM settings")
     settings = {row['key']: row['value'] for row in cursor.fetchall()}
-    whatsapp_number = settings.get('whatsapp_number', '251906020606')
+    whatsapp_number = settings.get('whatsapp_number', '251987957957')
 
     return render_template('customer/cart.html',
                          cart_items=cart_items,

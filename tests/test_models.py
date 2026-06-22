@@ -337,7 +337,7 @@ def test_order_creation(app):
             'order_number': 'ORD-TEST-001',
             'customer_name': 'Test Customer',
             'customer_phone': '0912345678',
-            'customer_address': 'Addis Ababa',
+            'customer_address': 'ወሎ ደሴ ኩታበር',
             'customer_email': 'test@example.com',
             'items': items,
             'subtotal': 2000,

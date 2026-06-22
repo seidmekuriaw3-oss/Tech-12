@@ -21,7 +21,7 @@ def get_lang():
 
 # ==================== CONTACT / WHATSAPP ====================
 
-WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251906020606')
+WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251987957957')
 
 # ==================== SHIPPING & PRICING ====================
 

@@ -203,8 +203,8 @@ def seed_all(clear_existing=True):
         settings = [
             ('site_name', 'Ethiosadat Furniture'),
             ('site_email', 'info@ethiosadat.com'),
-            ('site_phone', '+251906020606'),
-            ('whatsapp_number', '251906020606'),
+            ('site_phone', '+251987957957'),
+            ('whatsapp_number', '251987957957'),
             ('free_shipping_threshold', '5000'),
             ('shipping_cost', '200'),
             ('currency', 'ETB'),
@@ -304,7 +304,7 @@ def seed_all(clear_existing=True):
         print("\n🌐 Website:")
         print("   http://localhost:5000")
         print("\n📱 WhatsApp Number:")
-        print("   251906020606")
+        print("   251987957957")
         print("\n💡 Next Steps:")
         print("   1. Add product images to static/uploads/products/")
         print("   2. Customize settings in admin panel")

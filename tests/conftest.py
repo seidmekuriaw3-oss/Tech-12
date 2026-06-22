@@ -170,7 +170,7 @@ def sample_order():
         'order_number': 'TEST-20241225-ABCD',
         'customer_name': 'Test Customer',
         'customer_phone': '0912345678',
-        'customer_address': 'Addis Ababa, Ethiopia',
+        'customer_address': 'ወሎ ደሴ ኩታበር, Ethiopia',
         'customer_email': 'test@example.com',
         'items': '[{"name": "Test Product", "price": 10000, "quantity": 1, "total": 10000}]',
         'subtotal': 10000,

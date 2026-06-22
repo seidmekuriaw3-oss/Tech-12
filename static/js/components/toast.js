@@ -1,5 +1,5 @@
 // ==================== TOAST NOTIFICATION COMPONENT ====================
-// Professional Toast Notifications for Ethiosadat Furniture
+// Professional Toast Notifications for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 
 class Toast {
     constructor(options = {}) {

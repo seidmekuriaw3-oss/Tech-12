@@ -56,7 +56,7 @@ def check_environment():
 FLASK_ENV=development
 SECRET_KEY=ethiosadat_default_secret_key_2026
 ADMIN_PASSWORD=1234
-WHATSAPP_NUMBER=251906020606
+WHATSAPP_NUMBER=251987957957
 DEBUG=True
 HOST=0.0.0.0
 PORT=5000
@@ -194,7 +194,7 @@ def run_development():
         
         print(f"🌐 Server running at: http://localhost:{port}")
         print(f"🔐 Admin login: http://localhost:{port}/login")
-        print(f"📱 WhatsApp: {os.environ.get('WHATSAPP_NUMBER', '251906020606')}")
+        print(f"📱 WhatsApp: {os.environ.get('WHATSAPP_NUMBER', '251987957957')}")
         print("\n" + "=" * 60)
         
         app.run(host=host, port=port, debug=debug)

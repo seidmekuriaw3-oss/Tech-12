@@ -1,5 +1,5 @@
 """
-Admin Routes for Ethiosadat Furniture
+Admin Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
 
 All admin panel routes: dashboard, products, ads, orders, users,
 inbox, reports, settings, reviews, translations, notifications.
@@ -1108,7 +1108,7 @@ th{{background:#1a73e8;color:white}}
 </style></head>
 <body>
 <div class="header">
-  <h1 class="invoice-title">Ethiosadat Furniture</h1>
+  <h1 class="invoice-title">ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</h1>
   <h2>INVOICE</h2>
 </div>
 <p><strong>Order #:</strong> {order['order_number']}</p>
@@ -1125,8 +1125,8 @@ th{{background:#1a73e8;color:white}}
   <p><strong>Total: {order['total']:.2f} ETB</strong></p>
 </div>
 <div class="footer">
-  <p>Thank you for shopping with Ethiosadat Furniture!</p>
-  <p>Addis Ababa, Ethiopia | +251 90 602 0606</p>
+  <p>Thank you for shopping with ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ!</p>
+  <p>ወሎ ደሴ ኩታበር, Ethiopia | +251 90 602 0606</p>
 </div>
 </body></html>"""
         return html
@@ -1530,12 +1530,12 @@ def settings():
     if request.method == 'POST':
         try:
             settings_to_save = [
-                ('site_name', request.form.get('site_name', 'Ethiosadat Furniture')),
+                ('site_name', request.form.get('site_name', 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ')),
                 ('site_description', request.form.get('site_description', '')),
                 ('admin_email', request.form.get('admin_email', 'admin@ethiosadat.com')),
-                ('whatsapp_number', request.form.get('whatsapp_number', '251906020606')),
-                ('phone_number', request.form.get('phone_number', '+251906020606')),
-                ('store_address', request.form.get('store_address', 'Addis Ababa, Ethiopia')),
+                ('whatsapp_number', request.form.get('whatsapp_number', '251987957957')),
+                ('phone_number', request.form.get('phone_number', '+251987957957')),
+                ('store_address', request.form.get('store_address', 'ወሎ ደሴ ኩታበር, Ethiopia')),
                 ('free_shipping_threshold', request.form.get('free_shipping_threshold', '5000')),
                 ('shipping_cost', request.form.get('shipping_cost', '200')),
                 ('currency', request.form.get('currency', 'ETB')),
