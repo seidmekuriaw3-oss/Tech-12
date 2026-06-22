@@ -188,6 +188,7 @@
         
         <!-- Login Form -->
         <form id="loginForm" method="post" action="{{ url_for('customer.user_login') }}" onsubmit="return validateAndSubmit(event)">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label>📧 Email Address</label>
                 <input type="email" name="email" id="loginEmail" class="form-control" 

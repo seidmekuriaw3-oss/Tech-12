@@ -209,6 +209,7 @@
         
         <!-- Registration Form -->
         <form method="post" action="{{ url_for('customer.user_register') }}" id="registerForm" onsubmit="return validateAndSubmit(event)">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label>👤 Full Name <span class="required-star">*</span></label>
                 <input type="text" name="full_name" id="fullName" class="form-control" required placeholder="John Doe" autofocus>

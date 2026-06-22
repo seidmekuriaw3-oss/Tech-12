@@ -137,6 +137,7 @@
 
     <!-- Main Form -->
     <form method="post" action="{{ url_for('admin.ad_edit', aid=ad.id) }}" enctype="multipart/form-data" id="adForm" onsubmit="return validateForm()">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="_method" value="PUT">
         
         <!-- Current Media Display -->

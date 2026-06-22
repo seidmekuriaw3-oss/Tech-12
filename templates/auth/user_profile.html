@@ -623,6 +623,7 @@
             <button class="modal-close-x" onclick="closeEditModal()">✕</button>
         </div>
         <form method="post" action="{{ url_for('customer.update_profile') }}" id="editForm" onsubmit="return submitEdit()">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-row">
                 <div class="fg">
                     <label>Full Name <span style="color:#e53935">*</span></label>

@@ -39,7 +39,7 @@ def admin_login():
         password = request.form.get('password', '').strip()
 
         admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
-        admin_password = os.environ.get('ADMIN_PASSWORD', 'admin123456')
+        admin_password = os.environ.get('ADMIN_PASSWORD', '')
 
         if username == admin_username and password == admin_password:
             session['admin'] = True

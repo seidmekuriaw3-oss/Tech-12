@@ -313,6 +313,7 @@
         
         <!-- Login Form -->
         <form method="post" action="{{ url_for('admin.admin_login') }}" id="loginForm" onsubmit="return handleSubmit(event)">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="input-group">
                  <label for="email">Username</label>
                  <input type="text" id="email" name="username" required placeholder="Enter admin username">
@@ -329,22 +330,6 @@
             <button type="submit" id="loginBtn">Login to Dashboard</button>
         </form>
         
-        <!-- Admin Demo Hint -->
-        <div style="
-            margin-top: 20px;
-            background: #f5f5f5;
-            border-radius: 12px;
-            padding: 12px 16px;
-            text-align: left;
-            font-size: 12px;
-            color: #666;
-            cursor: pointer;
-        " onclick="fillAdminDemo()" title="Click to auto-fill">
-            <p style="margin: 0 0 6px; font-weight: 600; color: #333;">🔑 Admin Credentials <span style="font-weight:normal;">(click to fill)</span></p>
-            <p style="margin: 2px 0;"><strong>Username:</strong> <code style="background:#e0e0e0;padding:1px 5px;border-radius:4px;">admin</code></p>
-            <p style="margin: 2px 0;"><strong>Password:</strong> <code style="background:#e0e0e0;padding:1px 5px;border-radius:4px;">1234</code></p>
-        </div>
-
         <div class="footer-links">
             <a href="{{ url_for('customer.index') }}">← Back to Store</a> | 
             <a href="{{ url_for('customer.contact') }}">Need Help?</a>

@@ -187,6 +187,7 @@
 
     <!-- Main Form -->
     <form method="post" action="{{ url_for('admin.product_create') }}" enctype="multipart/form-data" id="productForm" onsubmit="return validateForm()">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         
         <!-- Basic Information Section -->
         <div class="form-section">

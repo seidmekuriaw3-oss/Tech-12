@@ -1,3 +1,4 @@
 - [PostgreSQL-only DB setup](pg-setup.md) — models.py uses %s (not ?); db.py adapter still converts ? as safety net; always PostgreSQL via DATABASE_URL.
 - [Translation system](translation.md) — googletrans removed; translation_cache.py is now 100% static dict; product multilingual fields (name_am, name_ar etc.) used directly from DB.
 - [Pagination fix](pagination.md) — /products route uses SQL LIMIT/OFFSET + COUNT query; total_pages calculated with math.ceil; was hardcoded to 1 before.
+- [Security baseline](security.md) — CSRF via utils/csrf.py + session token; all 22 POST forms have hidden input; fetch interceptor in base.html + admin_base.html adds X-CSRFToken to AJAX; SECRET_KEY and ADMIN_PASSWORD raise RuntimeError if unset.

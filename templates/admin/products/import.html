@@ -378,7 +378,7 @@
 
         <form method="POST" enctype="multipart/form-data" id="importForm"
               action="{{ url_for('admin.import_products') }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="drop-zone" id="dropZone">
                 <input type="file" name="csv_file" id="csvFileInput"

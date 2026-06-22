@@ -136,6 +136,7 @@
 
     <!-- Main Form -->
     <form method="post" action="{{ url_for('admin.ad_create') }}" enctype="multipart/form-data" id="adForm" onsubmit="return validateForm()">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         
         <!-- Advertisement Text Section -->
         <div class="form-section">

@@ -134,6 +134,7 @@
 
     <!-- Main Settings Form -->
     <form method="post" action="{{ url_for('admin.settings') }}" id="settingsForm" onsubmit="return validateForm()">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         
         <!-- General Settings -->
         <div class="settings-card">
@@ -293,6 +294,7 @@
             {% endfor %}
         {% endwith %}
         <form method="post" action="{{ url_for('admin.change_password') }}" onsubmit="return validatePasswordForm()">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label>Current Password</label>
                 <input type="password" name="current_password" id="current_password" placeholder="Enter current password" autocomplete="current-password">

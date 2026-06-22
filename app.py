@@ -33,6 +33,7 @@ from middleware.auth import login_required, admin_required, user_login_required,
 from middleware.platform import get_platform, is_android_app
 from utils.translation_cache import translate_text, batch_translate, clear_translation_cache, get_translation_stats, FALLBACK_TEXTS
 from routes.shared import WHATSAPP_NUMBER
+from utils.csrf import generate_csrf, validate_csrf
 
 
 # ==================== 2. APP INITIALIZATION ====================
@@ -84,9 +85,10 @@ app.jinja_env.globals["format_price_number"] = format_price_number
 app.config.from_object(Config)
 _secret_key = os.environ.get('SECRET_KEY')
 if not _secret_key:
-    import secrets as _secrets
-    _secret_key = _secrets.token_hex(32)
-    print("WARNING: SECRET_KEY not set. Sessions will not persist across restarts.")
+    raise RuntimeError(
+        "SECRET_KEY environment variable is not set. "
+        "Set it in the Replit Secrets panel to a long random string."
+    )
 app.secret_key = _secret_key
 
 # Rate Limiter
@@ -129,7 +131,27 @@ security_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(leve
 app.logger.addHandler(file_handler)
 app.logger.addHandler(security_handler)
 
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123456')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')
+if not ADMIN_PASSWORD:
+    raise RuntimeError(
+        "ADMIN_PASSWORD environment variable is not set. "
+        "Set it in the Replit Secrets panel."
+    )
+
+# ── CSRF Protection ──────────────────────────────────────────────────────────
+app.jinja_env.globals['csrf_token'] = generate_csrf
+
+_CSRF_EXEMPT_PREFIXES = ('/api/', '/static/')
+
+
+@app.before_request
+def csrf_protect():
+    if request.method not in ('POST', 'PUT', 'PATCH', 'DELETE'):
+        return
+    for prefix in _CSRF_EXEMPT_PREFIXES:
+        if request.path.startswith(prefix):
+            return
+    validate_csrf()
 
 
 # ==================== 3. DATABASE INITIALIZATION ====================

@@ -69,6 +69,7 @@
         }
     </style>
     {% endblock %}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
 
@@ -454,6 +455,7 @@
         <!-- Login Form -->
         <div id="login-form">
             <form method="post" action="{{ url_for('customer.user_login') }}" onsubmit="submitLoginForm(event)">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-group">
                     <label>📧 Email</label>
                     <input type="email" name="email" required placeholder="your@email.com">
@@ -473,6 +475,7 @@
         <!-- Register Form -->
         <div id="register-form" style="display: none;">
             <form method="post" action="{{ url_for('customer.user_register') }}" onsubmit="submitRegisterForm(event)">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-group">
                     <label>👤 {{ t.full_name }}</label>
                     <input type="text" name="full_name" required placeholder="John Doe">
@@ -671,6 +674,26 @@
 </footer>
 
 <!-- ==================== SCRIPTS ==================== -->
+<script>
+    // ── CSRF fetch interceptor ─────────────────────────────────────────
+    (function() {
+        const _csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+        const _origFetch = window.fetch.bind(window);
+        const _exemptPrefixes = ['/api/', '/static/'];
+        window.fetch = function(url, opts) {
+            opts = opts || {};
+            const method = (opts.method || 'GET').toUpperCase();
+            if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+                const urlStr = typeof url === 'string' ? url : url.toString();
+                const isExempt = _exemptPrefixes.some(p => urlStr.startsWith(p));
+                if (!isExempt && _csrfToken) {
+                    opts.headers = Object.assign({}, opts.headers || {}, { 'X-CSRFToken': _csrfToken });
+                }
+            }
+            return _origFetch(url, opts);
+        };
+    })();
+</script>
 <script src="{{ url_for('static', filename='js/main.js') }}?v=2"></script>
 <script src="{{ url_for('static', filename='js/cart.js') }}?v=3"></script>
 <script src="{{ url_for('static', filename='js/components/modal.js') }}?v=3"></script>

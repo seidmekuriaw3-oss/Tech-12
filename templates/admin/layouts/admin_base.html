@@ -437,6 +437,7 @@
             }
         }
     </style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <!-- Mobile Toggle Button -->
@@ -599,6 +600,24 @@
     <script src="{{ url_for('static', filename='js/admin.js') }}?v=3"></script>
     
     <script>
+        // ── CSRF fetch interceptor ─────────────────────────────────────────
+        (function() {
+            const _csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+            const _origFetch = window.fetch.bind(window);
+            const _exemptPrefixes = ['/api/', '/static/'];
+            window.fetch = function(url, opts) {
+                opts = opts || {};
+                const method = (opts.method || 'GET').toUpperCase();
+                if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+                    const urlStr = typeof url === 'string' ? url : url.toString();
+                    const isExempt = _exemptPrefixes.some(p => urlStr.startsWith(p));
+                    if (!isExempt && _csrfToken) {
+                        opts.headers = Object.assign({}, opts.headers || {}, { 'X-CSRFToken': _csrfToken });
+                    }
+                }
+                return _origFetch(url, opts);
+            };
+        })();
         // Toggle sidebar on mobile
         function toggleSidebar() {
             const sidebar = document.getElementById('adminSidebar');
