@@ -361,7 +361,17 @@ def product_duplicate(pid):
         p = dict(product)
         new_name = f"Copy of {p.get('name', '')}"
         new_name_am = f"ቅጂ - {p.get('name_am', '')}" if p.get('name_am') else new_name
-        new_sku = f"COPY-{p.get('sku', str(pid))}"
+
+        # Generate a guaranteed-unique SKU by appending a short random suffix
+        import random, string
+        base_sku = p.get('sku') or str(pid)
+        while True:
+            suffix = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+            new_sku = f"COPY-{base_sku}-{suffix}"
+            cursor.execute("SELECT id FROM products WHERE sku = %s", (new_sku,))
+            if not cursor.fetchone():
+                break
+
         cursor.execute("""
             INSERT INTO products (
                 name, name_am, name_ar, name_en,
