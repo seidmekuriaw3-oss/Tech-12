@@ -32,7 +32,7 @@ class Product:
         """Get a single product by ID"""
         try:
             db = get_db()
-            return db.execute("SELECT * FROM products WHERE id = ?", (pid,)).fetchone()
+            return db.execute("SELECT * FROM products WHERE id = %s", (pid,)).fetchone()
         except Exception as e:
             print(f"Error getting product by ID {pid}: {e}")
             return None
@@ -43,7 +43,7 @@ class Product:
         try:
             db = get_db()
             return db.execute(
-                "SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY id DESC", 
+                "SELECT * FROM products WHERE category_id = %s AND is_active = 1 ORDER BY id DESC", 
                 (category_id,)
             ).fetchall()
         except Exception as e:
@@ -56,7 +56,7 @@ class Product:
         try:
             db = get_db()
             return db.execute(
-                "SELECT * FROM products WHERE is_featured = 1 AND is_active = 1 ORDER BY id DESC LIMIT ?",
+                "SELECT * FROM products WHERE is_featured = 1 AND is_active = 1 ORDER BY id DESC LIMIT %s",
                 (limit,)
             ).fetchall()
         except Exception as e:
@@ -69,7 +69,7 @@ class Product:
         try:
             db = get_db()
             return db.execute(
-                "SELECT * FROM products WHERE is_new = 1 AND is_active = 1 ORDER BY id DESC LIMIT ?",
+                "SELECT * FROM products WHERE is_new = 1 AND is_active = 1 ORDER BY id DESC LIMIT %s",
                 (limit,)
             ).fetchall()
         except Exception as e:
@@ -84,7 +84,7 @@ class Product:
             search = f'%{query}%'
             return db.execute(
                 """SELECT * FROM products 
-                   WHERE (name LIKE ? OR name_am LIKE ? OR name_ar LIKE ?) 
+                   WHERE (name LIKE %s OR name_am LIKE %s OR name_ar LIKE %s) 
                    AND is_active = 1
                    ORDER BY id DESC""",
                 (search, search, search)
@@ -130,7 +130,7 @@ class Product:
                     weight, dimensions, material, color,
                     category_id, views, sales_count,
                     meta_title, meta_description
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id""",
                 (
                     data.get('name', data.get('name_en', '')),
@@ -194,17 +194,17 @@ class Product:
             
             db.execute(
                 """UPDATE products SET 
-                    name=?, name_am=?, name_ar=?, name_en=?,
-                    description=?, description_am=?, description_ar=?, description_en=?,
-                    price=?, compare_price=?, cost=?, sku=?, barcode=?,
-                    stock_quantity=?, low_stock_threshold=?,
-                    images=?, thumbnail=?,
-                    is_featured=?, is_new=?,
-                    weight=?, dimensions=?, material=?, color=?,
-                    category_id=?,
-                    meta_title=?, meta_description=?,
+                    name=%s, name_am=%s, name_ar=%s, name_en=%s,
+                    description=%s, description_am=%s, description_ar=%s, description_en=%s,
+                    price=%s, compare_price=%s, cost=%s, sku=%s, barcode=%s,
+                    stock_quantity=%s, low_stock_threshold=%s,
+                    images=%s, thumbnail=%s,
+                    is_featured=%s, is_new=%s,
+                    weight=%s, dimensions=%s, material=%s, color=%s,
+                    category_id=%s,
+                    meta_title=%s, meta_description=%s,
                     updated_at=CURRENT_TIMESTAMP
-                   WHERE id=?""",
+                   WHERE id=%s""",
                 (
                     data.get('name', data.get('name_en', '')),
                     data.get('name_am', ''),
@@ -247,7 +247,7 @@ class Product:
         """Soft delete a product (set is_active to 0)"""
         try:
             db = get_db()
-            db.execute("UPDATE products SET is_active = 0 WHERE id = ?", (pid,))
+            db.execute("UPDATE products SET is_active = 0 WHERE id = %s", (pid,))
             db.commit()
             return True
         except Exception as e:
@@ -260,7 +260,7 @@ class Product:
         """Permanently delete a product"""
         try:
             db = get_db()
-            db.execute("DELETE FROM products WHERE id = ?", (pid,))
+            db.execute("DELETE FROM products WHERE id = %s", (pid,))
             db.commit()
             return True
         except Exception as e:
@@ -274,7 +274,7 @@ class Product:
         try:
             db = get_db()
             db.execute(
-                "UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ? AND stock_quantity >= ?",
+                "UPDATE products SET stock_quantity = stock_quantity - %s WHERE id = %s AND stock_quantity >= %s",
                 (quantity, pid, quantity)
             )
             db.commit()
@@ -290,7 +290,7 @@ class Product:
         try:
             db = get_db()
             return db.execute(
-                "SELECT * FROM products WHERE stock_quantity <= ? AND stock_quantity > 0 AND is_active = 1 ORDER BY stock_quantity ASC",
+                "SELECT * FROM products WHERE stock_quantity <= %s AND stock_quantity > 0 AND is_active = 1 ORDER BY stock_quantity ASC",
                 (threshold,)
             ).fetchall()
         except Exception as e:
@@ -344,7 +344,7 @@ class Ad:
         """Get a single advertisement by ID"""
         try:
             db = get_db()
-            return db.execute("SELECT * FROM advertisements WHERE id = ?", (aid,)).fetchone()
+            return db.execute("SELECT * FROM advertisements WHERE id = %s", (aid,)).fetchone()
         except Exception as e:
             print(f"Error getting ad by ID {aid}: {e}")
             return None
@@ -358,7 +358,7 @@ class Ad:
                 """INSERT INTO advertisements (
                     title, title_am, title_ar, description, description_am, description_ar,
                     image, link, sort_order, is_active, start_date, end_date
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id""",
                 (
                     data.get('title', ''),
@@ -390,10 +390,10 @@ class Ad:
             db = get_db()
             db.execute(
                 """UPDATE advertisements SET 
-                    title=?, title_am=?, title_ar=?, 
-                    description=?, description_am=?, description_ar=?,
-                    image=?, link=?, sort_order=?
-                   WHERE id=?""",
+                    title=%s, title_am=%s, title_ar=%s, 
+                    description=%s, description_am=%s, description_ar=%s,
+                    image=%s, link=%s, sort_order=%s
+                   WHERE id=%s""",
                 (
                     data.get('title', ''),
                     data.get('title_am', ''),
@@ -419,7 +419,7 @@ class Ad:
         """Delete an advertisement by ID"""
         try:
             db = get_db()
-            db.execute("DELETE FROM advertisements WHERE id = ?", (aid,))
+            db.execute("DELETE FROM advertisements WHERE id = %s", (aid,))
             db.commit()
             return True
         except Exception as e:
@@ -433,7 +433,7 @@ class Ad:
         try:
             db = get_db()
             db.execute(
-                "UPDATE advertisements SET is_active = 1 - is_active WHERE id = ?",
+                "UPDATE advertisements SET is_active = 1 - is_active WHERE id = %s",
                 (aid,)
             )
             db.commit()
@@ -482,7 +482,7 @@ class Order:
                     order_number, user_id, status, payment_status, payment_method,
                     subtotal, discount, shipping_fee, total,
                     shipping_address, shipping_city, shipping_phone, notes
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id""",
                 (
                     order_number,
@@ -508,18 +508,18 @@ class Order:
             for item in order_data['items']:
                 db.execute(
                     """INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
-                       VALUES (?, ?, ?, ?)""",
+                       VALUES (%s, %s, %s, %s)""",
                     (order_id, item['product_id'], item['quantity'], item['price'])
                 )
                 
                 # Update product stock
                 db.execute(
-                    "UPDATE products SET stock_quantity = stock_quantity - ?, sales_count = sales_count + ? WHERE id = ?",
+                    "UPDATE products SET stock_quantity = stock_quantity - %s, sales_count = sales_count + %s WHERE id = %s",
                     (item['quantity'], item['quantity'], item['product_id'])
                 )
             
             # Clear user's cart
-            db.execute("DELETE FROM cart_items WHERE user_id = ?", (order_data['user_id'],))
+            db.execute("DELETE FROM cart_items WHERE user_id = %s", (order_data['user_id'],))
             
             db.commit()
             return order_id
@@ -543,7 +543,7 @@ class Order:
         """Get a single order by ID"""
         try:
             db = get_db()
-            return db.execute("SELECT * FROM orders WHERE id = ?", (oid,)).fetchone()
+            return db.execute("SELECT * FROM orders WHERE id = %s", (oid,)).fetchone()
         except Exception as e:
             print(f"Error getting order by ID {oid}: {e}")
             return None
@@ -554,7 +554,7 @@ class Order:
         try:
             db = get_db()
             return db.execute(
-                "SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC",
+                "SELECT * FROM orders WHERE user_id = %s ORDER BY id DESC",
                 (user_id,)
             ).fetchall()
         except Exception as e:
@@ -567,7 +567,7 @@ class Order:
         try:
             db = get_db()
             return db.execute(
-                "SELECT * FROM orders WHERE order_number = ?", 
+                "SELECT * FROM orders WHERE order_number = %s", 
                 (order_number,)
             ).fetchone()
         except Exception as e:
@@ -583,7 +583,7 @@ class Order:
                 """SELECT oi.*, p.name, p.name_am, p.name_ar, p.thumbnail 
                    FROM order_items oi
                    JOIN products p ON oi.product_id = p.id
-                   WHERE oi.order_id = ?""",
+                   WHERE oi.order_id = %s""",
                 (order_id,)
             ).fetchall()
         except Exception as e:
@@ -596,7 +596,7 @@ class Order:
         try:
             db = get_db()
             db.execute(
-                "UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                "UPDATE orders SET status = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
                 (status, oid)
             )
             db.commit()
@@ -612,7 +612,7 @@ class Order:
         try:
             db = get_db()
             db.execute(
-                "UPDATE orders SET payment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                "UPDATE orders SET payment_status = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
                 (payment_status, oid)
             )
             db.commit()
@@ -628,7 +628,7 @@ class Order:
         try:
             db = get_db()
             return db.execute(
-                "SELECT * FROM orders WHERE status = ? ORDER BY id DESC",
+                "SELECT * FROM orders WHERE status = %s ORDER BY id DESC",
                 (status,)
             ).fetchall()
         except Exception as e:
@@ -682,8 +682,8 @@ class Order:
         """Delete an order by ID"""
         try:
             db = get_db()
-            db.execute("DELETE FROM order_items WHERE order_id = ?", (oid,))
-            db.execute("DELETE FROM orders WHERE id = ?", (oid,))
+            db.execute("DELETE FROM order_items WHERE order_id = %s", (oid,))
+            db.execute("DELETE FROM orders WHERE id = %s", (oid,))
             db.commit()
             return True
         except Exception as e:
@@ -699,7 +699,7 @@ class User:
     def get_by_id(uid):
         try:
             db = get_db()
-            return db.execute("SELECT * FROM users WHERE id = ?", (uid,)).fetchone()
+            return db.execute("SELECT * FROM users WHERE id = %s", (uid,)).fetchone()
         except Exception as e:
             print(f"Error getting user by ID {uid}: {e}")
             return None
@@ -708,7 +708,7 @@ class User:
     def get_by_username(username):
         try:
             db = get_db()
-            return db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+            return db.execute("SELECT * FROM users WHERE username = %s", (username,)).fetchone()
         except Exception as e:
             print(f"Error getting user by username: {e}")
             return None
@@ -717,7 +717,7 @@ class User:
     def get_by_email(email):
         try:
             db = get_db()
-            return db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+            return db.execute("SELECT * FROM users WHERE email = %s", (email,)).fetchone()
         except Exception as e:
             print(f"Error getting user by email: {e}")
             return None
@@ -737,7 +737,7 @@ class User:
             db = get_db()
             cursor = db.execute(
                 """INSERT INTO users (username, email, password_hash, full_name, phone, address, city, is_admin, is_active)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (
                     data.get('username'),
                     data.get('email'),
@@ -762,8 +762,8 @@ class User:
         try:
             db = get_db()
             db.execute(
-                """UPDATE users SET full_name=?, phone=?, address=?, city=?, updated_at=CURRENT_TIMESTAMP
-                   WHERE id=?""",
+                """UPDATE users SET full_name=%s, phone=%s, address=%s, city=%s, updated_at=CURRENT_TIMESTAMP
+                   WHERE id=%s""",
                 (data.get('full_name'), data.get('phone'), data.get('address'), data.get('city'), uid)
             )
             db.commit()
@@ -777,7 +777,7 @@ class User:
     def update_last_login(uid):
         try:
             db = get_db()
-            db.execute("UPDATE users SET last_login=CURRENT_TIMESTAMP WHERE id=?", (uid,))
+            db.execute("UPDATE users SET last_login=CURRENT_TIMESTAMP WHERE id=%s", (uid,))
             db.commit()
         except Exception as e:
             print(f"Error updating last login for user {uid}: {e}")
@@ -786,7 +786,7 @@ class User:
     def delete(uid):
         try:
             db = get_db()
-            db.execute("DELETE FROM users WHERE id=?", (uid,))
+            db.execute("DELETE FROM users WHERE id=%s", (uid,))
             db.commit()
             return True
         except Exception as e:
@@ -820,7 +820,7 @@ class Category:
     def get_by_id(cid):
         try:
             db = get_db()
-            return db.execute("SELECT * FROM categories WHERE id=?", (cid,)).fetchone()
+            return db.execute("SELECT * FROM categories WHERE id=%s", (cid,)).fetchone()
         except Exception as e:
             print(f"Error getting category {cid}: {e}")
             return None
@@ -830,7 +830,7 @@ class Category:
         try:
             db = get_db()
             cursor = db.execute(
-                "INSERT INTO categories (name, name_am, name_ar, description, icon, image, sort_order, is_active) VALUES (?,?,?,?,?,?,?,?)",
+                "INSERT INTO categories (name, name_am, name_ar, description, icon, image, sort_order, is_active) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
                 (data.get('name'), data.get('name_am'), data.get('name_ar'), data.get('description'),
                  data.get('icon'), data.get('image'), data.get('sort_order', 0), data.get('is_active', 1))
             )
@@ -846,7 +846,7 @@ class Category:
         try:
             db = get_db()
             db.execute(
-                "UPDATE categories SET name=?, name_am=?, name_ar=?, description=?, icon=?, image=?, sort_order=?, is_active=? WHERE id=?",
+                "UPDATE categories SET name=%s, name_am=%s, name_ar=%s, description=%s, icon=%s, image=%s, sort_order=%s, is_active=%s WHERE id=%s",
                 (data.get('name'), data.get('name_am'), data.get('name_ar'), data.get('description'),
                  data.get('icon'), data.get('image'), data.get('sort_order', 0), data.get('is_active', 1), cid)
             )
@@ -861,7 +861,7 @@ class Category:
     def delete(cid):
         try:
             db = get_db()
-            db.execute("DELETE FROM categories WHERE id=?", (cid,))
+            db.execute("DELETE FROM categories WHERE id=%s", (cid,))
             db.commit()
             return True
         except Exception as e:
@@ -880,7 +880,7 @@ class CartItem:
             return db.execute(
                 """SELECT ci.*, p.name, p.name_am, p.thumbnail, p.price, p.compare_price, p.stock_quantity
                    FROM cart_items ci JOIN products p ON ci.product_id = p.id
-                   WHERE ci.user_id=?""",
+                   WHERE ci.user_id=%s""",
                 (user_id,)
             ).fetchall()
         except Exception as e:
@@ -892,17 +892,17 @@ class CartItem:
         try:
             db = get_db()
             existing = db.execute(
-                "SELECT id, quantity FROM cart_items WHERE user_id=? AND product_id=?",
+                "SELECT id, quantity FROM cart_items WHERE user_id=%s AND product_id=%s",
                 (user_id, product_id)
             ).fetchone()
             if existing:
                 db.execute(
-                    "UPDATE cart_items SET quantity=quantity+? WHERE id=?",
+                    "UPDATE cart_items SET quantity=quantity+%s WHERE id=%s",
                     (quantity, existing['id'])
                 )
             else:
                 db.execute(
-                    "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?,?,?)",
+                    "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s,%s,%s)",
                     (user_id, product_id, quantity)
                 )
             db.commit()
@@ -916,7 +916,7 @@ class CartItem:
     def update_quantity(item_id, quantity):
         try:
             db = get_db()
-            db.execute("UPDATE cart_items SET quantity=? WHERE id=?", (quantity, item_id))
+            db.execute("UPDATE cart_items SET quantity=%s WHERE id=%s", (quantity, item_id))
             db.commit()
             return True
         except Exception as e:
@@ -928,7 +928,7 @@ class CartItem:
     def remove(item_id):
         try:
             db = get_db()
-            db.execute("DELETE FROM cart_items WHERE id=?", (item_id,))
+            db.execute("DELETE FROM cart_items WHERE id=%s", (item_id,))
             db.commit()
             return True
         except Exception as e:
@@ -940,7 +940,7 @@ class CartItem:
     def clear(user_id):
         try:
             db = get_db()
-            db.execute("DELETE FROM cart_items WHERE user_id=?", (user_id,))
+            db.execute("DELETE FROM cart_items WHERE user_id=%s", (user_id,))
             db.commit()
             return True
         except Exception as e:
@@ -953,7 +953,7 @@ class CartItem:
         try:
             db = get_db()
             result = db.execute(
-                "SELECT SUM(quantity) FROM cart_items WHERE user_id=?", (user_id,)
+                "SELECT SUM(quantity) FROM cart_items WHERE user_id=%s", (user_id,)
             ).fetchone()
             return result[0] or 0
         except Exception as e:
@@ -971,7 +971,7 @@ class OrderItem:
             return db.execute(
                 """SELECT oi.*, p.name, p.name_am, p.thumbnail
                    FROM order_items oi JOIN products p ON oi.product_id = p.id
-                   WHERE oi.order_id=?""",
+                   WHERE oi.order_id=%s""",
                 (order_id,)
             ).fetchall()
         except Exception as e:
@@ -998,7 +998,7 @@ class Branch:
     def get_by_id(bid):
         try:
             db = get_db()
-            return db.execute("SELECT * FROM branches WHERE id=?", (bid,)).fetchone()
+            return db.execute("SELECT * FROM branches WHERE id=%s", (bid,)).fetchone()
         except Exception as e:
             print(f"Error getting branch {bid}: {e}")
             return None
@@ -1010,7 +1010,7 @@ class Branch:
             cursor = db.execute(
                 """INSERT INTO branches (name, name_am, name_ar, address, address_am, address_ar,
                    phone, email, latitude, longitude, working_hours, image, sort_order, is_active)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                    RETURNING id""",
                 (data.get('name'), data.get('name_am'), data.get('name_ar'),
                  data.get('address'), data.get('address_am'), data.get('address_ar'),
@@ -1032,9 +1032,9 @@ class Branch:
         try:
             db = get_db()
             db.execute(
-                """UPDATE branches SET name=?, name_am=?, name_ar=?, address=?, address_am=?, address_ar=?,
-                   phone=?, email=?, latitude=?, longitude=?, working_hours=?, image=?, sort_order=?, is_active=?
-                   WHERE id=?""",
+                """UPDATE branches SET name=%s, name_am=%s, name_ar=%s, address=%s, address_am=%s, address_ar=%s,
+                   phone=%s, email=%s, latitude=%s, longitude=%s, working_hours=%s, image=%s, sort_order=%s, is_active=%s
+                   WHERE id=%s""",
                 (data.get('name'), data.get('name_am'), data.get('name_ar'),
                  data.get('address'), data.get('address_am'), data.get('address_ar'),
                  data.get('phone'), data.get('email'),
@@ -1053,7 +1053,7 @@ class Branch:
     def delete(bid):
         try:
             db = get_db()
-            db.execute("DELETE FROM branches WHERE id=?", (bid,))
+            db.execute("DELETE FROM branches WHERE id=%s", (bid,))
             db.commit()
             return True
         except Exception as e:
@@ -1078,7 +1078,7 @@ class Notification:
     def get_by_id(nid):
         try:
             db = get_db()
-            return db.execute("SELECT * FROM notifications WHERE id=?", (nid,)).fetchone()
+            return db.execute("SELECT * FROM notifications WHERE id=%s", (nid,)).fetchone()
         except Exception as e:
             print(f"Error getting notification {nid}: {e}")
             return None
@@ -1090,7 +1090,7 @@ class Notification:
             cursor = db.execute(
                 """INSERT INTO notifications (title, title_am, title_ar, body, body_am, body_ar,
                    image, link, target_audience, created_by)
-                   VALUES (?,?,?,?,?,?,?,?,?,?)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                    RETURNING id""",
                 (data.get('title'), data.get('title_am'), data.get('title_ar'),
                  data.get('body'), data.get('body_am'), data.get('body_ar'),
@@ -1109,7 +1109,7 @@ class Notification:
     def delete(nid):
         try:
             db = get_db()
-            db.execute("DELETE FROM notifications WHERE id=?", (nid,))
+            db.execute("DELETE FROM notifications WHERE id=%s", (nid,))
             db.commit()
             return True
         except Exception as e:

@@ -1,32 +1,24 @@
 """
-Translation Cache Module for Ethiosadat Furniture
+Translation Cache Module for Ethiosadat / Semira Fashion
 
-This module provides cached backend translation using googletrans.
-Supports Amharic (am), English (en), and Arabic (ar).
+Static translation fallbacks for Amharic (am), English (en), and Arabic (ar).
+Dynamic translation via googletrans has been removed — it was unreliable due to
+frequent Google API changes. All UI strings are served from the static dictionary
+below; product content uses the pre-stored multilingual columns in the database
+(name, name_am, name_ar / description, description_am, description_ar).
 """
 
 import logging
 from functools import lru_cache
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-# Language code mappings for googletrans
-LANGUAGE_CODES = {
-    'am': 'am',      # Amharic
-    'en': 'en',      # English
-    'ar': 'ar',      # Arabic
-}
-
-# Fallback translations for critical errors and common UI elements
 FALLBACK_TEXTS = {
     'am': {
-        # Errors
         'error': 'ስህተት አለ',
         'loading': 'በመጫን ላይ...',
         'sorry': 'ይቅርታ',
         'try_again': 'እንደገና ይሞክሩ',
-        # Common UI
         'home': 'መነሻ',
         'products': 'ምርቶች',
         'cart': 'ጋሪ',
@@ -36,21 +28,90 @@ FALLBACK_TEXTS = {
         'add': 'ጨምር',
         'delete': 'ሰርዝ',
         'edit': 'ቀይር',
-        'save': 'ያስቀምጡ',
-        'cancel': 'ይቅርታ',
+        'save': 'አስቀምጥ',
+        'cancel': 'ሰርዝ',
         'close': 'ዝጋ',
         'submit': 'ላክ',
         'logout': 'ውጣ',
-        'login': 'ገባ',
+        'login': 'ግባ',
         'register': 'ተመዝገብ',
+        'categories': 'ምድቦች',
+        'orders': 'ትዕዛዞች',
+        'settings': 'ቅንብሮች',
+        'dashboard': 'ዳሽቦርድ',
+        'admin': 'አስተዳዳሪ',
+        'profile': 'መገለጫ',
+        'wishlist': 'የምወዳቸው',
+        'reviews': 'ግምገማዎች',
+        'branches': 'ቅርንጫፎች',
+        'contact': 'ያግኙን',
+        'about': 'ስለ እኛ',
+        'price': 'ዋጋ',
+        'stock': 'ክምችት',
+        'quantity': 'ብዛት',
+        'total': 'ድምር',
+        'shipping': 'ማጓጓዣ',
+        'free_shipping': 'ነፃ ማጓጓዣ',
+        'checkout': 'ክፍያ',
+        'order_placed': 'ትዕዛዝ ተቀበለ',
+        'out_of_stock': 'አልቋል',
+        'in_stock': 'አለ',
+        'featured': 'ተለዩ',
+        'new': 'አዲስ',
+        'sale': 'ቅናሽ',
+        'no_products': 'ምርቶች አልተገኙም',
+        'add_to_cart': 'ወደ ጋሪ ጨምር',
+        'buy_now': 'አሁን ግዛ',
+        'continue_shopping': 'ግዢ ቀጥል',
+        'empty_cart': 'ጋሪ ባዶ ነው',
+        'language': 'ቋንቋ',
+        'currency': 'ምንዛሬ',
+        'whatsapp_order': 'በ WhatsApp ትዕዛዝ',
+        'payment_method': 'የክፍያ ዘዴ',
+        'cash_on_delivery': 'ሲደርስ ይከፈላል',
+        'address': 'አድራሻ',
+        'phone': 'ስልክ',
+        'name': 'ስም',
+        'email': 'ኢሜይል',
+        'password': 'የይለፍ ቃል',
+        'confirm_password': 'የይለፍ ቃል አረጋግጥ',
+        'forgot_password': 'የይለፍ ቃልዎን ረሱ?',
+        'sign_in': 'ግቡ',
+        'sign_up': 'ተመዝገቡ',
+        'welcome': 'እንኳን ደህና መጡ',
+        'thank_you': 'አመሰግናለሁ',
+        'success': 'ተሳካ',
+        'failed': 'አልተሳካም',
+        'page_not_found': 'ገጽ አልተገኘም',
+        'server_error': 'የሰርቨር ስህተት',
+        'no_results': 'ምንም ውጤት አልተገኘም',
+        'view_all': 'ሁሉንም ይመልከቱ',
+        'read_more': 'ተጨማሪ አንብብ',
+        'share': 'አጋራ',
+        'copy_link': 'ሊንክ ቅዳ',
+        'color': 'ቀለም',
+        'material': 'ቁሳቁስ',
+        'dimensions': 'መጠኖች',
+        'weight': 'ክብደት',
+        'description': 'መግለጫ',
+        'related_products': 'ተዛማጅ ምርቶች',
+        'recently_viewed': 'በቅርቡ የታዩ',
+        'notifications': 'ማሳወቂያዎች',
+        'mark_all_read': 'ሁሉንም እንደተነበበ ምልክት አድርግ',
+        'no_notifications': 'ምንም ማሳወቂያ የለም',
+        'filter': 'አጣራ',
+        'sort_by': 'ደርድር',
+        'newest': 'አዲስ',
+        'oldest': 'ቀድሞ',
+        'price_low_high': 'ዋጋ: ዝቅ ወደ ላይ',
+        'price_high_low': 'ዋጋ: ከፍ ወደ ታች',
+        'popular': 'ታዋቂ',
     },
     'en': {
-        # Errors
         'error': 'An error occurred',
         'loading': 'Loading...',
         'sorry': 'Sorry',
         'try_again': 'Try again',
-        # Common UI
         'home': 'Home',
         'products': 'Products',
         'cart': 'Cart',
@@ -67,14 +128,83 @@ FALLBACK_TEXTS = {
         'logout': 'Logout',
         'login': 'Login',
         'register': 'Register',
+        'categories': 'Categories',
+        'orders': 'Orders',
+        'settings': 'Settings',
+        'dashboard': 'Dashboard',
+        'admin': 'Admin',
+        'profile': 'Profile',
+        'wishlist': 'Wishlist',
+        'reviews': 'Reviews',
+        'branches': 'Branches',
+        'contact': 'Contact Us',
+        'about': 'About Us',
+        'price': 'Price',
+        'stock': 'Stock',
+        'quantity': 'Quantity',
+        'total': 'Total',
+        'shipping': 'Shipping',
+        'free_shipping': 'Free Shipping',
+        'checkout': 'Checkout',
+        'order_placed': 'Order Placed',
+        'out_of_stock': 'Out of Stock',
+        'in_stock': 'In Stock',
+        'featured': 'Featured',
+        'new': 'New',
+        'sale': 'Sale',
+        'no_products': 'No products found',
+        'add_to_cart': 'Add to Cart',
+        'buy_now': 'Buy Now',
+        'continue_shopping': 'Continue Shopping',
+        'empty_cart': 'Your cart is empty',
+        'language': 'Language',
+        'currency': 'Currency',
+        'whatsapp_order': 'Order via WhatsApp',
+        'payment_method': 'Payment Method',
+        'cash_on_delivery': 'Cash on Delivery',
+        'address': 'Address',
+        'phone': 'Phone',
+        'name': 'Name',
+        'email': 'Email',
+        'password': 'Password',
+        'confirm_password': 'Confirm Password',
+        'forgot_password': 'Forgot your password?',
+        'sign_in': 'Sign In',
+        'sign_up': 'Sign Up',
+        'welcome': 'Welcome',
+        'thank_you': 'Thank You',
+        'success': 'Success',
+        'failed': 'Failed',
+        'page_not_found': 'Page Not Found',
+        'server_error': 'Server Error',
+        'no_results': 'No results found',
+        'view_all': 'View All',
+        'read_more': 'Read More',
+        'share': 'Share',
+        'copy_link': 'Copy Link',
+        'color': 'Color',
+        'material': 'Material',
+        'dimensions': 'Dimensions',
+        'weight': 'Weight',
+        'description': 'Description',
+        'related_products': 'Related Products',
+        'recently_viewed': 'Recently Viewed',
+        'notifications': 'Notifications',
+        'mark_all_read': 'Mark all as read',
+        'no_notifications': 'No notifications',
+        'filter': 'Filter',
+        'sort_by': 'Sort By',
+        'newest': 'Newest',
+        'oldest': 'Oldest',
+        'price_low_high': 'Price: Low to High',
+        'price_high_low': 'Price: High to Low',
+        'popular': 'Popular',
     },
     'ar': {
-        # Errors
         'error': 'حدث خطأ',
         'loading': 'جاري التحميل...',
         'sorry': 'عذرا',
         'try_again': 'حاول مجددا',
-        # Common UI
         'home': 'الرئيسية',
         'products': 'المنتجات',
         'cart': 'السلة',
@@ -91,140 +221,130 @@ FALLBACK_TEXTS = {
         'logout': 'تسجيل الخروج',
         'login': 'تسجيل الدخول',
         'register': 'تسجيل',
+        'categories': 'الفئات',
+        'orders': 'الطلبات',
+        'settings': 'الإعدادات',
+        'dashboard': 'لوحة التحكم',
+        'admin': 'الإدارة',
+        'profile': 'الملف الشخصي',
+        'wishlist': 'قائمة الأمنيات',
+        'reviews': 'التقييمات',
+        'branches': 'الفروع',
+        'contact': 'اتصل بنا',
+        'about': 'من نحن',
+        'price': 'السعر',
+        'stock': 'المخزون',
+        'quantity': 'الكمية',
+        'total': 'الإجمالي',
+        'shipping': 'الشحن',
+        'free_shipping': 'شحن مجاني',
+        'checkout': 'الدفع',
+        'order_placed': 'تم تقديم الطلب',
+        'out_of_stock': 'غير متوفر',
+        'in_stock': 'متوفر',
+        'featured': 'مميز',
+        'new': 'جديد',
+        'sale': 'خصم',
+        'no_products': 'لا توجد منتجات',
+        'add_to_cart': 'أضف إلى السلة',
+        'buy_now': 'اشتر الآن',
+        'continue_shopping': 'مواصلة التسوق',
+        'empty_cart': 'السلة فارغة',
+        'language': 'اللغة',
+        'currency': 'العملة',
+        'whatsapp_order': 'الطلب عبر واتساب',
+        'payment_method': 'طريقة الدفع',
+        'cash_on_delivery': 'الدفع عند الاستلام',
+        'address': 'العنوان',
+        'phone': 'الهاتف',
+        'name': 'الاسم',
+        'email': 'البريد الإلكتروني',
+        'password': 'كلمة المرور',
+        'confirm_password': 'تأكيد كلمة المرور',
+        'forgot_password': 'نسيت كلمة المرور؟',
+        'sign_in': 'تسجيل الدخول',
+        'sign_up': 'إنشاء حساب',
+        'welcome': 'مرحبا',
+        'thank_you': 'شكرا',
+        'success': 'نجح',
+        'failed': 'فشل',
+        'page_not_found': 'الصفحة غير موجودة',
+        'server_error': 'خطأ في الخادم',
+        'no_results': 'لا توجد نتائج',
+        'view_all': 'عرض الكل',
+        'read_more': 'اقرأ المزيد',
+        'share': 'مشاركة',
+        'copy_link': 'نسخ الرابط',
+        'color': 'اللون',
+        'material': 'المادة',
+        'dimensions': 'الأبعاد',
+        'weight': 'الوزن',
+        'description': 'الوصف',
+        'related_products': 'منتجات ذات صلة',
+        'recently_viewed': 'شاهدته مؤخرا',
+        'notifications': 'الإشعارات',
+        'mark_all_read': 'تعليم الكل كمقروء',
+        'no_notifications': 'لا توجد إشعارات',
+        'filter': 'تصفية',
+        'sort_by': 'ترتيب حسب',
+        'newest': 'الأحدث',
+        'oldest': 'الأقدم',
+        'price_low_high': 'السعر: من الأقل للأعلى',
+        'price_high_low': 'السعر: من الأعلى للأقل',
+        'popular': 'الأكثر شعبية',
     }
 }
-
-# Initialize googletrans translator with safe fallback
-translator = None
-GOOGLETRANS_AVAILABLE = False
-
-try:
-    from googletrans import Translator
-    translator = Translator()
-    GOOGLETRANS_AVAILABLE = True
-    logger.info("googletrans initialized successfully")
-except ImportError:
-    logger.info("googletrans not available - using fallback translations only (safe for Python 3.14)")
-except ModuleNotFoundError:
-    logger.info("googletrans module not found - using fallback translations only (safe for Python 3.14)")
-except Exception as e:
-    logger.warning(f"Failed to initialize googletrans: {str(e)} - Using fallback translations")
 
 
 @lru_cache(maxsize=2000)
 def translate_text(text, target_lang='en'):
     """
-    Translate text to target language with intelligent caching and fallback.
-    
-    Supports: Amharic (am), English (en), Arabic (ar)
-    Falls back gracefully to manual translations if googletrans unavailable.
-    
-    Args:
-        text (str): Text to translate
-        target_lang (str): Target language code ('am', 'en', 'ar')
-    
-    Returns:
-        str: Translated text or original text if translation fails
+    Return translation from the static dictionary.
+    If the key is not found, return the original text unchanged.
+    Product content should use the multilingual DB columns directly
+    (name_am, name_ar, description_am, description_ar, etc.).
     """
-    # Validate inputs
     if not text or not isinstance(text, str):
         return text
-    
     text = text.strip()
     if not text:
         return text
-    
-    # Validate language code
-    if target_lang not in LANGUAGE_CODES:
-        logger.debug(f"Unsupported language code: {target_lang}. Using English.")
+    if target_lang not in FALLBACK_TEXTS:
         target_lang = 'en'
-    
-    # If target is English, return original text
-    if target_lang == 'en':
-        return text
-    
-    # Check fallback translations first (faster and more reliable)
-    fallback_dict = FALLBACK_TEXTS.get(target_lang, {})
-    if text.lower() in fallback_dict:
-        return fallback_dict[text.lower()]
-    
-    # Try googletrans if available
-    if GOOGLETRANS_AVAILABLE and translator:
-        try:
-            result = translator.translate(text, src_language='en', dest_language=LANGUAGE_CODES[target_lang])
-            if result:
-                translated = result.get('text', text) if isinstance(result, dict) else getattr(result, 'text', text)
-                if translated and translated != text:
-                    logger.debug(f"Translated to {target_lang}: {text[:40]}... -> {translated[:40]}...")
-                    return translated
-        except Exception as e:
-            logger.debug(f"Translation failed for '{text[:40]}...': {str(e)}")
-    
-    # Return original text as final fallback
-    return text
+    fallback = FALLBACK_TEXTS[target_lang]
+    return fallback.get(text.lower(), text)
 
 
 def get_text(key, lang='en', default=None):
-    """
-    Get text from fallback translations.
-    
-    Args:
-        key (str): Text key to look up
-        lang (str): Target language ('am', 'en', 'ar')
-        default: Default text if key not found
-    
-    Returns:
-        str: Translated text or default
-    """
+    """Get a UI string by key and language."""
     fallback = FALLBACK_TEXTS.get(lang, FALLBACK_TEXTS['en'])
     return fallback.get(key.lower(), default or key)
 
 
 def batch_translate(texts, target_lang='en'):
-    """
-    Translate multiple texts at once.
-    
-    Args:
-        texts (list): List of strings to translate
-        target_lang (str): Target language code
-    
-    Returns:
-        dict: Dictionary mapping original text to translated text
-    """
-    translations = {}
-    for text in texts:
-        if text:
-            translations[text] = translate_text(text, target_lang)
-    return translations
+    """Translate a list of texts, returning a dict of original -> translated."""
+    return {t: translate_text(t, target_lang) for t in texts if t}
 
 
 def get_fallback_text(key, lang='en'):
-    """
-    Get fallback text for critical UI elements.
-    
-    Args:
-        key (str): Text key
-        lang (str): Language code
-    
-    Returns:
-        str: Fallback text or key itself
-    """
+    """Get fallback text for a key."""
     return FALLBACK_TEXTS.get(lang, {}).get(key, key)
 
 
 def clear_translation_cache():
-    """Clear the translation cache."""
+    """Clear the LRU translation cache."""
     translate_text.cache_clear()
     logger.info("Translation cache cleared")
 
 
 def get_translation_stats():
-    """Get statistics about the translation cache."""
-    cache_info = translate_text.cache_info()
+    """Return cache hit/miss statistics."""
+    info = translate_text.cache_info()
+    total = info.hits + info.misses
     return {
-        'hits': cache_info.hits,
-        'misses': cache_info.misses,
-        'maxsize': cache_info.maxsize,
-        'currsize': cache_info.currsize,
-        'hit_rate': cache_info.hits / (cache_info.hits + cache_info.misses) if (cache_info.hits + cache_info.misses) > 0 else 0
+        'hits': info.hits,
+        'misses': info.misses,
+        'maxsize': info.maxsize,
+        'currsize': info.currsize,
+        'hit_rate': info.hits / total if total > 0 else 0,
     }
