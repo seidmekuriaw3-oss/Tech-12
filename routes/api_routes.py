@@ -39,7 +39,7 @@ def api_search_products():
         SELECT p.*, c.name as category_name
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        WHERE (p.name LIKE ? OR p.name_am LIKE ? OR p.name_ar LIKE ?)
+        WHERE (p.name LIKE %s OR p.name_am LIKE %s OR p.name_ar LIKE %s)
         AND p.is_active = 1
         ORDER BY p.id DESC
         LIMIT 50
@@ -94,15 +94,15 @@ def api_filter_products():
     params = []
     
     if category_id:
-        query += " AND p.category_id = ?"
+        query += " AND p.category_id = %s"
         params.append(category_id)
     
     if min_price is not None:
-        query += " AND p.price >= ?"
+        query += " AND p.price >= %s"
         params.append(min_price)
     
     if max_price is not None:
-        query += " AND p.price <= ?"
+        query += " AND p.price <= %s"
         params.append(max_price)
     
     # Add sorting
@@ -117,7 +117,7 @@ def api_filter_products():
     else:  # newest
         query += " ORDER BY p.id DESC"
     
-    query += " LIMIT ? OFFSET ?"
+    query += " LIMIT %s OFFSET %s"
     params.extend([limit, offset])
     
     cursor.execute(query, params)
@@ -132,15 +132,15 @@ def api_filter_products():
     count_params = []
     
     if category_id:
-        count_query += " AND p.category_id = ?"
+        count_query += " AND p.category_id = %s"
         count_params.append(category_id)
     
     if min_price is not None:
-        count_query += " AND p.price >= ?"
+        count_query += " AND p.price >= %s"
         count_params.append(min_price)
     
     if max_price is not None:
-        count_query += " AND p.price <= ?"
+        count_query += " AND p.price <= %s"
         count_params.append(max_price)
     
     cursor.execute(count_query, count_params)
@@ -190,7 +190,7 @@ def api_get_product(pid):
         SELECT p.*, c.name as category_name, c.name_am as category_name_am
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        WHERE p.id = ? AND p.is_active = 1
+        WHERE p.id = %s AND p.is_active = 1
     """, (pid,))
     
     product = cursor.fetchone()
@@ -269,7 +269,7 @@ def api_cart_add():
         # Check if product already in cart
         cursor.execute("""
             SELECT id, quantity FROM cart_items 
-            WHERE user_id = ? AND product_id = ?
+            WHERE user_id = %s AND product_id = %s
         """, (session['user_id'], product_id))
         
         existing = cursor.fetchone()
@@ -277,12 +277,12 @@ def api_cart_add():
         if existing:
             new_quantity = existing['quantity'] + quantity
             cursor.execute("""
-                UPDATE cart_items SET quantity = ? WHERE id = ?
+                UPDATE cart_items SET quantity = %s WHERE id = %s
             """, (new_quantity, existing['id']))
         else:
             cursor.execute("""
                 INSERT INTO cart_items (user_id, product_id, quantity)
-                VALUES (?, ?, ?)
+                VALUES (%s, %s, %s)
             """, (session['user_id'], product_id, quantity))
         
         db.commit()
@@ -321,7 +321,7 @@ def _get_cart_totals_data(product_id_removed=None):
                 SELECT SUM(p.price * ci.quantity) as s, SUM(ci.quantity) as c
                 FROM cart_items ci
                 JOIN products p ON ci.product_id = p.id
-                WHERE ci.user_id = ?
+                WHERE ci.user_id = %s
             """, (session['user_id'],))
             row = cursor.fetchone()
             subtotal = float(row['s'] or 0)
@@ -329,7 +329,7 @@ def _get_cart_totals_data(product_id_removed=None):
         else:
             cart = session.get('cart', {})
             if cart:
-                placeholders = ','.join(['?'] * len(cart))
+                placeholders = ','.join(['%s'] * len(cart))
                 cursor.execute(
                     f"SELECT id, price FROM products WHERE id IN ({placeholders})",
                     list(cart.keys())
@@ -365,7 +365,7 @@ def api_cart_remove():
             db = get_db()
             cursor = db.cursor()
             cursor.execute("""
-                DELETE FROM cart_items WHERE user_id = ? AND product_id = ?
+                DELETE FROM cart_items WHERE user_id = %s AND product_id = %s
             """, (session['user_id'], product_id))
             db.commit()
         else:
@@ -408,7 +408,7 @@ def api_cart_update():
         db = get_db()
         cursor = db.cursor()
 
-        cursor.execute("SELECT price, stock_quantity FROM products WHERE id = ?", (product_id,))
+        cursor.execute("SELECT price, stock_quantity FROM products WHERE id = %s", (product_id,))
         product = cursor.fetchone()
         if not product:
             return jsonify({'success': False, 'error': 'Product not found'}), 404
@@ -420,8 +420,8 @@ def api_cart_update():
 
         if session.get('user_id'):
             cursor.execute("""
-                UPDATE cart_items SET quantity = ?
-                WHERE user_id = ? AND product_id = ?
+                UPDATE cart_items SET quantity = %s
+                WHERE user_id = %s AND product_id = %s
             """, (quantity, session['user_id'], product_id))
             db.commit()
         else:
@@ -456,7 +456,7 @@ def api_get_cart():
             SELECT ci.*, p.name, p.name_am, p.name_ar, p.price, p.compare_price, p.thumbnail
             FROM cart_items ci
             JOIN products p ON ci.product_id = p.id
-            WHERE ci.user_id = ?
+            WHERE ci.user_id = %s
         """, (session['user_id'],))
         
         rows = cursor.fetchall()
@@ -479,7 +479,7 @@ def api_get_cart():
         if cart:
             db = get_db()
             cursor = db.cursor()
-            placeholders = ','.join(['?'] * len(cart))
+            placeholders = ','.join(['%s'] * len(cart))
             cursor.execute(f"""
                 SELECT id, name, name_am, name_ar, price, compare_price, thumbnail
                 FROM products WHERE id IN ({placeholders})
@@ -528,7 +528,7 @@ def api_cart_count():
     if session.get('user_id'):
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("SELECT SUM(quantity) as total FROM cart_items WHERE user_id = ?", (session['user_id'],))
+        cursor.execute("SELECT SUM(quantity) as total FROM cart_items WHERE user_id = %s", (session['user_id'],))
         result = cursor.fetchone()
         count = result['total'] or 0
     else:
@@ -564,7 +564,7 @@ def api_register():
     cursor = db.cursor()
     
     # Check if email exists
-    cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+    cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
     if cursor.fetchone():
         return jsonify({'success': False, 'error': 'Email already registered'}), 400
     
@@ -574,13 +574,13 @@ def api_register():
     password_hash = generate_password_hash(password, method='pbkdf2:sha256')
     base_username = email.split('@')[0].lower()
     username = base_username
-    cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
+    cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
     if cursor.fetchone():
         username = base_username + str(_random.randint(100, 9999))
 
     cursor.execute("""
         INSERT INTO users (username, full_name, email, phone, password_hash, is_admin, is_active)
-        VALUES (?, ?, ?, ?, ?, 0, 1) RETURNING id
+        VALUES (%s, %s, %s, %s, %s, 0, 1) RETURNING id
     """, (username, full_name, email, phone, password_hash))
     row = cursor.fetchone()
     db.commit()
@@ -616,7 +616,7 @@ def api_login():
     
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM users WHERE email = ? AND is_active = 1", (email,))
+    cursor.execute("SELECT * FROM users WHERE email = %s AND is_active = 1", (email,))
     user = cursor.fetchone()
     
     if not user:
@@ -636,14 +636,14 @@ def api_login():
     guest_cart = session.get('cart', {})
     if guest_cart:
         for product_id, quantity in guest_cart.items():
-            cursor.execute("SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ?", 
+            cursor.execute("SELECT id, quantity FROM cart_items WHERE user_id = %s AND product_id = %s", 
                           (user['id'], product_id))
             existing = cursor.fetchone()
             if existing:
-                cursor.execute("UPDATE cart_items SET quantity = quantity + ? WHERE id = ?",
+                cursor.execute("UPDATE cart_items SET quantity = quantity + %s WHERE id = %s",
                              (quantity, existing['id']))
             else:
-                cursor.execute("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?)",
+                cursor.execute("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s, %s, %s)",
                              (user['id'], product_id, quantity))
         db.commit()
         session.pop('cart', None)
@@ -708,7 +708,7 @@ def api_place_order():
         SELECT ci.*, p.price, p.name
         FROM cart_items ci
         JOIN products p ON ci.product_id = p.id
-        WHERE ci.user_id = ?
+        WHERE ci.user_id = %s
     """, (session['user_id'],))
     
     cart_items = cursor.fetchall()
@@ -745,7 +745,7 @@ def api_place_order():
             order_number, user_id, status, payment_status,
             subtotal, discount, shipping_fee, total,
             shipping_address, shipping_city, shipping_phone, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
     """, (
         order_number, session['user_id'], 'pending', 'pending',
         subtotal, discount, shipping_cost, total,
@@ -761,17 +761,17 @@ def api_place_order():
     for item in items_list:
         cursor.execute("""
             INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
-            VALUES (?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s)
         """, (order_id, item['product_id'], item['quantity'], item['price']))
         
         # Update product stock
         cursor.execute("""
-            UPDATE products SET stock_quantity = stock_quantity - ?, sales_count = sales_count + ?
-            WHERE id = ?
+            UPDATE products SET stock_quantity = stock_quantity - %s, sales_count = sales_count + %s
+            WHERE id = %s
         """, (item['quantity'], item['quantity'], item['product_id']))
     
     # Clear cart
-    cursor.execute("DELETE FROM cart_items WHERE user_id = ?", (session['user_id'],))
+    cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))
     
     db.commit()
     
@@ -815,7 +815,7 @@ def api_contact():
     
     cursor.execute("""
         INSERT INTO contacts (name, email, phone, message)
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
     """, (name, email, phone, message))
     
     db.commit()
@@ -857,7 +857,7 @@ def api_get_branches():
             'longitude': b['longitude'],
             'working_hours': b['working_hours'],
             'image': b['image'],
-            'maps_url': f"https://www.google.com/maps/dir/?api=1&destination={b['latitude']},{b['longitude']}"
+            'maps_url': f"https://www.google.com/maps/dir/%sapi=1&destination={b['latitude']},{b['longitude']}"
         })
     
     return jsonify({
@@ -925,7 +925,7 @@ def api_wishlist_ids():
     try:
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("SELECT product_id FROM wishlist WHERE user_id = ?", (session['user_id'],))
+        cursor.execute("SELECT product_id FROM wishlist WHERE user_id = %s", (session['user_id'],))
         rows = cursor.fetchall()
         return jsonify({'ids': [str(r['product_id']) for r in rows]})
     except Exception:
@@ -947,7 +947,7 @@ def api_wishlist_add():
         cursor = db.cursor()
         cursor.execute("""
             INSERT INTO wishlist (user_id, product_id)
-            VALUES (?, ?)
+            VALUES (%s, %s)
             ON CONFLICT (user_id, product_id) DO NOTHING
         """, (session['user_id'], product_id))
         db.commit()
@@ -969,7 +969,7 @@ def api_wishlist_remove():
 
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("DELETE FROM wishlist WHERE user_id = ? AND product_id = ?",
+        cursor.execute("DELETE FROM wishlist WHERE user_id = %s AND product_id = %s",
                        (session['user_id'], product_id))
         db.commit()
         return jsonify({'success': True, 'message': 'Removed from wishlist'})
@@ -993,7 +993,7 @@ def api_apply_coupon():
 
         cursor.execute("""
             SELECT * FROM coupons
-            WHERE code = ? AND is_active = 1
+            WHERE code = %s AND is_active = 1
             AND (valid_from IS NULL OR valid_from <= CURRENT_TIMESTAMP)
             AND (valid_to IS NULL OR valid_to >= CURRENT_TIMESTAMP)
             AND (usage_limit IS NULL OR used_count < usage_limit)
@@ -1009,7 +1009,7 @@ def api_apply_coupon():
             cursor.execute("""
                 SELECT SUM(p.price * ci.quantity) as total
                 FROM cart_items ci JOIN products p ON ci.product_id = p.id
-                WHERE ci.user_id = ?
+                WHERE ci.user_id = %s
             """, (session['user_id'],))
             result = cursor.fetchone()
             subtotal = result['total'] or 0 if result else 0
@@ -1054,7 +1054,7 @@ def product_reviews(product_id):
                 SELECT r.id, r.rating, r.comment, r.is_approved,
                        r.created_at, u.full_name as user_name
                 FROM reviews r JOIN users u ON r.user_id = u.id
-                WHERE r.product_id = ? AND r.is_approved = 1
+                WHERE r.product_id = %s AND r.is_approved = 1
                 ORDER BY r.created_at DESC LIMIT 30
             """, (product_id,))
             rows = cursor.fetchall()
@@ -1077,7 +1077,7 @@ def product_reviews(product_id):
             user_review = None
             has_purchased = False
             if session.get('user_id'):
-                cursor.execute("SELECT rating, comment FROM reviews WHERE product_id=? AND user_id=?",
+                cursor.execute("SELECT rating, comment FROM reviews WHERE product_id=%s AND user_id=%s",
                                (product_id, session['user_id']))
                 ur = cursor.fetchone()
                 if ur:
@@ -1086,7 +1086,7 @@ def product_reviews(product_id):
                 cursor.execute("""
                     SELECT 1 FROM order_items oi
                     JOIN orders o ON oi.order_id = o.id
-                    WHERE oi.product_id = ? AND o.user_id = ? AND o.status = 'delivered'
+                    WHERE oi.product_id = %s AND o.user_id = %s AND o.status = 'delivered'
                     LIMIT 1
                 """, (product_id, session['user_id']))
                 has_purchased = cursor.fetchone() is not None
@@ -1119,14 +1119,14 @@ def product_reviews(product_id):
 
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("SELECT id FROM reviews WHERE product_id = ? AND user_id = ?",
+        cursor.execute("SELECT id FROM reviews WHERE product_id = %s AND user_id = %s",
                        (product_id, session['user_id']))
         if cursor.fetchone():
             return jsonify({'success': False, 'error': 'You have already reviewed this product'}), 400
 
         cursor.execute("""
             INSERT INTO reviews (product_id, user_id, rating, comment, is_approved)
-            VALUES (?, ?, ?, ?, 0)
+            VALUES (%s, %s, %s, %s, 0)
         """, (product_id, session['user_id'], rating, comment))
         db.commit()
 
@@ -1163,7 +1163,7 @@ def subscribe_newsletter():
         db = get_db()
         cursor = db.cursor()
         cursor.execute("""
-            INSERT INTO newsletter (email) VALUES (?)
+            INSERT INTO newsletter (email) VALUES (%s)
             ON CONFLICT (email) DO NOTHING
         """, (email,))
         db.commit()
@@ -1247,7 +1247,7 @@ def api_submit_order():
         cursor.execute("""
             SELECT ci.product_id, ci.quantity, p.price, p.name, p.name_am
             FROM cart_items ci JOIN products p ON ci.product_id = p.id
-            WHERE ci.user_id = ?
+            WHERE ci.user_id = %s
         """, (session['user_id'],))
         cart_items = cursor.fetchall()
 
@@ -1287,7 +1287,7 @@ def api_submit_order():
                 order_number, user_id, status, payment_status,
                 subtotal, discount, shipping_fee, total,
                 shipping_address, shipping_phone, notes, customer_name, customer_email
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
         """, (order_number, session['user_id'], 'pending', 'pending',
               subtotal, discount, shipping_cost, total,
               shipping_address, customer_phone, notes, customer_name, customer_email))
@@ -1298,13 +1298,13 @@ def api_submit_order():
         for item in items_list:
             cursor.execute("""
                 INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
-                VALUES (?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s)
             """, (order_id, item['product_id'], item['quantity'], item['price']))
             cursor.execute("""
-                UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?
+                UPDATE products SET stock_quantity = stock_quantity - %s WHERE id = %s
             """, (item['quantity'], item['product_id']))
 
-        cursor.execute("DELETE FROM cart_items WHERE user_id = ?", (session['user_id'],))
+        cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))
         db.commit()
 
         return jsonify({
@@ -1326,7 +1326,7 @@ def api_get_user_profile():
         db = get_db()
         cursor = db.cursor()
         cursor.execute(
-            "SELECT id, full_name, email, phone, city, address FROM users WHERE id = ?",
+            "SELECT id, full_name, email, phone, city, address FROM users WHERE id = %s",
             (session['user_id'],)
         )
         row = cursor.fetchone()
@@ -1334,11 +1334,11 @@ def api_get_user_profile():
             return jsonify({'success': False, 'error': 'User not found'}), 404
 
         uid = session['user_id']
-        cursor.execute("SELECT COUNT(*) as cnt FROM orders WHERE user_id = ?", (uid,))
+        cursor.execute("SELECT COUNT(*) as cnt FROM orders WHERE user_id = %s", (uid,))
         total_row = cursor.fetchone()
-        cursor.execute("SELECT COUNT(*) as cnt FROM orders WHERE user_id = ? AND status = 'delivered'", (uid,))
+        cursor.execute("SELECT COUNT(*) as cnt FROM orders WHERE user_id = %s AND status = 'delivered'", (uid,))
         delivered_row = cursor.fetchone()
-        cursor.execute("SELECT COUNT(*) as cnt FROM orders WHERE user_id = ? AND status NOT IN ('delivered','cancelled')", (uid,))
+        cursor.execute("SELECT COUNT(*) as cnt FROM orders WHERE user_id = %s AND status NOT IN ('delivered','cancelled')", (uid,))
         pending_row = cursor.fetchone()
 
         return jsonify({
@@ -1377,7 +1377,7 @@ def api_track_order():
                    o.shipping_city, o.shipping_address,
                    o.tracking_number, o.created_at
             FROM orders o
-            WHERE o.order_number = ?
+            WHERE o.order_number = %s
         """, (order_number,))
         row = cursor.fetchone()
         if not row:

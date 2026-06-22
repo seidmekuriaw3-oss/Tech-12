@@ -36,7 +36,7 @@ def view_cart():
             SELECT ci.*, p.name, p.name_am, p.name_ar, p.price, p.compare_price, p.thumbnail, p.stock_quantity
             FROM cart_items ci
             JOIN products p ON ci.product_id = p.id
-            WHERE ci.user_id = ?
+            WHERE ci.user_id = %s
         """, (session['user_id'],))
         
         rows = cursor.fetchall()
@@ -65,7 +65,7 @@ def view_cart():
         if cart:
             db = get_db()
             cursor = db.cursor()
-            placeholders = ','.join(['?'] * len(cart))
+            placeholders = ','.join(['%s'] * len(cart))
             cursor.execute(f"""
                 SELECT id, name, name_am, name_ar, price, compare_price, thumbnail, stock_quantity
                 FROM products WHERE id IN ({placeholders})
@@ -114,20 +114,20 @@ def go_add_to_cart(product_id):
     quantity = int(request.args.get('qty', 1))
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT id, stock_quantity FROM products WHERE id = ? AND is_active = 1", (product_id,))
+    cursor.execute("SELECT id, stock_quantity FROM products WHERE id = %s AND is_active = 1", (product_id,))
     product = cursor.fetchone()
     if not product:
         flash('Product not found!', 'danger')
         return redirect(url_for('customer.index'))
     if session.get('user_id'):
-        cursor.execute("SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ?",
+        cursor.execute("SELECT id, quantity FROM cart_items WHERE user_id = %s AND product_id = %s",
                        (session['user_id'], product_id))
         existing = cursor.fetchone()
         if existing:
-            cursor.execute("UPDATE cart_items SET quantity = ? WHERE id = ?",
+            cursor.execute("UPDATE cart_items SET quantity = %s WHERE id = %s",
                            (existing['quantity'] + quantity, existing['id']))
         else:
-            cursor.execute("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?)",
+            cursor.execute("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s, %s, %s)",
                            (session['user_id'], product_id, quantity))
         db.commit()
     else:
@@ -148,7 +148,7 @@ def add_to_cart(product_id):
     # Check if product exists and has stock
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT id, stock_quantity FROM products WHERE id = ? AND is_active = 1", (product_id,))
+    cursor.execute("SELECT id, stock_quantity FROM products WHERE id = %s AND is_active = 1", (product_id,))
     product = cursor.fetchone()
     
     if not product:
@@ -163,7 +163,7 @@ def add_to_cart(product_id):
         # Add to database cart
         cursor.execute("""
             SELECT id, quantity FROM cart_items 
-            WHERE user_id = ? AND product_id = ?
+            WHERE user_id = %s AND product_id = %s
         """, (session['user_id'], product_id))
         
         existing = cursor.fetchone()
@@ -172,7 +172,7 @@ def add_to_cart(product_id):
             new_quantity = existing['quantity'] + quantity
             if product['stock_quantity'] >= new_quantity:
                 cursor.execute("""
-                    UPDATE cart_items SET quantity = ? WHERE id = ?
+                    UPDATE cart_items SET quantity = %s WHERE id = %s
                 """, (new_quantity, existing['id']))
                 flash('Cart updated successfully!', 'success')
             else:
@@ -180,7 +180,7 @@ def add_to_cart(product_id):
         else:
             cursor.execute("""
                 INSERT INTO cart_items (user_id, product_id, quantity)
-                VALUES (?, ?, ?)
+                VALUES (%s, %s, %s)
             """, (session['user_id'], product_id, quantity))
             flash('Product added to cart!', 'success')
         
@@ -222,7 +222,7 @@ def remove_from_cart(product_id):
         cursor = db.cursor()
         cursor.execute("""
             DELETE FROM cart_items 
-            WHERE user_id = ? AND product_id = ?
+            WHERE user_id = %s AND product_id = %s
         """, (session['user_id'], product_id))
         db.commit()
     else:
@@ -252,7 +252,7 @@ def update_cart():
     # Check stock
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT stock_quantity FROM products WHERE id = ?", (product_id,))
+    cursor.execute("SELECT stock_quantity FROM products WHERE id = %s", (product_id,))
     product = cursor.fetchone()
     
     if product and quantity > product['stock_quantity']:
@@ -264,8 +264,8 @@ def update_cart():
     
     if session.get('user_id'):
         cursor.execute("""
-            UPDATE cart_items SET quantity = ?
-            WHERE user_id = ? AND product_id = ?
+            UPDATE cart_items SET quantity = %s
+            WHERE user_id = %s AND product_id = %s
         """, (quantity, session['user_id'], product_id))
         db.commit()
     else:
@@ -286,7 +286,7 @@ def clear_cart():
     if session.get('user_id'):
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("DELETE FROM cart_items WHERE user_id = ?", (session['user_id'],))
+        cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))
         db.commit()
     else:
         session.pop('cart', None)
@@ -308,7 +308,7 @@ def checkout():
         SELECT ci.*, p.name, p.name_am, p.name_ar, p.price, p.thumbnail
         FROM cart_items ci
         JOIN products p ON ci.product_id = p.id
-        WHERE ci.user_id = ?
+        WHERE ci.user_id = %s
     """, (session['user_id'],))
     
     raw_items = cursor.fetchall()
@@ -341,7 +341,7 @@ def checkout():
     totals = calc_cart_totals(subtotal, is_logged_in=True)
 
     # Get user info for pre-filling
-    cursor.execute("SELECT full_name, email, phone, address, city FROM users WHERE id = ?", (session['user_id'],))
+    cursor.execute("SELECT full_name, email, phone, address, city FROM users WHERE id = %s", (session['user_id'],))
     user = cursor.fetchone()
 
     return render_template('customer/checkout.html',
@@ -364,7 +364,7 @@ def place_order():
         SELECT ci.*, p.price, p.name, p.stock_quantity
         FROM cart_items ci
         JOIN products p ON ci.product_id = p.id
-        WHERE ci.user_id = ?
+        WHERE ci.user_id = %s
     """, (session['user_id'],))
     
     cart_items = cursor.fetchall()
@@ -418,7 +418,7 @@ def place_order():
             order_number, user_id, status, payment_status, payment_method,
             subtotal, discount, shipping_fee, total,
             shipping_address, shipping_city, shipping_phone, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
     """, (
         order_number, session['user_id'], 'pending', 'pending', payment_method,
         subtotal, discount, shipping_cost, total,
@@ -432,19 +432,19 @@ def place_order():
         discounted_price = item['price'] * 0.9
         cursor.execute("""
             INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
-            VALUES (?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s)
         """, (order_id, item['product_id'], item['quantity'], discounted_price))
         
         # Update product stock
         cursor.execute("""
             UPDATE products SET 
-                stock_quantity = stock_quantity - ?,
-                sales_count = sales_count + ?
-            WHERE id = ?
+                stock_quantity = stock_quantity - %s,
+                sales_count = sales_count + %s
+            WHERE id = %s
         """, (item['quantity'], item['quantity'], item['product_id']))
     
     # Clear cart
-    cursor.execute("DELETE FROM cart_items WHERE user_id = ?", (session['user_id'],))
+    cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))
     
     db.commit()
     
@@ -481,7 +481,7 @@ def get_cart_count():
     if session.get('user_id'):
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("SELECT SUM(quantity) as total FROM cart_items WHERE user_id = ?", (session['user_id'],))
+        cursor.execute("SELECT SUM(quantity) as total FROM cart_items WHERE user_id = %s", (session['user_id'],))
         result = cursor.fetchone()
         count = result['total'] or 0
     else:
@@ -502,7 +502,7 @@ def get_cart_total():
             SELECT SUM(p.price * ci.quantity) as total
             FROM cart_items ci
             JOIN products p ON ci.product_id = p.id
-            WHERE ci.user_id = ?
+            WHERE ci.user_id = %s
         """, (session['user_id'],))
         result = cursor.fetchone()
         total = result['total'] or 0
@@ -511,7 +511,7 @@ def get_cart_total():
         if cart:
             db = get_db()
             cursor = db.cursor()
-            placeholders = ','.join(['?'] * len(cart))
+            placeholders = ','.join(['%s'] * len(cart))
             cursor.execute(f"SELECT id, price FROM products WHERE id IN ({placeholders})", list(cart.keys()))
             products = cursor.fetchall()
             for p in products:

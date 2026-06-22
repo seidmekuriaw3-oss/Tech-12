@@ -217,7 +217,7 @@ def product_create():
                     description, description_am, description_ar, description_en,
                     price, compare_price, stock_quantity, category_id,
                     material, color, sku, is_featured, is_new, thumbnail, images, is_active
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
             """, (name, name_am, name_ar, name_en,
                   description, description_am, description_ar, description_en,
                   price, compare_price, stock_quantity, category_id,
@@ -240,7 +240,7 @@ def product_edit(pid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM products WHERE id = ?", (pid,))
+        cursor.execute("SELECT * FROM products WHERE id = %s", (pid,))
         product = cursor.fetchone()
         if not product:
             flash('Product not found!', 'danger')
@@ -307,12 +307,12 @@ def product_edit(pid):
 
             cursor.execute("""
                 UPDATE products SET
-                    name=?, name_am=?, name_ar=?, name_en=?,
-                    description=?, description_am=?, description_ar=?, description_en=?,
-                    price=?, compare_price=?, stock_quantity=?, category_id=?,
-                    material=?, color=?, sku=?, is_featured=?, is_new=?, thumbnail=?, images=?,
+                    name=%s, name_am=%s, name_ar=%s, name_en=%s,
+                    description=%s, description_am=%s, description_ar=%s, description_en=%s,
+                    price=%s, compare_price=%s, stock_quantity=%s, category_id=%s,
+                    material=%s, color=%s, sku=%s, is_featured=%s, is_new=%s, thumbnail=%s, images=%s,
                     updated_at=CURRENT_TIMESTAMP
-                WHERE id=?
+                WHERE id=%s
             """, (name, name_am, name_ar, name_en,
                   description, description_am, description_ar, description_en,
                   price, compare_price, stock_quantity, category_id,
@@ -335,7 +335,7 @@ def product_delete(pid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("UPDATE products SET is_active = 0 WHERE id = ?", (pid,))
+        cursor.execute("UPDATE products SET is_active = 0 WHERE id = %s", (pid,))
         conn.commit()
         if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': True, 'message': 'Product deleted successfully'})
@@ -354,7 +354,7 @@ def product_duplicate(pid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM products WHERE id = ?", (pid,))
+        cursor.execute("SELECT * FROM products WHERE id = %s", (pid,))
         product = cursor.fetchone()
         if not product:
             return jsonify({'success': False, 'error': 'Product not found'}), 404
@@ -368,7 +368,7 @@ def product_duplicate(pid):
                 description, description_am, description_ar, description_en,
                 price, compare_price, stock_quantity, category_id,
                 material, color, sku, is_featured, is_new, thumbnail, is_active
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0)
             RETURNING id
         """, (
             new_name, new_name_am, p.get('name_ar'), p.get('name_en'),
@@ -398,12 +398,12 @@ def product_toggle_featured(pid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT is_featured FROM products WHERE id = ?", (pid,))
+        cursor.execute("SELECT is_featured FROM products WHERE id = %s", (pid,))
         row = cursor.fetchone()
         if not row:
             return jsonify({'success': False, 'error': 'Product not found'}), 404
         new_state = 0 if row[0] else 1
-        cursor.execute("UPDATE products SET is_featured = ? WHERE id = ?", (new_state, pid))
+        cursor.execute("UPDATE products SET is_featured = %s WHERE id = %s", (new_state, pid))
         conn.commit()
         return jsonify({'success': True, 'is_featured': bool(new_state)})
     except Exception as e:
@@ -418,7 +418,7 @@ def product_update_stock(pid):
         stock_quantity = int(data.get('stock_quantity', 0))
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("UPDATE products SET stock_quantity = ? WHERE id = ?", (stock_quantity, pid))
+        cursor.execute("UPDATE products SET stock_quantity = %s WHERE id = %s", (stock_quantity, pid))
         conn.commit()
         return jsonify({'success': True, 'stock_quantity': stock_quantity})
     except Exception as e:
@@ -436,7 +436,7 @@ def bulk_delete_products():
 
         conn = get_db()
         cursor = conn.cursor()
-        placeholders = ','.join(['?'] * len(ids))
+        placeholders = ','.join(['%s'] * len(ids))
         cursor.execute(f"SELECT id, thumbnail FROM products WHERE id IN ({placeholders})", ids)
         products_rows = cursor.fetchall()
 
@@ -504,7 +504,7 @@ def import_products_sample():
                      'sku', 'image_url'])
     writer.writerow(['Luxury Sofa', 'ቅርጫ ሶፋ', 'صوفا فاخرة', '15000', '20000', '10',
                      'Sofa', 'Premium quality sofa', 'ከፍተኛ ጥራት ያለው ሶፋ', 'yes', 'yes',
-                     'SKU-001', 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400'])
+                     'SKU-001', 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc%sw=400'])
     response = make_response(output.getvalue())
     response.headers['Content-Type'] = 'text/csv; charset=utf-8'
     response.headers['Content-Disposition'] = 'attachment; filename=products_import_sample.csv'
@@ -675,7 +675,7 @@ def import_products():
                     description, description_en, description_am,
                     price, compare_price, stock_quantity, category_id,
                     sku, is_featured, is_new, thumbnail, is_active
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
             """, (vrow['name'], vrow['name_en'], vrow['name_am'], vrow['name_ar'],
                   vrow['description'], vrow['description_en'], vrow['description_am'],
                   vrow['price'], vrow['compare_price'], vrow['stock_quantity'], vrow['category_id'],
@@ -741,7 +741,7 @@ def ad_create():
             INSERT INTO advertisements (
                 title, title_am, title_ar, description, description_am, description_ar,
                 image, media_url, link, sort_order, is_active
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
         """, (title, title_am, title_ar, description, description_am, description_ar,
               image_filename, media_url, link, sort_order))
         conn.commit()
@@ -756,7 +756,7 @@ def ad_create():
 def ad_edit(aid):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM advertisements WHERE id = ?", (aid,))
+    cursor.execute("SELECT * FROM advertisements WHERE id = %s", (aid,))
     ad = cursor.fetchone()
     if not ad:
         flash('Advertisement not found!', 'danger')
@@ -788,9 +788,9 @@ def ad_edit(aid):
 
         cursor.execute("""
             UPDATE advertisements SET
-                title=?, title_am=?, title_ar=?, description=?, description_am=?, description_ar=?,
-                image=?, media_url=?, link=?, sort_order=?
-            WHERE id=?
+                title=%s, title_am=%s, title_ar=%s, description=%s, description_am=%s, description_ar=%s,
+                image=%s, media_url=%s, link=%s, sort_order=%s
+            WHERE id=%s
         """, (title, title_am, title_ar, description, description_am, description_ar,
               image_filename, media_url, link, sort_order, aid))
         conn.commit()
@@ -806,7 +806,7 @@ def ad_toggle(aid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("UPDATE advertisements SET is_active = NOT is_active WHERE id = ?", (aid,))
+        cursor.execute("UPDATE advertisements SET is_active = NOT is_active WHERE id = %s", (aid,))
         conn.commit()
         flash('Advertisement status toggled!', 'success')
     except Exception as e:
@@ -821,7 +821,7 @@ def ad_delete(aid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM advertisements WHERE id = ?", (aid,))
+        cursor.execute("DELETE FROM advertisements WHERE id = %s", (aid,))
         conn.commit()
         if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': True, 'message': 'Advertisement deleted successfully'})
@@ -846,13 +846,13 @@ def ad_reorder():
 
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT sort_order FROM advertisements WHERE id = ?", (src_id,))
+        cursor.execute("SELECT sort_order FROM advertisements WHERE id = %s", (src_id,))
         src_order = cursor.fetchone()
-        cursor.execute("SELECT sort_order FROM advertisements WHERE id = ?", (dest_id,))
+        cursor.execute("SELECT sort_order FROM advertisements WHERE id = %s", (dest_id,))
         dest_order = cursor.fetchone()
         if src_order and dest_order:
-            cursor.execute("UPDATE advertisements SET sort_order = ? WHERE id = ?", (dest_order[0], src_id))
-            cursor.execute("UPDATE advertisements SET sort_order = ? WHERE id = ?", (src_order[0], dest_id))
+            cursor.execute("UPDATE advertisements SET sort_order = %s WHERE id = %s", (dest_order[0], src_id))
+            cursor.execute("UPDATE advertisements SET sort_order = %s WHERE id = %s", (src_order[0], dest_id))
             conn.commit()
         return jsonify({'success': True})
     except Exception as e:
@@ -878,10 +878,10 @@ def orders():
         """
         params = []
         if status != 'all':
-            query += " AND o.status = ?"
+            query += " AND o.status = %s"
             params.append(status)
         if search:
-            query += " AND (o.order_number LIKE ? OR u.full_name LIKE ? OR o.shipping_phone LIKE ?)"
+            query += " AND (o.order_number LIKE %s OR u.full_name LIKE %s OR o.shipping_phone LIKE %s)"
             s = f'%{search}%'
             params.extend([s, s, s])
         query += " ORDER BY o.id DESC"
@@ -913,7 +913,7 @@ def order_detail(oid):
         cursor.execute("""
             SELECT o.*, u.full_name, u.email, u.phone
             FROM orders o LEFT JOIN users u ON o.user_id = u.id
-            WHERE o.id = ?
+            WHERE o.id = %s
         """, (oid,))
         order = cursor.fetchone()
         if not order:
@@ -923,7 +923,7 @@ def order_detail(oid):
         cursor.execute("""
             SELECT oi.*, p.name, p.name_am, p.name_ar, p.thumbnail
             FROM order_items oi JOIN products p ON oi.product_id = p.id
-            WHERE oi.order_id = ?
+            WHERE oi.order_id = %s
         """, (oid,))
         items = cursor.fetchall()
 
@@ -949,24 +949,24 @@ def order_update_status(oid):
         conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT status, user_id, total, order_number FROM orders WHERE id = ?", (oid,))
+        cursor.execute("SELECT status, user_id, total, order_number FROM orders WHERE id = %s", (oid,))
         prev = cursor.fetchone()
         prev_status   = prev[0] if prev else None
         user_id       = prev[1] if prev else None
         order_total   = float(prev[2]) if prev and prev[2] else 0
         order_number  = prev[3] if prev else str(oid)
 
-        cursor.execute("UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        cursor.execute("UPDATE orders SET status = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
                        (status, oid))
 
         if status == 'delivered' and prev_status != 'delivered' and user_id:
             points_earned = max(1, int(order_total // 100))
             cursor.execute(
-                "UPDATE users SET loyalty_points = COALESCE(loyalty_points, 0) + ? WHERE id = ?",
+                "UPDATE users SET loyalty_points = COALESCE(loyalty_points, 0) + %s WHERE id = %s",
                 (points_earned, user_id)
             )
             cursor.execute(
-                "INSERT INTO loyalty_transactions (user_id, order_id, points, type, description) VALUES (?, ?, ?, 'earn', ?)",
+                "INSERT INTO loyalty_transactions (user_id, order_id, points, type, description) VALUES (%s, %s, %s, 'earn', %s)",
                 (user_id, oid, points_earned, f'Points earned for order #{oid}')
             )
 
@@ -1017,8 +1017,8 @@ def delete_order(oid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM order_items WHERE order_id = ?", (oid,))
-        cursor.execute("DELETE FROM orders WHERE id = ?", (oid,))
+        cursor.execute("DELETE FROM order_items WHERE order_id = %s", (oid,))
+        cursor.execute("DELETE FROM orders WHERE id = %s", (oid,))
         conn.commit()
         flash('Order deleted successfully!', 'success')
     except Exception as e:
@@ -1036,7 +1036,7 @@ def export_order(oid):
 
         cursor.execute("""
             SELECT o.*, u.full_name, u.email, u.phone
-            FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.id = ?
+            FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE o.id = %s
         """, (oid,))
         order = cursor.fetchone()
         if not order:
@@ -1046,7 +1046,7 @@ def export_order(oid):
         cursor.execute("""
             SELECT oi.*, p.name, p.name_am, p.name_ar
             FROM order_items oi JOIN products p ON oi.product_id = p.id
-            WHERE oi.order_id = ?
+            WHERE oi.order_id = %s
         """, (oid,))
         items = cursor.fetchall()
 
@@ -1073,7 +1073,7 @@ def order_invoice(oid):
         conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM orders WHERE id = ?", (oid,))
+        cursor.execute("SELECT * FROM orders WHERE id = %s", (oid,))
         order = cursor.fetchone()
         if not order:
             flash('Order not found!', 'danger')
@@ -1082,7 +1082,7 @@ def order_invoice(oid):
         cursor.execute("""
             SELECT oi.*, p.name, p.name_am, p.name_ar
             FROM order_items oi JOIN products p ON oi.product_id = p.id
-            WHERE oi.order_id = ?
+            WHERE oi.order_id = %s
         """, (oid,))
         items = cursor.fetchall()
 
@@ -1163,14 +1163,14 @@ def toggle_user(uid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT is_active, is_admin FROM users WHERE id = ?", (uid,))
+        cursor.execute("SELECT is_active, is_admin FROM users WHERE id = %s", (uid,))
         user = cursor.fetchone()
         if not user:
             return jsonify({'success': False, 'error': 'User not found'}), 404
         if user['is_admin']:
             return jsonify({'success': False, 'error': 'Cannot deactivate admin accounts'}), 403
         new_status = 0 if user['is_active'] else 1
-        cursor.execute("UPDATE users SET is_active = ? WHERE id = ?", (new_status, uid))
+        cursor.execute("UPDATE users SET is_active = %s WHERE id = %s", (new_status, uid))
         conn.commit()
         return jsonify({'success': True, 'is_active': new_status})
     except Exception as e:
@@ -1183,14 +1183,14 @@ def delete_user(uid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT is_admin FROM users WHERE id = ?", (uid,))
+        cursor.execute("SELECT is_admin FROM users WHERE id = %s", (uid,))
         user = cursor.fetchone()
         if not user:
             return jsonify({'success': False, 'error': 'User not found'}), 404
         if user['is_admin']:
             return jsonify({'success': False, 'error': 'Cannot delete admin accounts'}), 403
-        cursor.execute("DELETE FROM cart_items WHERE user_id = ?", (uid,))
-        cursor.execute("DELETE FROM users WHERE id = ?", (uid,))
+        cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (uid,))
+        cursor.execute("DELETE FROM users WHERE id = %s", (uid,))
         conn.commit()
         return jsonify({'success': True})
     except Exception as e:
@@ -1245,12 +1245,12 @@ def inbox_mark_read(mid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT is_read FROM contact_messages WHERE id = ?", (mid,))
+        cursor.execute("SELECT is_read FROM contact_messages WHERE id = %s", (mid,))
         row = cursor.fetchone()
         if not row:
             return jsonify({'success': False, 'error': 'Message not found'}), 404
         new_status = 0 if row['is_read'] else 1
-        cursor.execute("UPDATE contact_messages SET is_read = ? WHERE id = ?", (new_status, mid))
+        cursor.execute("UPDATE contact_messages SET is_read = %s WHERE id = %s", (new_status, mid))
         conn.commit()
         return jsonify({'success': True, 'is_read': new_status})
     except Exception as e:
@@ -1277,7 +1277,7 @@ def inbox_delete(mid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM contact_messages WHERE id = ?", (mid,))
+        cursor.execute("DELETE FROM contact_messages WHERE id = %s", (mid,))
         conn.commit()
         if cursor.rowcount == 0:
             return jsonify({'success': False, 'error': 'Message not found'}), 404
@@ -1294,10 +1294,10 @@ def inbox_save_note(mid):
         note = data.get('note', '').strip()
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT id FROM contact_messages WHERE id = ?", (mid,))
+        cursor.execute("SELECT id FROM contact_messages WHERE id = %s", (mid,))
         if not cursor.fetchone():
             return jsonify({'success': False, 'error': 'Message not found'}), 404
-        cursor.execute("UPDATE contact_messages SET admin_notes = ? WHERE id = ?",
+        cursor.execute("UPDATE contact_messages SET admin_notes = %s WHERE id = %s",
                        (note if note else None, mid))
         conn.commit()
         return jsonify({'success': True, 'note': note})
@@ -1402,10 +1402,10 @@ def reports_sales():
         """
         params = []
         if start_date:
-            query += " AND DATE(o.created_at) >= ?"
+            query += " AND DATE(o.created_at) >= %s"
             params.append(start_date)
         if end_date:
-            query += " AND DATE(o.created_at) <= ?"
+            query += " AND DATE(o.created_at) <= %s"
             params.append(end_date)
         query += " ORDER BY o.created_at DESC"
         cursor.execute(query, params)
@@ -1545,8 +1545,8 @@ def settings():
             ]
             for key, value in settings_to_save:
                 cursor.execute("""
-                    INSERT INTO settings (key, value) VALUES (?, ?)
-                    ON CONFLICT(key) DO UPDATE SET value = ?
+                    INSERT INTO settings (key, value) VALUES (%s, %s)
+                    ON CONFLICT(key) DO UPDATE SET value = %s
                 """, (key, value, value))
             conn.commit()
             flash('Settings saved successfully!', 'success')
@@ -1581,7 +1581,7 @@ def change_password():
         conn = get_db()
         cursor = conn.cursor()
         admin_id = session.get('admin_id') or session.get('user_id')
-        cursor.execute("SELECT id, password_hash FROM users WHERE id = ? AND is_admin = 1",
+        cursor.execute("SELECT id, password_hash FROM users WHERE id = %s AND is_admin = 1",
                        (admin_id,))
         admin = cursor.fetchone()
 
@@ -1590,7 +1590,7 @@ def change_password():
             return redirect(url_for('admin.settings') + '#change-password')
 
         new_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
-        cursor.execute("UPDATE users SET password_hash = ? WHERE id = ?", (new_hash, admin[0]))
+        cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_hash, admin[0]))
         conn.commit()
         flash('Password changed successfully!', 'success')
     except Exception as e:
@@ -1653,7 +1653,7 @@ def send_notification():
                 INSERT INTO notifications (
                     title, title_am, title_ar, body, body_am, body_ar,
                     image, link, target_audience, sent_at, created_by
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, %s)
             """, (title, title_am, title_ar, body, body_am, body_ar,
                   image_url, link, target, session.get('admin_username', 'admin')))
             conn.commit()
@@ -1727,7 +1727,7 @@ def approve_review(review_id):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("UPDATE reviews SET is_approved = 1 WHERE id = ?", (review_id,))
+        cursor.execute("UPDATE reviews SET is_approved = 1 WHERE id = %s", (review_id,))
         conn.commit()
         return jsonify({'success': True, 'message': 'Review approved'})
     except Exception as e:
@@ -1740,7 +1740,7 @@ def delete_review(review_id):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM reviews WHERE id = ?", (review_id,))
+        cursor.execute("DELETE FROM reviews WHERE id = %s", (review_id,))
         conn.commit()
         return jsonify({'success': True, 'message': 'Review deleted'})
     except Exception as e:

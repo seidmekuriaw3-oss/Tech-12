@@ -119,7 +119,7 @@ def sitemap_xml():
         base_url = request.url_root.rstrip('/')
         current_date = datetime_.datetime.now().strftime('%Y-%m-%d')
 
-        xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+        xml = '<%sxml version="1.0" encoding="UTF-8"%s>\n'
         xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         for page in ['/', '/products', '/about', '/contact', '/branches',
                      '/faq', '/shipping-info', '/returns']:
@@ -161,7 +161,7 @@ def test_add_to_cart(product_id):
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT id, name FROM products WHERE id = ? AND is_active = 1",
+            "SELECT id, name FROM products WHERE id = %s AND is_active = 1",
             (product_id,)
         )
         product = cursor.fetchone()
@@ -169,18 +169,18 @@ def test_add_to_cart(product_id):
             return jsonify({'success': False, 'error': f'Product {product_id} not found'}), 404
         if session.get('user_id'):
             cursor.execute(
-                "SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ?",
+                "SELECT id, quantity FROM cart_items WHERE user_id = %s AND product_id = %s",
                 (session['user_id'], product_id)
             )
             existing = cursor.fetchone()
             if existing:
                 cursor.execute(
-                    "UPDATE cart_items SET quantity = ? WHERE id = ?",
+                    "UPDATE cart_items SET quantity = %s WHERE id = %s",
                     (existing[1] + 1, existing[0])
                 )
             else:
                 cursor.execute(
-                    "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?)",
+                    "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s, %s, %s)",
                     (session['user_id'], product_id, 1)
                 )
             conn.commit()

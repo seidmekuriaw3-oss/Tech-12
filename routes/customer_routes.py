@@ -75,7 +75,7 @@ def index():
         recently_viewed_ids = session.get('recently_viewed', [])
         recently_viewed_list = []
         if recently_viewed_ids:
-            placeholders = ','.join(['?' for _ in recently_viewed_ids])
+            placeholders = ','.join(['%s' for _ in recently_viewed_ids])
             cursor.execute(f"""
                 SELECT p.*, c.name as category_name, c.name_am as category_name_am
                 FROM products p LEFT JOIN categories c ON p.category_id = c.id
@@ -204,7 +204,7 @@ def product_detail(product_id):
         cursor.execute("""
             SELECT p.*, c.name as category_name, c.name_am as category_name_am
             FROM products p LEFT JOIN categories c ON p.category_id = c.id
-            WHERE p.id = ? AND p.is_active = 1
+            WHERE p.id = %s AND p.is_active = 1
         """, (product_id,))
         product = cursor.fetchone()
 
@@ -212,7 +212,7 @@ def product_detail(product_id):
             flash('Product not found!', 'danger')
             return redirect(url_for('customer.products'))
 
-        cursor.execute("UPDATE products SET views = views + 1 WHERE id = ?", (product_id,))
+        cursor.execute("UPDATE products SET views = views + 1 WHERE id = %s", (product_id,))
         conn.commit()
 
         # Track recently viewed
@@ -225,7 +225,7 @@ def product_detail(product_id):
 
         cursor.execute("""
             SELECT * FROM products
-            WHERE category_id = ? AND id != ? AND is_active = 1
+            WHERE category_id = %s AND id != %s AND is_active = 1
             ORDER BY id DESC LIMIT 4
         """, (product['category_id'], product_id))
         related_products = cursor.fetchall()
@@ -246,7 +246,7 @@ def product_detail(product_id):
         try:
             cursor.execute("""
                 SELECT AVG(rating) as avg_r, COUNT(*) as cnt
-                FROM reviews WHERE product_id = ? AND is_approved = 1
+                FROM reviews WHERE product_id = %s AND is_approved = 1
             """, (product_id,))
             rrow = cursor.fetchone()
             product_dict['rating'] = round(rrow[0], 1) if rrow and rrow[0] else 0
@@ -301,14 +301,14 @@ def category_products(category_id=None):
 
         page_title = None
         if category_id:
-            cursor.execute("SELECT * FROM categories WHERE id = ? AND is_active = 1", (category_id,))
+            cursor.execute("SELECT * FROM categories WHERE id = %s AND is_active = 1", (category_id,))
             cat_row = cursor.fetchone()
             if cat_row:
                 page_title = cat_row['name_am'] if lang == 'am' else cat_row['name']
                 cursor.execute("""
                     SELECT p.*, c.name as cat_name
                     FROM products p LEFT JOIN categories c ON p.category_id = c.id
-                    WHERE p.category_id = ? AND p.is_active = 1 ORDER BY p.id DESC
+                    WHERE p.category_id = %s AND p.is_active = 1 ORDER BY p.id DESC
                 """, (category_id,))
             else:
                 page_title = 'ሁሉም ምርቶች' if lang == 'am' else 'All Products'
@@ -415,9 +415,9 @@ def search():
             SELECT p.*, c.name as category_name, c.name_am as category_name_am
             FROM products p LEFT JOIN categories c ON p.category_id = c.id
             WHERE p.is_active = 1
-            AND (p.name LIKE ? OR p.name_en LIKE ? OR p.name_am LIKE ? OR p.name_ar LIKE ?
-                 OR p.description LIKE ? OR p.description_am LIKE ?)
-            ORDER BY CASE WHEN p.name_am LIKE ? THEN 0 ELSE 1 END,
+            AND (p.name LIKE %s OR p.name_en LIKE %s OR p.name_am LIKE %s OR p.name_ar LIKE %s
+                 OR p.description LIKE %s OR p.description_am LIKE %s)
+            ORDER BY CASE WHEN p.name_am LIKE %s THEN 0 ELSE 1 END,
                      p.is_featured DESC, p.id DESC
         """, (search_pattern,) * 6 + (search_pattern,))
         products_rows = cursor.fetchall()
@@ -451,7 +451,7 @@ def branches():
         branches_list = []
         for branch in branches_rows:
             bd = dict(branch)
-            bd['maps_url'] = f"https://www.google.com/maps/dir/?api=1&destination={bd.get('latitude', 0)},{bd.get('longitude', 0)}"
+            bd['maps_url'] = f"https://www.google.com/maps/dir/%sapi=1&destination={bd.get('latitude', 0)},{bd.get('longitude', 0)}"
             branches_list.append(bd)
 
         phone_numbers = [WHATSAPP_NUMBER, '251906080606', '251906090606']
@@ -495,7 +495,7 @@ def contact():
             cursor = conn.cursor()
             cursor.execute("""
                 INSERT INTO contact_messages (name, email, phone, message)
-                VALUES (?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s)
             """, (name, email, phone, message))
             conn.commit()
         except Exception as e:
@@ -510,7 +510,7 @@ def contact():
         whatsapp_msg += f"\n💬 Message:\n{message}"
 
         encoded = urllib.parse.quote(whatsapp_msg)
-        whatsapp_url = f"https://wa.me/{WHATSAPP_NUMBER}?text={encoded}"
+        whatsapp_url = f"https://wa.me/{WHATSAPP_NUMBER}%stext={encoded}"
 
         flash('Message sent! You will be redirected to WhatsApp.', 'success')
         return redirect(whatsapp_url)
@@ -575,7 +575,7 @@ def user_login():
         try:
             conn = get_db()
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM users WHERE email = ? AND is_active = 1", (email,))
+            cursor.execute("SELECT * FROM users WHERE email = %s AND is_active = 1", (email,))
             user = cursor.fetchone()
 
             if user and check_password_hash(user['password_hash'], password):
@@ -628,7 +628,7 @@ def user_register():
         try:
             conn = get_db()
             cursor = conn.cursor()
-            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+            cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
             if cursor.fetchone():
                 flash('Email already registered!', 'danger')
                 return redirect(url_for('customer.user_register'))
@@ -636,14 +636,14 @@ def user_register():
             import random as _random
             base_username = email.split('@')[0].lower()
             username = base_username
-            cursor.execute("SELECT id FROM users WHERE username = ?", (username,))
+            cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
             if cursor.fetchone():
                 username = base_username + str(_random.randint(100, 9999))
 
             password_hash = generate_password_hash(password, method='pbkdf2:sha256')
             cursor.execute("""
                 INSERT INTO users (username, full_name, email, phone, password_hash, is_admin, is_active)
-                VALUES (?, ?, ?, ?, ?, 0, 1) RETURNING id
+                VALUES (%s, %s, %s, %s, %s, 0, 1) RETURNING id
             """, (username, full_name, email, phone, password_hash))
             row = cursor.fetchone()
             conn.commit()
@@ -702,7 +702,7 @@ def user_profile():
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE id = ?", (session['user_id'],))
+        cursor.execute("SELECT * FROM users WHERE id = %s", (session['user_id'],))
         user = cursor.fetchone()
 
         cursor.execute("""
@@ -711,13 +711,13 @@ def user_profile():
                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
                    SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled,
                    SUM(total) as total_spent
-            FROM orders WHERE user_id = ?
+            FROM orders WHERE user_id = %s
         """, (session['user_id'],))
         order_stats_row = cursor.fetchone()
         order_stats = dict(order_stats_row) if order_stats_row else {}
 
         cursor.execute("""
-            SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC LIMIT 20
+            SELECT * FROM orders WHERE user_id = %s ORDER BY id DESC LIMIT 20
         """, (session['user_id'],))
         orders_raw = cursor.fetchall()
         orders = [dict(o) for o in orders_raw] if orders_raw else []
@@ -744,9 +744,9 @@ def update_profile():
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute("""
-            UPDATE users SET full_name = ?, phone = ?, address = ?, city = ?,
+            UPDATE users SET full_name = %s, phone = %s, address = %s, city = %s,
                 updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
+            WHERE id = %s
         """, (full_name, phone, address, city, session['user_id']))
         conn.commit()
         session['user_name'] = full_name
@@ -777,7 +777,7 @@ def change_password():
         conn = get_db()
         cursor = conn.cursor()
         password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
-        cursor.execute("UPDATE users SET password_hash = ? WHERE id = ?",
+        cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s",
                        (password_hash, session['user_id']))
         conn.commit()
         return jsonify({'success': True, 'message': 'Password changed successfully'})
@@ -796,13 +796,13 @@ def delete_account():
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT password_hash FROM users WHERE id = ?", (session['user_id'],))
+        cursor.execute("SELECT password_hash FROM users WHERE id = %s", (session['user_id'],))
         user = cursor.fetchone()
 
         if not user or not check_password_hash(user['password_hash'], password):
             return jsonify({'success': False, 'error': 'Invalid password'}), 401
 
-        cursor.execute("DELETE FROM users WHERE id = ?", (session['user_id'],))
+        cursor.execute("DELETE FROM users WHERE id = %s", (session['user_id'],))
         conn.commit()
         session.clear()
         return jsonify({'success': True, 'message': 'Account deleted successfully'})
@@ -825,17 +825,17 @@ def user_orders():
         cursor = conn.cursor()
         if status_filter == 'delivered':
             cursor.execute(
-                "SELECT * FROM orders WHERE user_id = ? AND status = 'delivered' ORDER BY id DESC",
+                "SELECT * FROM orders WHERE user_id = %s AND status = 'delivered' ORDER BY id DESC",
                 (session['user_id'],)
             )
         elif status_filter == 'pending':
             cursor.execute(
-                "SELECT * FROM orders WHERE user_id = ? AND status NOT IN ('delivered','cancelled') ORDER BY id DESC",
+                "SELECT * FROM orders WHERE user_id = %s AND status NOT IN ('delivered','cancelled') ORDER BY id DESC",
                 (session['user_id'],)
             )
         else:
             cursor.execute(
-                "SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC",
+                "SELECT * FROM orders WHERE user_id = %s ORDER BY id DESC",
                 (session['user_id'],)
             )
         orders = cursor.fetchall()
@@ -854,7 +854,7 @@ def order_detail(order_id):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM orders WHERE id = ? AND user_id = ?",
+        cursor.execute("SELECT * FROM orders WHERE id = %s AND user_id = %s",
                        (order_id, session['user_id']))
         order = cursor.fetchone()
         if not order:
@@ -864,7 +864,7 @@ def order_detail(order_id):
         cursor.execute("""
             SELECT oi.*, p.name, p.name_am, p.name_ar, p.thumbnail
             FROM order_items oi JOIN products p ON oi.product_id = p.id
-            WHERE oi.order_id = ?
+            WHERE oi.order_id = %s
         """, (order_id,))
         items = cursor.fetchall()
 
@@ -885,7 +885,7 @@ def order_confirmation(order_id):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM orders WHERE id = ? AND user_id = ?",
+        cursor.execute("SELECT * FROM orders WHERE id = %s AND user_id = %s",
                        (order_id, session['user_id']))
         order = cursor.fetchone()
         if not order:
@@ -895,7 +895,7 @@ def order_confirmation(order_id):
         cursor.execute("""
             SELECT oi.*, p.name, p.name_am, p.name_ar, p.thumbnail
             FROM order_items oi JOIN products p ON oi.product_id = p.id
-            WHERE oi.order_id = ?
+            WHERE oi.order_id = %s
         """, (order_id,))
         items = cursor.fetchall()
         items_list = [dict(i) for i in items] if items else []
@@ -1049,7 +1049,7 @@ def track_order_public():
         cursor.execute("""
             SELECT o.*, u.full_name, u.email, u.phone
             FROM orders o LEFT JOIN users u ON o.user_id = u.id
-            WHERE o.order_number = ?
+            WHERE o.order_number = %s
         """, (order_number,))
         order = cursor.fetchone()
 
@@ -1063,7 +1063,7 @@ def track_order_public():
         cursor.execute("""
             SELECT oi.*, p.name, p.name_am, p.name_ar, p.thumbnail
             FROM order_items oi JOIN products p ON oi.product_id = p.id
-            WHERE oi.order_id = ?
+            WHERE oi.order_id = %s
         """, (order_dict['id'],))
         items = cursor.fetchall()
         items_list = [dict(i) for i in items] if items else []
@@ -1099,7 +1099,7 @@ def wishlist():
         cursor.execute("""
             SELECT w.*, p.name, p.name_am, p.name_ar, p.price, p.compare_price, p.thumbnail
             FROM wishlist w JOIN products p ON w.product_id = p.id
-            WHERE w.user_id = ? AND p.is_active = 1
+            WHERE w.user_id = %s AND p.is_active = 1
             ORDER BY w.created_at DESC
         """, (session['user_id'],))
         wishlist_items = cursor.fetchall()
@@ -1125,7 +1125,7 @@ def dashboard():
         conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM users WHERE id = ?", (session['user_id'],))
+        cursor.execute("SELECT * FROM users WHERE id = %s", (session['user_id'],))
         user_row = cursor.fetchone()
         user = dict(user_row) if user_row else {}
 
@@ -1137,13 +1137,13 @@ def dashboard():
                 SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled,
                 SUM(CASE WHEN status NOT IN ('delivered','cancelled') THEN 1 ELSE 0 END) as active,
                 COALESCE(SUM(total), 0) as total_spent
-            FROM orders WHERE user_id = ?
+            FROM orders WHERE user_id = %s
         """, (session['user_id'],))
         stats_row = cursor.fetchone()
         order_stats = dict(stats_row) if stats_row else {}
 
         cursor.execute("""
-            SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC LIMIT 50
+            SELECT * FROM orders WHERE user_id = %s ORDER BY id DESC LIMIT 50
         """, (session['user_id'],))
         orders_raw = cursor.fetchall()
         orders = [dict(o) for o in orders_raw] if orders_raw else []
@@ -1153,7 +1153,7 @@ def dashboard():
                 SELECT w.*, p.name, p.name_am, p.name_ar, p.price, p.compare_price,
                        p.thumbnail, p.is_active
                 FROM wishlist w JOIN products p ON w.product_id = p.id
-                WHERE w.user_id = ? AND p.is_active = 1
+                WHERE w.user_id = %s AND p.is_active = 1
                 ORDER BY w.created_at DESC
             """, (session['user_id'],))
             wishlist_raw = cursor.fetchall()
@@ -1164,7 +1164,7 @@ def dashboard():
         loyalty_points = 0
         loyalty_transactions = []
         try:
-            cursor.execute("SELECT COALESCE(loyalty_points, 0) FROM users WHERE id = ?", (session['user_id'],))
+            cursor.execute("SELECT COALESCE(loyalty_points, 0) FROM users WHERE id = %s", (session['user_id'],))
             lp_row = cursor.fetchone()
             loyalty_points = int(lp_row[0]) if lp_row else 0
 
@@ -1173,7 +1173,7 @@ def dashboard():
                        o.order_number
                 FROM loyalty_transactions lt
                 LEFT JOIN orders o ON lt.order_id = o.id
-                WHERE lt.user_id = ?
+                WHERE lt.user_id = %s
                 ORDER BY lt.created_at DESC LIMIT 30
             """, (session['user_id'],))
             lt_raw = cursor.fetchall()
