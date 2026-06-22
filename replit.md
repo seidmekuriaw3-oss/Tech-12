@@ -1,27 +1,38 @@
-# Workspace
+# Ethiosadat Furniture Store
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+A multi-language e-commerce platform for an Ethiopian furniture store (Wollo Dessie Kutaber). Features a customer storefront, admin dashboard, and WhatsApp integration. Supports Amharic, English, and Arabic.
 
 ## Stack
 
-- **Monorepo tool**: pnpm workspaces
-- **Node.js version**: 24
-- **Package manager**: pnpm
-- **TypeScript version**: 5.9
-- **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec)
-- **Build**: esbuild (CJS bundle)
+- **Backend**: Python 3.11 + Flask 2.3.3
+- **Database**: PostgreSQL (via psycopg2-binary, Replit managed)
+- **Frontend**: HTML/Jinja2 templates + vanilla JavaScript + CSS
+- **Server**: Gunicorn (production), Flask dev server (development)
+- **Auth**: Custom session-based (admin password + customer email/password)
+- **Image processing**: Pillow
+- **Rate limiting**: Flask-Limiter
+- **Session**: Flask-Session + Flask-Caching
 
 ## Key Commands
 
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- `pnpm --filter @workspace/api-server run dev` — run API server locally
+- `python app.py` — run dev server on port 5000
+- `python run.py --init-db` — initialize/reset database
+- `python run.py --seed` — seed sample products and ads
 
-See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+## Environment Variables
+
+Set via Replit Secrets/Env Vars panel:
+
+- `SECRET_KEY` — Flask session signing key (already set)
+- `DATABASE_URL` — PostgreSQL connection string (Replit managed)
+- `ADMIN_PASSWORD` — Admin login password (default: `1234`, change for production)
+- `WHATSAPP_NUMBER` — Store WhatsApp contact number
+- `FREE_SHIPPING_THRESHOLD` — Minimum order for free shipping (default: 5000 ETB)
+- `SHIPPING_COST` — Standard shipping cost (default: 200 ETB)
+
+## User Preferences
+
+- App runs on port 5000 in development
+- Deployment uses Gunicorn on port 8080
