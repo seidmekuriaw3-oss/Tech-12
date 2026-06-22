@@ -449,6 +449,8 @@ def init_db():
             ('መጋረጃ', 'Curtain', 'ستارة', '🚪', 4),
             ('ቁምሳጥን', 'Wardrobe', 'خزانة', '🗄️', 5),
             ('ሌላ', 'Other', 'آخر', '📦', 6),
+            ('የሴቶች ልብስ', "Women's Clothing", 'ملابس النساء', '👗', 7),
+            ('የልጆች ልብስ', "Children's Clothing", 'ملابس الأطفال', '👶', 8),
         ]
         cur.executemany(
             "INSERT INTO categories (name, name_am, name_ar, icon, sort_order) VALUES (%s, %s, %s, %s, %s)",
