@@ -1034,14 +1034,28 @@ WHATSAPP_NUMBER = '251987957957'
 
 @customer_bp.route('/track-order', methods=['GET'])
 def track_order_public():
-    """Public order tracking search page."""
+    """Public order tracking — requires order number + phone for security."""
     lang = get_lang()
     order_number = request.args.get('order', '').strip().upper()
+    phone_raw    = request.args.get('phone', '').strip()
+
+    # Normalize phone: strip spaces/dashes, handle 09xx → 2519xx
+    def normalize_phone(p):
+        p = p.replace(' ', '').replace('-', '')
+        if p.startswith('09') or p.startswith('07'):
+            p = '251' + p[1:]
+        return p
 
     if not order_number:
         return render_template('customer/track_order.html',
                                order=None, items=[], lang=lang,
                                whatsapp_number=WHATSAPP_NUMBER, error=None)
+
+    if not phone_raw:
+        return render_template('customer/track_order.html',
+                               order=None, items=[], lang=lang,
+                               whatsapp_number=WHATSAPP_NUMBER,
+                               error='Please enter both your order number and phone number.')
 
     try:
         conn = get_db()
@@ -1057,9 +1071,23 @@ def track_order_public():
             return render_template('customer/track_order.html',
                                    order=None, items=[], lang=lang,
                                    whatsapp_number=WHATSAPP_NUMBER,
-                                   error=f'No order found with number "{order_number}". Please check and try again.')
+                                   error=f'Order "{order_number}" not found. Please check and try again.')
 
         order_dict = dict(order)
+
+        # Verify phone matches the order (shipping_phone or user phone)
+        stored_phones = set()
+        for raw in [order_dict.get('shipping_phone'), order_dict.get('phone')]:
+            if raw:
+                stored_phones.add(normalize_phone(str(raw)))
+        entered = normalize_phone(phone_raw)
+
+        if not stored_phones or entered not in stored_phones:
+            return render_template('customer/track_order.html',
+                                   order=None, items=[], lang=lang,
+                                   whatsapp_number=WHATSAPP_NUMBER,
+                                   error='The phone number does not match this order. Please check and try again.')
+
         cursor.execute("""
             SELECT oi.*, p.name, p.name_am, p.name_ar, p.thumbnail
             FROM order_items oi JOIN products p ON oi.product_id = p.id

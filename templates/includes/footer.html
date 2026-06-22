@@ -55,6 +55,7 @@
                     🛠️ {% if lang == 'am' %}የደንበኛ አገልግሎት{% else %}Customer Service{% endif %}
                 </h3>
                 <ul class="footer-links">
+                    <li><a href="{{ url_for('customer.track_order_public') }}">📦 {% if lang == 'am' %}ትዕዛዝ ይከታተሉ{% else %}Track My Order{% endif %}</a></li>
                     <li><a href="{{ url_for('customer.shipping_info') }}">🚚 {% if lang == 'am' %}ማጓጓዝ መረጃ{% else %}Shipping Info{% endif %}</a></li>
                     <li><a href="{{ url_for('customer.returns_policy') }}">🔄 {% if lang == 'am' %}መመለስ እና መለዋወጥ{% else %}Returns & Exchanges{% endif %}</a></li>
                     <li><a href="{{ url_for('customer.privacy') }}">🔒 {% if lang == 'am' %}ግላዊነት ፖሊሲ{% else %}Privacy Policy{% endif %}</a></li>

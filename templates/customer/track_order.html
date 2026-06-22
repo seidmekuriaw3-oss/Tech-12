@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Track Order{% if order %} #{{ order.order_number }}{% endif %} - Ethiosadat{% endblock %}
+{% block title %}Track Order{% if order %} #{{ order.order_number }}{% endif %} - SEMIRA FASHION{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -117,21 +117,32 @@
 <div class="track-wrap">
 
     <div class="track-header">
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔍</div>
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">📦</div>
         <h1>Track Your Order</h1>
-        <p>Enter your order number to see real-time status updates</p>
+        <p>ትዕዛዝ ቁጥርዎን እና ስልክ ቁጥርዎን ያስገቡ</p>
+        <p style="opacity:.75;font-size:.88rem;">Enter your order number and phone number to see status updates</p>
     </div>
 
     <!-- Search Form -->
     <div class="search-card">
-        <p style="margin: 0 0 14px; color: #555; font-size: .93rem;">Enter the order number from your confirmation message:</p>
+        <p style="margin: 0 0 16px; color: #555; font-size: .93rem;">
+            📋 Use the order number from your confirmation message + the phone you placed the order with.
+        </p>
         <form method="GET" action="{{ url_for('customer.track_order_public') }}">
-            <div class="search-row">
+            <div class="search-row" style="flex-direction: column; gap: 12px;">
                 <input type="text" name="order" class="search-input"
-                       placeholder="e.g. 20260516-ABC123"
+                       placeholder="Order number — e.g. 20260622-ABC123"
                        value="{{ request.args.get('order', '') }}"
+                       style="width:100%;box-sizing:border-box;"
                        required>
-                <button type="submit" class="search-btn">🔍 Track</button>
+                <input type="tel" name="phone" class="search-input"
+                       placeholder="Phone number — e.g. 09xxxxxxxx"
+                       value="{{ request.args.get('phone', '') }}"
+                       style="width:100%;box-sizing:border-box;"
+                       required>
+                <button type="submit" class="search-btn" style="width:100%;padding:14px;">
+                    🔍 Track My Order
+                </button>
             </div>
         </form>
     </div>
