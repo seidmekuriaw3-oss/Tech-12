@@ -205,7 +205,7 @@ TEXTS = {
     },
     'en': {
         'search_results': '🔍 Search Results',
-        'find_perfect': 'Find the perfect furniture for your home',
+        'find_perfect': 'Find the perfect fashion for you and your family',
         'showing_results_for': '🔎 Showing results for',
         'products_found': 'product(s) found',
         'no_products_found': 'No products found',
@@ -232,7 +232,7 @@ TEXTS = {
         'my_orders': 'My Orders', 'my_cart': 'My Cart',
         'in_stock': 'In Stock', 'out_of_stock': 'Out of Stock',
         'quick_links': 'Quick Links', 'call_us': 'Call Us',
-        'quality_tagline': 'Quality furniture at affordable prices in ወሎ ደሴ ኩታበር',
+        'quality_tagline': 'Quality fashion at affordable prices in ወሎ ደሴ ኩታበር',
         'free_shipping_msg': '🚚 Free shipping on orders over 5,000 ETB',
         'copyright_text': 'All Rights Reserved',
         'order_now': 'Order Now', 'address': 'Address: ወሎ ደሴ ኩታበር', 'promo': 'Special Offer!',
@@ -377,7 +377,7 @@ def inject_globals():
         'platform': platform,
         'whatsapp_number': WHATSAPP_NUMBER,
         'google_translate_widget': get_google_translate_widget(),
-        'app_name': 'Ethiosadat Furniture',
+        'app_name': 'ኢትዮሳዳት ፋሽን ወድ ሰሚራ',
         'pending_orders_count': pending_orders_count,
         'low_stock_count': low_stock_count,
         'unread_messages_count': unread_messages_count,
@@ -675,7 +675,7 @@ app.start_time = time.time()
 
 
 def initialize_app():
-    app.logger.info("Initializing Ethiosadat Furniture Application")
+    app.logger.info("Initializing Ethiosadat Fashion Application")
     try:
         init_db()
         app.logger.info("Database initialized successfully")
@@ -703,12 +703,12 @@ with app.app_context():
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description='Ethiosadat Furniture Application')
+    parser = argparse.ArgumentParser(description='Ethiosadat Fashion Application')
     parser.add_argument('--host', default='0.0.0.0')
     parser.add_argument('--port', type=int, default=5000)
     parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
-    print(f"\nStarting Ethiosadat Furniture at http://{args.host}:{args.port}")
+    print(f"\nStarting Ethiosadat Fashion at http://{args.host}:{args.port}")
     app.run(host=args.host, port=args.port, debug=args.debug)
 
 
