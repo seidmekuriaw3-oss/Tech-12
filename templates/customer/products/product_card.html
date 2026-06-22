@@ -34,7 +34,7 @@
                  onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
         {% else %}
             <div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 56px; color: #ccc;">
-                🪑
+                👗
             </div>
         {% endif %}
         
@@ -204,7 +204,7 @@
         ">
             {% if product.category.name_am == 'ሶፋ' %}🛋️ Sofa
             {% elif product.category.name_am == 'አልጋ' %}🛏️ Bed
-            {% elif product.category.name_am == 'መጅሊስ' %}🪑 Mejlis
+            {% elif product.category.name_am == 'መጅሊስ' %}👗 Mejlis
             {% elif product.category.name_am == 'መጋረጃ' %}🚪 Curtain
             {% elif product.category.name_am == 'ቁምሳጥን' %}🗄️ Wardrobe
             {% else %}📦 {{ product.category.name_am }}{% endif %}

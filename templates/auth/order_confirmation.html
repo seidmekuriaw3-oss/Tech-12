@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Order Confirmed - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ{% endblock %}
+{% block title %}Order Confirmed - ኢትዮሳዳት ፋሽን ወድ ሰሚራ{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -201,7 +201,7 @@
     <div class="success-banner">
         <div class="success-icon">✅</div>
         <h1>Order Placed Successfully!</h1>
-        <p>Thank you for shopping with ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</p>
+        <p>Thank you for shopping with ኢትዮሳዳት ፋሽን ወድ ሰሚራ</p>
         <div class="order-number-badge">Order #{{ order.order_number }}</div>
     </div>
 
@@ -232,9 +232,9 @@
         <div class="order-item-row">
             {% if item.thumbnail %}
             <img src="{{ url_for('static', filename=item.thumbnail) }}" alt="{{ item.name }}" class="item-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="item-thumb-placeholder" style="display:none;">🪑</div>
+            <div class="item-thumb-placeholder" style="display:none;">👗</div>
             {% else %}
-            <div class="item-thumb-placeholder">🪑</div>
+            <div class="item-thumb-placeholder">👗</div>
             {% endif %}
             <div class="item-info">
                 <div class="item-name">{{ item.name }}</div>

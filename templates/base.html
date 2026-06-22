@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ - Quality furniture at affordable prices in ወሎ ደሴ ኩታበር, Ethiopia">
-    <meta name="keywords" content="furniture, ethiosadat, ወሎ ደሴ ኩታበር, sofa, bed, mejlis, curtain, wardrobe">
-    <meta name="author" content="ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ">
+    <meta name="description" content="ኢትዮሳዳት ፋሽን ወድ ሰሚራ - Quality fashion at affordable prices in ወሎ ደሴ ኩታበር, Ethiopia">
+    <meta name="keywords" content="fashion, clothing, ልብስ, ethiosadat, ወሎ ደሴ ኩታበር, የሴቶች ልብስ, የልጆች ልብስ">
+    <meta name="author" content="ኢትዮሳዳት ፋሽን ወድ ሰሚራ">
     <meta name="theme-color" content="#061510">
     
-    <title>{% block title %}ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ{% endblock %}</title>
+    <title>{% block title %}ኢትዮሳዳት ፋሽን ወድ ሰሚራ{% endblock %}</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
@@ -432,7 +432,7 @@
             <span class="category-icon">
                 {% if cat.name_am == 'ሶፋ' %}🛋️
                 {% elif cat.name_am == 'አልጋ' %}🛏️
-                {% elif cat.name_am == 'መጅሊስ' %}🪑
+                {% elif cat.name_am == 'መጅሊስ' %}👗
                 {% elif cat.name_am == 'መጋረጃ' %}🚪
                 {% elif cat.name_am == 'ቁምሳጥን' %}🗄️
                 {% else %}📦{% endif %}
@@ -646,7 +646,7 @@
     <div class="footer-container">
         <div class="footer-grid">
             <div class="footer-section">
-                <h3>🪑 ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</h3>
+                <h3>👗 ኢትዮሳዳት ፋሽን ወድ ሰሚራ</h3>
                 <p>{{ t.quality_tagline }}</p>
             </div>
             <div class="footer-section">
@@ -665,7 +665,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; {{ current_year }} ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ. {{ t.copyright_text }}</p>
+            <p>&copy; {{ current_year }} ኢትዮሳዳት ፋሽን ወድ ሰሚራ. {{ t.copyright_text }}</p>
         </div>
     </div>
 </footer>

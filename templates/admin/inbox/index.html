@@ -792,10 +792,10 @@
         const emailOpt  = document.getElementById('replyEmailOption');
         const emailDesc = document.getElementById('replyEmailDesc');
         if (email) {
-            const subject = encodeURIComponent('Re: Your message to ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ');
+            const subject = encodeURIComponent('Re: Your message to ኢትዮሳዳት ፋሽን ወድ ሰሚራ');
             const snippet = message.length > 120 ? message.slice(0, 120) + '…' : message;
             const body    = encodeURIComponent(
-                'Dear ' + name + ',\n\nThank you for contacting ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ.\n\n' +
+                'Dear ' + name + ',\n\nThank you for contacting ኢትዮሳዳት ፋሽን ወድ ሰሚራ.\n\n' +
                 '\n\n──────────────────────\n' +
                 'Your original message:\n' + snippet
             );
@@ -816,7 +816,7 @@
             const waPhone = cleaned.startsWith('0') ? '251' + cleaned.slice(1) : cleaned;
             const snippet = message.length > 100 ? message.slice(0, 100) + '…' : message;
             const waText  = encodeURIComponent(
-                'Hello ' + name + ', thank you for reaching out to ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ! 🪑\n\n' +
+                'Hello ' + name + ', thank you for reaching out to ኢትዮሳዳት ፋሽን ወድ ሰሚራ! 👗\n\n' +
                 'Regarding your message:\n"' + snippet + '"\n\n' +
                 'We are happy to help you.'
             );

@@ -160,7 +160,7 @@
                     <img src="{{ url_for('static', filename=(product.thumbnail if product.thumbnail[:8] == 'uploads/' else 'uploads/products/' ~ product.thumbnail)) }}" alt="{{ product.name_am }}" id="mainProductImage" 
                          onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
                 {% else %}
-                    <div style="font-size: 80px; padding: 40px;">🪑</div>
+                    <div style="font-size: 80px; padding: 40px;">👗</div>
                     <p style="color: var(--text-muted, #999);">No image uploaded</p>
                 {% endif %}
             </div>

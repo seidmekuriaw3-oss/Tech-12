@@ -22,7 +22,7 @@ def check_data():
         cursor = conn.cursor()
         
         print("\n" + "=" * 60)
-        print("🪑 ETHIOSADAT FURNITURE STORE - DATABASE STATUS")
+        print("👗 ETHIOSADAT FASHION STORE - DATABASE STATUS")
         print("=" * 60)
         print(f"📁 Database Path: {db_path}")
         

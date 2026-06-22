@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ product.name_am }} - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ{% endblock %}
+{% block title %}{{ product.name_am }} - ኢትዮሳዳት ፋሽን ወድ ሰሚራ{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -267,9 +267,9 @@
             <div class="main-image" id="mainImageWrap">
                 {% if product.thumbnail and product.thumbnail|trim != '' and product.thumbnail != 'None' %}
                     <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product.name_am }}" id="mainProductImage"
-                         onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:64px;\'>🪑</div>'">
+                         onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:64px;\'>👗</div>'">
                 {% else %}
-                    <div style="font-size: 64px;">🪑</div>
+                    <div style="font-size: 64px;">👗</div>
                 {% endif %}
             </div>
 
@@ -556,9 +556,9 @@
                 <div class="related-image">
                     {% if related.thumbnail and related.thumbnail|trim != '' and related.thumbnail != 'None' %}
                         <img src="{{ url_for('static', filename=related.thumbnail) }}" alt="{{ related.name_am }}" loading="lazy"
-                             onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:32px;\'>🪑</div>'">
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:32px;\'>👗</div>'">
                     {% else %}
-                        <div style="font-size: 32px;">🪑</div>
+                        <div style="font-size: 32px;">👗</div>
                     {% endif %}
                 </div>
                 <div class="related-name">{{ related.name_am }}</div>

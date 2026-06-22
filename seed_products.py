@@ -598,6 +598,6 @@ if __name__ == "__main__":
         clear_products()
     else:
         print("\n" + "=" * 60)
-        print("🪑 ETHIOSADAT PRODUCT SEEDER")
+        print("👗 ETHIOSADAT PRODUCT SEEDER")
         print("=" * 60)
         seed_products(clear_existing=not args.append, add_images=args.images)

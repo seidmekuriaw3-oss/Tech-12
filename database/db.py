@@ -471,10 +471,10 @@ def init_db():
     cur.execute("SELECT COUNT(*) FROM settings")
     if cur.fetchone()[0] == 0:
         default_settings = [
-            ('site_name', 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ'),
-            ('site_name_am', 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ የሴቶች እና የልጆች ልብስ እስቶር'),
-            ('site_name_ar', 'إثيوصادات للأثاث ووده سميرة'),
-            ('site_description', 'Quality Furniture at Affordable Prices'),
+            ('site_name', 'ኢትዮሳዳት ፋሽን ወድ ሰሚራ'),
+            ('site_name_am', 'ኢትዮሳዳት ፋሽን ወድ ሰሚራ - የሴቶች እና የልጆች ልብስ እስቶር'),
+            ('site_name_ar', 'إثيوصادات فاشن ووده سميرة'),
+            ('site_description', 'የሴቶች እና የልጆች ልብስ በተመጣጣኝ ዋጋ - Women\'s & Children\'s Fashion'),
             ('site_email', 'info@ethiosadat.com'),
             ('site_phone', '+251987957957'),
             ('admin_email', 'admin@ethiosadat.com'),
@@ -485,7 +485,7 @@ def init_db():
             ('shipping_cost', '200'),
             ('currency', 'ETB'),
             ('default_language', 'am'),
-            ('meta_keywords', 'furniture, ethiosadat, ወሎ ደሴ ኩታበር, sofa, bed'),
+            ('meta_keywords', 'fashion, clothing, ልብስ, ethiosadat, ወሎ ደሴ ኩታበር, የሴቶች ልብስ, የልጆች ልብስ'),
             ('google_analytics', ''),
         ]
         cur.executemany(
@@ -494,11 +494,11 @@ def init_db():
         )
     else:
         extra_settings = [
-            ('site_description', 'Quality Furniture at Affordable Prices'),
+            ('site_description', 'የሴቶች እና የልጆች ልብስ በተመጣጣኝ ዋጋ - Women\'s & Children\'s Fashion'),
             ('admin_email', 'admin@ethiosadat.com'),
             ('phone_number', '+251987957957'),
             ('store_address', 'ወሎ ደሴ ኩታበር, Ethiopia'),
-            ('meta_keywords', 'furniture, ethiosadat, ወሎ ደሴ ኩታበር, sofa, bed'),
+            ('meta_keywords', 'fashion, clothing, ልብስ, ethiosadat, ወሎ ደሴ ኩታበር, የሴቶች ልብስ, የልጆች ልብስ'),
             ('google_analytics', ''),
         ]
         for key, value in extra_settings:

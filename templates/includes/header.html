@@ -6,10 +6,10 @@
         
         <!-- Logo -->
         <div class="logo" onclick="location.href='{{ url_for(&quot;index&quot;) }}'">
-            <div class="logo-icon">🪑</div>
+            <div class="logo-icon">👗</div>
             <div class="logo-text">
-                <h1>Ethiosadat</h1>
-                <p>Furniture</p>
+                <h1>ኢትዮሳዳት</h1>
+                <p>Fashion</p>
             </div>
         </div>
         
@@ -66,10 +66,10 @@
     <!-- Mobile Menu Panel -->
     <div id="mobileMenu" class="mobile-menu">
         <div class="mobile-menu-header">
-            <div class="logo-icon">🪑</div>
+            <div class="logo-icon">👗</div>
             <div class="logo-text">
-                <h3>Ethiosadat</h3>
-                <p>Furniture</p>
+                <h3>ኢትዮሳዳት</h3>
+                <p>Fashion</p>
             </div>
             <button class="close-menu" onclick="toggleMobileMenu()">&times;</button>
         </div>
@@ -579,7 +579,7 @@
                         if (data.products && data.products.length > 0) {
                             suggestionsDiv.innerHTML = data.products.map(p => `
                                 <div class="suggestion-item" onclick="location.href='{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0', '/' + ${p.id})">
-                                    <span class="suggestion-icon">🪑</span>
+                                    <span class="suggestion-icon">👗</span>
                                     <div class="suggestion-info">
                                         <div class="suggestion-name">${escapeHtml(p.name_am || p.name)}</div>
                                         <div class="suggestion-price">${formatPriceNumber(p.price)} ETB</div>

@@ -612,7 +612,7 @@
         if (!currentProduct) return;
         
         const url = window.location.origin + '{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0', '/' + currentProduct.id);
-        const text = `Check out ${currentProduct.name_am || currentProduct.name} at ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ!`;
+        const text = `Check out ${currentProduct.name_am || currentProduct.name} at ኢትዮሳዳት ፋሽን ወድ ሰሚራ!`;
         
         let shareUrl = '';
         if (platform === 'facebook') {

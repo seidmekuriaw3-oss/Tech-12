@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Home - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ{% endblock %}
+{% block title %}Home - ኢትዮሳዳት ፋሽን ወድ ሰሚራ{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slider.css') }}">
@@ -606,7 +606,7 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="hero">
-    <h1>🪑 ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</h1>
+    <h1>👗 ኢትዮሳዳት ፋሽን ወድ ሰሚራ</h1>
     <p>{{ t.quality_tagline }}</p>
     <p>{{ t.free_shipping_msg }}</p>
 </div>
@@ -764,9 +764,9 @@
             {% if product.thumbnail and product.thumbnail != '' %}
                 <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
                      onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.pc-fallback').style.display='flex';">
-                <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">🪑</div>
+                <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">👗</div>
             {% else %}
-                <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">🪑</div>
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">👗</div>
             {% endif %}
             {% if disc > 0 %}<span class="pc-badge pc-badge-sale">-{{ disc }}%</span>{% endif %}
             {% if product.is_new %}<span class="pc-badge pc-badge-new">NEW</span>{% endif %}
@@ -794,9 +794,9 @@
             {% if product.thumbnail and product.thumbnail != '' %}
                 <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
                      onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.pc-fallback').style.display='flex';">
-                <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">🪑</div>
+                <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">👗</div>
             {% else %}
-                <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">🪑</div>
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">👗</div>
             {% endif %}
             {% if disc > 0 %}<span class="pc-badge pc-badge-sale">-{{ disc }}%</span>{% endif %}
             <span class="pc-badge pc-badge-new">NEW</span>
@@ -954,9 +954,9 @@
                 {% if product.thumbnail and product.thumbnail != '' %}
                     <img src="{{ url_for('static', filename=product.thumbnail) }}" alt="{{ product_name(product) }}" loading="lazy"
                          onerror="this.onerror=null;this.style.display='none';this.parentElement.querySelector('.pc-fallback').style.display='flex';">
-                    <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">🪑</div>
+                    <div class="pc-fallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:36px;">👗</div>
                 {% else %}
-                    <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">🪑</div>
+                    <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;">👗</div>
                 {% endif %}
                 {% if disc > 0 %}<span class="pc-badge pc-badge-sale">-{{ disc }}%</span>{% endif %}
                 <button class="pc-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('{{ product.id }}',1,this)" title="{{ t.add_to_cart }}">🛒</button>
@@ -977,12 +977,12 @@
 <!-- About Section (Desktop only - shown based on platform) -->
 {% if show_about %}
 <div class="about-section">
-    <h2>🏢 About ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</h2>
+    <h2>🏢 About ኢትዮሳዳት ፋሽን ወድ ሰሚራ</h2>
     <p>
-        ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ is a leading furniture retailer in Ethiopia, offering high-quality 
-        furniture at competitive prices. With multiple branches across the country, we serve 
+        ኢትዮሳዳት ፋሽን ወድ ሰሚራ is a leading fashion store in Ethiopia, offering high-quality 
+        clothing at competitive prices. With multiple branches across the country, we serve 
         thousands of satisfied customers. Our mission is to provide comfortable, stylish, 
-        and durable furniture that transforms houses into homes.
+        and stylish clothing that makes every occasion special.
     </p>
     <p style="margin-top: 15px;">
         🇪🇹 Proudly serving Ethiopia since 2000 | 9 branches nationwide | Thousands of happy customers

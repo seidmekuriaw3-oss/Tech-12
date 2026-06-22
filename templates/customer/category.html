@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ page_title }} - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ{% endblock %}
+{% block title %}{{ page_title }} - ኢትዮሳዳት ፋሽን ወድ ሰሚራ{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -273,9 +273,9 @@
                     <img src="{{ url_for('static', filename=product.thumbnail) }}" 
                          alt="{{ product.name_am }}"
                          loading="lazy"
-                         onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>🪑</div>'">
+                         onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>👗</div>'">
                 {% else %}
-                    <div style="font-size: 48px;">🪑</div>
+                    <div style="font-size: 48px;">👗</div>
                 {% endif %}
                 {% if product.compare_price and product.compare_price|float > product.price|float %}
                     {% set discount = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int %}
@@ -396,8 +396,8 @@
                     <div class="product-image">
                         ${hasImage ? 
                             `<img src="${imageUrl}" alt="${escapeHtml(product.name_am)}" loading="lazy" 
-                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>🪑</div>'">` :
-                            '<div style="font-size: 48px;">🪑</div>'
+                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>👗</div>'">` :
+                            '<div style="font-size: 48px;">👗</div>'
                         }
                         ${discount ? `<span class="discount-badge">${discount}</span>` : ''}
                     </div>

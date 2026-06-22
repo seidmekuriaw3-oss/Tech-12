@@ -415,7 +415,7 @@
         
         container.innerHTML = products.map(product => `
             <div class="suggestion-item" onclick="performSearch('${escapeHtml(product.name_am || product.name)}')">
-                <div class="suggestion-icon">🪑</div>
+                <div class="suggestion-icon">👗</div>
                 <div class="suggestion-info">
                     <div class="suggestion-name">${escapeHtml(product.name_am || product.name)}</div>
                     <div class="suggestion-category">${escapeHtml(product.category_name || 'Uncategorized')}</div>

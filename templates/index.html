@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ - Quality Furniture in ወሎ ደሴ ኩታበር{% endblock %}
+{% block title %}ኢትዮሳዳት ፋሽን ወድ ሰሚራ - Women's & Children's Fashion in ወሎ ደሴ ኩታበር{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slider.css') }}">
@@ -18,7 +18,7 @@
     }
     
     .hero-section::before {
-        content: '🪑';
+        content: '👗';
         position: absolute;
         font-size: 200px;
         opacity: 0.05;
@@ -384,8 +384,8 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="hero-section">
-    <h1>🪑 ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</h1>
-    <p>Quality furniture at affordable prices in ወሎ ደሴ ኩታበር</p>
+    <h1>👗 ኢትዮሳዳት ፋሽን ወድ ሰሚራ</h1>
+    <p>Quality fashion at affordable prices in ወሎ ደሴ ኩታበር</p>
     <p>🚚 Free shipping on orders over 5000 ETB</p>
     <div class="hero-buttons">
         <a href="{{ url_for('customer.products') }}" class="hero-btn hero-btn-primary">Shop Now →</a>
@@ -407,7 +407,7 @@
         <div class="category-icon">
             {% if cat.name_am == 'ሶፋ' %}🛋️
             {% elif cat.name_am == 'አልጋ' %}🛏️
-            {% elif cat.name_am == 'መጅሊስ' %}🪑
+            {% elif cat.name_am == 'መጅሊስ' %}👗
             {% elif cat.name_am == 'መጋረጃ' %}🚪
             {% elif cat.name_am == 'ቁምሳጥን' %}🗄️
             {% else %}📦{% endif %}
@@ -436,9 +436,9 @@
                 <img src="{{ url_for('static', filename=product.thumbnail) }}" 
                      alt="{{ product.name_am }}"
                      loading="lazy"
-                     onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>🪑</div>'">
+                     onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>👗</div>'">
             {% else %}
-                <div style="font-size: 48px;">🪑</div>
+                <div style="font-size: 48px;">👗</div>
             {% endif %}
             {% if product.compare_price and product.compare_price|float > product.price|float %}
                 {% set discount = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int %}
@@ -467,7 +467,7 @@
 <div style="text-align: center; padding: 60px; background: var(--bg-white, white); border-radius: 20px;">
     <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
     <h3 style="color: var(--text-color, #333);">No products yet</h3>
-    <p style="color: var(--text-muted, #666);">Check back soon for our amazing furniture collection!</p>
+    <p style="color: var(--text-muted, #666);">Check back soon for our amazing clothing collection!</p>
 </div>
 {% endif %}
 
@@ -486,7 +486,7 @@
         <div class="feature-item">
             <div class="feature-icon">💰</div>
             <div class="feature-title">Best Prices</div>
-            <div class="feature-desc">Affordable furniture for every budget</div>
+            <div class="feature-desc">Affordable fashion for every budget</div>
         </div>
         <div class="feature-item">
             <div class="feature-icon">🚚</div>
@@ -504,10 +504,10 @@
 <!-- About Section (Desktop only - based on platform) -->
 {% if show_about %}
 <div style="background: var(--bg-white, white); border-radius: 24px; padding: 40px; margin: 40px 0; text-align: center;">
-    <h2 style="color: #1a7a4a;">🏢 About ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</h2>
+    <h2 style="color: #1a7a4a;">🏢 About ኢትዮሳዳት ፋሽን ወድ ሰሚራ</h2>
     <p style="color: var(--text-muted, #666); max-width: 800px; margin: 20px auto;">
-        ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ is a leading furniture retailer in Ethiopia, offering high-quality 
-        furniture at competitive prices. With multiple branches across the country, we serve 
+        ኢትዮሳዳት ፋሽን ወድ ሰሚራ is a leading fashion store in Ethiopia, offering high-quality 
+        clothing at competitive prices. With multiple branches across the country, we serve 
         thousands of satisfied customers.
     </p>
 </div>

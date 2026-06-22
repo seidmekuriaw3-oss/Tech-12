@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ t.search_results }} — ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ{% endblock %}
+{% block title %}{{ t.search_results }} — ኢትዮሳዳት ፋሽን ወድ ሰሚራ{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -365,9 +365,9 @@
                     <img src="{{ url_for('static', filename=product.thumbnail) }}"
                          alt="{{ product_name(product) }}"
                          loading="lazy"
-                         onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>🪑</div>'">
+                         onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>👗</div>'">
                 {% else %}
-                    <div style="font-size: 48px;">🪑</div>
+                    <div style="font-size: 48px;">👗</div>
                 {% endif %}
                 {% if product.compare_price and product.compare_price|float > product.price|float %}
                     {% set discount = ((product.compare_price|float - product.price|float) / product.compare_price|float * 100)|round|int %}
@@ -509,8 +509,8 @@
             const hasImg = p.thumbnail && p.thumbnail.trim() && p.thumbnail !== 'None';
             const imgHtml = hasImg
                 ? `<img src="${STATIC_BASE}${p.thumbnail}" alt="${name}" loading="lazy"
-                        onerror="this.onerror=null;this.parentElement.innerHTML='<div style=\\'font-size:48px;\\'>🪑</div>'">`
-                : '<div style="font-size:48px;">🪑</div>';
+                        onerror="this.onerror=null;this.parentElement.innerHTML='<div style=\\'font-size:48px;\\'>👗</div>'">`
+                : '<div style="font-size:48px;">👗</div>';
 
             const hasDiscount = p.compare_price && parseFloat(p.compare_price) > parseFloat(p.price);
             const discount = hasDiscount

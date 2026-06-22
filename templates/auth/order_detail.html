@@ -182,9 +182,9 @@
             {% if item.thumbnail %}
             <img src="{{ url_for('static', filename=item.thumbnail) }}" alt="{{ item.name }}" class="item-thumb"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="item-thumb-ph" style="display:none;">🪑</div>
+            <div class="item-thumb-ph" style="display:none;">👗</div>
             {% else %}
-            <div class="item-thumb-ph">🪑</div>
+            <div class="item-thumb-ph">👗</div>
             {% endif %}
             <div class="item-info">
                 <div class="item-name">{{ item.name_am or item.name }}</div>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Products - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ{% endblock %}
+{% block title %}Products - ኢትዮሳዳት ፋሽን ወድ ሰሚራ{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -354,7 +354,7 @@
     <!-- Page Header -->
     <div class="page-header">
         <h1>🛍️ All Products</h1>
-        <p>Browse our complete collection of quality furniture</p>
+        <p>Browse our complete collection of quality clothing</p>
     </div>
     
     <!-- Mobile Filter Toggle -->
@@ -580,8 +580,8 @@
                 <div class="product-image" style="position:relative;">
                     ${hasImage ? 
                         `<img src="${imageUrl}" alt="${escapeHtml(product.name_am)}" loading="lazy"
-                             onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>🪑</div>'">` :
-                        '<div style="font-size: 48px;">🪑</div>'
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>👗</div>'">` :
+                        '<div style="font-size: 48px;">👗</div>'
                     }
                     ${discountHtml}
                 </div>

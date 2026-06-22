@@ -143,13 +143,13 @@
             
             <div class="form-group">
                 <label>Site Name</label>
-                <input type="text" name="site_name" id="site_name" value="{{ settings.site_name|default('ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ') }}" placeholder="Store name">
+                <input type="text" name="site_name" id="site_name" value="{{ settings.site_name|default('ኢትዮሳዳት ፋሽን ወድ ሰሚራ') }}" placeholder="Store name">
                 <small>This appears in browser tabs and page titles</small>
             </div>
             
             <div class="form-group">
                 <label>Site Description</label>
-                <input type="text" name="site_description" id="site_description" value="{{ settings.site_description|default('Quality Furniture at Affordable Prices') }}" placeholder="Store description">
+                <input type="text" name="site_description" id="site_description" value="{{ settings.site_description|default('Women's & Children's Fashion at Affordable Prices') }}" placeholder="Store description">
                 <small>Used for SEO and meta descriptions</small>
             </div>
         </div>
@@ -238,7 +238,7 @@
             
             <div class="form-group">
                 <label>Meta Keywords</label>
-                <input type="text" name="meta_keywords" id="meta_keywords" value="{{ settings.meta_keywords|default('furniture, ethiosadat, ወሎ ደሴ ኩታበር, sofa, bed') }}" placeholder="furniture, ethiosadat, ወሎ ደሴ ኩታበር">
+                <input type="text" name="meta_keywords" id="meta_keywords" value="{{ settings.meta_keywords|default('fashion, clothing, ልብስ, ethiosadat, ወሎ ደሴ ኩታበር') }}" placeholder="fashion, clothing, ልብስ, ethiosadat, ወሎ ደሴ ኩታበር">
                 <small>Comma-separated keywords for search engines</small>
             </div>
             
@@ -405,8 +405,8 @@
     function resetToDefaults() {
         const confirmFn = window.showConfirm || confirm;
         const callback = () => {
-            document.getElementById('site_name').value = 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ';
-            document.getElementById('site_description').value = 'Quality Furniture at Affordable Prices';
+            document.getElementById('site_name').value = 'ኢትዮሳዳት ፋሽን ወድ ሰሚራ';
+            document.getElementById('site_description').value = 'Women's & Children's Fashion at Affordable Prices';
             document.getElementById('admin_email').value = 'admin@ethiosadat.com';
             document.getElementById('whatsapp_number').value = '251987957957';
             document.getElementById('phone_number').value = '+251987957957';
@@ -415,7 +415,7 @@
             document.getElementById('shipping_cost').value = '200';
             document.getElementById('currency').value = 'ETB';
             document.getElementById('default_language').value = 'am';
-            document.getElementById('meta_keywords').value = 'furniture, ethiosadat, ወሎ ደሴ ኩታበር, sofa, bed';
+            document.getElementById('meta_keywords').value = 'fashion, clothing, ልብስ, ethiosadat, ወሎ ደሴ ኩታበር';
             
             if (window.showToast) {
                 window.showToast('Settings reset to defaults', 'success');

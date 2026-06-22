@@ -448,7 +448,7 @@
             itemsDiv.innerHTML = cart.map(item => `
                 <div class="cart-item" data-id="${item.product_id}">
                     <div class="cart-item-image">
-                        ${item.thumbnail ? `<img src="{{ url_for('static', filename='') }}${item.thumbnail}" alt="${escapeHtml(item.name)}" onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">` : '<div style="display: flex; align-items: center; justify-content: center; height: 100%;">🪑</div>'}
+                        ${item.thumbnail ? `<img src="{{ url_for('static', filename='') }}${item.thumbnail}" alt="${escapeHtml(item.name)}" onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">` : '<div style="display: flex; align-items: center; justify-content: center; height: 100%;">👗</div>'}
                     </div>
                     <div class="cart-item-details">
                         <div class="cart-item-name">${escapeHtml(item.name_am || item.name)}</div>

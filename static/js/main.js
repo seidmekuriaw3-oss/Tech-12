@@ -1733,9 +1733,9 @@ if (window.performance && window.performance.mark) {
 // Console greeting
 console.log(`
 ╔═══════════════════════════════════════════╗
-║   🪑 ETHIOSADAT FURNITURE v1.0.0          ║
+║   👗 ETHIOSADAT FASHION v1.0.0            ║
 ║   Professional E-commerce Platform        ║
-║   Made with ❤️ for Ethiopian Furniture    ║
+║   Made with ❤️ for Ethiopian Fashion     ║
 ╚═══════════════════════════════════════════╝
 `);
 // ==================== Exports (Part 1) ====================

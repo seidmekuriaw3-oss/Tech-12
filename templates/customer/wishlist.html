@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}
 {% if lang == 'am' %}የምርጦቼ ዝርዝር{% elif lang == 'ar' %}قائمة الأمنيات{% else %}My Wishlist{% endif %}
- — ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+ — ኢትዮሳዳት ፋሽን ወድ ሰሚራ
 {% endblock %}
 
 {% block extra_css %}
@@ -139,9 +139,9 @@
                 <img src="{{ url_for('static', filename=item.thumbnail) }}"
                      alt="{{ item.name_am if lang == 'am' else item.name }}"
                      loading="lazy"
-                     onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'wl-img-placeholder\'>🪑</div>'">
+                     onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'wl-img-placeholder\'>👗</div>'">
             {% else %}
-                <div class="wl-img-placeholder">🪑</div>
+                <div class="wl-img-placeholder">👗</div>
             {% endif %}
             <button class="wl-remove" title="Remove from wishlist"
                     onclick="removeFromWishlist({{ item.product_id }})">❤️</button>
