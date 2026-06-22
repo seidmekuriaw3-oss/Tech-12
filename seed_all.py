@@ -133,7 +133,7 @@ def seed_all(clear_existing=True):
             ('🎉 ልዩ ቅናሽ! እስከ 30% ቅናሽ በሁሉም ልብሶች ላይ! ውሱን ጊዜ ብቻ!', 'discount', '#ff4444', '/category/all', 1, 1),
             ('🚚 ነጻ ማጓጓዝ ከ5000 ብር በላይ ግዢ ላይ! ዛሬውኑ ይግዙ!', 'shipping', '#4CAF50', '/cart', 1, 2),
             ('✨ አዲስ ልብሶች ደርሰዋል! ዘመናዊ ዲዛይን፣ ምርጥ ጥራት!', 'new', '#2196F3', '/category/all', 1, 3),
-            ('💝 የበዓል ልዩ ቅናሽ! ለቤተሰብዎ ምርጥ ስጦታ ከኢትዮሳዳት ፋሽን ጋር!', 'holiday', '#9C27B0', '/category/all', 1, 4),
+            ('💝 የበዓል ልዩ ቅናሽ! ለቤተሰብዎ ምርጥ ስጦታ ከSEMIRA FASHION ጋር!', 'holiday', '#9C27B0', '/category/all', 1, 4),
             ('👗 የሴቶች ቀሚሶች ልዩ ቅናሽ! ምርጥ ቀሚሶች ዋጋ ከ500 ብር ጀምሮ!', 'product', '#FF9800', '/category/all', 1, 5),
             ('📱 በዋትሳፕ በማዘዝ ተጨማሪ 5% ቅናሽ ያግኙ!', 'whatsapp', '#25D366', '/contact', 1, 6),
             ('⭐ የደንበኞች ምርጫ 2024! ኢትዮሳዳት ምርጥ የፋሽን እስቶር ተመርጧል!', 'award', '#FFC107', '/about', 1, 7),
@@ -201,7 +201,7 @@ def seed_all(clear_existing=True):
             print("   ✓ Cleared existing settings")
         
         settings = [
-            ('site_name', 'ኢትዮሳዳት ፋሽን ወድ ሰሚራ'),
+            ('site_name', 'SEMIRA FASHION'),
             ('site_email', 'info@ethiosadat.com'),
             ('site_phone', '+251987957957'),
             ('whatsapp_number', '251987957957'),

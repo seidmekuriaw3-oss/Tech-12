@@ -471,8 +471,8 @@ def init_db():
     cur.execute("SELECT COUNT(*) FROM settings")
     if cur.fetchone()[0] == 0:
         default_settings = [
-            ('site_name', 'ኢትዮሳዳት ፋሽን ወድ ሰሚራ'),
-            ('site_name_am', 'ኢትዮሳዳት ፋሽን ወድ ሰሚራ - የሴቶች እና የልጆች ልብስ እስቶር'),
+            ('site_name', 'SEMIRA FASHION'),
+            ('site_name_am', 'SEMIRA FASHION - የሴቶች እና የልጆች ልብስ እስቶር'),
             ('site_name_ar', 'إثيوصادات فاشن ووده سميرة'),
             ('site_description', 'የሴቶች እና የልጆች ልብስ በተመጣጣኝ ዋጋ - Women\'s & Children\'s Fashion'),
             ('site_email', 'info@ethiosadat.com'),

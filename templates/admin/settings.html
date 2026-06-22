@@ -143,7 +143,7 @@
             
             <div class="form-group">
                 <label>Site Name</label>
-                <input type="text" name="site_name" id="site_name" value="{{ settings.site_name|default('ኢትዮሳዳት ፋሽን ወድ ሰሚራ') }}" placeholder="Store name">
+                <input type="text" name="site_name" id="site_name" value="{{ settings.site_name|default('SEMIRA FASHION') }}" placeholder="Store name">
                 <small>This appears in browser tabs and page titles</small>
             </div>
             
@@ -405,7 +405,7 @@
     function resetToDefaults() {
         const confirmFn = window.showConfirm || confirm;
         const callback = () => {
-            document.getElementById('site_name').value = 'ኢትዮሳዳት ፋሽን ወድ ሰሚራ';
+            document.getElementById('site_name').value = 'SEMIRA FASHION';
             document.getElementById('site_description').value = 'Women's & Children's Fashion at Affordable Prices';
             document.getElementById('admin_email').value = 'admin@ethiosadat.com';
             document.getElementById('whatsapp_number').value = '251987957957';

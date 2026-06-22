@@ -377,7 +377,7 @@ def inject_globals():
         'platform': platform,
         'whatsapp_number': WHATSAPP_NUMBER,
         'google_translate_widget': get_google_translate_widget(),
-        'app_name': 'ኢትዮሳዳት ፋሽን ወድ ሰሚራ',
+        'app_name': 'SEMIRA FASHION',
         'pending_orders_count': pending_orders_count,
         'low_stock_count': low_stock_count,
         'unread_messages_count': unread_messages_count,
@@ -675,7 +675,7 @@ app.start_time = time.time()
 
 
 def initialize_app():
-    app.logger.info("Initializing Ethiosadat Fashion Application")
+    app.logger.info("Initializing Semira Fashion Application")
     try:
         init_db()
         app.logger.info("Database initialized successfully")
@@ -703,12 +703,12 @@ with app.app_context():
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description='Ethiosadat Fashion Application')
+    parser = argparse.ArgumentParser(description='Semira Fashion Application')
     parser.add_argument('--host', default='0.0.0.0')
     parser.add_argument('--port', type=int, default=5000)
     parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
-    print(f"\nStarting Ethiosadat Fashion at http://{args.host}:{args.port}")
+    print(f"\nStarting Semira Fashion at http://{args.host}:{args.port}")
     app.run(host=args.host, port=args.port, debug=args.debug)
 
 
