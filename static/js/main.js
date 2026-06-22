@@ -1733,7 +1733,7 @@ if (window.performance && window.performance.mark) {
 // Console greeting
 console.log(`
 ╔═══════════════════════════════════════════╗
-║   👗 ETHIOSADAT FASHION v1.0.0            ║
+║   👗 SEMIRA FASHION v1.0.0                ║
 ║   Professional E-commerce Platform        ║
 ║   Made with ❤️ for Ethiopian Fashion     ║
 ╚═══════════════════════════════════════════╝
