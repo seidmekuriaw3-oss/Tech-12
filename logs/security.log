@@ -19092,3 +19092,5 @@ TypeError: Object of type Undefined is not JSON serializable
 2026-06-22 04:13:32,143 - app - WARNING - 404 Error: http://1b6fbc24-b6ae-4105-b052-4039fc64549b-00-1fqo1x06nm4da.picard.replit.dev/favicon.ico
 2026-06-22 04:42:45,438 - app - WARNING - 404 Error: http://b4cdde04-53f2-4cc2-a2f4-4587252160a9-00-3i7qfxwewajzr.janeway.replit.dev/static/images/logo.svg
 2026-06-22 04:42:53,311 - app - WARNING - 404 Error: http://b4cdde04-53f2-4cc2-a2f4-4587252160a9-00-3i7qfxwewajzr.janeway.replit.dev/favicon.ico
+2026-06-22 05:33:44,357 - app - WARNING - 404 Error: http://localhost:5000/checkout
+2026-06-22 05:33:44,407 - app - WARNING - 404 Error: http://localhost:5000/favicon.ico

@@ -1227,12 +1227,11 @@ def api_platform():
 
 @api_bp.route('/submit-order', methods=['POST'])
 def api_submit_order():
-    """Submit order via AJAX (quick-checkout modal)."""
-    if not session.get('user_id'):
-        return jsonify({'success': False, 'error': 'Please login to place order'}), 401
+    """Submit order via AJAX (quick-checkout modal) — supports guests and logged-in users."""
+    user_id = session.get('user_id')
     try:
         data = request.get_json()
-        customer_name = (data.get('customer_name') or '').strip()
+        customer_name  = (data.get('customer_name') or '').strip()
         customer_phone = (data.get('customer_phone') or '').strip()
         shipping_address = (data.get('customer_address') or '').strip() or 'Not provided'
         customer_email = (data.get('customer_email') or '').strip() or None
@@ -1244,35 +1243,56 @@ def api_submit_order():
         db = get_db()
         cursor = db.cursor()
 
-        cursor.execute("""
-            SELECT ci.product_id, ci.quantity, p.price, p.name, p.name_am
-            FROM cart_items ci JOIN products p ON ci.product_id = p.id
-            WHERE ci.user_id = %s
-        """, (session['user_id'],))
-        cart_items = cursor.fetchall()
+        cart_items = []
+        if user_id:
+            cursor.execute("""
+                SELECT ci.product_id, ci.quantity, p.price, p.name, p.name_am
+                FROM cart_items ci JOIN products p ON ci.product_id = p.id
+                WHERE ci.user_id = %s
+            """, (user_id,))
+            cart_items = cursor.fetchall()
+        else:
+            # Guest: load from session cart
+            session_cart = session.get('cart', {})
+            if session_cart:
+                product_ids = [int(pid) for pid in session_cart.keys()]
+                placeholders = ','.join(['%s'] * len(product_ids))
+                cursor.execute(
+                    f"SELECT id, name, name_am, price FROM products WHERE id IN ({placeholders}) AND is_active = TRUE",
+                    product_ids
+                )
+                products_map = {p['id']: p for p in cursor.fetchall()}
+                for pid_str, qty in session_cart.items():
+                    p = products_map.get(int(pid_str))
+                    if p:
+                        cart_items.append({
+                            'product_id': p['id'], 'quantity': qty,
+                            'price': p['price'], 'name': p['name'],
+                            'name_am': p['name_am'] or p['name'],
+                        })
 
         if not cart_items:
             return jsonify({'success': False, 'error': 'Cart is empty'}), 400
 
         from middleware.platform import is_android_app
         android_user = is_android_app()
+        is_logged_in = bool(user_id) or android_user
 
         subtotal = 0
         items_list = []
         for item in cart_items:
             price = item['price'] or 0
-            qty = item['quantity'] or 1
-            subtotal += price * qty          # always use original price for subtotal
+            qty   = item['quantity'] or 1
+            subtotal += price * qty
             items_list.append({
                 'product_id': item['product_id'], 'quantity': qty,
-                'price': round(price * 0.9, 2) if android_user else price,
+                'price': round(price * 0.9, 2) if is_logged_in else price,
                 'name': item['name'],
                 'name_am': item['name_am'] or item['name'],
             })
 
-        # calc_cart_totals applies the 10% exactly once on original subtotal
         from routes.shared import calc_cart_totals as _cct
-        _totals = _cct(subtotal, is_logged_in=android_user)
+        _totals = _cct(subtotal, is_logged_in=is_logged_in)
         discount = _totals['discount']
         subtotal_after_discount = _totals['subtotal_after_discount']
         shipping_cost = _totals['shipping_cost']
@@ -1284,13 +1304,13 @@ def api_submit_order():
 
         cursor.execute("""
             INSERT INTO orders (
-                order_number, user_id, status, payment_status,
+                order_number, user_id, customer_name, customer_email, status, payment_status,
                 subtotal, discount, shipping_fee, total,
-                shipping_address, shipping_phone, notes, customer_name, customer_email
+                shipping_address, shipping_phone, notes
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
-        """, (order_number, session['user_id'], 'pending', 'pending',
+        """, (order_number, user_id, customer_name, customer_email, 'pending', 'pending',
               subtotal, discount, shipping_cost, total,
-              shipping_address, customer_phone, notes, customer_name, customer_email))
+              shipping_address, customer_phone, notes))
 
         row = cursor.fetchone()
         order_id = row[0] if row else None
@@ -1304,7 +1324,10 @@ def api_submit_order():
                 UPDATE products SET stock_quantity = stock_quantity - %s WHERE id = %s
             """, (item['quantity'], item['product_id']))
 
-        cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))
+        if user_id:
+            cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (user_id,))
+        else:
+            session.pop('cart', None)
         db.commit()
 
         # WhatsApp owner notification (background thread)

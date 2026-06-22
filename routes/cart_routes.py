@@ -299,93 +299,168 @@ def clear_cart():
 # ==================== CHECKOUT ====================
 
 @cart_bp.route('/checkout')
-@user_login_required
 def checkout():
-    """Checkout page"""
-    # Get cart items
+    """Checkout page — supports both logged-in users and guests"""
+    user_id = session.get('user_id')
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("""
-        SELECT ci.*, p.name, p.name_am, p.name_ar, p.price, p.thumbnail
-        FROM cart_items ci
-        JOIN products p ON ci.product_id = p.id
-        WHERE ci.user_id = %s
-    """, (session['user_id'],))
-    
-    raw_items = cursor.fetchall()
 
-    if not raw_items:
-        flash('Your cart is empty!', 'warning')
-        return redirect(url_for('customer.index'))
-
-    # Build enriched cart items with discounted_price for template display
     cart_items = []
     subtotal = 0
-    for item in raw_items:
-        orig_price = item['price']
-        discounted_price = round(orig_price * 0.9, 2)
-        subtotal += orig_price * item['quantity']
-        cart_items.append({
-            'id': item['id'] if 'id' in item.keys() else None,
-            'product_id': item['product_id'],
-            'name': item['name'],
-            'name_am': item['name_am'],
-            'name_ar': item['name_ar'],
-            'price': orig_price,
-            'discounted_price': discounted_price,
-            'quantity': item['quantity'],
-            'thumbnail': item['thumbnail'],
-            'subtotal': round(discounted_price * item['quantity'], 2),
-        })
 
-    # calc_cart_totals applies the 10% discount exactly once on original subtotal
-    totals = calc_cart_totals(subtotal, is_logged_in=True)
+    if user_id:
+        # Logged-in: fetch from DB cart_items
+        cursor.execute("""
+            SELECT ci.*, p.name, p.name_am, p.name_ar, p.price, p.thumbnail
+            FROM cart_items ci
+            JOIN products p ON ci.product_id = p.id
+            WHERE ci.user_id = %s
+        """, (user_id,))
+        raw_items = cursor.fetchall()
 
-    # Get user info for pre-filling
-    cursor.execute("SELECT full_name, email, phone, address, city FROM users WHERE id = %s", (session['user_id'],))
-    user = cursor.fetchone()
+        if not raw_items:
+            flash('Your cart is empty!', 'warning')
+            return redirect(url_for('customer.index'))
+
+        for item in raw_items:
+            orig_price = item['price']
+            discounted_price = round(orig_price * 0.9, 2)
+            subtotal += orig_price * item['quantity']
+            cart_items.append({
+                'id': item['id'] if 'id' in item.keys() else None,
+                'product_id': item['product_id'],
+                'name': item['name'],
+                'name_am': item['name_am'],
+                'name_ar': item['name_ar'],
+                'price': orig_price,
+                'discounted_price': discounted_price,
+                'quantity': item['quantity'],
+                'thumbnail': item['thumbnail'],
+                'subtotal': round(discounted_price * item['quantity'], 2),
+            })
+    else:
+        # Guest: fetch from session cart
+        session_cart = session.get('cart', {})
+        if not session_cart:
+            flash('Your cart is empty!', 'warning')
+            return redirect(url_for('customer.index'))
+
+        product_ids = [int(pid) for pid in session_cart.keys()]
+        placeholders = ','.join(['%s'] * len(product_ids))
+        cursor.execute(f"SELECT id, name, name_am, name_ar, price, thumbnail FROM products WHERE id IN ({placeholders}) AND is_active = TRUE", product_ids)
+        products_map = {str(p['id']): p for p in cursor.fetchall()}
+
+        for pid_str, qty in session_cart.items():
+            p = products_map.get(pid_str)
+            if not p:
+                continue
+            orig_price = p['price']
+            subtotal += orig_price * qty
+            cart_items.append({
+                'id': None,
+                'product_id': p['id'],
+                'name': p['name'],
+                'name_am': p['name_am'],
+                'name_ar': p['name_ar'],
+                'price': orig_price,
+                'discounted_price': orig_price,
+                'quantity': qty,
+                'thumbnail': p['thumbnail'],
+                'subtotal': round(orig_price * qty, 2),
+            })
+
+        if not cart_items:
+            flash('Your cart is empty!', 'warning')
+            return redirect(url_for('customer.index'))
+
+    is_logged_in = bool(user_id)
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+
+    user = None
+    if user_id:
+        cursor.execute("SELECT full_name, email, phone, address, city FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
 
     return render_template('customer/checkout.html',
-                         cart_items=cart_items,
-                         **totals,
-                         user=user)
+                           cart_items=cart_items,
+                           **totals,
+                           user=user,
+                           is_guest=not is_logged_in)
 
 
 # ==================== PLACE ORDER ====================
 
 @cart_bp.route('/place-order', methods=['POST'])
-@user_login_required
 def place_order():
-    """Place order from cart"""
+    """Place order from cart — supports both logged-in users and guests"""
+    user_id = session.get('user_id')
     db = get_db()
     cursor = db.cursor()
-    
-    # Get cart items
-    cursor.execute("""
-        SELECT ci.*, p.price, p.name, p.stock_quantity
-        FROM cart_items ci
-        JOIN products p ON ci.product_id = p.id
-        WHERE ci.user_id = %s
-    """, (session['user_id'],))
-    
-    cart_items = cursor.fetchall()
-    
-    if not cart_items:
+
+    # Get form data
+    shipping_address = request.form.get('shipping_address', '')
+    shipping_city    = request.form.get('shipping_city', '')
+    shipping_phone   = request.form.get('shipping_phone', '').strip()
+    notes            = request.form.get('notes', '')
+    payment_method   = request.form.get('payment_method', 'cash')
+    customer_name    = request.form.get('customer_name', '').strip()
+    customer_email   = request.form.get('customer_email', '').strip() or None
+
+    # Validate guest required fields
+    if not user_id and (not customer_name or not shipping_phone):
+        flash('ስምና ስልክ ቁጥር ያስፈልጋሉ።', 'danger')
+        return redirect(url_for('cart.checkout'))
+
+    cart_items_raw = []
+
+    if user_id:
+        cursor.execute("""
+            SELECT ci.product_id, ci.quantity, p.price, p.name, p.name_am, p.stock_quantity
+            FROM cart_items ci
+            JOIN products p ON ci.product_id = p.id
+            WHERE ci.user_id = %s
+        """, (user_id,))
+        cart_items_raw = cursor.fetchall()
+    else:
+        session_cart = session.get('cart', {})
+        if session_cart:
+            product_ids = [int(pid) for pid in session_cart.keys()]
+            placeholders = ','.join(['%s'] * len(product_ids))
+            cursor.execute(
+                f"SELECT id, name, name_am, price, stock_quantity FROM products WHERE id IN ({placeholders}) AND is_active = TRUE",
+                product_ids
+            )
+            products_map = {p['id']: p for p in cursor.fetchall()}
+            for pid_str, qty in session_cart.items():
+                p = products_map.get(int(pid_str))
+                if p:
+                    cart_items_raw.append({
+                        'product_id': p['id'], 'quantity': qty,
+                        'price': p['price'], 'name': p['name'],
+                        'name_am': p['name_am'], 'stock_quantity': p['stock_quantity']
+                    })
+
+    if not cart_items_raw:
         flash('Your cart is empty!', 'warning')
         return redirect(url_for('cart.view_cart'))
-    
-    # Check stock availability
-    for item in cart_items:
-        if item['quantity'] > item['stock_quantity']:
-            flash(f'Sorry, {item["name"]} has only {item["stock_quantity"]} items in stock!', 'danger')
-            return redirect(url_for('cart.view_cart'))
-    
-    # Calculate totals
-    subtotal = 0
-    for item in cart_items:
-        subtotal += item['price'] * item['quantity']
 
-    totals = calc_cart_totals(subtotal, is_logged_in=True)
+    # Stock check
+    for item in cart_items_raw:
+        qty = item['quantity'] if isinstance(item, dict) else item['quantity']
+        stock = item['stock_quantity'] if isinstance(item, dict) else item['stock_quantity']
+        name = item['name'] if isinstance(item, dict) else item['name']
+        if qty > stock:
+            flash(f'Sorry, {name} has only {stock} items in stock!', 'danger')
+            return redirect(url_for('cart.view_cart'))
+
+    # Calculate totals
+    subtotal = sum(
+        (item['price'] if isinstance(item, dict) else item['price']) *
+        (item['quantity'] if isinstance(item, dict) else item['quantity'])
+        for item in cart_items_raw
+    )
+    is_logged_in = bool(user_id)
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
     subtotal_after_discount = totals['subtotal_after_discount']
     shipping_cost = totals['shipping_cost']
     total = totals['total']
@@ -402,81 +477,93 @@ def place_order():
 
     # Generate order number
     from datetime import datetime
-    import random
-    import string
+    import random, string
     order_number = f"{datetime.now().strftime('%Y%m%d')}-{''.join(random.choices(string.ascii_uppercase + string.digits, k=6))}"
-    
-    # Get form data
-    shipping_address = request.form.get('shipping_address', '')
-    shipping_city = request.form.get('shipping_city', '')
-    shipping_phone = request.form.get('shipping_phone', session.get('user_phone', ''))
-    notes = request.form.get('notes', '')
-    payment_method = request.form.get('payment_method', 'cash')
-    
-    # Create order
+
+    if not customer_name and user_id:
+        customer_name = session.get('user_name', 'Customer')
+    if not shipping_phone and user_id:
+        shipping_phone = session.get('user_phone', '')
+
     cursor.execute("""
         INSERT INTO orders (
-            order_number, user_id, status, payment_status, payment_method,
+            order_number, user_id, customer_name, customer_email, status, payment_status, payment_method,
             subtotal, discount, shipping_fee, total,
             shipping_address, shipping_city, shipping_phone, notes
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id
     """, (
-        order_number, session['user_id'], 'pending', 'pending', payment_method,
+        order_number, user_id, customer_name, customer_email, 'pending', 'pending', payment_method,
         subtotal, discount, shipping_cost, total,
         shipping_address, shipping_city, shipping_phone, notes
     ))
     row = cursor.fetchone()
     order_id = row[0] if row else None
-    
+
     # Create order items and update stock
-    for item in cart_items:
-        discounted_price = item['price'] * 0.9
+    for item in cart_items_raw:
+        price = item['price'] if isinstance(item, dict) else item['price']
+        qty   = item['quantity'] if isinstance(item, dict) else item['quantity']
+        pid   = item['product_id'] if isinstance(item, dict) else item['product_id']
+        discounted_price = round(price * (0.9 if is_logged_in else 1.0), 2)
         cursor.execute("""
             INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
             VALUES (%s, %s, %s, %s)
-        """, (order_id, item['product_id'], item['quantity'], discounted_price))
-        
-        # Update product stock
+        """, (order_id, pid, qty, discounted_price))
         cursor.execute("""
-            UPDATE products SET 
+            UPDATE products SET
                 stock_quantity = stock_quantity - %s,
                 sales_count = sales_count + %s
             WHERE id = %s
-        """, (item['quantity'], item['quantity'], item['product_id']))
-    
+        """, (qty, qty, pid))
+
     # Clear cart
-    cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))
-    
+    if user_id:
+        cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (user_id,))
+    else:
+        session.pop('cart', None)
+
     db.commit()
-    
-    flash(f'Order placed successfully! Your order number is: {order_number}', 'success')
+
+    flash(f'✅ Order placed successfully! Your order number is: {order_number}', 'success')
+
+    if user_id:
+        try:
+            notify_user(
+                user_id,
+                '✅ Order Placed Successfully',
+                f'Your order #{order_number} has been received. We will confirm it shortly.',
+                type='order',
+                link=f'/orders/{order_id}'
+            )
+            notify_admin(
+                '🛒 New Order Received',
+                f'Order #{order_number} was placed. Total: {total:.0f} ETB.',
+                type='new_order',
+                link=f'/admin/orders/{order_id}',
+                ref_order_id=order_id,
+                ref_user_id=user_id
+            )
+        except Exception:
+            pass
+    else:
+        try:
+            notify_admin(
+                '🛒 New Guest Order',
+                f'Guest order #{order_number} from {customer_name}. Total: {total:.0f} ETB.',
+                type='new_order',
+                link=f'/admin/orders/{order_id}',
+                ref_order_id=order_id
+            )
+        except Exception:
+            pass
 
     try:
-        notify_user(
-            session['user_id'],
-            '✅ Order Placed Successfully',
-            f'Your order #{order_number} has been received. We will confirm it shortly.',
-            type='order',
-            link=f'/orders/{order_id}'
-        )
-        notify_admin(
-            '🛒 New Order Received',
-            f'Order #{order_number} was placed. Total: {total:.0f} ETB.',
-            type='new_order',
-            link=f'/admin/orders/{order_id}',
-            ref_order_id=order_id,
-            ref_user_id=session.get('user_id')
-        )
-    except Exception:
-        pass
-
-    # WhatsApp owner notification (background thread — never blocks order)
-    try:
-        customer_name = session.get('user_name', 'Customer')
         wa_items = [
-            {'name': item['name'], 'name_am': item.get('name', ''),
-             'quantity': item['quantity'], 'price': item['price']}
-            for item in cart_items
+            {'name': item['name'] if isinstance(item, dict) else item['name'],
+             'name_am': item.get('name_am', '') if isinstance(item, dict) else item.get('name_am', ''),
+             'quantity': item['quantity'] if isinstance(item, dict) else item['quantity'],
+             'price': item['price'] if isinstance(item, dict) else item['price']}
+            for item in cart_items_raw
         ]
         send_owner_order_notification(
             order_number=order_number,

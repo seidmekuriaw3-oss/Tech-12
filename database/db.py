@@ -223,7 +223,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS orders (
             id SERIAL PRIMARY KEY,
             order_number TEXT UNIQUE NOT NULL,
-            user_id INTEGER NOT NULL,
+            user_id INTEGER,
             customer_name TEXT,
             customer_email TEXT,
             status TEXT DEFAULT 'pending',
