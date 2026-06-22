@@ -38,3 +38,13 @@ psycopg2-binary
 python-dotenv==1.0.0
 requests
 Werkzeug==2.3.7
+flask==2.3.3
+flask-caching
+flask-limiter
+flask-session==0.5.0
+gunicorn
+pillow
+psycopg2-binary
+python-dotenv==1.0.0
+requests
+werkzeug==2.3.7
