@@ -377,15 +377,18 @@ def inject_globals():
         try:
             conn = get_db()
             cur = conn.cursor()
-            cur.execute("SELECT COUNT(*) FROM orders WHERE status = 'pending'")
-            pending_orders_count = (cur.fetchone() or [0])[0]
             cur.execute("""
-                SELECT COUNT(*) FROM products
-                WHERE stock_quantity <= low_stock_threshold AND stock_quantity > 0
+                SELECT
+                    (SELECT COUNT(*) FROM orders WHERE status = 'pending') AS pending_orders,
+                    (SELECT COUNT(*) FROM products
+                     WHERE stock_quantity <= low_stock_threshold AND stock_quantity > 0) AS low_stock,
+                    (SELECT COUNT(*) FROM contact_messages WHERE is_read = 0) AS unread_messages
             """)
-            low_stock_count = (cur.fetchone() or [0])[0]
-            cur.execute("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0")
-            unread_messages_count = (cur.fetchone() or [0])[0]
+            row = cur.fetchone()
+            if row:
+                pending_orders_count = row[0] or 0
+                low_stock_count      = row[1] or 0
+                unread_messages_count = row[2] or 0
         except Exception:
             pass
 

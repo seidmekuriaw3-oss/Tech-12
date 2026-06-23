@@ -427,11 +427,14 @@ def search():
             SELECT p.*, c.name as category_name, c.name_am as category_name_am
             FROM products p LEFT JOIN categories c ON p.category_id = c.id
             WHERE p.is_active = 1
-            AND (p.name LIKE %s OR p.name_en LIKE %s OR p.name_am LIKE %s OR p.name_ar LIKE %s
-                 OR p.description LIKE %s OR p.description_am LIKE %s)
-            ORDER BY CASE WHEN p.name_am LIKE %s THEN 0 ELSE 1 END,
+            AND (p.name ILIKE %s OR p.name_en ILIKE %s OR p.name_am ILIKE %s OR p.name_ar ILIKE %s
+                 OR p.description ILIKE %s OR p.description_am ILIKE %s OR p.description_ar ILIKE %s)
+            ORDER BY CASE WHEN p.name_am ILIKE %s THEN 0
+                          WHEN p.name ILIKE %s   THEN 1
+                          ELSE 2 END,
                      p.is_featured DESC, p.id DESC
-        """, (search_pattern,) * 6 + (search_pattern,))
+            LIMIT 200
+        """, (search_pattern,) * 7 + (search_pattern, search_pattern))
         products_rows = cursor.fetchall()
 
         cursor.execute("SELECT * FROM categories WHERE is_active = 1 ORDER BY sort_order ASC LIMIT 6")
@@ -466,7 +469,8 @@ def branches():
             bd['maps_url'] = f"https://www.google.com/maps/dir/%sapi=1&destination={bd.get('latitude', 0)},{bd.get('longitude', 0)}"
             branches_list.append(bd)
 
-        phone_numbers = [WHATSAPP_NUMBER, '251906080606', '251906090606']
+        from routes.shared import BRANCH_PHONE_NUMBERS
+        phone_numbers = [WHATSAPP_NUMBER] + BRANCH_PHONE_NUMBERS
         return render_template('customer/branches.html',
                                branches=branches_list, phone_numbers=phone_numbers,
                                lang=lang)

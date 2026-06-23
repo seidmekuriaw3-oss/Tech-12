@@ -419,6 +419,7 @@ def place_order():
             FROM cart_items ci
             JOIN products p ON ci.product_id = p.id
             WHERE ci.user_id = %s
+            FOR UPDATE OF p
         """, (user_id,))
         cart_items_raw = cursor.fetchall()
     else:
@@ -427,7 +428,7 @@ def place_order():
             product_ids = [int(pid) for pid in session_cart.keys()]
             placeholders = ','.join(['%s'] * len(product_ids))
             cursor.execute(
-                f"SELECT id, name, name_am, price, stock_quantity FROM products WHERE id IN ({placeholders}) AND is_active = TRUE",
+                f"SELECT id, name, name_am, price, stock_quantity FROM products WHERE id IN ({placeholders}) AND is_active = TRUE FOR UPDATE",
                 product_ids
             )
             products_map = {p['id']: p for p in cursor.fetchall()}
@@ -499,22 +500,28 @@ def place_order():
     row = cursor.fetchone()
     order_id = row[0] if row else None
 
-    # Create order items and update stock
+    # Create order items and update stock atomically
     for item in cart_items_raw:
         price = item['price'] if isinstance(item, dict) else item['price']
         qty   = item['quantity'] if isinstance(item, dict) else item['quantity']
         pid   = item['product_id'] if isinstance(item, dict) else item['product_id']
-        discounted_price = round(price * (0.9 if is_logged_in else 1.0), 2)
+        name  = item['name'] if isinstance(item, dict) else item['name']
+        discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
         cursor.execute("""
             INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
             VALUES (%s, %s, %s, %s)
         """, (order_id, pid, qty, discounted_price))
+        # Atomic decrement — prevents race condition when two orders compete for the last item
         cursor.execute("""
             UPDATE products SET
                 stock_quantity = stock_quantity - %s,
                 sales_count = sales_count + %s
-            WHERE id = %s
-        """, (qty, qty, pid))
+            WHERE id = %s AND stock_quantity >= %s
+        """, (qty, qty, pid, qty))
+        if cursor.rowcount == 0:
+            db.rollback()
+            flash(f'ይቅርታ! "{name}" ላይ በቂ ዕቃ አልተገኘም። ካርትዎን ያረጋግጡ።', 'danger')
+            return redirect(url_for('cart.view_cart'))
 
     # Clear cart
     if user_id:

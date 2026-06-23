@@ -14,7 +14,7 @@ from flask import Blueprint, request, jsonify, session
 from database.db import get_db
 from database.models import Product, Order
 from middleware.auth import is_admin
-from routes.shared import FREE_SHIPPING_THRESHOLD, SHIPPING_COST, calc_cart_totals
+from routes.shared import FREE_SHIPPING_THRESHOLD, SHIPPING_COST, calc_cart_totals, USER_DISCOUNT_RATE
 import json
 import re
 
@@ -705,17 +705,25 @@ def api_place_order():
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
-        SELECT ci.*, p.price, p.name
+        SELECT ci.*, p.price, p.name, p.stock_quantity
         FROM cart_items ci
         JOIN products p ON ci.product_id = p.id
         WHERE ci.user_id = %s
+        FOR UPDATE OF p
     """, (session['user_id'],))
     
     cart_items = cursor.fetchall()
     
     if not cart_items:
         return jsonify({'success': False, 'error': 'Cart is empty'}), 400
-    
+
+    # Stock check before processing
+    for _ci in cart_items:
+        if _ci['quantity'] > _ci['stock_quantity']:
+            db.rollback()
+            return jsonify({'success': False,
+                            'error': f"Insufficient stock for {_ci['name']}"}), 400
+
     # Calculate totals — discount applied once via calc_cart_totals
     subtotal = 0
     items_list = []
@@ -725,7 +733,7 @@ def api_place_order():
         items_list.append({
             'product_id': item['product_id'],
             'quantity': item['quantity'],
-            'price': round(orig_price * 0.9, 2)   # store discounted price_at_time
+            'price': round(orig_price * (1 - USER_DISCOUNT_RATE), 2)
         })
 
     totals = calc_cart_totals(subtotal, is_logged_in=True)
@@ -764,11 +772,15 @@ def api_place_order():
             VALUES (%s, %s, %s, %s)
         """, (order_id, item['product_id'], item['quantity'], item['price']))
         
-        # Update product stock
+        # Atomic stock decrement — guards against race conditions
         cursor.execute("""
             UPDATE products SET stock_quantity = stock_quantity - %s, sales_count = sales_count + %s
-            WHERE id = %s
-        """, (item['quantity'], item['quantity'], item['product_id']))
+            WHERE id = %s AND stock_quantity >= %s
+        """, (item['quantity'], item['quantity'], item['product_id'], item['quantity']))
+        if cursor.rowcount == 0:
+            db.rollback()
+            return jsonify({'success': False,
+                            'error': f"Insufficient stock for product #{item['product_id']}"}), 400
     
     # Clear cart
     cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))

@@ -74,26 +74,25 @@ def dashboard():
         conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT COUNT(*) FROM products WHERE is_active = 1")
-        products_count = cursor.fetchone()[0] or 0
-
-        cursor.execute("SELECT COUNT(*) FROM advertisements WHERE is_active = 1")
-        ads_count = cursor.fetchone()[0] or 0
-
-        cursor.execute("SELECT COUNT(*) FROM orders")
-        total_orders = cursor.fetchone()[0] or 0
-
-        cursor.execute("SELECT COUNT(*) FROM orders WHERE status = 'pending'")
-        pending_orders = cursor.fetchone()[0] or 0
-
-        cursor.execute("SELECT COUNT(*) FROM users WHERE is_admin = 0")
-        customers_count = cursor.fetchone()[0] or 0
-
-        cursor.execute("SELECT SUM(total) FROM orders WHERE status != 'cancelled'")
-        total_revenue = cursor.fetchone()[0] or 0
-
-        cursor.execute("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURRENT_DATE")
-        today_orders = cursor.fetchone()[0] or 0
+        # Single round-trip instead of 7 separate queries
+        cursor.execute("""
+            SELECT
+                (SELECT COUNT(*) FROM products WHERE is_active = 1),
+                (SELECT COUNT(*) FROM advertisements WHERE is_active = 1),
+                (SELECT COUNT(*) FROM orders),
+                (SELECT COUNT(*) FROM orders WHERE status = 'pending'),
+                (SELECT COUNT(*) FROM users WHERE is_admin = 0),
+                (SELECT COALESCE(SUM(total), 0) FROM orders WHERE status != 'cancelled'),
+                (SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURRENT_DATE)
+        """)
+        _row = cursor.fetchone()
+        products_count  = _row[0] or 0
+        ads_count       = _row[1] or 0
+        total_orders    = _row[2] or 0
+        pending_orders  = _row[3] or 0
+        customers_count = _row[4] or 0
+        total_revenue   = _row[5] or 0
+        today_orders    = _row[6] or 0
 
         cursor.execute("""
             SELECT o.*, u.full_name as customer_name
@@ -189,7 +188,14 @@ def product_create():
             upload_dir = 'static/uploads/products'
             os.makedirs(upload_dir, exist_ok=True)
 
+            _MAX_IMG_BYTES = 5 * 1024 * 1024  # 5 MB per image
+
             def save_upload(file_obj):
+                file_obj.seek(0, os.SEEK_END)
+                size = file_obj.tell()
+                file_obj.seek(0)
+                if size > _MAX_IMG_BYTES:
+                    raise ValueError(f"'{file_obj.filename}' exceeds 5 MB limit")
                 fname = secure_filename(file_obj.filename)
                 ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else 'jpg'
                 unique = f"product_{uuid.uuid4().hex[:8]}.{ext}"
@@ -274,24 +280,43 @@ def product_edit(pid):
             upload_dir = 'static/uploads/products'
             os.makedirs(upload_dir, exist_ok=True)
 
+            _MAX_IMG_BYTES = 5 * 1024 * 1024  # 5 MB per image
+
             def save_upload(file_obj):
+                file_obj.seek(0, os.SEEK_END)
+                size = file_obj.tell()
+                file_obj.seek(0)
+                if size > _MAX_IMG_BYTES:
+                    raise ValueError(f"'{file_obj.filename}' exceeds 5 MB limit")
                 fname = secure_filename(file_obj.filename)
                 ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else 'jpg'
                 unique = f"product_{uuid.uuid4().hex[:8]}.{ext}"
                 file_obj.save(os.path.join(upload_dir, unique))
                 return f'uploads/products/{unique}'
 
-            image_filename = product['thumbnail']
+            def _normalize_img(path):
+                """Normalise a stored image path to 'uploads/products/<file>'."""
+                if not path:
+                    return None
+                path = path.strip()
+                if path.startswith('static/'):
+                    path = path[len('static/'):]
+                if '/' not in path:
+                    path = f'uploads/products/{path}'
+                return path
+
+            image_filename = _normalize_img(product['thumbnail']) or ''
             image = request.files.get('image')
             if image and image.filename:
                 image_filename = save_upload(image)
 
-            # Existing gallery images the user kept
+            # Existing gallery images the user kept — normalise paths from legacy data
             keep_images_raw = request.form.get('keep_images', '')
             try:
-                kept = _json.loads(keep_images_raw) if keep_images_raw else []
-                if not isinstance(kept, list):
-                    kept = []
+                kept_raw = _json.loads(keep_images_raw) if keep_images_raw else []
+                if not isinstance(kept_raw, list):
+                    kept_raw = []
+                kept = [_normalize_img(p) for p in kept_raw if p]
             except Exception:
                 kept = []
 

@@ -23,6 +23,10 @@ def get_lang():
 
 WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251987957957')
 
+# Branch / store contact numbers (comma-separated env var, e.g. "251906080606,251906090606")
+_branch_phones_env = os.environ.get('BRANCH_PHONE_NUMBERS', '')
+BRANCH_PHONE_NUMBERS: list[str] = [p.strip() for p in _branch_phones_env.split(',') if p.strip()]
+
 # ==================== SHIPPING & PRICING ====================
 
 FREE_SHIPPING_THRESHOLD = int(os.environ.get('FREE_SHIPPING_THRESHOLD', '5000'))
