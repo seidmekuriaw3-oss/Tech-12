@@ -98,7 +98,8 @@ class AdService:
                     title, title_am, title_ar, 
                     description, description_am, description_ar,
                     image, link, sort_order, is_active, start_date, end_date
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)""",
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1, %s, %s)
+                RETURNING id""",
                 (
                     data.get('title', ''),
                     data.get('title_am', ''),
@@ -114,7 +115,8 @@ class AdService:
                 )
             )
             db.commit()
-            return cursor.lastrowid
+            row = cursor.fetchone()
+            return row[0] if row else None
         except Exception as e:
             print(f"Error creating ad: {e}")
             db.rollback()

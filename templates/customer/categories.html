@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}ሁሉም ምድቦች — ሰሚራ ልብስ እስቶር{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cats-wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 80px; }
+    .cats-hero {
+        background: linear-gradient(135deg, #c2185b, #880e4f);
+        border-radius: 20px;
+        padding: 32px 24px;
+        color: white;
+        text-align: center;
+        margin-bottom: 28px;
+    }
+    .cats-hero h1 { margin: 0 0 6px; font-size: 1.7rem; }
+    .cats-hero p  { margin: 0; opacity: .85; font-size: .95rem; }
+    .cats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 18px;
+    }
+    .cat-card {
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 4px 18px rgba(0,0,0,.08);
+        padding: 28px 16px 22px;
+        text-align: center;
+        text-decoration: none;
+        color: inherit;
+        transition: transform .2s, box-shadow .2s;
+        display: block;
+        border: 2px solid transparent;
+    }
+    .cat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 32px rgba(194,24,91,.15);
+        border-color: #c2185b;
+    }
+    .cat-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+    .cat-name { font-size: 1.05rem; font-weight: 700; color: #222; margin-bottom: 4px; }
+    .cat-name-en { font-size: .8rem; color: #888; margin-bottom: 10px; }
+    .cat-count {
+        display: inline-block;
+        background: #fce4ec;
+        color: #c2185b;
+        font-size: .78rem;
+        font-weight: 700;
+        padding: 3px 12px;
+        border-radius: 50px;
+    }
+    .empty-state { text-align: center; padding: 60px 24px; color: #999; }
+    .empty-state .icon { font-size: 4rem; margin-bottom: 16px; }
+    @media (max-width: 480px) {
+        .cats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .cat-icon { font-size: 2.4rem; }
+        .cats-hero h1 { font-size: 1.3rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cats-wrap">
+
+    <div class="cats-hero">
+        <div style="font-size:2.5rem;margin-bottom:10px;">👗</div>
+        <h1>{% if lang == 'am' %}ሁሉም ምድቦች{% elif lang == 'ar' %}كل الفئات{% else %}All Categories{% endif %}</h1>
+        <p>{% if lang == 'am' %}ምርጥ ምድብ ምረጡ እና ልብሶቻቸውን ይዳስሱ{% else %}Browse our clothing categories{% endif %}</p>
+    </div>
+
+    {% if categories %}
+    <div class="cats-grid">
+        {% for cat in categories %}
+        <a href="{{ url_for('customer.category_products', category_id=cat.id) }}" class="cat-card">
+            <span class="cat-icon">{{ cat.icon or '👗' }}</span>
+            <div class="cat-name">{{ cat.name_am or cat.name }}</div>
+            {% if cat.name and cat.name != cat.name_am %}
+            <div class="cat-name-en">{{ cat.name }}</div>
+            {% endif %}
+            <span class="cat-count">
+                {{ cat.product_count or 0 }}
+                {% if lang == 'am' %}ምርቶች{% else %}items{% endif %}
+            </span>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📭</div>
+        <p>{% if lang == 'am' %}ምድቦች አልተገኙም{% else %}No categories found{% endif %}</p>
+        <a href="{{ url_for('customer.products') }}" style="color:#c2185b;font-weight:600;">
+            {% if lang == 'am' %}ሁሉም ምርቶችን ይዳስሱ →{% else %}Browse all products →{% endif %}
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

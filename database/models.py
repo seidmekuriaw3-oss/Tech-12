@@ -737,7 +737,7 @@ class User:
             db = get_db()
             cursor = db.execute(
                 """INSERT INTO users (username, email, password_hash, full_name, phone, address, city, is_admin, is_active)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
                 (
                     data.get('username'),
                     data.get('email'),
@@ -751,7 +751,8 @@ class User:
                 )
             )
             db.commit()
-            return cursor.lastrowid
+            row = cursor.fetchone()
+            return row[0] if row else None
         except Exception as e:
             print(f"Error creating user: {e}")
             db.rollback()
@@ -830,12 +831,13 @@ class Category:
         try:
             db = get_db()
             cursor = db.execute(
-                "INSERT INTO categories (name, name_am, name_ar, description, icon, image, sort_order, is_active) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
+                "INSERT INTO categories (name, name_am, name_ar, description, icon, image, sort_order, is_active) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id",
                 (data.get('name'), data.get('name_am'), data.get('name_ar'), data.get('description'),
                  data.get('icon'), data.get('image'), data.get('sort_order', 0), data.get('is_active', 1))
             )
             db.commit()
-            return cursor.lastrowid
+            row = cursor.fetchone()
+            return row[0] if row else None
         except Exception as e:
             print(f"Error creating category: {e}")
             db.rollback()

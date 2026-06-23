@@ -228,7 +228,8 @@ class ProductService:
                     is_featured, is_new, is_active,
                     material, color, weight, dimensions,
                     category_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1, %s, %s, %s, %s, %s)
+                RETURNING id
             """, (
                 data.get('name', data.get('name_en', '')),
                 data.get('name_am', ''),
@@ -254,7 +255,8 @@ class ProductService:
                 data.get('category_id')
             ))
             db.commit()
-            return cursor.lastrowid
+            row = cursor.fetchone()
+            return row[0] if row else None
         except Exception as e:
             print(f"Error creating product: {e}")
             db.rollback()
