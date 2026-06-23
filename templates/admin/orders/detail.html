@@ -407,7 +407,26 @@
                 } else if (window.showToast) {
                     window.showToast('Order status updated successfully', 'success');
                 }
-                setTimeout(() => location.reload(), 1000);
+                // Show WhatsApp customer notification button if URL is available
+                if (data.wa_notify_url) {
+                    const waBtn = document.createElement('a');
+                    waBtn.href = data.wa_notify_url;
+                    waBtn.target = '_blank';
+                    waBtn.style.cssText = 'display:inline-block;margin:12px auto 0;padding:12px 24px;background:#25D366;color:white;border-radius:50px;text-decoration:none;font-size:14px;font-weight:600;';
+                    waBtn.innerHTML = '📱 ደንበኛ WhatsApp ያሳውቁ';
+                    const container = document.createElement('div');
+                    container.style.cssText = 'position:fixed;bottom:80px;right:24px;z-index:9999;text-align:center;background:white;border-radius:16px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,0.18);';
+                    container.innerHTML = '<div style="font-size:13px;color:#333;margin-bottom:8px;font-weight:600;">✅ Status updated!</div>';
+                    container.appendChild(waBtn);
+                    const closeBtn = document.createElement('div');
+                    closeBtn.style.cssText = 'margin-top:10px;font-size:12px;color:#aaa;cursor:pointer;';
+                    closeBtn.textContent = '× Close';
+                    closeBtn.onclick = () => { container.remove(); location.reload(); };
+                    container.appendChild(closeBtn);
+                    document.body.appendChild(container);
+                } else {
+                    setTimeout(() => location.reload(), 1000);
+                }
             } else {
                 if (window.showError) window.showError(data.error || 'Failed to update status');
             }

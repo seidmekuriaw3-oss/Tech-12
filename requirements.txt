@@ -48,3 +48,14 @@ psycopg2-binary
 python-dotenv==1.0.0
 requests
 werkzeug==2.3.7
+apscheduler
+flask
+flask-limiter
+flask-mail
+flask-session
+gunicorn
+pillow
+psycopg2-binary
+python-dotenv
+requests
+werkzeug

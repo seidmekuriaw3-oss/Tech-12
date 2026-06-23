@@ -38,7 +38,8 @@ class OrderService:
                     subtotal, discount, shipping_fee, total,
                     shipping_address, shipping_city, shipping_phone, notes,
                     created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+                RETURNING id
             """, (
                 order_number, 
                 user_id,
@@ -55,7 +56,8 @@ class OrderService:
                 notes
             ))
             
-            order_id = cursor.lastrowid
+            row = cursor.fetchone()
+            order_id = row[0] if row else None
             
             # Create order items
             for item in items:
@@ -360,7 +362,7 @@ class OrderService:
             
             # Today's orders
             cursor = db.execute(
-                "SELECT COUNT(*) FROM orders WHERE DATE(created_at) = DATE('now')"
+                "SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURRENT_DATE"
             )
             today_orders = cursor.fetchone()[0] or 0
             
@@ -449,11 +451,11 @@ class OrderService:
                        COUNT(*) as order_count, 
                        SUM(total) as revenue
                 FROM orders 
-                WHERE created_at >= DATE('now', ?)
+                WHERE created_at >= NOW() - INTERVAL '%s days'
                 AND status = 'delivered'
                 GROUP BY DATE(created_at)
                 ORDER BY date DESC
-            """, (f'-{days} days',)).fetchall()
+            """, (days,)).fetchall()
         except Exception as e:
             print(f"Error getting daily sales: {e}")
             return []
