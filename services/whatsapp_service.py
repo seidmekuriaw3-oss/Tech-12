@@ -449,6 +449,77 @@ class WhatsAppService:
         return links
 
 
+# ==================== CUSTOMER ORDER STATUS NOTIFICATION ====================
+
+def send_customer_status_notification(
+    order_number: str,
+    customer_name: str,
+    customer_phone: str,
+    status: str,
+    notes: str = ''
+):
+    """
+    Notify the customer when their order status changes.
+
+    Strategy (two-layer):
+      1. AUTO  — if CALLMEBOT_API_KEY is set, fire a background WhatsApp message
+                 to the customer's number via CallMeBot and return auto_sent=True.
+      2. MANUAL— always build a wa.me URL so the admin can tap it as a fallback.
+
+    Returns:
+        dict: {
+            'auto_sent': bool,      # True when CallMeBot message was dispatched
+            'wa_url':    str|None,  # pre-filled wa.me link for manual sending
+        }
+    """
+    status_icons = {
+        'pending':    '⏳', 'confirmed':  '✅', 'processing': '⚙️',
+        'shipped':    '🚚', 'delivered':  '🎉', 'cancelled':  '❌',
+    }
+    # Amharic messages (primary)
+    am_msgs = {
+        'confirmed':  f'ሰላም {customer_name}! ትዕዛዝ #{order_number} ተቀብለናል — በዝግጅት ላይ ነው። ✅\nሰሚራ ፋሽን: +251987957957',
+        'processing': f'ሰላም {customer_name}! ትዕዛዝ #{order_number} በሂደት ላይ ነው። ⚙️\nሰሚራ ፋሽን: +251987957957',
+        'shipped':    f'ሰላም {customer_name}! ✈️ ትዕዛዝ #{order_number} ተላከ — በቅርቡ ይደርስዎታል! 🚚\nሰሚራ ፋሽን: +251987957957',
+        'delivered':  f'ሰላም {customer_name}! 🎉 ትዕዛዝ #{order_number} ደረሰ። ጥሩ ጥቅም ይሁንልዎ!\nሰሚራ ፋሽን: +251987957957',
+        'cancelled':  f'ሰላም {customer_name}! ትዕዛዝ #{order_number} ተሰርዟል። ❌\nለጥያቄ: +251987957957',
+        'pending':    f'ሰላም {customer_name}! ትዕዛዝ #{order_number} ደርሶናል — በቅርቡ እናረጋግጣለን። ⏳\nሰሚራ ፋሽን: +251987957957',
+    }
+    icon = status_icons.get(status, '📦')
+    message = am_msgs.get(status, f'{icon} ትዕዛዝ #{order_number} — {status}')
+    if notes:
+        message += f'\n📝 {notes}'
+
+    # --- Build wa.me fallback URL ---
+    wa_url = None
+    phone_digits = ''.join(filter(str.isdigit, customer_phone or ''))
+    if phone_digits.startswith('0'):
+        phone_digits = '251' + phone_digits[1:]
+    if phone_digits:
+        wa_url = f"https://wa.me/{phone_digits}?text={urllib.parse.quote(message)}"
+
+    # --- Auto-send via CallMeBot if API key is configured ---
+    api_key = os.environ.get('CALLMEBOT_API_KEY', '')
+    auto_sent = False
+    if api_key and phone_digits:
+        phone_fmt = f"+{phone_digits}"
+        t = threading.Thread(
+            target=_send_callmebot,
+            args=(phone_fmt, message, api_key),
+            daemon=True
+        )
+        t.start()
+        auto_sent = True
+        print(f"✅ Auto WhatsApp queued → {phone_fmt} [{status}] #{order_number}")
+    else:
+        if not api_key:
+            print("ℹ️  CALLMEBOT_API_KEY not set — customer WhatsApp auto-send skipped.")
+        if not phone_digits:
+            print(f"ℹ️  No phone for order #{order_number} — customer WhatsApp skipped.")
+
+    return {'auto_sent': auto_sent, 'wa_url': wa_url}
+
+
 # ==================== LOW-STOCK ALERT ====================
 
 def send_low_stock_alert(products: list):
