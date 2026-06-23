@@ -1,6 +1,6 @@
 {% extends 'admin/layouts/admin_base.html' %}
 
-{% block title %}Alert Inbox — Ethiosadat Admin{% endblock %}
+{% block title %}Alert Inbox — SEMIRA FASHION{% endblock %}
 
 {% block content %}
 <div style="padding: 28px 24px; max-width: 900px;">
@@ -80,7 +80,7 @@
                     </a>
                     {% endif %}
                     {% if alert.ref_user_id %}
-                    <a href="{{ url_for('admin.admin_customer_detail', user_id=alert.ref_user_id) if 'admin_customer_detail' in dir() else '#' }}"
+                    <a href="{{ url_for('admin.admin_users') }}?search={{ alert.ref_user_id }}"
                        style="font-size:11px;color:#4caf50;font-weight:700;text-decoration:none;background:rgba(76,175,80,0.1);padding:2px 8px;border-radius:6px;">
                         View Customer →
                     </a>
