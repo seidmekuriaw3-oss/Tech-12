@@ -544,6 +544,10 @@
                         <span class="nav-icon">⚙️</span>
                         <span class="nav-text">Settings</span>
                     </a>
+                    <a href="{{ url_for('admin.password_resets') }}" class="{% if request.endpoint == 'admin.password_resets' %}active{% endif %}">
+                        <span class="nav-icon">🔑</span>
+                        <span class="nav-text">Password Resets</span>
+                    </a>
                 </div>
             </nav>
             

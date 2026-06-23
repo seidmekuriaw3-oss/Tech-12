@@ -1784,3 +1784,58 @@ def clear_translations():
         return jsonify({'status': 'success', 'message': 'Translation cache cleared successfully'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+# ==================== PASSWORD RESET TOKENS ====================
+
+@admin_bp.route('/password-resets')
+@admin_required
+def password_resets():
+    """View pending password reset tokens — useful when email is not configured."""
+    lang = get_lang()
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT prt.id, prt.email, prt.token, prt.expires_at, prt.created_at,
+                   u.full_name
+            FROM password_reset_tokens prt
+            LEFT JOIN users u ON u.email = prt.email
+            WHERE prt.used = 0
+              AND prt.expires_at > NOW()
+            ORDER BY prt.created_at DESC
+        """)
+        tokens = [dict(r) for r in (cursor.fetchall() or [])]
+
+        import datetime as _dt
+        from flask import request as _req
+        base = _req.host_url.rstrip('/')
+        for t in tokens:
+            t['reset_url'] = f"{base}/reset-password/{t['token']}"
+            if t['expires_at']:
+                remaining = t['expires_at'] - _dt.datetime.now()
+                mins = int(remaining.total_seconds() / 60)
+                t['expires_in'] = f"{mins} min" if mins > 0 else "expired"
+
+        return render_template('admin/password_resets/index.html',
+                               tokens=tokens, lang=lang)
+    except Exception as e:
+        print(f"Password resets admin error: {e}")
+        flash('Error loading reset tokens.', 'error')
+        return redirect(url_for('admin.dashboard'))
+
+
+@admin_bp.route('/password-resets/invalidate/<int:token_id>', methods=['POST'])
+@admin_required
+def invalidate_reset_token(token_id):
+    """Manually invalidate a reset token."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE password_reset_tokens SET used = 1 WHERE id = %s", (token_id,))
+        conn.commit()
+        flash('Reset token invalidated.', 'success')
+    except Exception as e:
+        print(f"Invalidate token error: {e}")
+        flash('Error invalidating token.', 'error')
+    return redirect(url_for('admin.password_resets'))

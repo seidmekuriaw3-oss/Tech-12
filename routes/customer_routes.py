@@ -16,6 +16,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from services.whatsapp_service import WhatsAppService
 from services.notification_service import notify_user, notify_admin
 from routes.shared import get_lang, WHATSAPP_NUMBER, SUPPORTED_LANGUAGES
+from utils.email_service import send_password_reset_email
 import re
 import os
 import urllib.parse
@@ -975,7 +976,20 @@ def forgot_password():
                     VALUES (%s, %s, %s)
                 """, (email, reset_token, expires_at))
                 conn.commit()
-                flash('Password reset link sent to your email!', 'success')
+
+                reset_url = url_for('customer.reset_password',
+                                    token=reset_token, _external=True)
+                user_name = user['full_name'] or email
+                email_sent = send_password_reset_email(email, user_name, reset_url)
+
+                if email_sent:
+                    flash('Password reset link sent! Check your email inbox (and spam folder).', 'success')
+                else:
+                    flash(
+                        f'Email service not configured. '
+                        f'Share this reset link manually: {reset_url}',
+                        'info'
+                    )
             else:
                 flash('If an account exists with that email, you will receive a reset link.', 'info')
 
