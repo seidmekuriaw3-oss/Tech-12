@@ -1,5 +1,5 @@
 """
-Language Middleware for Ethiosadat Furniture
+Language Middleware for SEMIRA FASHION
 
 This module handles multi-language support for the application.
 Supports Amharic (አማርኛ), English, and Arabic (العربية).

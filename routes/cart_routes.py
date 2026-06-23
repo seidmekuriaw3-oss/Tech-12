@@ -1,5 +1,5 @@
 """
-Cart Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+Cart Routes for SEMIRA FASHION
 
 This module contains all cart-related routes including:
 - View cart

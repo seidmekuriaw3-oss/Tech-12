@@ -1,5 +1,5 @@
 """
-Database Package for Ethiosadat Furniture
+Database Package for SEMIRA FASHION
 
 This package provides database connection management and ORM models
 for users, products, advertisements, orders, and branches.

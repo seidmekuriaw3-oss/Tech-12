@@ -1,5 +1,5 @@
 // ==================== TOAST NOTIFICATION COMPONENT ====================
-// Professional Toast Notifications for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+// Professional Toast Notifications for SEMIRA FASHION
 
 class Toast {
     constructor(options = {}) {

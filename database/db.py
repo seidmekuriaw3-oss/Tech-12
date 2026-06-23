@@ -464,7 +464,7 @@ def init_db():
         admin_hash = generate_password_hash('admin123456', method='pbkdf2:sha256')
         cur.execute(
             "INSERT INTO users (username, email, password_hash, full_name, is_admin, is_active) VALUES (%s, %s, %s, %s, %s, %s)",
-            ('admin', 'admin@ethiosadat.com', admin_hash, 'Administrator', 1, 1)
+            ('admin', 'admin@semirafashion.com', admin_hash, 'Administrator', 1, 1)
         )
         print("✅ Default admin user created")
 
@@ -475,7 +475,7 @@ def init_db():
             ('site_name_am', 'SEMIRA FASHION - የሴቶች እና የልጆች ልብስ እስቶር'),
             ('site_name_ar', 'إثيوصادات فاشن ووده سميرة'),
             ('site_description', 'የሴቶች እና የልጆች ልብስ በተመጣጣኝ ዋጋ - Women\'s & Children\'s Fashion'),
-            ('site_email', 'info@ethiosadat.com'),
+            ('site_email', 'info@semirafashion.com'),
             ('site_phone', '+251987957957'),
             ('admin_email', 'admin@semirafashion.com'),
             ('phone_number', '+251987957957'),
@@ -485,7 +485,7 @@ def init_db():
             ('shipping_cost', '200'),
             ('currency', 'ETB'),
             ('default_language', 'am'),
-            ('meta_keywords', 'fashion, clothing, ልብስ, ethiosadat, ወሎ ደሴ ኩታበር, የሴቶች ልብስ, የልጆች ልብስ'),
+            ('meta_keywords', 'fashion, clothing, ልብስ, semira fashion, ወሎ ደሴ ኩታበር, የሴቶች ልብስ, የልጆች ልብስ'),
             ('google_analytics', ''),
         ]
         cur.executemany(
@@ -498,7 +498,7 @@ def init_db():
             ('admin_email', 'admin@semirafashion.com'),
             ('phone_number', '+251987957957'),
             ('store_address', 'ወሎ ደሴ ኩታበር, Ethiopia'),
-            ('meta_keywords', 'fashion, clothing, ልብስ, ethiosadat, ወሎ ደሴ ኩታበር, የሴቶች ልብስ, የልጆች ልብስ'),
+            ('meta_keywords', 'fashion, clothing, ልብስ, semira fashion, ወሎ ደሴ ኩታበር, የሴቶች ልብስ, የልጆች ልብስ'),
             ('google_analytics', ''),
         ]
         for key, value in extra_settings:

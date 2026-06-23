@@ -1,5 +1,5 @@
 """
-Customer Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+Customer Routes for SEMIRA FASHION
 
 Public-facing routes: home, products, categories, branches, auth,
 orders, wishlist, tracking, static info pages.
@@ -517,7 +517,7 @@ def contact():
         except Exception as e:
             print(f"Error saving contact: {e}")
 
-        whatsapp_msg = (f"📬 New Contact Message - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ\n\n"
+        whatsapp_msg = (f"📬 New Contact Message - SEMIRA FASHION\n\n"
                         f"👤 Name: {name}\n")
         if email:
             whatsapp_msg += f"📧 Email: {email}\n"
@@ -670,12 +670,12 @@ def user_register():
             session['user_email'] = email
             session['user_phone'] = phone
 
-            flash('Registration successful! Welcome to ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ!', 'success')
+            flash('Registration successful! Welcome to SEMIRA FASHION!', 'success')
 
             try:
                 notify_user(
                     user_id,
-                    '🎉 Welcome to ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ!',
+                    '🎉 Welcome to SEMIRA FASHION!',
                     f'Hello {full_name}! Your account is ready. Enjoy 10% discount on all orders.',
                     type='welcome',
                     link='/dashboard'

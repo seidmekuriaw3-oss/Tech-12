@@ -11,7 +11,7 @@ def clear_all_data(confirm=True):
     if hasattr(Config, 'DATABASE_PATH'):
         db_path = Config.DATABASE_PATH
     else:
-        db_path = os.environ.get('DATABASE_PATH', 'ethiosadat.db')
+        db_path = os.environ.get('DATABASE_PATH', 'semirafashion.db')
     
     # Check if database exists
     if not os.path.exists(db_path):
@@ -114,7 +114,7 @@ def table_exists(cursor, table_name):
 
 def clear_products_only():
     """Clear only products data"""
-    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'ethiosadat.db'
+    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'semirafashion.db'
     
     if not os.path.exists(db_path):
         print(f"❌ Database not found")
@@ -147,7 +147,7 @@ def clear_products_only():
 
 def clear_ads_only():
     """Clear only advertisements data"""
-    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'ethiosadat.db'
+    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'semirafashion.db'
     
     if not os.path.exists(db_path):
         print(f"❌ Database not found")
@@ -180,7 +180,7 @@ def clear_ads_only():
 
 def clear_orders_only():
     """Clear only orders data"""
-    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'ethiosadat.db'
+    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'semirafashion.db'
     
     if not os.path.exists(db_path):
         print(f"❌ Database not found")
@@ -237,7 +237,7 @@ def backup_before_clear():
     """Create backup before clearing data"""
     from datetime import datetime
     
-    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'ethiosadat.db'
+    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'semirafashion.db'
     
     if not os.path.exists(db_path):
         print("❌ Database not found")
@@ -311,7 +311,7 @@ def show_menu():
 
 def view_counts():
     """View current data counts without modifying anything"""
-    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'ethiosadat.db'
+    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'semirafashion.db'
     
     if not os.path.exists(db_path):
         print(f"❌ Database not found at: {db_path}")
@@ -352,7 +352,7 @@ if __name__ == "__main__":
     import argparse
     
     # Command line argument parsing
-    parser = argparse.ArgumentParser(description='Database management tool for Ethiosadat')
+    parser = argparse.ArgumentParser(description='Database management tool for SEMIRA FASHION
     parser.add_argument('--all', action='store_true', help='Clear all data')
     parser.add_argument('--products', action='store_true', help='Clear only products')
     parser.add_argument('--ads', action='store_true', help='Clear only ads')

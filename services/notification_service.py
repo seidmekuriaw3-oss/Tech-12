@@ -1,5 +1,5 @@
 """
-Notification Service for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+Notification Service for SEMIRA FASHION
 In-app notifications stored in DB for both customers and admins.
 """
 

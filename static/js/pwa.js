@@ -7,8 +7,8 @@ const PWA_CONFIG = {
     manifestUrl: '/static/manifest.json',
     swUrl: '/static/service-worker.js',
     offlinePage: '/offline',
-    cacheName: 'ethiosadat-cache-v1',
-    apiCacheName: 'ethiosadat-api-v1',
+    cacheName: 'semirafashion-cache-v1',
+    apiCacheName: 'semirafashion-api-v1',
     offlineSupport: true,
     autoUpdate: true,
     updateCheckInterval: 3600000, // 1 hour
@@ -580,7 +580,7 @@ class BackgroundSyncManager {
 // ==================== Offline Storage ====================
 class OfflineStorage {
     constructor() {
-        this.storagePrefix = 'ethiosadat_';
+        this.storagePrefix = 'semirafashion_';
     }
 
     save(key, data) {

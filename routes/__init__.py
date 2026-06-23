@@ -1,5 +1,5 @@
 """
-Routes Package for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+Routes Package for SEMIRA FASHION
 
 This package contains all route modules for the application:
 - customer_routes: Public-facing routes (home, products, cart, checkout, branches, etc.)

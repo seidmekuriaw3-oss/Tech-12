@@ -36,7 +36,7 @@ def admin_add_ad():
     """
     if not session.get('admin'):
         flash('Please log in to access admin panel.', 'warning')
-        return redirect(url_for('login'))
+        return redirect(url_for('admin.login'))
     
     lang = get_lang()
     t = TEXTS.get(lang, TEXTS['am'])
@@ -128,7 +128,7 @@ def admin_delete_ad(aid):
     """
     if not session.get('admin'):
         flash('Please log in to access admin panel.', 'warning')
-        return redirect(url_for('login'))
+        return redirect(url_for('admin.login'))
     
     try:
         conn = get_db()
@@ -205,7 +205,7 @@ def admin_edit_ad(aid):
     """
     if not session.get('admin'):
         flash('Please log in to access admin panel.', 'warning')
-        return redirect(url_for('login'))
+        return redirect(url_for('admin.login'))
     
     lang = get_lang()
     t = TEXTS.get(lang, TEXTS['am'])

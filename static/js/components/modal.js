@@ -1,5 +1,5 @@
 // ==================== MODAL COMPONENT ====================
-// Professional Modal Dialog for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+// Professional Modal Dialog for SEMIRA FASHION
 
 class Modal {
     constructor(options = {}) {

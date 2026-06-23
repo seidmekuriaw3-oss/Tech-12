@@ -78,14 +78,9 @@ class Config:
     # PostgreSQL connection string — set via DATABASE_URL environment variable.
     DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
-    # Kept for backwards-compatibility (no longer used for SQLite)
-    DATABASE_PATH = os.environ.get('DATABASE_PATH', 'database/ethiosadat.db')
-
     @staticmethod
     def ensure_db_directory():
-        db_dir = os.path.dirname(Config.DATABASE_PATH)
-        if db_dir and not os.path.exists(db_dir):
-            os.makedirs(db_dir, exist_ok=True)
+        pass  # PostgreSQL — no local directory needed
     
     # ============================================================
     # LANGUAGE & LOCALIZATION

@@ -18,7 +18,7 @@ const CART_CONFIG = {
     maxRetries: 3,
     retryDelay: 1000,
     enableLocalStorage: true,
-    storageKey: 'ethiosadat_cart'
+    storageKey: 'semirafashion_cart'
 };
 
 // ==================== Cart State Management ====================

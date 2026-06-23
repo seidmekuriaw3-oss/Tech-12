@@ -1,5 +1,5 @@
 """
-API Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+API Routes for SEMIRA FASHION
 
 This module contains all API endpoints for AJAX requests including:
 - Product search and filtering
@@ -911,7 +911,7 @@ def api_get_settings():
     return jsonify({
         'success': True,
         'settings': {
-            'site_name': settings.get('site_name', 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ'),
+            'site_name': settings.get('site_name', 'SEMIRA FASHION'),
             'site_phone': settings.get('site_phone', '+251987957957'),
             'whatsapp_number': settings.get('whatsapp_number', '251987957957'),
             'free_shipping_threshold': float(settings.get('free_shipping_threshold', 5000)),

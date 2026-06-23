@@ -1,5 +1,5 @@
 """
-Services Package for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+Services Package for SEMIRA FASHION
 
 This package contains all business logic services for:
 - Product management

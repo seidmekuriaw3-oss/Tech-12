@@ -1,5 +1,5 @@
 """
-Utility Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+Utility Routes for SEMIRA FASHION
 
 Handles sitewide utility endpoints:
 - Language switching
@@ -99,7 +99,7 @@ Disallow: /admin/
 Disallow: /login/
 Disallow: /logout/
 Disallow: /cart/clear/
-Sitemap: https://ethiosadat.com/sitemap.xml
+Sitemap: https://semirafashion.com/sitemap.xml
 """
     return make_response(content, 200, {'Content-Type': 'text/plain'})
 

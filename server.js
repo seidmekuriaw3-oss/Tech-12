@@ -6,7 +6,7 @@ const server = http.createServer((req, res) => {
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Ethiosadat Furniture</title>
+            <title>SEMIRA FASHION</title>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
@@ -18,7 +18,7 @@ const server = http.createServer((req, res) => {
         </head>
         <body>
             <div class="container">
-                <h1>🪑 Ethiosadat Furniture</h1>
+                <h1>👗 SEMIRA FASHION</h1>
                 <p>✅ Server is running!</p>
                 <p>የቤት እቃዎች በምቹ ዋጋ | Quality Furniture</p>
                 <hr>

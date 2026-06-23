@@ -11,7 +11,7 @@ def seed_ads(with_media=False):
     if hasattr(Config, 'DATABASE_PATH'):
         db_path = Config.DATABASE_PATH
     else:
-        db_path = os.environ.get('DATABASE_PATH', 'database/ethiosadat.db')
+        db_path = os.environ.get('DATABASE_PATH', 'database/semirafashion.db')
     
     # Check if database exists
     if not os.path.exists(db_path):
@@ -246,7 +246,7 @@ def seed_ads(with_media=False):
 def seed_single_ad(text, ad_type='general', media=None, link=None):
     """Insert a single advertisement"""
     
-    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'database/ethiosadat.db'
+    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'database/semirafashion.db'
     
     if not os.path.exists(db_path):
         print(f"❌ Database not found")
@@ -308,7 +308,7 @@ def seed_single_ad(text, ad_type='general', media=None, link=None):
 def show_ads():
     """Display all advertisements in the database"""
     
-    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'database/ethiosadat.db'
+    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'database/semirafashion.db'
     
     if not os.path.exists(db_path):
         print(f"❌ Database not found")
@@ -371,7 +371,7 @@ if __name__ == "__main__":
     import argparse
     
     # Command line argument parsing
-    parser = argparse.ArgumentParser(description='Seed advertisements for Ethiosadat')
+    parser = argparse.ArgumentParser(description='Seed advertisements for SEMIRA FASHION
     parser.add_argument('--media', action='store_true', help='Try to assign existing media files')
     parser.add_argument('--show', action='store_true', help='Show existing ads')
     parser.add_argument('--clear', action='store_true', help='Clear all ads before seeding')
@@ -389,7 +389,7 @@ if __name__ == "__main__":
         if args.clear:
             response = input("⚠️  Clear all existing ads before seeding? (yes/no): ")
             if response.lower() == 'yes':
-                db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'database/ethiosadat.db'
+                db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'database/semirafashion.db'
                 conn = sqlite3.connect(db_path)
                 conn.execute("DELETE FROM ads")
                 conn.commit()

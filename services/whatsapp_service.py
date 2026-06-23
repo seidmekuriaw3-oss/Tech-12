@@ -166,7 +166,7 @@ class WhatsAppService:
             str: WhatsApp URL with encoded message
         """
         try:
-            message = "🛍️ *NEW ORDER - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ*\n"
+            message = "🛍️ *NEW ORDER - SEMIRA FASHION*\n"
             message += "=" * 40 + "\n\n"
             
             if order_number:
@@ -196,7 +196,7 @@ class WhatsAppService:
             
             message += f"💵 *TOTAL:* {total} ETB\n"
             message += "=" * 40 + "\n"
-            message += "🙏 Thank you for shopping with Ethiosadat!\n"
+            message += "🙏 Thank you for shopping with SEMIRA FASHION!\n"
             message += "📞 For inquiries, call: +251987957957"
             
             encoded = urllib.parse.quote(message)
@@ -222,7 +222,7 @@ class WhatsAppService:
             str: WhatsApp URL with encoded message
         """
         try:
-            msg = "📬 *New Contact Message - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ*\n"
+            msg = "📬 *New Contact Message - SEMIRA FASHION*\n"
             msg += "=" * 40 + "\n\n"
             msg += f"👤 *Name:* {name}\n"
             
@@ -284,7 +284,7 @@ class WhatsAppService:
             str: WhatsApp URL with encoded invoice
         """
         try:
-            message = "🧾 *INVOICE - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ*\n"
+            message = "🧾 *INVOICE - SEMIRA FASHION*\n"
             message += "=" * 40 + "\n\n"
             message += f"📋 *Order #:* {order_number}\n"
             message += f"👤 *Customer:* {customer_name}\n"
@@ -311,7 +311,7 @@ class WhatsAppService:
             message += f"💵 *TOTAL PAID:* {total} ETB\n"
             message += "=" * 35 + "\n\n"
             message += "✅ Thank you for your purchase!\n"
-            message += "🔗 Track your order: ethiosadat.com/orders\n"
+            message += "🔗 Track your order: semirafashion.com/orders\n"
             message += "📞 Questions? Call: +251987957957"
             
             encoded = urllib.parse.quote(message)
@@ -358,7 +358,7 @@ class WhatsAppService:
             emoji = status_emojis.get(status, '📦')
             text = status_texts.get(status, f'Order status updated to: {status}')
             
-            message = f"{emoji} *Order Status Update - ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ*\n"
+            message = f"{emoji} *Order Status Update - SEMIRA FASHION*\n"
             message += "=" * 40 + "\n\n"
             message += f"📋 *Order #:* {order_number}\n"
             message += f"📊 *Status:* {status.upper()}\n\n"
@@ -367,9 +367,9 @@ class WhatsAppService:
             if notes:
                 message += f"📝 *Notes:* {notes}\n\n"
             
-            message += "🔗 Track your order: ethiosadat.com/orders\n"
+            message += "🔗 Track your order: semirafashion.com/orders\n"
             message += "📞 Questions? Call us: +251987957957\n"
-            message += "🙏 Thank you for shopping with Ethiosadat!"
+            message += "🙏 Thank you for shopping with SEMIRA FASHION!"
             
             encoded = urllib.parse.quote(message)
             phone = WhatsAppService.format_phone_number(customer_phone)

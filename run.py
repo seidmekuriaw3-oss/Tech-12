@@ -62,31 +62,28 @@ MAINTENANCE_MODE=False
         print("✅ .env file created successfully!\n")
 
 def check_database():
-    """Check if database exists and has required tables"""
-    from config import Config
-    
-    db_path = Config.DATABASE_PATH if hasattr(Config, 'DATABASE_PATH') else 'ethiosadat.db'
-    
-    if not os.path.exists(db_path):
-        print(f"⚠️  Database not found at: {db_path}")
-        print("   Running database initialization...")
-        return False
-    
-    # Check if tables exist
+    """Check PostgreSQL database connectivity and required tables."""
     try:
-        import sqlite3
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='products'")
-        if not cursor.fetchone():
-            print("⚠️  Products table missing. Running initialization...")
-            conn.close()
+        import psycopg2
+        import psycopg2.extras
+        db_url = os.environ.get('DATABASE_URL', '')
+        if not db_url:
+            print("⚠️  DATABASE_URL not set — cannot check database.")
             return False
-        
+        conn = psycopg2.connect(db_url)
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.tables
+                WHERE table_name = 'products'
+            )
+        """)
+        exists = cursor.fetchone()[0]
         conn.close()
+        if not exists:
+            print("⚠️  Products table missing. Run --init-db first.")
+            return False
         return True
-        
     except Exception as e:
         print(f"⚠️  Database check failed: {e}")
         return False
@@ -152,19 +149,33 @@ def clear_database(args):
             return False
     elif args.orders:
         try:
-            from clear_data import clear_orders_only
-            clear_orders_only()
-        except ImportError:
-            print("❌ Could not import clear_data module")
+            import psycopg2
+            db_url = os.environ.get('DATABASE_URL', '')
+            conn = psycopg2.connect(db_url)
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM order_items")
+            cursor.execute("DELETE FROM orders")
+            conn.commit()
+            conn.close()
+            print("✅ Orders cleared.")
+        except Exception as e:
+            print(f"❌ Could not clear orders: {e}")
             return False
     else:
         response = input("⚠️  Clear ALL data? (yes/no): ")
         if response.lower() == 'yes':
             try:
-                from clear_data import clear_all_data
-                clear_all_data(confirm=False)
-            except ImportError:
-                print("❌ Could not import clear_data module")
+                import psycopg2
+                db_url = os.environ.get('DATABASE_URL', '')
+                conn = psycopg2.connect(db_url)
+                cursor = conn.cursor()
+                for table in ['order_items', 'orders', 'cart_items', 'ads', 'products', 'settings']:
+                    cursor.execute(f"DELETE FROM {table}")
+                conn.commit()
+                conn.close()
+                print("✅ All data cleared.")
+            except Exception as e:
+                print(f"❌ Could not clear data: {e}")
                 return False
         else:
             print("❌ Cancelled.")

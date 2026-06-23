@@ -1,5 +1,5 @@
 """
-Admin Routes for ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ
+Admin Routes for SEMIRA FASHION
 
 All admin panel routes: dashboard, products, ads, orders, users,
 inbox, reports, settings, reviews, translations, notifications.
@@ -1143,7 +1143,7 @@ th{{background:#1a73e8;color:white}}
 </style></head>
 <body>
 <div class="header">
-  <h1 class="invoice-title">ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ</h1>
+  <h1 class="invoice-title">SEMIRA FASHION</h1>
   <h2>INVOICE</h2>
 </div>
 <p><strong>Order #:</strong> {order['order_number']}</p>
@@ -1160,7 +1160,7 @@ th{{background:#1a73e8;color:white}}
   <p><strong>Total: {order['total']:.2f} ETB</strong></p>
 </div>
 <div class="footer">
-  <p>Thank you for shopping with ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ!</p>
+  <p>Thank you for shopping with SEMIRA FASHION!</p>
   <p>ወሎ ደሴ ኩታበር, Ethiopia | +251 90 602 0606</p>
 </div>
 </body></html>"""
@@ -1565,9 +1565,9 @@ def settings():
     if request.method == 'POST':
         try:
             settings_to_save = [
-                ('site_name', request.form.get('site_name', 'ኢትዮሳዳት ፈርኒቸር ወድ ሰሚራ')),
+                ('site_name', request.form.get('site_name', 'SEMIRA FASHION')),
                 ('site_description', request.form.get('site_description', '')),
-                ('admin_email', request.form.get('admin_email', 'admin@ethiosadat.com')),
+                ('admin_email', request.form.get('admin_email', 'admin@semirafashion.com')),
                 ('whatsapp_number', request.form.get('whatsapp_number', '251987957957')),
                 ('phone_number', request.form.get('phone_number', '+251987957957')),
                 ('store_address', request.form.get('store_address', 'ወሎ ደሴ ኩታበር, Ethiopia')),

@@ -1,5 +1,5 @@
 """
-Authentication Middleware for Ethiosadat Furniture
+Authentication Middleware for SEMIRA FASHION
 
 This module provides decorators for protecting routes that require
 admin authentication or user authentication.
@@ -116,7 +116,7 @@ def get_current_user():
         return {
             'id': 'admin',
             'name': 'Administrator',
-            'email': session.get('admin_email', 'admin@ethiosadat.com'),
+            'email': session.get('admin_email', 'admin@semirafashion.com'),
             'role': 'admin',
             'is_admin': True
         }

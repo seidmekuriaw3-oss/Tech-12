@@ -6,7 +6,7 @@ def get_platform():
     user_agent = request.headers.get('User-Agent', '').lower()
     x_platform = request.headers.get('X-Platform', '').lower()
 
-    if x_platform == 'android' or 'ethiosadat-android' in user_agent:
+    if x_platform == 'android' or 'semirafashion-android' in user_agent:
         return 'android'
     if 'android' in user_agent:
         return 'android_browser'
@@ -21,7 +21,7 @@ def is_android_app():
     """Return True if the request is from the native Android app."""
     user_agent = request.headers.get('User-Agent', '').lower()
     x_platform = request.headers.get('X-Platform', '').lower()
-    return x_platform == 'android' or 'ethiosadat-android' in user_agent
+    return x_platform == 'android' or 'semirafashion-android' in user_agent
 
 
 def is_mobile_browser():
