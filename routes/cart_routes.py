@@ -603,6 +603,7 @@ def place_order():
     except Exception:
         pass
 
+    session['last_order_id'] = order_id
     return redirect(url_for('customer.order_confirmation', order_id=order_id))
 
 

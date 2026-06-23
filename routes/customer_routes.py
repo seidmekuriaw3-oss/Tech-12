@@ -466,7 +466,7 @@ def branches():
         branches_list = []
         for branch in branches_rows:
             bd = dict(branch)
-            bd['maps_url'] = f"https://www.google.com/maps/dir/%sapi=1&destination={bd.get('latitude', 0)},{bd.get('longitude', 0)}"
+            bd['maps_url'] = f"https://www.google.com/maps/dir/?api=1&destination={bd.get('latitude', 0)},{bd.get('longitude', 0)}"
             branches_list.append(bd)
 
         from routes.shared import BRANCH_PHONE_NUMBERS
@@ -526,7 +526,7 @@ def contact():
         whatsapp_msg += f"\n💬 Message:\n{message}"
 
         encoded = urllib.parse.quote(whatsapp_msg)
-        whatsapp_url = f"https://wa.me/{WHATSAPP_NUMBER}%stext={encoded}"
+        whatsapp_url = f"https://wa.me/{WHATSAPP_NUMBER}?text={encoded}"
 
         flash('Message sent! You will be redirected to WhatsApp.', 'success')
         return redirect(whatsapp_url)
@@ -895,14 +895,28 @@ def order_detail(order_id):
 
 
 @customer_bp.route('/order-confirmation/<int:order_id>')
-@user_login_required
 def order_confirmation(order_id):
-    """Order confirmation page."""
+    """Order confirmation page — accessible to both logged-in users and guests."""
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM orders WHERE id = %s AND user_id = %s",
-                       (order_id, session['user_id']))
+
+        user_id = session.get('user_id')
+
+        if user_id:
+            # Logged-in user: must own the order
+            cursor.execute("SELECT * FROM orders WHERE id = %s AND user_id = %s",
+                           (order_id, user_id))
+        else:
+            # Guest: order must be a guest order (user_id IS NULL) and must match
+            # the order_id stored in session right after place_order
+            last_order_id = session.get('last_order_id')
+            if not last_order_id or int(last_order_id) != order_id:
+                flash('Order not found!', 'danger')
+                return redirect(url_for('customer.index'))
+            cursor.execute("SELECT * FROM orders WHERE id = %s AND user_id IS NULL",
+                           (order_id,))
+
         order = cursor.fetchone()
         if not order:
             flash('Order not found!', 'danger')
@@ -917,7 +931,7 @@ def order_confirmation(order_id):
         items_list = [dict(i) for i in items] if items else []
 
         order_dict = dict(order)
-        customer_name = session.get('user_name', 'Customer')
+        customer_name = order_dict.get('customer_name') or session.get('user_name', 'Customer')
         customer_phone = order_dict.get('shipping_phone') or session.get('user_phone', '')
 
         wa_items = [
