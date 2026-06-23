@@ -1,0 +1,257 @@
+{% extends "admin/layouts/admin_base.html" %}
+{% block title %}Customer — {{ user.full_name or user.email }} — SEMIRA FASHION{% endblock %}
+
+{% block content %}
+<div style="padding: 24px; max-width: 1100px;">
+
+    <!-- Back + Actions -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+        <a href="{{ url_for('admin.admin_users') }}" style="display:inline-flex; align-items:center; gap:6px; color:#1a7a4a; font-weight:600; text-decoration:none; font-size:14px;">
+            ← Back to Users
+        </a>
+        {% if not user.is_admin %}
+        <div style="display:flex; gap:10px;">
+            <button onclick="toggleUser({{ user.id }}, {{ user.is_active }})"
+                id="toggleBtn"
+                style="padding:8px 18px; border-radius:10px; border:none; cursor:pointer; font-size:13px; font-weight:600;
+                       background:{{ '#fff3e0' if user.is_active else '#e8f5e9' }};
+                       color:{{ '#e65100' if user.is_active else '#2e7d32' }};">
+                {{ '🔒 Deactivate' if user.is_active else '🔓 Activate' }}
+            </button>
+            <button onclick="deleteUser({{ user.id }}, '{{ user.full_name or user.email }}')"
+                style="padding:8px 18px; border-radius:10px; border:none; cursor:pointer; font-size:13px; font-weight:600; background:#ffebee; color:#c62828;">
+                🗑️ Delete Account
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Profile Card -->
+    <div style="background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.08); padding:28px; margin-bottom:24px; display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">
+        <div style="width:80px; height:80px; border-radius:50%; background:{{ '#1a7a4a' if user.is_admin else '#4caf50' }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:32px; font-weight:800; flex-shrink:0;">
+            {{ (user.full_name or user.email or 'U')[0]|upper }}
+        </div>
+        <div style="flex:1; min-width:0;">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+                <h1 style="margin:0; font-size:22px; color:#1a1a1a;">{{ user.full_name or '(No name)' }}</h1>
+                {% if user.is_admin %}
+                <span style="background:#e3f2fd; color:#0f5232; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700;">🛡️ Admin</span>
+                {% endif %}
+                {% if user.is_active %}
+                <span style="background:#e8f5e9; color:#2e7d32; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700;">✅ Active</span>
+                {% else %}
+                <span style="background:#ffebee; color:#c62828; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700;">❌ Inactive</span>
+                {% endif %}
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:18px; margin-top:8px;">
+                <span style="color:#555; font-size:14px;">📧 {{ user.email }}</span>
+                {% if user.phone %}
+                <span style="color:#555; font-size:14px;">📞 {{ user.phone }}</span>
+                {% endif %}
+                {% if user.username %}
+                <span style="color:#888; font-size:14px;">👤 @{{ user.username }}</span>
+                {% endif %}
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:18px; margin-top:8px;">
+                <span style="color:#999; font-size:13px;">🗓️ Joined: {{ user.created_at.strftime('%B %d, %Y') if user.created_at else '—' }}</span>
+                <span style="color:#999; font-size:13px;">🕐 Last login: {{ user.last_login.strftime('%B %d, %Y %H:%M') if user.last_login else 'Never' }}</span>
+            </div>
+        </div>
+        {% if user.phone %}
+        <a href="https://wa.me/{{ user.phone|replace('+','') }}?text=Hello+{{ user.full_name or '' }}%2C+this+is+SEMIRA+FASHION."
+           target="_blank"
+           style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:#25D366; color:#fff; border-radius:12px; font-weight:700; font-size:14px; text-decoration:none; flex-shrink:0;">
+            💬 WhatsApp
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Stats Cards -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:16px; margin-bottom:24px;">
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); text-align:center;">
+            <div style="font-size:28px; font-weight:800; color:#1a7a4a;">{{ stats.total_orders or 0 }}</div>
+            <div style="font-size:13px; color:#888; margin-top:4px;">Total Orders</div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); text-align:center;">
+            <div style="font-size:22px; font-weight:800; color:#4caf50;">{{ "{:,.0f}".format(stats.total_spent or 0) }} ETB</div>
+            <div style="font-size:13px; color:#888; margin-top:4px;">Total Spent</div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); text-align:center;">
+            <div style="font-size:22px; font-weight:800; color:#2196F3;">{{ "{:,.0f}".format(stats.avg_order or 0) }} ETB</div>
+            <div style="font-size:13px; color:#888; margin-top:4px;">Avg. Order Value</div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); text-align:center;">
+            <div style="font-size:28px; font-weight:800; color:#4CAF50;">{{ stats.delivered_orders or 0 }}</div>
+            <div style="font-size:13px; color:#888; margin-top:4px;">Delivered</div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); text-align:center;">
+            <div style="font-size:28px; font-weight:800; color:#FF9800;">{{ stats.pending_orders or 0 }}</div>
+            <div style="font-size:13px; color:#888; margin-top:4px;">Pending</div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); text-align:center;">
+            <div style="font-size:28px; font-weight:800; color:#f44336;">{{ stats.cancelled_orders or 0 }}</div>
+            <div style="font-size:13px; color:#888; margin-top:4px;">Cancelled</div>
+        </div>
+    </div>
+
+    <!-- Two column: Orders + Top Products -->
+    <div style="display:grid; grid-template-columns:1fr 300px; gap:24px; align-items:start;">
+
+        <!-- Order History -->
+        <div style="background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.08); overflow:hidden;">
+            <div style="padding:20px 24px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0; font-size:17px; color:#1a1a1a;">🛒 Order History</h2>
+                <span style="background:#f5f5f5; color:#888; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600;">{{ orders|length }} orders</span>
+            </div>
+            {% if orders %}
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#fafafa;">
+                            <th style="padding:12px 16px; text-align:left; font-size:12px; color:#999; font-weight:600;">ORDER #</th>
+                            <th style="padding:12px 16px; text-align:left; font-size:12px; color:#999; font-weight:600;">DATE</th>
+                            <th style="padding:12px 16px; text-align:right; font-size:12px; color:#999; font-weight:600;">TOTAL</th>
+                            <th style="padding:12px 16px; text-align:center; font-size:12px; color:#999; font-weight:600;">STATUS</th>
+                            <th style="padding:12px 16px; text-align:center; font-size:12px; color:#999; font-weight:600;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in orders %}
+                        {% set status_colors = {
+                            'pending':    ('#fff3e0', '#e65100'),
+                            'confirmed':  ('#e3f2fd', '#0d47a1'),
+                            'processing': ('#f3e5f5', '#6a1b9a'),
+                            'shipped':    ('#e0f7fa', '#006064'),
+                            'delivered':  ('#e8f5e9', '#2e7d32'),
+                            'cancelled':  ('#ffebee', '#c62828')
+                        } %}
+                        {% set sc = status_colors.get(o.status, ('#f5f5f5', '#555')) %}
+                        <tr style="border-bottom:1px solid #f5f5f5;">
+                            <td style="padding:12px 16px; font-weight:700; color:#1a1a1a; font-size:13px;">{{ o.order_number }}</td>
+                            <td style="padding:12px 16px; color:#888; font-size:13px;">{{ o.created_at.strftime('%d %b %Y') if o.created_at else '—' }}</td>
+                            <td style="padding:12px 16px; text-align:right; font-weight:700; color:#1a7a4a; font-size:13px;">{{ "{:,.0f}".format(o.total or 0) }} ETB</td>
+                            <td style="padding:12px 16px; text-align:center;">
+                                <span style="background:{{ sc[0] }}; color:{{ sc[1] }}; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; text-transform:capitalize;">
+                                    {{ o.status }}
+                                </span>
+                            </td>
+                            <td style="padding:12px 16px; text-align:center;">
+                                <a href="{{ url_for('admin.order_detail', oid=o.id) }}"
+                                   style="color:#1a7a4a; font-size:12px; font-weight:600; text-decoration:none; background:#e8f5e9; padding:4px 10px; border-radius:8px;">
+                                    View →
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="padding:48px; text-align:center; color:#bbb;">
+                <div style="font-size:48px; margin-bottom:12px;">🛍️</div>
+                <div style="font-size:15px; font-weight:600; color:#aaa;">No orders yet</div>
+                <div style="font-size:13px; color:#ccc; margin-top:6px;">This customer hasn't placed any orders.</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+
+            <!-- Top Products -->
+            {% if top_products %}
+            <div style="background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.08); overflow:hidden;">
+                <div style="padding:18px 20px; border-bottom:1px solid #f0f0f0;">
+                    <h2 style="margin:0; font-size:16px; color:#1a1a1a;">⭐ Most Ordered</h2>
+                </div>
+                <div style="padding:12px;">
+                    {% for p in top_products %}
+                    <div style="display:flex; align-items:center; gap:12px; padding:10px 8px; border-bottom:1px solid #f9f9f9;">
+                        {% if p.thumbnail %}
+                        <img src="/static/uploads/products/{{ p.thumbnail }}" alt=""
+                             onerror="this.src='/static/images/placeholder.png'"
+                             style="width:44px; height:44px; border-radius:10px; object-fit:cover; flex-shrink:0;">
+                        {% else %}
+                        <div style="width:44px; height:44px; border-radius:10px; background:#f5f5f5; display:flex; align-items:center; justify-content:center; font-size:20px;">👗</div>
+                        {% endif %}
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-size:13px; font-weight:600; color:#1a1a1a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                {{ p.name_am or p.name }}
+                            </div>
+                            <div style="font-size:11px; color:#aaa; margin-top:2px;">
+                                × {{ p.total_qty }} ordered · {{ "{:,.0f}".format(p.total_value or 0) }} ETB
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Cart Items -->
+            {% if cart_items %}
+            <div style="background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.08); overflow:hidden;">
+                <div style="padding:18px 20px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="margin:0; font-size:16px; color:#1a1a1a;">🛒 Current Cart</h2>
+                    <span style="background:#fff3e0; color:#e65100; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700;">{{ cart_items|length }} items</span>
+                </div>
+                <div style="padding:12px;">
+                    {% for c in cart_items %}
+                    <div style="display:flex; align-items:center; gap:10px; padding:10px 8px; border-bottom:1px solid #f9f9f9;">
+                        {% if c.thumbnail %}
+                        <img src="/static/uploads/products/{{ c.thumbnail }}" alt=""
+                             onerror="this.src='/static/images/placeholder.png'"
+                             style="width:38px; height:38px; border-radius:8px; object-fit:cover; flex-shrink:0;">
+                        {% else %}
+                        <div style="width:38px; height:38px; border-radius:8px; background:#f5f5f5; display:flex; align-items:center; justify-content:center; font-size:18px;">👗</div>
+                        {% endif %}
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-size:13px; font-weight:600; color:#1a1a1a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                {{ c.name_am or c.name }}
+                            </div>
+                            <div style="font-size:11px; color:#aaa; margin-top:2px;">
+                                × {{ c.quantity }} · {{ "{:,.0f}".format((c.price or 0) * c.quantity) }} ETB
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- No activity -->
+            {% if not top_products and not cart_items %}
+            <div style="background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.08); padding:32px; text-align:center; color:#ccc;">
+                <div style="font-size:40px; margin-bottom:10px;">📭</div>
+                <div style="font-size:14px; color:#aaa;">No product activity yet</div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+function toggleUser(uid, isActive) {
+    const action = isActive ? 'deactivate' : 'activate';
+    if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+    fetch(`/admin/users/toggle/${uid}`, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) { location.reload(); }
+            else { alert(data.error || 'Action failed'); }
+        }).catch(() => alert('Network error'));
+}
+
+function deleteUser(uid, name) {
+    if (!confirm(`Permanently delete "${name}"? This cannot be undone.`)) return;
+    fetch(`/admin/users/delete/${uid}`, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) { window.location.href = '/admin/users'; }
+            else { alert(data.error || 'Delete failed'); }
+        }).catch(() => alert('Network error'));
+}
+</script>
+{% endblock %}

@@ -1263,6 +1263,74 @@ def delete_user(uid):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@admin_bp.route('/users/<int:uid>')
+@admin_required
+def admin_customer_detail(uid):
+    lang = get_lang()
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT id, username, email, full_name, phone, is_admin, is_active, created_at, last_login
+            FROM users WHERE id = %s
+        """, (uid,))
+        user = cursor.fetchone()
+        if not user:
+            flash('User not found!', 'danger')
+            return redirect(url_for('admin.admin_users'))
+        user = dict(user)
+
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS total_orders,
+                COALESCE(SUM(CASE WHEN status != 'cancelled' THEN total ELSE 0 END), 0) AS total_spent,
+                COALESCE(AVG(CASE WHEN status != 'cancelled' THEN total END), 0) AS avg_order,
+                COUNT(CASE WHEN status = 'pending'   THEN 1 END) AS pending_orders,
+                COUNT(CASE WHEN status = 'delivered' THEN 1 END) AS delivered_orders,
+                COUNT(CASE WHEN status = 'cancelled' THEN 1 END) AS cancelled_orders
+            FROM orders WHERE user_id = %s
+        """, (uid,))
+        stats = dict(cursor.fetchone() or {})
+
+        cursor.execute("""
+            SELECT id, order_number, total, status, created_at, customer_name, shipping_phone
+            FROM orders WHERE user_id = %s
+            ORDER BY created_at DESC LIMIT 30
+        """, (uid,))
+        orders = [dict(o) for o in cursor.fetchall()]
+
+        cursor.execute("""
+            SELECT p.name, p.name_am, p.thumbnail,
+                   COUNT(oi.id)       AS times_ordered,
+                   SUM(oi.quantity)   AS total_qty,
+                   SUM(oi.subtotal)   AS total_value
+            FROM order_items oi
+            JOIN orders  o ON oi.order_id  = o.id
+            JOIN products p ON oi.product_id = p.id
+            WHERE o.user_id = %s AND o.status != 'cancelled'
+            GROUP BY p.id, p.name, p.name_am, p.thumbnail
+            ORDER BY total_qty DESC LIMIT 5
+        """, (uid,))
+        top_products = [dict(p) for p in cursor.fetchall()]
+
+        cursor.execute("""
+            SELECT ci.quantity, ci.added_at, p.name, p.name_am, p.price, p.thumbnail
+            FROM cart_items ci JOIN products p ON ci.product_id = p.id
+            WHERE ci.user_id = %s ORDER BY ci.added_at DESC
+        """, (uid,))
+        cart_items = [dict(c) for c in cursor.fetchall()]
+
+        return render_template('admin/users/detail.html',
+                               user=user, stats=stats, orders=orders,
+                               top_products=top_products, cart_items=cart_items,
+                               lang=lang)
+    except Exception as e:
+        print(f"Customer detail error: {e}")
+        flash('Error loading customer details.', 'error')
+        return redirect(url_for('admin.admin_users'))
+
+
 # ==================== INBOX ====================
 
 @admin_bp.route('/inbox')

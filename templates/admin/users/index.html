@@ -77,8 +77,12 @@
                             {{ user.created_at.strftime('%Y-%m-%d') if user.created_at else '—' }}
                         </td>
                         <td style="padding: 12px 16px; text-align: center;">
-                            {% if not user.is_admin %}
-                            <div style="display: flex; gap: 8px; justify-content: center;">
+                            <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                                <a href="{{ url_for('admin.admin_customer_detail', uid=user.id) }}"
+                                   style="padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; background: #e8f5e9; color: #1a7a4a; text-decoration: none; display:inline-flex; align-items:center;">
+                                    👁️ View
+                                </a>
+                                {% if not user.is_admin %}
                                 <button onclick="toggleUser({{ user.id }}, this)"
                                     data-active="{{ user.is_active }}"
                                     style="padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; background: {{ '#fff3e0' if user.is_active else '#e8f5e9' }}; color: {{ '#e65100' if user.is_active else '#2e7d32' }};">
@@ -88,10 +92,10 @@
                                     style="padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; background: #ffebee; color: #c62828;">
                                     🗑️ Delete
                                 </button>
+                                {% else %}
+                                <span style="color: var(--text-muted, #999); font-size: 12px;">Protected</span>
+                                {% endif %}
                             </div>
-                            {% else %}
-                            <span style="color: var(--text-muted, #999); font-size: 12px;">Protected</span>
-                            {% endif %}
                         </td>
                     </tr>
                     {% else %}
