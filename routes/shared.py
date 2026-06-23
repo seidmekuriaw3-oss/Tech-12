@@ -1,5 +1,5 @@
 """
-Shared constants and helpers for all Ethiosadat route modules.
+Shared constants and helpers for all SEMIRA FASHION route modules.
 
 Single source of truth — import from here, never re-declare in individual route files.
 """

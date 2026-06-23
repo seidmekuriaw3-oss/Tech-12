@@ -107,7 +107,7 @@ def get_current_user():
         return {
             'id': 'admin',
             'name': 'Administrator',
-            'email': session.get('admin_email', 'admin@ethiosadat.com'),
+            'email': session.get('admin_email', 'admin@semirafashion.com'),
             'role': 'admin',
             'is_admin': True
         }

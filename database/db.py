@@ -1,5 +1,5 @@
 """
-Database Module for Ethiosadat Furniture
+Database Module for SEMIRA FASHION
 PostgreSQL backend using psycopg2 with a sqlite3-compatible adapter layer.
 """
 
@@ -477,7 +477,7 @@ def init_db():
             ('site_description', 'የሴቶች እና የልጆች ልብስ በተመጣጣኝ ዋጋ - Women\'s & Children\'s Fashion'),
             ('site_email', 'info@ethiosadat.com'),
             ('site_phone', '+251987957957'),
-            ('admin_email', 'admin@ethiosadat.com'),
+            ('admin_email', 'admin@semirafashion.com'),
             ('phone_number', '+251987957957'),
             ('store_address', 'ወሎ ደሴ ኩታበር, Ethiopia'),
             ('whatsapp_number', '251987957957'),
@@ -495,7 +495,7 @@ def init_db():
     else:
         extra_settings = [
             ('site_description', 'የሴቶች እና የልጆች ልብስ በተመጣጣኝ ዋጋ - Women\'s & Children\'s Fashion'),
-            ('admin_email', 'admin@ethiosadat.com'),
+            ('admin_email', 'admin@semirafashion.com'),
             ('phone_number', '+251987957957'),
             ('store_address', 'ወሎ ደሴ ኩታበር, Ethiopia'),
             ('meta_keywords', 'fashion, clothing, ልብስ, ethiosadat, ወሎ ደሴ ኩታበር, የሴቶች ልብስ, የልጆች ልብስ'),

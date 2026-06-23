@@ -417,19 +417,7 @@
             }
         });
         
-        // Auto-fill admin demo credentials
-        function fillAdminDemo() {
-            const emailEl = document.getElementById('email');
-            const passEl = document.getElementById('password');
-            if (emailEl) emailEl.value = 'admin';
-            if (passEl) passEl.value = '1234';
-            [emailEl, passEl].forEach(el => {
-                if (!el) return;
-                el.style.transition = 'background 0.4s';
-                el.style.background = '#e8f0fe';
-                setTimeout(() => { el.style.background = ''; }, 800);
-            });
-        }
+        function fillAdminDemo() { /* demo auto-fill removed for security */ }
         window.fillAdminDemo = fillAdminDemo;
         
         console.log('Admin login page loaded');

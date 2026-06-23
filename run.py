@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Ethiosadat Furniture Store - Application Runner
+SEMIRA FASHION - Application Runner
 This script provides a unified entry point for running the application
 with various command-line options and environment configurations.
 """
@@ -19,15 +19,10 @@ def print_banner():
     banner = """
     ╔══════════════════════════════════════════════════════════╗
     ║                                                          ║
-    ║   ███████╗██╗  ██╗██╗ ██████╗ ███████╗ █████╗ ██████╗   ║
-    ║   ██╔════╝██║  ██║██║██╔═══██╗██╔════╝██╔══██╗██╔══██╗  ║
-    ║   ██╩╗    ███████║██║██║   ██║█████╗  ███████║██║  ██║  ║
-    ║   ██╔╝    ██╔══██║██║██║   ██║██╔══╝  ██╔══██║██║  ██║  ║
-    ║   ██║     ██║  ██║██║╚██████╔╝██║     ██║  ██║██████╔╝  ║
-    ║   ╚═╝     ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝╚═════╝   ║
+    ║        👗  SEMIRA FASHION  👗                            ║
     ║                                                          ║
-    ║           የቤት እቃዎች መሸጫ ድህረ ገጽ                         ║
-    ║           Furniture Store Website                       ║
+    ║        የሴቶች እና የልጆች ልብስ መሸጫ                          ║
+    ║        Women's & Children's Fashion Store               ║
     ║                                                          ║
     ║                   Version 1.0.0                         ║
     ╚══════════════════════════════════════════════════════════╝
@@ -52,9 +47,9 @@ def check_environment():
     if not env_file.exists():
         print("📝 Creating default .env file...")
         with open(env_file, 'w') as f:
-            f.write("""# Ethiosadat Environment Configuration
+            f.write("""# SEMIRA FASHION Environment Configuration
 FLASK_ENV=development
-SECRET_KEY=ethiosadat_default_secret_key_2026
+SECRET_KEY=semirafashion_default_secret_key_2026
 ADMIN_PASSWORD=1234
 WHATSAPP_NUMBER=251987957957
 DEBUG=True

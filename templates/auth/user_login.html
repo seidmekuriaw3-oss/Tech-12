@@ -277,12 +277,9 @@
             </a>
         </div>
         
-        <!-- Demo Credentials -->
-        <div class="demo-credentials" onclick="fillDemo()" style="cursor:pointer;" title="Click to auto-fill">
-            <p style="margin-top: 0; font-weight: 600;">📝 Demo Account <span style="font-size:11px;font-weight:normal;">(click to fill)</span></p>
-            <p><strong>Email:</strong> <code>customer@ethiosadat.com</code></p>
-            <p><strong>Password:</strong> <code>Demo@1234</code></p>
-            <p style="margin-bottom: 0; font-size: 11px; color: #999;">* Create your own account to get 10% discount</p>
+        <!-- Register prompt -->
+        <div class="demo-credentials" style="cursor:default;">
+            <p style="margin: 0; font-size: 12px; color: #666;">* Create your own account to get 10% discount on every order</p>
         </div>
     </div>
 </div>
@@ -410,19 +407,7 @@
         document.getElementById('email').value = emailParam;
     }
 
-    // Auto-fill demo credentials
-    function fillDemo() {
-        const emailEl = document.getElementById('email');
-        const passEl = document.getElementById('password');
-        if (emailEl) emailEl.value = 'customer@ethiosadat.com';
-        if (passEl) passEl.value = 'Demo@1234';
-        [emailEl, passEl].forEach(el => {
-            if (!el) return;
-            el.style.transition = 'background 0.4s';
-            el.style.background = '#e8f5e9';
-            setTimeout(() => { el.style.background = ''; }, 800);
-        });
-    }
+    function fillDemo() { /* demo removed */ }
     window.fillDemo = fillDemo;
 </script>
 {% endblock %}

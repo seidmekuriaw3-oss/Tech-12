@@ -134,7 +134,7 @@ class Config:
     SESSION_LIFETIME = int(os.environ.get('SESSION_LIFETIME', 86400))  # 24 hours
     
     # Session cookie settings
-    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True' if os.environ.get('FLASK_ENV') == 'production' else 'False').lower() == 'true'
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     
