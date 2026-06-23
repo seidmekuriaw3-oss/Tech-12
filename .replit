@@ -68,12 +68,10 @@ packages = ["freetype", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp
 [userenv]
 
 [userenv.shared]
-SECRET_KEY = "a6c50edaba0b2dbf5853169753ac4cb137da3a74cfd6e87e71590a0a81e9c2ae"
 FLASK_ENV = "development"
 DEBUG = "False"
 HOST = "0.0.0.0"
 PORT = "5000"
-ADMIN_PASSWORD = "1234"
 WHATSAPP_NUMBER = "251906020606"
 FREE_SHIPPING_THRESHOLD = "5000"
 SHIPPING_COST = "200"
