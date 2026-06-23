@@ -44,7 +44,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --light: #1a1a2e;
-        --white: #16213e;
+        /* --white stays #ffffff — it is used as text color on dark backgrounds */
         --dark: #e0e0e0;
         --gray: #aaaaaa;
         --gray-light: #2a2a3e;
