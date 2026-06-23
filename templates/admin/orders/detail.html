@@ -470,32 +470,33 @@
         }
     }
     
-    // Send WhatsApp message
+    // Send WhatsApp message for current saved status
     function sendWhatsAppMessage() {
-        const customerName = "{{ order.shipping_address.split(',')[0] if order.shipping_address else 'Customer' }}";
-        const customerPhone = "{{ order.shipping_phone or '' }}";
-        const orderNumber = "{{ order.order_number }}";
-        const orderTotal = "{{ order.total }}";
-        
+        const customerName = {{ (order.customer_name or 'ደንበኛ') | tojson }};
+        const customerPhone = {{ (order.shipping_phone or '') | tojson }};
+        const orderNumber = {{ order.order_number | tojson }};
+        const currentStatus = {{ order.status | tojson }};
+
         if (!customerPhone) {
             if (window.showError) window.showError('Customer phone number not available');
+            else alert('Customer phone number not available');
             return;
         }
-        
-        const statusSelect = document.getElementById('orderStatus');
-        const statusText = statusSelect.options[statusSelect.selectedIndex]?.text || 'Updated';
-        
-        const message = `🛍️ *Order Update - SEMIRA FASHION*\n\n`
-            + `Hello ${customerName},\n\n`
-            + `Your order #${orderNumber} has been updated.\n`
-            + `Status: ${statusText}\n`
-            + `Total: ${orderTotal} ETB\n\n`
-            + `Thank you for shopping with SEMIRA FASHION!\n`
-            + `🔗 Track your order: ${window.location.origin}/orders/${orderNumber}`;
-        
-        const encoded = encodeURIComponent(message);
-        const phone = customerPhone.replace(/[^0-9]/g, '');
-        window.open(`https://wa.me/${phone}?text=${encoded}`, '_blank');
+
+        const msgs = {
+            confirmed:  `ሰላም ${customerName}! ትዕዛዝ #${orderNumber} ተቀብለናል እና በዝግጅት ላይ ነው። ✅`,
+            processing: `ሰላም ${customerName}! ትዕዛዝ #${orderNumber} በሂደት ላይ ነው። ⚙️`,
+            shipped:    `ሰላም ${customerName}! ትዕዛዝ #${orderNumber} ተላከ — በቅርቡ ይደርስዎታል! 🚚`,
+            delivered:  `ሰላም ${customerName}! ትዕዛዝ #${orderNumber} ደረሰ። አመሰግናለን! 🎉`,
+            cancelled:  `ሰላም ${customerName}! ትዕዛዝ #${orderNumber} ተሰርዟል። ለጥያቄ 0987957957 ይደውሉ። ❌`,
+            pending:    `ሰላም ${customerName}! ትዕዛዝ #${orderNumber} በግምገማ ላይ ነው። ⏳`,
+        };
+        const message = msgs[currentStatus] || `ትዕዛዝ #${orderNumber} — ${currentStatus}`;
+
+        let phone = customerPhone.replace(/[^0-9]/g, '');
+        if (phone.startsWith('0')) phone = '251' + phone.slice(1);
+
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
     }
     
     // Send email update

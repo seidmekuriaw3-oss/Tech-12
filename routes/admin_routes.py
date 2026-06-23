@@ -1024,6 +1024,8 @@ def order_update_status(oid):
             'pending':    'Your order is pending review.',
         }
         wa_notify_url = None
+
+        # In-app notification for registered users only
         if user_id and prev_status != status:
             try:
                 icon = status_icons.get(status, '📦')
@@ -1038,7 +1040,8 @@ def order_update_status(oid):
             except Exception:
                 pass
 
-            # Build WhatsApp message link so admin can tap to notify the customer
+        # WhatsApp notify URL — built for ANY order (guest or registered) with a phone number
+        if prev_status != status:
             try:
                 cursor.execute(
                     "SELECT shipping_phone, customer_name FROM orders WHERE id = %s", (oid,)
