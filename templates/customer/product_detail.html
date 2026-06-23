@@ -416,27 +416,27 @@
                 {% elif stock > 0 %}low-stock
                 {% else %}out-of-stock{% endif %}">
                 {% if stock > 10 %}
-                    ✅ In Stock ({{ stock }} available)
+                    ✅ {{ t.in_stock }} ({{ stock }})
                 {% elif stock > 0 %}
-                    ⚠️ Only {{ stock }} left in stock - Order soon!
+                    ⚠️ {{ stock }} {{ t.only_left }}
                 {% else %}
-                    ❌ Out of Stock
+                    ❌ {{ t.out_of_stock }}
                 {% endif %}
             </div>
             
             <!-- Material & Color Info -->
             <div style="margin: 16px 0; display: flex; gap: 20px; flex-wrap: wrap;">
                 {% if product.material %}
-                <div><strong>Material:</strong> {{ product.material }}</div>
+                <div><strong>{{ t.material }}</strong> {{ product.material }}</div>
                 {% endif %}
                 {% if product.color %}
-                <div><strong>Color:</strong> {{ product.color }}</div>
+                <div><strong>{{ t.color_label }}</strong> {{ product.color }}</div>
                 {% endif %}
             </div>
             
             <!-- Quantity Selector -->
             <div class="quantity-selector">
-                <span style="font-weight: 500;">Quantity:</span>
+                <span style="font-weight: 500;">{{ t.quantity }}</span>
                 <button class="quantity-btn" onclick="decrementQuantity()">-</button>
                 <input type="number" id="quantityInput" class="quantity-input" value="1" min="1" {% if stock == 0 %}disabled{% endif %}>
                 <button class="quantity-btn" onclick="incrementQuantity()">+</button>
@@ -448,47 +448,51 @@
                         id="addToCartBtn"
                         class="btn btn-primary btn-add-to-cart"
                         {% if stock == 0 %}disabled{% endif %}>
-                    🛒 Add to Cart
+                    {{ t.add_to_cart }}
                 </button>
-                <a href="{{ url_for('customer.products') }}" class="btn btn-outline">← Continue Shopping</a>
+                <a href="{{ url_for('customer.products') }}" class="btn btn-outline">{{ t.continue_shopping }}</a>
             </div>
         </div>
     </div>
     
     <!-- Product Description -->
     <div class="product-description">
-        <h3>📝 Product Description</h3>
+        <h3>{{ t.product_description }}</h3>
         <p>
-            {% if product.description_am and product.description_am|trim != '' %}
+            {% if lang == 'ar' and product.description_ar and product.description_ar|trim != '' %}
+                {{ product.description_ar }}
+            {% elif lang == 'am' and product.description_am and product.description_am|trim != '' %}
                 {{ product.description_am }}
+            {% elif product.description_en and product.description_en|trim != '' %}
+                {{ product.description_en }}
             {% elif product.description and product.description|trim != '' %}
                 {{ product.description }}
             {% else %}
-                No description available for this product. Please contact us for more information.
+                {{ t.no_description }}
             {% endif %}
         </p>
         
         <!-- Product Features -->
         <div style="margin-top: 20px;">
-            <h4>✨ Features:</h4>
+            <h4>{{ t.features }}</h4>
             <ul class="features-list">
-                <li>✓ High-quality materials</li>
-                <li>✓ Modern design</li>
-                <li>✓ Durable construction</li>
-                <li>✓ Easy to clean</li>
+                <li>{{ t.high_quality }}</li>
+                <li>{{ t.modern_design }}</li>
+                <li>{{ t.durable }}</li>
+                <li>{{ t.easy_to_clean }}</li>
             </ul>
         </div>
         
         <!-- Dimensions & Weight -->
         {% if product.dimensions or product.weight %}
         <div style="margin-top: 20px;">
-            <h4>📏 Specifications:</h4>
+            <h4>{{ t.specifications }}</h4>
             <ul class="features-list">
                 {% if product.dimensions %}
-                <li>✓ Dimensions: {{ product.dimensions }}</li>
+                <li>✓ {{ t.dimensions }} {{ product.dimensions }}</li>
                 {% endif %}
                 {% if product.weight %}
-                <li>✓ Weight: {{ product.weight }} kg</li>
+                <li>✓ {{ t.weight_label }} {{ product.weight }} kg</li>
                 {% endif %}
             </ul>
         </div>
@@ -507,7 +511,7 @@
     ">
         <!-- Header -->
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
-            <h3 style="margin:0;font-size:20px;color:#1a1a2e;">⭐ Customer Reviews</h3>
+            <h3 style="margin:0;font-size:20px;color:#1a1a2e;">{{ t.customer_reviews }}</h3>
             <div id="reviewSummaryBadge" style="display:none;background:#f8f9fa;border-radius:14px;padding:10px 18px;display:flex;align-items:center;gap:10px;">
                 <span id="avgRatingDisplay" style="font-size:28px;font-weight:900;color:#1a7a4a;">0</span>
                 <div>
@@ -533,7 +537,7 @@
 
         <!-- Write Review Form -->
         <div id="reviewFormArea" style="margin-bottom:28px;padding:20px;background:#f8f9fa;border-radius:16px;">
-            <h4 style="margin:0 0 16px;font-size:15px;color:#1a1a2e;">✍️ Write a Review</h4>
+            <h4 style="margin:0 0 16px;font-size:15px;color:#1a1a2e;">{{ t.write_review }}</h4>
             <div id="reviewFormInner">
                 <!-- filled by JS -->
                 <div style="text-align:center;padding:20px;color:#aaa;">⏳ Loading…</div>
@@ -549,7 +553,7 @@
     <!-- Related Products -->
     {% if related_products and related_products|length > 0 %}
     <div class="related-products">
-        <h2>🔗 You May Also Like</h2>
+        <h2>{{ t.you_may_also_like }}</h2>
         <div class="related-grid">
             {% for related in related_products %}
             <div class="related-card" onclick="location.href='{{ url_for('customer.product_detail', product_id=related.id) }}'">

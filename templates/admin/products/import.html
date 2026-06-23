@@ -374,7 +374,7 @@
 
     <!-- ── Upload card ── -->
     <div class="import-card">
-        <h3>📂 Upload CSV File</h3>
+        <h3>📂 Upload CSV or Excel File</h3>
 
         <form method="POST" enctype="multipart/form-data" id="importForm"
               action="{{ url_for('admin.import_products') }}">
@@ -382,11 +382,11 @@
 
             <div class="drop-zone" id="dropZone">
                 <input type="file" name="csv_file" id="csvFileInput"
-                       accept=".csv,text/csv" required>
+                       accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
                 <div class="drop-zone-icon" id="dropIcon">📋</div>
-                <div class="drop-zone-label">Click or drag &amp; drop your CSV file here</div>
+                <div class="drop-zone-label">Click or drag &amp; drop your CSV or Excel file here</div>
                 <div class="drop-zone-hint">
-                    Only .csv files · Max 2 MB · Max 500 rows ·
+                    .csv or .xlsx files · Max 5 MB · Max 500 rows ·
                     Images downloaded automatically from image_url column
                 </div>
                 <div class="file-name-display" id="fileNameDisplay"></div>
@@ -558,17 +558,18 @@
 
         const f = fileInput.files[0];
 
-        if (!f.name.toLowerCase().endsWith('.csv')) {
+        const nm = f.name.toLowerCase();
+        if (!nm.endsWith('.csv') && !nm.endsWith('.xlsx') && !nm.endsWith('.xls')) {
             e.preventDefault();
-            if (window.showToast) window.showToast('Only .csv files are accepted.', 'error');
-            else alert('Only .csv files are accepted.');
+            if (window.showToast) window.showToast('Only .csv or .xlsx files are accepted.', 'error');
+            else alert('Only .csv or .xlsx files are accepted.');
             return;
         }
 
-        if (f.size > 2 * 1024 * 1024) {
+        if (f.size > 5 * 1024 * 1024) {
             e.preventDefault();
-            if (window.showToast) window.showToast('File exceeds 2 MB limit.', 'error');
-            else alert('File exceeds 2 MB limit.');
+            if (window.showToast) window.showToast('File exceeds 5 MB limit.', 'error');
+            else alert('File exceeds 5 MB limit.');
             return;
         }
 

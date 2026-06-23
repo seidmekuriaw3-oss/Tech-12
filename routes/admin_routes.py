@@ -149,8 +149,11 @@ def products():
             ORDER BY p.id DESC
         """)
         products_rows = cursor.fetchall()
+        cursor.execute("SELECT id, name, name_am FROM categories WHERE is_active = 1 ORDER BY sort_order")
+        categories_rows = cursor.fetchall()
         return render_template('admin/products/index.html',
                                products=[dict(p) for p in products_rows] if products_rows else [],
+                               categories=[dict(c) for c in categories_rows] if categories_rows else [],
                                lang=lang)
     except Exception as e:
         print(f"Admin products error: {e}")
@@ -584,35 +587,64 @@ def import_products():
 
     csv_file = request.files.get('csv_file')
     if not csv_file or csv_file.filename == '':
-        flash('Please select a CSV file to upload.', 'error')
-        return redirect(url_for('admin.import_products'))
-    if not csv_file.filename.lower().endswith('.csv'):
-        flash('Invalid file type. Please upload a .csv file.', 'error')
+        flash('Please select a CSV or Excel file to upload.', 'error')
         return redirect(url_for('admin.import_products'))
 
+    fname_lower = csv_file.filename.lower()
+    is_excel = fname_lower.endswith('.xlsx') or fname_lower.endswith('.xls')
+    is_csv   = fname_lower.endswith('.csv')
+
+    if not is_csv and not is_excel:
+        flash('Invalid file type. Please upload a .csv or .xlsx file.', 'error')
+        return redirect(url_for('admin.import_products'))
+
+    rows_dicts = []
     try:
         raw = csv_file.read()
-        try:
-            content = raw.decode('utf-8-sig')
-        except UnicodeDecodeError:
-            content = raw.decode('latin-1')
-    except Exception:
-        flash('Could not read the uploaded file.', 'error')
+        if is_excel:
+            import openpyxl
+            from io import BytesIO
+            wb = openpyxl.load_workbook(BytesIO(raw), read_only=True, data_only=True)
+            ws = wb.active
+            all_rows = list(ws.iter_rows(values_only=True))
+            if not all_rows:
+                flash('The Excel file appears to be empty.', 'error')
+                return redirect(url_for('admin.import_products'))
+            headers = [str(h).strip() if h is not None else '' for h in all_rows[0]]
+            for data_row in all_rows[1:]:
+                row_dict = {headers[i]: (str(v).strip() if v is not None else '')
+                            for i, v in enumerate(data_row) if i < len(headers)}
+                rows_dicts.append(row_dict)
+            wb.close()
+        else:
+            try:
+                content = raw.decode('utf-8-sig')
+            except UnicodeDecodeError:
+                content = raw.decode('latin-1')
+            reader = csv.DictReader(StringIO(content))
+            if reader.fieldnames is None:
+                flash('The CSV file appears to be empty.', 'error')
+                return redirect(url_for('admin.import_products'))
+            reader.fieldnames = [h.strip() for h in reader.fieldnames]
+            rows_dicts = list(reader)
+            headers = reader.fieldnames
+    except Exception as ex:
+        flash(f'Could not read the uploaded file: {ex}', 'error')
         return redirect(url_for('admin.import_products'))
 
-    reader = csv.DictReader(StringIO(content))
-    if reader.fieldnames is None:
-        flash('The CSV file appears to be empty.', 'error')
+    if not rows_dicts:
+        flash('The file appears to be empty.', 'error')
         return redirect(url_for('admin.import_products'))
 
-    headers_norm = {h.strip().lower() for h in reader.fieldnames}
+    headers_norm = {k.strip().lower() for k in (rows_dicts[0].keys() if rows_dicts else [])}
     REQUIRED = {'name_en', 'price', 'category'}
     missing_cols = REQUIRED - headers_norm
     if missing_cols:
         flash(f'Missing required columns: {", ".join(sorted(missing_cols))}.', 'error')
         return redirect(url_for('admin.import_products'))
 
-    reader.fieldnames = [h.strip() for h in reader.fieldnames]
+    # Normalize all keys to lowercase
+    rows_dicts = [{k.strip().lower(): v for k, v in r.items()} for r in rows_dicts]
     upload_dir = 'static/uploads/products'
     os.makedirs(upload_dir, exist_ok=True)
 
@@ -622,8 +654,8 @@ def import_products():
     def _bool_field(val):
         return 1 if val.strip().lower() in ('yes', '1', 'true') else 0
 
-    for row_num, raw_row in enumerate(reader, start=2):
-        row = {k.strip().lower(): (v or '').strip() for k, v in raw_row.items() if k}
+    for row_num, row in enumerate(rows_dicts, start=2):
+        row = {k: (v or '').strip() for k, v in row.items() if k}
 
         name_en = row.get('name_en', '')
         if not name_en:
