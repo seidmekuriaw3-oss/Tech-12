@@ -14,7 +14,7 @@ import datetime as datetime_
 
 from flask import (
     Blueprint, request, redirect, url_for, session,
-    jsonify, make_response
+    jsonify, make_response, send_from_directory
 )
 from database.db import get_db
 from middleware.auth import admin_required
@@ -90,6 +90,15 @@ def health_check_details():
 
 
 # ==================== SEO / CRAWLERS ====================
+
+@utility_bp.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'images'),
+        'favicon.ico',
+        mimetype='image/vnd.microsoft.icon'
+    )
+
 
 @utility_bp.route('/robots.txt')
 def robots_txt():

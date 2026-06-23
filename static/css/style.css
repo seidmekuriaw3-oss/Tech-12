@@ -1874,7 +1874,8 @@ select.form-control {
         display: flex !important;
     }
     
-    /* Hide any extra cart icons in header */
+    /* Hide mobile-cart in header-icons on desktop — cart already in desktop-nav */
+    .header-icons .mobile-cart,
     .header-icons .cart-icon {
         display: none !important;
     }
@@ -1901,19 +1902,18 @@ select.form-control {
         display: flex !important;
     }
     
-    /* On mobile, show cart in bottom nav, hide desktop cart */
+    /* On mobile, show mobile-cart in header-icons, hide desktop cart */
     .desktop-nav .cart-link {
         display: none !important;
     }
     
-    .bottom-nav .nav-item[onclick*="cart"] {
+    /* Ensure mobile cart in header shows on mobile */
+    .header-icons .mobile-cart {
         display: flex !important;
     }
     
-    /* Hide extra cart icons in header on mobile */
-    .header-icons .cart-icon,
-    .cart-icon {
-        display: none !important;
+    .bottom-nav .nav-item[onclick*="cart"] {
+        display: flex !important;
     }
 }
 
