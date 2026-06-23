@@ -373,6 +373,8 @@ def inject_globals():
     pending_orders_count = 0
     low_stock_count = 0
     unread_messages_count = 0
+    products_count = 0
+    ads_count = 0
     if session.get('admin'):
         try:
             conn = get_db()
@@ -382,13 +384,17 @@ def inject_globals():
                     (SELECT COUNT(*) FROM orders WHERE status = 'pending') AS pending_orders,
                     (SELECT COUNT(*) FROM products
                      WHERE stock_quantity <= low_stock_threshold AND stock_quantity > 0) AS low_stock,
-                    (SELECT COUNT(*) FROM contact_messages WHERE is_read = 0) AS unread_messages
+                    (SELECT COUNT(*) FROM contact_messages WHERE is_read = 0) AS unread_messages,
+                    (SELECT COUNT(*) FROM products WHERE is_active = 1) AS products_count,
+                    (SELECT COUNT(*) FROM advertisements WHERE is_active = 1) AS ads_count
             """)
             row = cur.fetchone()
             if row:
-                pending_orders_count = row[0] or 0
-                low_stock_count      = row[1] or 0
+                pending_orders_count  = row[0] or 0
+                low_stock_count       = row[1] or 0
                 unread_messages_count = row[2] or 0
+                products_count        = row[3] or 0
+                ads_count             = row[4] or 0
         except Exception:
             pass
 
@@ -406,6 +412,8 @@ def inject_globals():
         'pending_orders_count': pending_orders_count,
         'low_stock_count': low_stock_count,
         'unread_messages_count': unread_messages_count,
+        'products_count': products_count,
+        'ads_count': ads_count,
     }
 
 

@@ -41,6 +41,10 @@ def admin_login():
         admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
         admin_password = os.environ.get('ADMIN_PASSWORD', '')
 
+        if not admin_password:
+            flash('Admin login is disabled. Set ADMIN_PASSWORD in environment variables.', 'danger')
+            return render_template('admin/login.html')
+
         if username == admin_username and password == admin_password:
             session['admin'] = True
             session['admin_username'] = username
@@ -1727,8 +1731,8 @@ def send_notification():
                 for ur in (user_rows or []):
                     uid = ur[0]
                     notify_user(uid, title, body, type='info', link=link or '')
-            except Exception:
-                pass
+            except Exception as fan_err:
+                print(f"⚠️ Notification fan-out partial failure: {fan_err}")
 
             flash('Notification sent to all customers!', 'success')
         except Exception as e:

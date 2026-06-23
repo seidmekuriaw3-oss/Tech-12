@@ -152,15 +152,17 @@ def save_file(file, subfolder='', app=None):
         return None
 
 
-def save_image(file, subfolder='products', app=None):
+def save_image(file, subfolder='products', app=None, max_width=1200, max_height=1200):
     """
-    Save an image file with image-specific validation.
-    
+    Save an image file with image-specific validation and automatic resizing.
+
     Args:
         file: Flask file object
         subfolder (str): Subfolder within uploads directory
         app: Flask app instance
-    
+        max_width (int): Maximum image width in pixels (default 1200)
+        max_height (int): Maximum image height in pixels (default 1200)
+
     Returns:
         str: Saved filename, or None if failed
     """
@@ -169,8 +171,32 @@ def save_image(file, subfolder='products', app=None):
     if not is_valid:
         print(f"❌ {error}")
         return None
-    
-    return save_file(file, subfolder, app)
+
+    filename = save_file(file, subfolder, app)
+    if not filename:
+        return None
+
+    # Resize image if it exceeds max dimensions
+    try:
+        from PIL import Image as PilImage
+        upload_folder = UPLOAD_FOLDER
+        if app and hasattr(app, 'config'):
+            upload_folder = app.config.get('UPLOAD_FOLDER', UPLOAD_FOLDER)
+        filepath = os.path.join(upload_folder, subfolder, filename) if subfolder else os.path.join(upload_folder, filename)
+        with PilImage.open(filepath) as img:
+            if img.width > max_width or img.height > max_height:
+                img.thumbnail((max_width, max_height), PilImage.LANCZOS)
+                # Preserve format; fallback to JPEG for unknowns
+                fmt = img.format or 'JPEG'
+                save_kwargs = {'optimize': True}
+                if fmt in ('JPEG', 'JPG'):
+                    save_kwargs['quality'] = 85
+                img.save(filepath, format=fmt, **save_kwargs)
+                print(f"✅ Image resized to {img.width}x{img.height}: {filename}")
+    except Exception as e:
+        print(f"⚠️ Image resize skipped: {e}")
+
+    return filename
 
 
 def save_video(file, subfolder='videos', app=None):

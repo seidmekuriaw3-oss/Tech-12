@@ -74,7 +74,7 @@
                 <div style="display:flex;gap:12px;align-items:center;margin-top:8px;flex-wrap:wrap;">
                     <span style="font-size:11px;color:#aaa;">{{ alert.created_at }}</span>
                     {% if alert.ref_order_id %}
-                    <a href="{{ url_for('admin.admin_order_detail', order_id=alert.ref_order_id) }}"
+                    <a href="{{ url_for('admin.order_detail', oid=alert.ref_order_id) }}"
                        style="font-size:11px;color:#1a7a4a;font-weight:700;text-decoration:none;background:rgba(26,122,74,0.1);padding:2px 8px;border-radius:6px;">
                         View Order →
                     </a>

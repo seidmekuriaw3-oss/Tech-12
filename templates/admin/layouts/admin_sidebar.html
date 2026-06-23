@@ -69,7 +69,7 @@
                 color: rgba(255,255,255,0.4);
             ">MAIN</div>
             
-            <a href="{{ url_for('admin.dashboard') }}" class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" style="
+            <a href="{{ url_for('admin.dashboard') }}" class="nav-item {% if request.endpoint == 'admin.dashboard' %}active{% endif %}" style="
                 display: flex;
                 align-items: center;
                 gap: 12px;
@@ -95,7 +95,7 @@
                 margin-top: 8px;
             ">PRODUCTS</div>
             
-            <a href="{{ url_for('admin.products') }}" class="nav-item {% if request.endpoint in ('admin_products', 'admin_product_edit', 'admin_product_view') %}active{% endif %}" style="
+            <a href="{{ url_for('admin.products') }}" class="nav-item {% if request.endpoint in ('admin.products', 'admin.product_edit', 'admin.product_view', 'admin.product_create') %}active{% endif %}" style="
                 display: flex;
                 align-items: center;
                 gap: 12px;
@@ -140,7 +140,7 @@
                 <span class="nav-text">Add Product</span>
             </a>
 
-            <a href="{{ url_for('admin.import_products') }}" class="nav-item {% if request.endpoint == 'admin_import_products' %}active{% endif %}" style="
+            <a href="{{ url_for('admin.import_products') }}" class="nav-item {% if request.endpoint == 'admin.import_products' %}active{% endif %}" style="
                 display: flex;
                 align-items: center;
                 gap: 12px;
@@ -180,7 +180,7 @@
                 margin-top: 8px;
             ">ORDERS</div>
             
-            <a href="{{ url_for('admin.orders') }}" class="nav-item {% if request.endpoint in ('admin_orders', 'admin_order_detail') %}active{% endif %}" style="
+            <a href="{{ url_for('admin.orders') }}" class="nav-item {% if request.endpoint in ('admin.orders', 'admin.order_detail') %}active{% endif %}" style="
                 display: flex;
                 align-items: center;
                 gap: 12px;
@@ -215,7 +215,7 @@
                 margin-top: 8px;
             ">MARKETING</div>
             
-            <a href="{{ url_for('admin.ads') }}" class="nav-item {% if request.endpoint in ('admin_ads', 'admin_ad_create', 'admin_ad_edit') %}active{% endif %}" style="
+            <a href="{{ url_for('admin.ads') }}" class="nav-item {% if request.endpoint in ('admin.ads', 'admin.ad_create', 'admin.ad_edit') %}active{% endif %}" style="
                 display: flex;
                 align-items: center;
                 gap: 12px;
@@ -296,7 +296,7 @@
                 margin-top: 8px;
             ">REPORTS</div>
             
-            <a href="{{ url_for('admin.reports') }}" class="nav-item {% if request.endpoint in ('admin_reports', 'admin_reports_sales', 'admin_reports_products') %}active{% endif %}" style="
+            <a href="{{ url_for('admin.reports') }}" class="nav-item {% if request.endpoint in ('admin.reports', 'admin.reports_sales', 'admin.reports_products') %}active{% endif %}" style="
                 display: flex;
                 align-items: center;
                 gap: 12px;
@@ -364,7 +364,7 @@
                 margin-top: 8px;
             ">SYSTEM</div>
             
-            <a href="{{ url_for('admin.settings') }}" class="nav-item {% if request.endpoint == 'admin_settings' %}active{% endif %}" style="
+            <a href="{{ url_for('admin.settings') }}" class="nav-item {% if request.endpoint == 'admin.settings' %}active{% endif %}" style="
                 display: flex;
                 align-items: center;
                 gap: 12px;

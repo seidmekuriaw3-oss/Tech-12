@@ -1739,8 +1739,8 @@ console.log(`
 ╚═══════════════════════════════════════════╝
 `);
 // ==================== Exports (Part 1) ====================
-window.showToast = showToast;
-window.showModal = showModal;
+if (!window.showToast) window.showToast = showToast;
+if (!window.showModal) window.showModal = showModal;
 window.showLoading = showLoading;
 window.showLoadingWithTimeout = showLoadingWithTimeout;
 window.hideLoading = hideLoading;

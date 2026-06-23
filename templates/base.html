@@ -27,15 +27,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
     
-    <!-- Unregister any old service workers immediately — must run before any fetch calls -->
+    <!-- Clear only legacy v1 cache keys to avoid conflicts with current SW -->
     <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for (var r of registrations) { r.unregister(); }
-        });
-        caches.keys().then(function(keys) {
-            keys.forEach(function(k) { caches.delete(k); });
-        });
+    if (typeof caches !== 'undefined') {
+        var legacyKeys = ['ethiosadat-v1', 'semira-v1', 'static-v1', 'pages-v1'];
+        legacyKeys.forEach(function(k) { caches.delete(k); });
     }
     </script>
 
