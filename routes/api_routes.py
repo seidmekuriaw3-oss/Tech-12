@@ -782,9 +782,27 @@ def api_place_order():
             return jsonify({'success': False,
                             'error': f"Insufficient stock for product #{item['product_id']}"}), 400
     
+    # Low-stock check — query updated stock levels within this transaction
+    try:
+        ordered_pids = [it['product_id'] for it in items_list]
+        if ordered_pids:
+            from services.whatsapp_service import send_low_stock_alert as _stock_alert
+            _ph = ','.join(['%s'] * len(ordered_pids))
+            cursor.execute(
+                f"""SELECT id, name_am, name, stock_quantity, low_stock_threshold
+                    FROM products WHERE id IN ({_ph})
+                    AND stock_quantity <= low_stock_threshold""",
+                ordered_pids
+            )
+            _low = [dict(r) for r in cursor.fetchall()]
+            if _low:
+                _stock_alert(_low)
+    except Exception as _e:
+        print(f"Low-stock check error (api): {_e}")
+
     # Clear cart
     cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))
-    
+
     db.commit()
     
     return jsonify({

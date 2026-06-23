@@ -16,7 +16,7 @@ from database.db import get_db
 from routes.shared import calc_cart_totals, FREE_SHIPPING_THRESHOLD, SHIPPING_COST, USER_DISCOUNT_RATE
 import json
 from services.notification_service import notify_user, notify_admin
-from services.whatsapp_service import send_owner_order_notification
+from services.whatsapp_service import send_owner_order_notification, send_low_stock_alert
 
 cart_bp = Blueprint('cart', __name__)
 
@@ -522,6 +522,26 @@ def place_order():
             db.rollback()
             flash(f'ይቅርታ! "{name}" ላይ በቂ ዕቃ አልተገኘም። ካርትዎን ያረጋግጡ።', 'danger')
             return redirect(url_for('cart.view_cart'))
+
+    # Low-stock check — query updated stock levels within this transaction
+    try:
+        ordered_pids = list({
+            (item['product_id'] if isinstance(item, dict) else item['product_id'])
+            for item in cart_items_raw
+        })
+        if ordered_pids:
+            _ph = ','.join(['%s'] * len(ordered_pids))
+            cursor.execute(
+                f"""SELECT id, name_am, name, stock_quantity, low_stock_threshold
+                    FROM products WHERE id IN ({_ph})
+                    AND stock_quantity <= low_stock_threshold""",
+                ordered_pids
+            )
+            _low = [dict(r) for r in cursor.fetchall()]
+            if _low:
+                send_low_stock_alert(_low)
+    except Exception as _e:
+        print(f"Low-stock check error: {_e}")
 
     # Clear cart
     if user_id:

@@ -19097,3 +19097,4 @@ TypeError: Object of type Undefined is not JSON serializable
 2026-06-22 06:33:33,676 - app - WARNING - 404 Error: http://localhost:5000/favicon.ico
 2026-06-22 14:02:18,273 - app - WARNING - 404 Error: http://localhost:5000/favicon.ico
 2026-06-23 01:59:52,084 - app - WARNING - 404 Error: http://localhost:5000/favicon.ico
+2026-06-23 02:10:50,584 - app - WARNING - 404 Error: http://52885a94-0f9e-49ef-92b8-8efa4bf74f19-00-3kbekzhp4a8e3.kirk.replit.dev/static/images/logo.svg

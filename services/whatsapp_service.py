@@ -449,6 +449,64 @@ class WhatsAppService:
         return links
 
 
+# ==================== LOW-STOCK ALERT ====================
+
+def send_low_stock_alert(products: list):
+    """
+    Notify the store owner via WhatsApp when products drop to or below their
+    low-stock threshold after an order.
+
+    products: list of dicts with keys id, name_am, name, stock_quantity,
+              low_stock_threshold.
+    Always logs to console; sends WhatsApp only when CALLMEBOT_API_KEY is set.
+    Runs its own background thread — safe to call from request context.
+    """
+    if not products:
+        return
+
+    # Always log — visible in server console even without CallMeBot
+    print(f"⚠️  LOW STOCK ALERT — {len(products)} product(s) at/below threshold:")
+    for p in products:
+        qty = p['stock_quantity']
+        thr = p.get('low_stock_threshold', 0)
+        label = "OUT OF STOCK" if qty == 0 else f"LOW ({qty} left, threshold {thr})"
+        print(f"   • [{p['id']}] {p.get('name_am') or p.get('name', 'Product')} — {label}")
+
+    api_key = os.environ.get('CALLMEBOT_API_KEY', '')
+    if not api_key:
+        print("ℹ️  CALLMEBOT_API_KEY not set — WhatsApp low-stock alert skipped.")
+        return
+
+    owner_phone = os.environ.get('WHATSAPP_NUMBER', WHATSAPP_NUMBER)
+    now = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+    lines = [
+        "⚠️ *ዕቃ አነስተኛ ማስጠንቀቂያ — ሰሚራ ፋሽን*",
+        "━" * 30,
+        f"📅 {now}",
+        "━" * 30,
+    ]
+    for p in products:
+        qty = p['stock_quantity']
+        thr = p.get('low_stock_threshold', 0)
+        name = p.get('name_am') or p.get('name', 'ምርት')
+        if qty == 0:
+            lines.append(f"🔴 *{name}* — ዕቃ አልቋል!")
+        else:
+            lines.append(f"🟡 *{name}* — {qty} ቀርቷል (ዝቅተኛ: {thr})")
+    lines += [
+        "━" * 30,
+        "🔗 /admin/products ⟶ ዕቃ ይሙሉ",
+    ]
+
+    message = "\n".join(lines)
+    phone_fmt = owner_phone if owner_phone.startswith('+') else f"+{owner_phone}"
+    t = threading.Thread(
+        target=_send_callmebot, args=(phone_fmt, message, api_key), daemon=True
+    )
+    t.start()
+
+
 # ==================== BACKWARD COMPATIBILITY ====================
 
 # Keep function versions for backward compatibility

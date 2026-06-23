@@ -1,4 +1,3 @@
-- [PostgreSQL-only DB setup](pg-setup.md) — models.py uses %s (not ?); db.py adapter still converts ? as safety net; always PostgreSQL via DATABASE_URL.
-- [Translation system](translation.md) — googletrans removed; translation_cache.py is now 100% static dict; product multilingual fields (name_am, name_ar etc.) used directly from DB.
-- [Pagination fix](pagination.md) — /products route uses SQL LIMIT/OFFSET + COUNT query; total_pages calculated with math.ceil; was hardcoded to 1 before.
-- [Security baseline](security.md) — CSRF via utils/csrf.py + session token; all 22 POST forms have hidden input; fetch interceptor in base.html + admin_base.html adds X-CSRFToken to AJAX; SECRET_KEY and ADMIN_PASSWORD raise RuntimeError if unset.
+- [WhatsApp low-stock alert](whatsapp-low-stock.md) — send_low_stock_alert() in whatsapp_service.py; always logs to console, sends WhatsApp only if CALLMEBOT_API_KEY is set.
+- [Stock race condition fix](stock-race-condition.md) — FOR UPDATE OF p on product SELECT + atomic UPDATE WHERE stock_quantity >= qty + rollback; both cart_routes.py and api_routes.py.
+- [Order discount rate](order-discount.md) — USER_DISCOUNT_RATE in routes/shared.py is the single source of truth; never hardcode 0.9 in route files.
