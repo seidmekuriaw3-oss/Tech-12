@@ -292,7 +292,7 @@
             </div>
             
             <!-- Free Shipping Progress -->
-            {% set free_shipping_threshold = 5000 %}
+            {% set free_shipping_threshold = free_shipping_threshold|default(5000) %}
             {% if subtotal_after_discount|default(subtotal - discount) < free_shipping_threshold %}
             <div style="margin-bottom: 20px; padding: 12px; background: #e8f0fe; border-radius: 12px;">
                 <div style="font-size: 13px; margin-bottom: 8px; color: #333;">
