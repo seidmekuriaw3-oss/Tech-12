@@ -427,43 +427,83 @@ h3 {
         text-align: center;
     }
     
-    /* Header Layout */
-    .header-container {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 10px;
+    /* ── Header Layout: single compact row ── */
+    .header {
+        height: 54px;
+        padding: 0 10px;
     }
-    
+
+    .header-container {
+        flex-wrap: nowrap;
+        gap: 8px;
+        height: 100%;
+        padding: 0;
+    }
+
     .logo {
         order: 1;
-        text-align: left;
-        flex: 0 0 auto;
+        flex-shrink: 0;
     }
-    
+
+    .logo img {
+        height: 36px;
+    }
+
+    /* Search fills the middle, shrinks as needed */
     .search-box {
         order: 2;
-        flex: 1;
-        min-width: 180px;
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: none;
     }
-    
+
+    .search-box input {
+        font-size: 13px;
+        padding: 7px 36px 7px 30px;
+    }
+
+    .search-icon-left {
+        left: 10px;
+        width: 14px;
+        height: 14px;
+    }
+
+    .search-btn {
+        width: 28px;
+        height: 28px;
+        right: 4px;
+    }
+
+    /* Icons group: compact, no wrap */
     .header-icons {
         order: 3;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
-        gap: 15px;
-        margin-left: auto;
+        gap: 4px;
+        margin-left: 0;
     }
-    
-    .cart-icon {
-        margin-right: 5px;
-        position: relative;
+
+    .nav-icon-btn {
+        width: 34px;
+        height: 34px;
     }
-    
+
+    /* Hamburger: icon only — hide "MENU" text on mobile */
     .hamburger-btn {
-        margin-right: 0;
-        padding: 8px 12px;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        justify-content: center;
+        gap: 0;
+    }
+
+    .hamburger-btn span {
+        display: none;
+    }
+
+    .cart-icon {
+        position: relative;
     }
     
     /* Hide desktop navigation on mobile */
@@ -509,8 +549,21 @@ h3 {
     }
     
     .search-box input {
-        font-size: 14px;
-        padding: 8px;
+        font-size: 12px;
+        padding: 6px 34px 6px 28px;
+    }
+
+    .header {
+        height: 50px;
+        padding: 0 8px;
+    }
+
+    .header-container {
+        gap: 6px;
+    }
+
+    .logo img {
+        height: 32px;
     }
     
     body {
