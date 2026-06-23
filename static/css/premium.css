@@ -474,9 +474,51 @@ button[onclick*="addToCart"]:hover,
 }
 
 /* ===== FOOTER ===== */
-footer, .footer {
+footer, .footer, .site-footer {
     background: linear-gradient(160deg, #081a0d 0%, #0a2a15 50%, #071810 100%) !important;
     border-top: 1px solid rgba(201,168,76,0.3) !important;
+    color: rgba(255,255,255,0.88) !important;
+}
+
+/* Footer text — force white on dark green for all sub-elements */
+footer .footer-title,
+.site-footer .footer-title,
+footer .footer-newsletter h4,
+.site-footer .footer-newsletter h4 {
+    color: #ffffff !important;
+}
+
+footer .footer-description,
+.site-footer .footer-description,
+footer .newsletter-note,
+.site-footer .newsletter-note,
+footer .footer-copyright,
+.site-footer .footer-copyright,
+footer .footer-contact li span,
+.site-footer .footer-contact li span,
+footer .contact-icon,
+.site-footer .contact-icon {
+    color: rgba(255,255,255,0.80) !important;
+}
+
+footer .footer-links a,
+.site-footer .footer-links a,
+footer .footer-contact a,
+.site-footer .footer-contact a {
+    color: rgba(255,255,255,0.80) !important;
+}
+
+footer .footer-links a:hover,
+.site-footer .footer-links a:hover,
+footer .footer-contact a:hover,
+.site-footer .footer-contact a:hover {
+    color: #c9a84c !important;
+}
+
+footer .footer-payments span,
+.site-footer .footer-payments span {
+    color: rgba(255,255,255,0.80) !important;
+    background: rgba(255,255,255,0.10) !important;
 }
 
 /* ===== WISHLIST HEART GLOW ===== */
@@ -508,6 +550,17 @@ footer, .footer {
     border: 1px solid rgba(201,168,76,0.2) !important;
     border-radius: 20px !important;
     box-shadow: 0 8px 40px rgba(0,0,0,0.3) !important;
+    color: rgba(255,255,255,0.92) !important;
+    padding: 24px 28px !important;
+}
+.page-header h1,
+.page-header h2,
+.page-header h3 {
+    color: #ffffff !important;
+}
+.page-header p,
+.page-header span {
+    color: rgba(255,255,255,0.80) !important;
 }
 
 /* ===== RADIO/CHECKBOX — GREEN ===== */
