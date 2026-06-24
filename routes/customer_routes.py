@@ -595,10 +595,35 @@ def user_login():
             user = cursor.fetchone()
 
             if user and check_password_hash(user['password_hash'], password):
+                # Merge guest session cart → DB cart before setting session
+                guest_cart = session.get('cart', {})
                 session['user_id'] = user['id']
                 session['user_name'] = user['full_name']
                 session['user_email'] = user['email']
                 session['user_phone'] = user['phone']
+                if guest_cart:
+                    try:
+                        for pid_str, qty in guest_cart.items():
+                            pid = int(pid_str)
+                            cursor.execute(
+                                "SELECT id, quantity FROM cart_items WHERE user_id=%s AND product_id=%s",
+                                (user['id'], pid)
+                            )
+                            existing = cursor.fetchone()
+                            if existing:
+                                cursor.execute(
+                                    "UPDATE cart_items SET quantity = quantity + %s WHERE id = %s",
+                                    (qty, existing['id'])
+                                )
+                            else:
+                                cursor.execute(
+                                    "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s,%s,%s)",
+                                    (user['id'], pid, qty)
+                                )
+                        conn.commit()
+                        session.pop('cart', None)
+                    except Exception as _me:
+                        print(f"Cart merge error: {_me}")
                 flash('Login successful!', 'success')
                 next_page = request.args.get('next')
                 if next_page:
@@ -669,6 +694,21 @@ def user_register():
             session['user_name'] = full_name
             session['user_email'] = email
             session['user_phone'] = phone
+
+            # Merge any guest session cart into DB cart
+            guest_cart = session.get('cart', {})
+            if guest_cart:
+                try:
+                    for pid_str, qty in guest_cart.items():
+                        pid = int(pid_str)
+                        cursor.execute(
+                            "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s,%s,%s)",
+                            (user_id, pid, qty)
+                        )
+                    conn.commit()
+                    session.pop('cart', None)
+                except Exception as _me:
+                    print(f"Cart merge on register error: {_me}")
 
             flash('Registration successful! Welcome to SEMIRA FASHION!', 'success')
 

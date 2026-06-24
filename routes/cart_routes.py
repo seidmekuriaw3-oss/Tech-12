@@ -324,7 +324,7 @@ def checkout():
 
         for item in raw_items:
             orig_price = item['price']
-            discounted_price = round(orig_price * 0.9, 2)
+            discounted_price = round(orig_price * (1 - USER_DISCOUNT_RATE), 2)
             subtotal += orig_price * item['quantity']
             cart_items.append({
                 'id': item['id'] if 'id' in item.keys() else None,
@@ -653,9 +653,9 @@ def get_cart_total():
                 quantity = cart.get(str(p['id']), 0)
                 total += p['price'] * quantity
     
-    # Apply 10% discount for logged in users
+    # Apply member discount for logged-in users
     if session.get('user_id'):
-        total = total * 0.9
+        total = total * (1 - USER_DISCOUNT_RATE)
     
     return round(total, 2)
 

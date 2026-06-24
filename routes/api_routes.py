@@ -432,7 +432,7 @@ def api_cart_update():
 
         totals = _get_cart_totals_data()
         is_logged_in = bool(session.get('user_id'))
-        discounted_price = item_price * 0.9 if is_logged_in else item_price
+        discounted_price = item_price * (1 - USER_DISCOUNT_RATE) if is_logged_in else item_price
         item_total = round(discounted_price * quantity, 2)
 
         totals['success'] = True
@@ -1316,7 +1316,7 @@ def api_submit_order():
             subtotal += price * qty
             items_list.append({
                 'product_id': item['product_id'], 'quantity': qty,
-                'price': round(price * 0.9, 2) if is_logged_in else price,
+                'price': round(price * (1 - USER_DISCOUNT_RATE), 2) if is_logged_in else price,
                 'name': item['name'],
                 'name_am': item['name_am'] or item['name'],
             })

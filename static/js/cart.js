@@ -9,7 +9,7 @@ const CART_API = {
     remove: '/api/cart/remove',
     cart: '/api/cart',
     clear: '/cart/clear',
-    checkout: '/checkout'
+    checkout: '/cart/checkout'
 };
 
 // Cart configuration
@@ -214,7 +214,7 @@ class CartManager {
                     <span>Total:</span>
                     <span>${this.formatPrice(this.total)}</span>
                 </div>
-                <a href="/checkout" class="btn btn-primary w-100 mt-3">Checkout →</a>
+                <a href="/cart/checkout" class="btn btn-primary w-100 mt-3">Checkout →</a>
             `;
         }
     }
@@ -649,7 +649,7 @@ function updateMiniCartPanelContent(panel) {
                 <span>${manager.formatPrice(manager.total)}</span>
             </div>
         </div>
-        <a href="/checkout" class="btn btn-primary w-100" style="text-align: center;">Checkout →</a>
+        <a href="/cart/checkout" class="btn btn-primary w-100" style="text-align: center;">Checkout →</a>
         <button onclick="hideMiniCart();" class="btn btn-outline w-100 mt-2">Continue Shopping</button>
     `;
 }
