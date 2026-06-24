@@ -433,24 +433,15 @@
     }
 
     function removeCartItem(productId) {
-        if (window.showConfirm) {
-            window.showConfirm('Remove Item', 'Are you sure you want to remove this item?', function() { doRemoveItem(productId); });
-        } else {
-            if (confirm('Are you sure you want to remove this item?')) doRemoveItem(productId);
-        }
+        if (!confirm('Are you sure you want to remove this item?')) return;
+        doRemoveItem(productId);
     }
 
     function clearCart() {
-        function doIt() {
-            fetch(CLEAR_URL, { method: 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(function() { location.reload(); })
-            .catch(function() { location.reload(); });
-        }
-        if (window.showConfirm) {
-            window.showConfirm('Clear Cart', 'Remove all items from your cart?', doIt);
-        } else {
-            if (confirm('Remove all items from your cart?')) doIt();
-        }
+        if (!confirm('Remove all items from your cart?')) return;
+        fetch(CLEAR_URL, { method: 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function() { location.reload(); })
+        .catch(function() { location.reload(); });
     }
 
     function toggleCouponInput() {

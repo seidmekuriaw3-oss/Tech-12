@@ -259,7 +259,32 @@ def api_cart_add():
     
     if not product_id:
         return jsonify({'success': False, 'error': 'Product ID required'}), 400
-    
+
+    # Check product exists and has enough stock
+    db_check = get_db()
+    cur_check = db_check.cursor()
+    cur_check.execute("SELECT id, stock_quantity, is_active FROM products WHERE id = %s", (product_id,))
+    prod_check = cur_check.fetchone()
+    if not prod_check or not prod_check['is_active']:
+        return jsonify({'success': False, 'error': 'Product not available'}), 404
+
+    # For logged-in users, account for what's already in cart
+    existing_qty = 0
+    if session.get('user_id'):
+        cur_check.execute("SELECT quantity FROM cart_items WHERE user_id = %s AND product_id = %s",
+                          (session['user_id'], product_id))
+        ex = cur_check.fetchone()
+        if ex:
+            existing_qty = ex['quantity']
+    else:
+        existing_qty = session.get('cart', {}).get(str(product_id), 0)
+
+    if existing_qty + quantity > prod_check['stock_quantity']:
+        avail = prod_check['stock_quantity'] - existing_qty
+        if avail <= 0:
+            return jsonify({'success': False, 'error': 'No more stock available'}), 400
+        return jsonify({'success': False, 'error': f'Only {avail} more item(s) available'}), 400
+
     # Check if user is logged in
     if session.get('user_id'):
         # Save to database
@@ -1363,9 +1388,16 @@ def api_submit_order():
                 INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
                 VALUES (%s, %s, %s, %s)
             """, (order_id, item['product_id'], item['quantity'], item['price']))
+            # Atomic decrement — prevents race condition / negative stock
             cursor.execute("""
-                UPDATE products SET stock_quantity = stock_quantity - %s WHERE id = %s
-            """, (item['quantity'], item['product_id']))
+                UPDATE products SET stock_quantity = stock_quantity - %s,
+                    sales_count = COALESCE(sales_count, 0) + %s
+                WHERE id = %s AND stock_quantity >= %s
+            """, (item['quantity'], item['quantity'], item['product_id'], item['quantity']))
+            if cursor.rowcount == 0:
+                db.rollback()
+                return jsonify({'success': False,
+                                'error': f"ይቅርታ! \"{item.get('name', 'ምርት')}\" ላይ በቂ ዕቃ አልተገኘም።"}), 400
 
         if user_id:
             cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (user_id,))
