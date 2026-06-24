@@ -376,12 +376,17 @@
         if (newQuantity < 1) { doRemoveItem(productId); return; }
         var inp = input || document.querySelector('.quantity-input[data-id="' + productId + '"]');
         if (inp) inp.style.opacity = '0.5';
-        fetch(UPDATE_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ product_id: parseInt(productId), quantity: newQuantity })
+        var pid = parseInt(productId);
+        fetch(UPDATE_URL + '?product_id=' + pid + '&quantity=' + newQuantity, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(function(r) { return r.json(); })
+        .then(function(r) {
+            return r.text().then(function(txt) {
+                try { return JSON.parse(txt); }
+                catch(e) { throw new Error('bad_json'); }
+            });
+        })
         .then(function(data) {
             if (inp) inp.style.opacity = '1';
             if (data.success) {
@@ -399,17 +404,22 @@
         })
         .catch(function() {
             if (inp) inp.style.opacity = '1';
-            if (window.showToast) window.showToast('Network error — please try again', 'error');
+            location.href = '/cart/go/add/' + parseInt(productId) + '?qty=' + newQuantity;
         });
     }
 
     function doRemoveItem(productId) {
-        fetch(REMOVE_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ product_id: parseInt(productId) })
+        var pid = parseInt(productId);
+        fetch(REMOVE_URL + '?product_id=' + pid, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(function(r) { return r.json(); })
+        .then(function(r) {
+            return r.text().then(function(txt) {
+                try { return JSON.parse(txt); }
+                catch(e) { throw new Error('bad_json'); }
+            });
+        })
         .then(function(data) {
             if (data.success) {
                 var card = document.querySelector('.cart-item[data-id="' + productId + '"]');
@@ -428,7 +438,7 @@
             }
         })
         .catch(function() {
-            if (window.showToast) window.showToast('Network error — please try again', 'error');
+            location.reload();
         });
     }
 
