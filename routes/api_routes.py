@@ -299,7 +299,20 @@ def api_cart_add():
         session['cart'] = cart
         session.modified = True
     
-    return jsonify({'success': True, 'message': 'Product added to cart'})
+    # Compute cart count to return
+    try:
+        if session.get('user_id'):
+            db2 = get_db()
+            cur2 = db2.cursor()
+            cur2.execute("SELECT COALESCE(SUM(quantity),0) as c FROM cart_items WHERE user_id=%s", (session['user_id'],))
+            row2 = cur2.fetchone()
+            cart_count = int(row2['c']) if row2 else 0
+        else:
+            cart_count = sum(int(v) for v in session.get('cart', {}).values())
+    except Exception:
+        cart_count = 0
+
+    return jsonify({'success': True, 'message': 'Product added to cart', 'cart_count': cart_count})
 
 
 def _get_cart_totals_data(product_id_removed=None):

@@ -405,66 +405,11 @@
 
 <script>
     // Navigate to product detail page
-    function goToProduct(productId) {
-        if (productId) {
-            window.location.href = '{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0', '/' + productId);
-        }
-    }
-    
-    // Enhanced add to cart with animation
-    const originalAddToCart = window.addToCart;
-    if (!window.addToCart) {
-        window.addToCart = function(productId, quantity, btn) {
-            if (btn) {
-                btn.classList.add('loading');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '⏳ Adding...';
-                
-                // Simulate add to cart action
-                if (window.showToast) {
-                    window.showToast('Added to cart!', 'success');
-                }
-                
-                setTimeout(() => {
-                    btn.classList.remove('loading');
-                    btn.innerHTML = originalText;
-                }, 1000);
-            }
-        };
-    } else {
-        const userAddToCart = window.addToCart;
-        window.addToCart = function(productId, quantity, btn) {
-            if (btn) {
-                btn.classList.add('loading');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '⏳ Adding...';
-                
-                userAddToCart(productId, quantity, btn);
-                
-                setTimeout(() => {
-                    btn.classList.remove('loading');
-                    btn.innerHTML = originalText;
-                }, 1000);
-            } else {
-                userAddToCart(productId, quantity);
-            }
-        };
-    }
-    
-    // Track product impressions (for analytics)
-    if (typeof gtag !== 'undefined') {
-        document.querySelectorAll('.product-card').forEach((card, index) => {
-            const productId = card.dataset.productId;
+    if (!window.goToProduct) {
+        window.goToProduct = function(productId) {
             if (productId) {
-                gtag('event', 'view_item_list', {
-                    'event_category': 'engagement',
-                    'event_label': `product_card_${productId}`,
-                    'value': index + 1
-                });
+                window.location.href = '{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0', '/' + productId);
             }
-        });
+        };
     }
-    
-    // Make goToProduct globally available
-    window.goToProduct = goToProduct;
 </script>
