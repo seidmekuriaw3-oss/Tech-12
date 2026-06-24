@@ -37,17 +37,12 @@ def seed_all(clear_existing=True):
             cursor.execute("""
                 INSERT INTO categories (name, name_am, name_ar, is_active)
                 VALUES (%s, %s, %s, 1)
-                ON CONFLICT DO NOTHING
+                ON CONFLICT (name) DO UPDATE SET name_am=EXCLUDED.name_am, name_ar=EXCLUDED.name_ar
                 RETURNING id
             """, (name_en, name_am, name_ar))
             row = cursor.fetchone()
             if row:
                 cat_ids[name_am] = row[0]
-            else:
-                cursor.execute("SELECT id FROM categories WHERE name = %s", (name_en,))
-                row = cursor.fetchone()
-                if row:
-                    cat_ids[name_am] = row[0]
 
         conn.commit()
         print(f"   ✅ {len(cat_ids)} categories ready")
