@@ -1056,6 +1056,7 @@ def order_update_status(oid):
             'pending':    'Your order is pending review.',
         }
         wa_notify_url = None
+        auto_sent = False
 
         # In-app notification for registered users only
         if user_id and prev_status != status:
@@ -1072,7 +1073,7 @@ def order_update_status(oid):
             except Exception:
                 pass
 
-        # WhatsApp notify URL — built for ANY order (guest or registered) with a phone number
+        # WhatsApp customer notification (auto + manual fallback)
         if prev_status != status:
             try:
                 cursor.execute(
@@ -1081,26 +1082,26 @@ def order_update_status(oid):
                 orow = cursor.fetchone()
                 cust_phone = (orow[0] if orow else '') or ''
                 cust_name  = (orow[1] if orow else '') or 'ደንበኛ'
-                if cust_phone:
-                    am_msgs = {
-                        'confirmed':  f'ሰላም {cust_name}! ትዕዛዝ #{order_number} ተቀብለናል እና በዝግጅት ላይ ነው። ✅',
-                        'processing': f'ሰላም {cust_name}! ትዕዛዝ #{order_number} በሂደት ላይ ነው። ⚙️',
-                        'shipped':    f'ሰላም {cust_name}! ትዕዛዝ #{order_number} ተላከ — በቅርቡ ይደርስዎታል! 🚚',
-                        'delivered':  f'ሰላም {cust_name}! ትዕዛዝ #{order_number} ደረሰ። አመሰግናለን! 🎉',
-                        'cancelled':  f'ሰላም {cust_name}! ትዕዛዝ #{order_number} ተሰርዟል። ለጥያቄ 0987957957 ይደውሉ። ❌',
-                        'pending':    f'ሰላም {cust_name}! ትዕዛዝ #{order_number} በግምገማ ላይ ነው። ⏳',
-                    }
-                    wa_text = am_msgs.get(status, f'ትዕዛዝ #{order_number} — {status}')
-                    import urllib.parse as _up
-                    phone_digits = ''.join(filter(str.isdigit, cust_phone))
-                    if phone_digits.startswith('0'):
-                        phone_digits = '251' + phone_digits[1:]
-                    wa_notify_url = f"https://wa.me/{phone_digits}?text={_up.quote(wa_text)}"
-            except Exception:
-                pass
+
+                from services.whatsapp_service import send_customer_status_notification
+                notif = send_customer_status_notification(
+                    order_number=order_number,
+                    customer_name=cust_name,
+                    customer_phone=cust_phone,
+                    status=status,
+                )
+                auto_sent     = notif.get('auto_sent', False)
+                wa_notify_url = notif.get('wa_url')
+            except Exception as _e:
+                print(f"WhatsApp notification error: {_e}")
 
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': True, 'status': status, 'wa_notify_url': wa_notify_url})
+            return jsonify({
+                'success': True,
+                'status': status,
+                'wa_notify_url': wa_notify_url,
+                'auto_sent': auto_sent,
+            })
 
         flash(f'Order status updated to {status}!', 'success')
         return redirect(url_for('admin.order_detail', oid=oid))
