@@ -19112,3 +19112,12 @@ TypeError: Object of type Undefined is not JSON serializable
 2026-06-24 00:13:04,942 - app - WARNING - 404 Error: http://localhost:5000/checkout
 2026-06-24 01:14:52,899 - app - WARNING - 404 Error: http://localhost:5000/static/uploads/products/product_406c4f75.jpg
 2026-06-24 01:15:06,656 - app - WARNING - 404 Error: http://localhost:5000/static/uploads/products/product_406c4f75.jpg
+2026-06-24 01:16:19,080 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_406c4f75.jpg
+2026-06-24 01:16:54,842 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_406c4f75.jpg
+2026-06-24 01:17:09,706 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_406c4f75.jpg
+2026-06-24 01:18:49,831 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_7d5bf1f6.png
+2026-06-24 01:18:50,019 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_209ba387.heic
+2026-06-24 01:19:59,353 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_7d5bf1f6.png
+2026-06-24 01:19:59,618 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_209ba387.heic
+2026-06-24 01:24:23,362 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_7d5bf1f6.png
+2026-06-24 01:24:23,365 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_209ba387.heic
