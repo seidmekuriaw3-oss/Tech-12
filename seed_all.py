@@ -23,13 +23,15 @@ def seed_all(clear_existing=True):
         print("\n📁 Seeding categories...")
 
         category_defs = [
-            ('ቀሚሶች',               'Dresses',          'فساتين'),
-            ('ሸሚዞች',               'Shirts & Tops',    'قمصان'),
-            ('ሱሪዎች እና ቁምጣዎች',    'Trousers & Shorts', 'بنطلونات'),
-            ('ጀኬቶች እና ሹራቦች',     'Jackets & Knitwear','جاكيتات'),
-            ('የሌሊት እና የቤት ልብሶች', 'Nightwear',        'ملابس نوم'),
-            ('ስፖርታዊ ልብሶች',       'Sportswear',       'ملابس رياضية'),
-            ('የሃይማኖት ሙሉ ልብሶች',  'Modest Wear',      'ملابس محتشمة'),
+            ('ቀሚሶች',            'Dresses & Gowns',     'فساتين وعبايات'),
+            ('ቶፖች እና ሸሚዞች',   'Tops & Shirts',        'قمصان وبلوزات'),
+            ('ሱሪዎች እና ቁምጣዎች', 'Trousers & Shorts',    'بنطلونات'),
+            ('ጃኬቶች እና ሹራቦች',  'Jackets & Knitwear',   'جاكيتات'),
+            ('የውስጥ እና የሌሊት ልብሶች', 'Underwear & Nightwear', 'ملابس نوم'),
+            ('የሕፃናት ሙሉ ልብሶች', 'Baby Suits & Rompers', 'ملابس أطفال'),
+            ('ስፖርታዊ ልብሶች',    'Activewear',           'ملابس رياضية'),
+            ('የባህል ልብሶች',      'Traditional Wear',     'ملابس تقليدية'),
+            ('ሃይማኖታዊ አልባሳት',  'Religious Wear',       'ملابس دينية'),
         ]
 
         cat_ids = {}
