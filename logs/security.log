@@ -19125,3 +19125,56 @@ TypeError: Object of type Undefined is not JSON serializable
 2026-06-25 01:34:01,172 - app - WARNING - 404 Error: http://1edebbcc-171e-4e8e-8a06-6b5f25cad186-00-bqayozdtvf41.kirk.replit.dev/static/images/logo.svg
 2026-06-25 01:42:04,573 - app - WARNING - 404 Error: http://localhost:5000/auth/register
 2026-06-25 01:42:04,579 - app - WARNING - 404 Error: http://localhost:5000/auth/login
+2026-06-25 02:51:05,352 - app - ERROR - Exception on /cart/checkout [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/cart_routes.py", line 350, in checkout
+    cursor.execute(f"SELECT id, name, name_am, name_ar, price, thumbnail FROM products WHERE id IN ({placeholders}) AND is_active = TRUE", product_ids)
+  File "/home/runner/workspace/database/db.py", line 30, in execute
+    self._c.execute(q, params)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/psycopg2/extras.py", line 146, in execute
+    return super().execute(query, vars)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedFunction: operator does not exist: smallint = boolean
+LINE 1: ...thumbnail FROM products WHERE id IN (1) AND is_active = TRUE
+                                                                 ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+2026-06-25 02:51:05,778 - app - ERROR - 500 Error: http://2e0d0734-0fc1-40cf-aa0b-72dccdf8f0bd-00-2f0j5xtcgohw9.kirk.replit.dev/cart/checkout - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-25 02:51:05,779 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/cart_routes.py", line 350, in checkout
+    cursor.execute(f"SELECT id, name, name_am, name_ar, price, thumbnail FROM products WHERE id IN ({placeholders}) AND is_active = TRUE", product_ids)
+  File "/home/runner/workspace/database/db.py", line 30, in execute
+    self._c.execute(q, params)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/psycopg2/extras.py", line 146, in execute
+    return super().execute(query, vars)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedFunction: operator does not exist: smallint = boolean
+LINE 1: ...thumbnail FROM products WHERE id IN (1) AND is_active = TRUE
+                                                                 ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
