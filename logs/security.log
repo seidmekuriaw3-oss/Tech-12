@@ -19122,3 +19122,6 @@ TypeError: Object of type Undefined is not JSON serializable
 2026-06-24 01:24:23,362 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_7d5bf1f6.png
 2026-06-24 01:24:23,365 - app - WARNING - 404 Error: http://9c457f36-bb56-45e3-879d-c136000aecb0-00-3tjnx8ktuwl2u.worf.replit.dev/static/uploads/products/product_209ba387.heic
 2026-06-24 02:02:31,811 - app - WARNING - 404 Error: http://1edebbcc-171e-4e8e-8a06-6b5f25cad186-00-bqayozdtvf41.kirk.replit.dev/static/images/logo.svg
+2026-06-25 01:34:01,172 - app - WARNING - 404 Error: http://1edebbcc-171e-4e8e-8a06-6b5f25cad186-00-bqayozdtvf41.kirk.replit.dev/static/images/logo.svg
+2026-06-25 01:42:04,573 - app - WARNING - 404 Error: http://localhost:5000/auth/register
+2026-06-25 01:42:04,579 - app - WARNING - 404 Error: http://localhost:5000/auth/login

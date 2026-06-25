@@ -216,7 +216,7 @@
                                    data-id="{{ item.product_id }}" readonly>
                             <button class="quantity-btn" onclick="changeQty(this, 1)">+</button>
                         </div>
-                        <a href="#" class="remove-item" onclick="removeCartItem('{{ item.product_id }}'); return false;">🗑️ Remove</a>
+                        <a href="#" class="remove-item" onclick="removeCartItem(this, '{{ item.product_id }}'); return false;">🗑️ Remove</a>
                     </div>
                 </div>
                 
@@ -399,12 +399,13 @@
                 updateSummary(data);
                 if (window.showToast) window.showToast('Cart updated', 'success');
             } else {
+                if (inp) inp.style.opacity = '1';
                 if (window.showToast) window.showToast(data.error || 'Failed to update cart', 'error');
             }
         })
         .catch(function() {
             if (inp) inp.style.opacity = '1';
-            location.href = '/cart/go/add/' + parseInt(productId) + '?qty=' + newQuantity;
+            location.reload();
         });
     }
 
@@ -442,9 +443,25 @@
         });
     }
 
-    function removeCartItem(productId) {
-        if (!confirm('Are you sure you want to remove this item?')) return;
-        doRemoveItem(productId);
+    function removeCartItem(el, productId) {
+        // Inline confirm — avoids window.confirm() being blocked on mobile browsers
+        if (el._confirming) {
+            el._confirming = false;
+            el.textContent = '🗑️ Remove';
+            el.style.color = '';
+            doRemoveItem(productId);
+            return;
+        }
+        el._confirming = true;
+        el.textContent = '✓ Confirm?';
+        el.style.color = '#e53935';
+        setTimeout(function() {
+            if (el._confirming) {
+                el._confirming = false;
+                el.textContent = '🗑️ Remove';
+                el.style.color = '';
+            }
+        }, 3000);
     }
 
     function clearCart() {
