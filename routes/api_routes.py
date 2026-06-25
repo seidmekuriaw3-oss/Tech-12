@@ -84,11 +84,21 @@ def api_filter_products():
     db = get_db()
     cursor = db.cursor()
     
-    # Build query
+    # Build query (include avg rating and review count via subquery)
     query = """
-        SELECT p.*, c.name as category_name
+        SELECT p.*, c.name as category_name,
+            COALESCE(r.avg_rating, 0) as rating,
+            COALESCE(r.review_count, 0) as reviews
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN (
+            SELECT product_id,
+                   ROUND(AVG(rating)::numeric, 1) as avg_rating,
+                   COUNT(*) as review_count
+            FROM reviews
+            WHERE is_approved = 1
+            GROUP BY product_id
+        ) r ON r.product_id = p.id
         WHERE p.is_active = 1
     """
     params = []
@@ -167,7 +177,9 @@ def api_filter_products():
             'category_id': p['category_id'],
             'category_name': p['category_name'],
             'is_featured': bool(p['is_featured']),
-            'is_new': bool(p['is_new'])
+            'is_new': bool(p['is_new']),
+            'rating': float(p['rating']) if p['rating'] else 0,
+            'reviews': int(p['reviews']) if p['reviews'] else 0
         })
     
     return jsonify({
@@ -1120,7 +1132,14 @@ def product_reviews(product_id):
             cursor = db.cursor()
             cursor.execute("""
                 SELECT r.id, r.rating, r.comment, r.is_approved,
-                       r.created_at, u.full_name as user_name
+                       r.created_at, u.full_name as user_name,
+                       CASE WHEN EXISTS(
+                           SELECT 1 FROM order_items oi
+                           JOIN orders o ON oi.order_id = o.id
+                           WHERE oi.product_id = r.product_id
+                             AND o.user_id = r.user_id
+                             AND o.status = 'delivered'
+                       ) THEN 1 ELSE 0 END as verified_purchase
                 FROM reviews r JOIN users u ON r.user_id = u.id
                 WHERE r.product_id = %s AND r.is_approved = 1
                 ORDER BY r.created_at DESC LIMIT 30
