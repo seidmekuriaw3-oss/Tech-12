@@ -1208,13 +1208,29 @@ def wishlist():
         cursor = conn.cursor()
 
         cursor.execute("""
-            SELECT w.*, p.name, p.name_am, p.name_ar, p.price, p.compare_price, p.thumbnail
+            SELECT w.id, w.product_id, w.created_at, w.price_at_add,
+                   p.name, p.name_am, p.name_ar, p.price, p.compare_price, p.thumbnail,
+                   p.stock_quantity
             FROM wishlist w JOIN products p ON w.product_id = p.id
             WHERE w.user_id = %s AND p.is_active = 1
             ORDER BY w.created_at DESC
         """, (session['user_id'],))
         wishlist_items = cursor.fetchall()
-        wishlist_list = [dict(i) for i in wishlist_items] if wishlist_items else []
+        wishlist_list = []
+        for item in (wishlist_items or []):
+            d = dict(item)
+            # Calculate price drop info
+            if d.get('price_at_add') and d['price_at_add'] > d['price']:
+                d['price_dropped'] = True
+                d['price_drop_amount'] = round(float(d['price_at_add']) - float(d['price']), 2)
+                d['price_drop_pct'] = round(
+                    (d['price_drop_amount'] / float(d['price_at_add'])) * 100
+                )
+            else:
+                d['price_dropped'] = False
+                d['price_drop_amount'] = 0
+                d['price_drop_pct'] = 0
+            wishlist_list.append(d)
 
         return render_template('customer/wishlist.html',
                                wishlist=wishlist_list, lang=lang)

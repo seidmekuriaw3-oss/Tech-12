@@ -1025,11 +1025,16 @@ def api_wishlist_add():
 
         db = get_db()
         cursor = db.cursor()
+        # Fetch current price so we can track price drops later
+        cursor.execute("SELECT price FROM products WHERE id = %s AND is_active = 1", (product_id,))
+        prod = cursor.fetchone()
+        if not prod:
+            return jsonify({'success': False, 'error': 'Product not found'}), 404
         cursor.execute("""
-            INSERT INTO wishlist (user_id, product_id)
-            VALUES (%s, %s)
+            INSERT INTO wishlist (user_id, product_id, price_at_add)
+            VALUES (%s, %s, %s)
             ON CONFLICT (user_id, product_id) DO NOTHING
-        """, (session['user_id'], product_id))
+        """, (session['user_id'], product_id, prod['price']))
         db.commit()
         return jsonify({'success': True, 'message': 'Added to wishlist'})
     except Exception as e:

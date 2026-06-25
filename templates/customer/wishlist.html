@@ -33,10 +33,15 @@
     display: flex;
     flex-direction: column;
     transition: transform .22s, box-shadow .22s;
+    position: relative;
 }
 .wl-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 28px rgba(26,122,74,0.14);
+}
+.wl-card.price-dropped {
+    border-color: #e53935;
+    box-shadow: 0 2px 14px rgba(229,57,53,0.12);
 }
 .wl-img {
     height: 200px;
@@ -65,6 +70,22 @@
     z-index: 2;
 }
 .wl-remove:hover { transform: scale(1.15); background: #ffeaea; }
+.wl-drop-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: linear-gradient(135deg, #e53935, #b71c1c);
+    color: white;
+    font-size: 11px; font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 20px;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(229,57,53,0.4);
+    display: flex; align-items: center; gap: 4px;
+    animation: pulseBadge 2s ease-in-out infinite;
+}
+@keyframes pulseBadge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+}
 .wl-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
 .wl-name {
     font-size: 15px; font-weight: 600; color: #1a2e1e;
@@ -72,7 +93,25 @@
     display: -webkit-box; -webkit-line-clamp: 2;
     -webkit-box-orient: vertical; overflow: hidden;
 }
-.wl-price { font-size: 20px; font-weight: 800; color: #1a7a4a; margin-bottom: 12px; }
+.wl-price-wrap { margin-bottom: 12px; }
+.wl-price { font-size: 20px; font-weight: 800; color: #1a7a4a; }
+.wl-price-was {
+    font-size: 13px; color: #9e9e9e;
+    text-decoration: line-through;
+    margin-left: 6px;
+}
+.wl-price-save {
+    display: inline-block;
+    background: #fff3f3;
+    color: #e53935;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 8px; border-radius: 12px;
+    margin-top: 4px;
+}
+.wl-out-of-stock {
+    font-size: 11px; color: #e53935; font-weight: 600;
+    margin-bottom: 8px;
+}
 .wl-btn {
     width: 100%;
     background: linear-gradient(135deg,#1a7a4a,#0f5232);
@@ -86,6 +125,9 @@
 .wl-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 14px rgba(26,122,74,0.36);
+}
+.wl-btn:disabled {
+    background: #ccc; cursor: not-allowed; transform: none; box-shadow: none;
 }
 .wl-empty {
     text-align: center;
@@ -106,6 +148,15 @@
     transition: transform .22s, box-shadow .22s;
 }
 .wl-empty a:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,122,74,0.38); }
+.wl-drop-banner {
+    background: linear-gradient(135deg, #fff3f3, #ffeaea);
+    border: 1px solid #ffcdd2;
+    border-radius: 14px;
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; color: #b71c1c; font-weight: 600;
+}
 @media (max-width: 600px) {
     .wl-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .wl-img { height: 160px; }
@@ -131,10 +182,31 @@
 </div>
 
 {% if wishlist %}
+    {%- set drop_count = wishlist | selectattr('price_dropped') | list | length -%}
+    {% if drop_count > 0 %}
+    <div class="wl-drop-banner">
+        🔥
+        <span>
+            {% if lang == 'am' %}
+                {{ drop_count }} ምርቶቹ ዋጋ ቀንሷል! አሁን ይያዙ።
+            {% elif lang == 'ar' %}
+                انخفض سعر {{ drop_count }} منتج في قائمتك! اشتر الآن.
+            {% else %}
+                {{ drop_count }} item{% if drop_count != 1 %}s{% endif %} in your wishlist dropped in price! Grab them now.
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+
 <div class="wl-grid">
     {% for item in wishlist %}
-    <div class="wl-card" id="wl-card-{{ item.product_id }}">
+    <div class="wl-card {% if item.price_dropped %}price-dropped{% endif %}" id="wl-card-{{ item.product_id }}">
         <div class="wl-img">
+            {% if item.price_dropped %}
+            <div class="wl-drop-badge">
+                🔥 -{{ item.price_drop_pct }}%
+            </div>
+            {% endif %}
             {% if item.thumbnail and item.thumbnail != '' %}
                 <img src="{{ url_for('static', filename=item.thumbnail) }}"
                      alt="{{ item.name_am if lang == 'am' else item.name }}"
@@ -143,15 +215,33 @@
             {% else %}
                 <div class="wl-img-placeholder">👗</div>
             {% endif %}
-            <button class="wl-remove" title="Remove from wishlist"
+            <button class="wl-remove" title="{% if lang == 'am' %}ዝርዝር ካጽዳ{% elif lang == 'ar' %}إزالة{% else %}Remove from wishlist{% endif %}"
                     onclick="removeFromWishlist({{ item.product_id }})">❤️</button>
         </div>
         <div class="wl-body">
             <div class="wl-name">
                 {{ item.name_am if lang == 'am' else (item.name_ar if lang == 'ar' else item.name) }}
             </div>
-            <div class="wl-price">{{ format_price(item.price) }}</div>
-            <button class="wl-btn" onclick="if(window.addToCart) addToCart('{{ item.product_id }}', 1, this)">
+            <div class="wl-price-wrap">
+                <span class="wl-price">{{ format_price(item.price) }}</span>
+                {% if item.price_dropped %}
+                    <span class="wl-price-was">{{ format_price(item.price_at_add) }}</span>
+                    <br>
+                    <span class="wl-price-save">
+                        {% if lang == 'am' %}{{ format_price(item.price_drop_amount) }} ቆጠብ!
+                        {% elif lang == 'ar' %}وفر {{ format_price(item.price_drop_amount) }}!
+                        {% else %}Save {{ format_price(item.price_drop_amount) }}!{% endif %}
+                    </span>
+                {% endif %}
+            </div>
+            {% if item.stock_quantity is not none and item.stock_quantity <= 0 %}
+            <div class="wl-out-of-stock">
+                {% if lang == 'am' %}ክምችት አልቋል{% elif lang == 'ar' %}نفذ المخزون{% else %}Out of Stock{% endif %}
+            </div>
+            {% endif %}
+            <button class="wl-btn"
+                    {% if item.stock_quantity is not none and item.stock_quantity <= 0 %}disabled{% endif %}
+                    onclick="if(window.addToCart) addToCart('{{ item.product_id }}', 1, this)">
                 🛒
                 {% if lang == 'am' %}ወደ ዝርዝር ጨምር{% elif lang == 'ar' %}أضف إلى السلة{% else %}Add to Cart{% endif %}
             </button>
@@ -196,7 +286,10 @@ function removeFromWishlist(productId) {
                     if (grid && grid.children.length === 0) location.reload();
                 }, 320);
             }
-            if (window.showToast) showToast('Removed from wishlist', 'info');
+            if (window.showToast) showToast(
+                {% if lang == 'am' %}'ከምርጦቼ ዝርዝር ተወስዷል'{% elif lang == 'ar' %}'تمت الإزالة من قائمة الأمنيات'{% else %}'Removed from wishlist'{% endif %},
+                'info'
+            );
         }
     })
     .catch(function() {});

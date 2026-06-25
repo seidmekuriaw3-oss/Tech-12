@@ -337,6 +337,11 @@ def product_edit(pid):
             all_gallery = kept + new_gallery
             images_json = _json.dumps(all_gallery) if all_gallery else None
 
+            # Fetch old price before update (for price-drop notifications)
+            cursor.execute("SELECT price, name_am, name FROM products WHERE id = %s", (pid,))
+            old_prod = cursor.fetchone()
+            old_price = float(old_prod['price']) if old_prod else None
+
             cursor.execute("""
                 UPDATE products SET
                     name=%s, name_am=%s, name_ar=%s, name_en=%s,
@@ -350,6 +355,28 @@ def product_edit(pid):
                   price, compare_price, stock_quantity, category_id,
                   material, color, sku, is_featured, is_new, image_filename, images_json, pid))
             conn.commit()
+
+            # Notify wishlist users if price dropped
+            if old_price is not None and price < old_price:
+                try:
+                    from services.notification_service import notify_user
+                    pname = (old_prod['name_am'] or old_prod['name'] or 'Product')
+                    drop_pct = round((old_price - price) / old_price * 100)
+                    cursor.execute(
+                        "SELECT user_id FROM wishlist WHERE product_id = %s", (pid,)
+                    )
+                    wl_users = cursor.fetchall()
+                    for wu in (wl_users or []):
+                        notify_user(
+                            wu['user_id'],
+                            f'🔥 Price Drop on {pname}!',
+                            f'Price dropped {drop_pct}% — now {price:,.0f} ETB (was {old_price:,.0f} ETB). Grab it before it\'s gone!',
+                            type='price_drop',
+                            link=f'/product/{pid}'
+                        )
+                except Exception as _ne:
+                    print(f"[price-drop notify] {_ne}")
+
             flash('Product updated successfully!', 'success')
             return redirect(url_for('admin.products'))
 
