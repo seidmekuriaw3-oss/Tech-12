@@ -50,7 +50,7 @@ def admin_login():
             session['admin_username'] = username
             flash('Logged in successfully!', 'success')
             next_page = request.args.get('next')
-            if next_page:
+            if next_page and next_page.startswith('/') and not next_page.startswith('//'):
                 return redirect(next_page)
             return redirect(url_for('admin.dashboard'))
         else:

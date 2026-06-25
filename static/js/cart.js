@@ -673,16 +673,19 @@ function initQuantityInputs() {
     });
     
     // Quantity increment/decrement buttons
+    // Skip buttons without data-id — those are managed by inline onclick handlers (e.g. cart page)
     document.querySelectorAll('.quantity-btn').forEach(btn => {
+        const productId = btn.dataset.id || btn.getAttribute('data-id');
+        if (!productId) return;
         btn.removeEventListener('click', btn._listener);
         btn._listener = function() {
-            const productId = this.dataset.id || this.getAttribute('data-id');
-            const input = document.querySelector(`.cart-item-quantity[data-id="${productId}"], input[data-id="${productId}"]`);
+            const pid = this.dataset.id || this.getAttribute('data-id');
+            const input = document.querySelector(`.cart-item-quantity[data-id="${pid}"], input[data-id="${pid}"]`);
             if (input) {
                 let newVal = parseInt(input.value, 10) + (this.classList.contains('plus') ? 1 : -1);
                 if (newVal < 1) newVal = 1;
                 input.value = newVal;
-                updateCartItem(productId, newVal, input);
+                updateCartItem(pid, newVal, input);
             }
         };
         btn.addEventListener('click', btn._listener);

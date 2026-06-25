@@ -42,7 +42,7 @@ def view_cart():
         
         rows = cursor.fetchall()
         for row in rows:
-            discounted_price = round(row['price'] * 0.9, 2)
+            discounted_price = round(row['price'] * (1 - USER_DISCOUNT_RATE), 2)
             # Subtotal uses ORIGINAL price — calc_cart_totals applies the 10% once
             orig_subtotal = row['price'] * row['quantity']
             subtotal += orig_subtotal

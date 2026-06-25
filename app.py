@@ -32,7 +32,7 @@ from database.models import (
 from middleware.auth import login_required, admin_required, user_login_required, get_current_user, is_authenticated
 from middleware.platform import get_platform, is_android_app
 from utils.translation_cache import translate_text, batch_translate, clear_translation_cache, get_translation_stats, FALLBACK_TEXTS
-from routes.shared import WHATSAPP_NUMBER
+from routes.shared import WHATSAPP_NUMBER, USER_DISCOUNT_RATE
 from utils.csrf import generate_csrf, validate_csrf
 
 
@@ -490,6 +490,8 @@ def inject_globals():
         'unread_messages_count': unread_messages_count,
         'products_count': products_count,
         'ads_count': ads_count,
+        'user_discount_rate': USER_DISCOUNT_RATE,
+        'member_discount_multiplier': round(1 - USER_DISCOUNT_RATE, 4),
     }
 
 
