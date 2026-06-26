@@ -335,7 +335,7 @@ def checkout():
             return redirect(url_for('customer.index'))
 
         for item in raw_items:
-            orig_price = item['price']
+            orig_price = float(item['price'])
             discounted_price = round(orig_price * (1 - USER_DISCOUNT_RATE), 2)
             subtotal += orig_price * item['quantity']
             cart_items.append({
@@ -366,7 +366,7 @@ def checkout():
             p = products_map.get(pid_str)
             if not p:
                 continue
-            orig_price = p['price']
+            orig_price = float(p['price'])
             subtotal += orig_price * qty
             cart_items.append({
                 'id': None,
@@ -542,10 +542,10 @@ def place_order():
 
     # Create order items and update stock atomically
     for item in cart_items_raw:
-        price = item['price'] if isinstance(item, dict) else item['price']
-        qty   = item['quantity'] if isinstance(item, dict) else item['quantity']
-        pid   = item['product_id'] if isinstance(item, dict) else item['product_id']
-        name  = item['name'] if isinstance(item, dict) else item['name']
+        price = float(item['price'])
+        qty   = item['quantity']
+        pid   = item['product_id']
+        name  = item['name']
         discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
         cursor.execute("""
             INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
@@ -694,7 +694,7 @@ def get_cart_total():
             products = cursor.fetchall()
             for p in products:
                 quantity = cart.get(str(p['id']), 0)
-                total += p['price'] * quantity
+                total += float(p['price']) * quantity
     
     # Apply member discount for logged-in users
     if session.get('user_id'):
