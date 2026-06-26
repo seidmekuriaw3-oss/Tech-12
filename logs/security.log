@@ -21211,3 +21211,16 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-26 10:43:02,091 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-26 10:43:10,857 - app - WARNING - 404 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/uploads/products/product_316ea9df.jpg
 2026-06-26 10:43:17,028 - app - WARNING - 404 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/uploads/products/product_316ea9df.jpg
+2026-06-26 12:23:48,272 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 12:23:48,340 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 12:23:49,772 - app - ERROR - Database initialization error: duplicate key value violates unique constraint "pg_class_relname_nsp_index"
+DETAIL:  Key (relname, relnamespace)=(users_id_seq, 2200) already exists.
+
+2026-06-26 12:23:53,061 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 12:23:56,509 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 12:23:59,922 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 12:24:03,349 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 12:24:06,762 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 12:24:10,174 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 12:24:13,580 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 12:24:21,422 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
