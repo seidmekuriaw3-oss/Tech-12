@@ -10,7 +10,7 @@ This module contains all API endpoints for AJAX requests including:
 - Branch information
 """
 
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, current_app
 from database.db import get_db
 from database.models import Product, Order
 from middleware.auth import is_admin
@@ -40,7 +40,7 @@ def api_search_products():
         SELECT p.*, c.name as category_name
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        WHERE (p.name LIKE %s OR p.name_am LIKE %s OR p.name_ar LIKE %s)
+        WHERE (p.name ILIKE %s OR p.name_am ILIKE %s OR p.name_ar ILIKE %s)
         AND p.is_active = 1
         ORDER BY p.id DESC
         LIMIT 50
@@ -595,7 +595,7 @@ def api_cart_count():
 @limiter.limit("5 per minute; 20 per hour")
 def api_register():
     """Register new user"""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     
     full_name = data.get('full_name', '').strip()
     email = data.get('email', '').strip().lower()
@@ -659,7 +659,7 @@ def api_register():
 @limiter.limit("10 per minute; 50 per hour")
 def api_login():
     """Login user"""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     
     email = data.get('email', '').strip().lower()
     password = data.get('password', '')
@@ -753,7 +753,7 @@ def api_place_order():
     if not session.get('user_id'):
         return jsonify({'success': False, 'error': 'Please login to place order'}), 401
     
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     
     # Get cart items
     db = get_db()
@@ -874,7 +874,7 @@ def api_place_order():
 @limiter.limit("10 per hour")
 def api_contact():
     """Submit contact form"""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     name = data.get('name', '').strip()
     email = data.get('email', '').strip()
@@ -1011,7 +1011,7 @@ def api_wishlist_add():
     if not session.get('user_id'):
         return jsonify({'success': False, 'error': 'Please login first'}), 401
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         product_id = data.get('product_id')
         if not product_id:
             return jsonify({'success': False, 'error': 'Product ID required'}), 400
@@ -1040,7 +1040,7 @@ def api_wishlist_remove():
     if not session.get('user_id'):
         return jsonify({'success': False, 'error': 'Please login first'}), 401
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         product_id = data.get('product_id')
         if not product_id:
             return jsonify({'success': False, 'error': 'Product ID required'}), 400
@@ -1061,7 +1061,7 @@ def api_wishlist_remove():
 def api_apply_coupon():
     """Apply discount coupon to cart."""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         code = data.get('code', '').strip().upper()
         if not code:
             return jsonify({'success': False, 'error': 'Coupon code required'}), 400
@@ -1242,7 +1242,7 @@ def product_reviews(product_id):
 def subscribe_newsletter():
     """Subscribe to newsletter."""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         email = data.get('email', '').strip().lower()
         if not email:
             return jsonify({'success': False, 'error': 'Email is required'}), 400
@@ -1268,7 +1268,7 @@ def api_translate():
     """Translate text to target language."""
     try:
         from utils.translation_cache import translate_text
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         text = data.get('text', '').strip()
         target_lang = data.get('target_lang', 'en')
         if not text:
@@ -1285,7 +1285,7 @@ def api_translate_batch():
     """Translate multiple texts at once."""
     try:
         from utils.translation_cache import batch_translate
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         texts = data.get('texts', [])
         target_lang = data.get('target_lang', 'en')
         if not texts or not isinstance(texts, list):
@@ -1320,7 +1320,7 @@ def api_submit_order():
     """Submit order via AJAX (quick-checkout modal) — supports guests and logged-in users."""
     user_id = session.get('user_id')
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         customer_name    = (data.get('customer_name') or '').strip()
         customer_phone   = (data.get('customer_phone') or '').strip()
         shipping_address = (data.get('customer_address') or '').strip()

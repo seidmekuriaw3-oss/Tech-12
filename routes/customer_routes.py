@@ -7,7 +7,7 @@ orders, wishlist, tracking, static info pages.
 
 from flask import (
     Blueprint, render_template, request, redirect, url_for,
-    flash, session, jsonify, make_response
+    flash, session, jsonify, make_response, current_app
 )
 from extensions import limiter
 from middleware.auth import user_login_required
@@ -625,8 +625,11 @@ def user_login():
                     except Exception as _me:
                         current_app.logger.error(f"Cart merge error: {_me}")
                 flash('Login successful!', 'success')
-                next_page = request.args.get('next')
-                if next_page:
+                next_page = request.args.get('next', '')
+                from urllib.parse import urlparse as _urlparse
+                _p = _urlparse(next_page)
+                # Only allow same-site relative URLs (no scheme / netloc)
+                if next_page and not _p.scheme and not _p.netloc and next_page.startswith('/'):
                     return redirect(next_page)
                 return redirect(url_for('customer.index'))
             else:
@@ -824,7 +827,7 @@ def update_profile():
 @user_login_required
 def change_password():
     """Change user password (AJAX)."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     new_password = data.get('password', '')
 
     if not new_password or len(new_password) < 6:
@@ -847,7 +850,7 @@ def change_password():
 @user_login_required
 def delete_account():
     """Delete user account (AJAX)."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     password = data.get('password', '')
 
     try:

@@ -7,7 +7,7 @@ inbox, reports, settings, reviews, translations, notifications.
 
 from flask import (
     Blueprint, render_template, request, redirect, url_for,
-    flash, session, jsonify, make_response, send_from_directory, abort
+    flash, session, jsonify, make_response, send_from_directory, abort, current_app
 )
 from middleware.auth import admin_required
 from database.db import get_db
@@ -977,7 +977,7 @@ def orders():
             query += " AND o.status = %s"
             params.append(status)
         if search:
-            query += " AND (o.order_number LIKE %s OR u.full_name LIKE %s OR o.shipping_phone LIKE %s)"
+            query += " AND (o.order_number ILIKE %s OR u.full_name ILIKE %s OR o.shipping_phone ILIKE %s)"
             s = f'%{search}%'
             params.extend([s, s, s])
         query += " ORDER BY o.id DESC"

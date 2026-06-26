@@ -10,7 +10,7 @@ This module contains all cart-related routes including:
 - Apply discounts
 """
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session, current_app
 from middleware.auth import user_login_required
 from database.db import get_db
 from routes.shared import calc_cart_totals, FREE_SHIPPING_THRESHOLD, SHIPPING_COST, USER_DISCOUNT_RATE
