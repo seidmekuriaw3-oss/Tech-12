@@ -728,32 +728,6 @@
     </div>
 </div>
 
-<!-- ወድ ሰሚራ Clothing Banner -->
-<a href="{{ url_for('customer.wede_semira') }}" style="
-    display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(135deg, #8b1a6b 0%, #c2185b 45%, #ff6b9d 100%);
-    color: white; border-radius: 20px; padding: 28px 32px;
-    text-decoration: none; margin-bottom: 36px;
-    box-shadow: 0 8px 28px rgba(194,24,91,0.25);
-    transition: all 0.3s; flex-wrap: wrap; gap: 16px;
-    " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(194,24,91,0.35)'"
-       onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(194,24,91,0.25)'">
-    <div style="display:flex;align-items:center;gap:20px;">
-        <span style="font-size:52px;line-height:1;">👗</span>
-        <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;opacity:0.8;text-transform:uppercase;margin-bottom:4px;">NEW SECTION</div>
-            <h3 style="margin:0 0 6px 0;font-size:clamp(18px,3vw,26px);font-weight:900;line-height:1.2;">ሰሚራ የሴቶች እና የልጆች ልብስ እስቶር</h3>
-            <p style="margin:0;font-size:14px;opacity:0.9;">
-                {% if lang == 'am' %}ዘመናዊ ፋሽን — ወሎ ደሴ ኩታበር{% elif lang == 'ar' %}ملابس النساء والأطفال{% else %}Women's & Children's Clothing Store{% endif %}
-            </p>
-        </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
-        <span style="background:rgba(255,255,255,0.2);padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;">👶 {% if lang == 'am' %}የልጆች ልብስ{% else %}Kids{% endif %}</span>
-        <span style="font-size:28px;">→</span>
-    </div>
-</a>
-
 <!-- Products Grid -->
 <h2>{{ t.featured_products }}</h2>
 <div class="products-grid">
@@ -783,28 +757,30 @@
     {% endfor %}
 </div>
 
-<!-- Mid-Page Promo Banner -->
-<a href="{{ url_for('customer.products') }}" style="display:block;text-decoration:none;margin:32px 0 8px 0;">
-  <div style="background:linear-gradient(135deg,#1a472a 0%,#2d6a4f 60%,#52b788 100%);border-radius:18px;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 4px 18px rgba(0,0,0,0.18);">
-    <div style="display:flex;align-items:center;gap:16px;flex:1;">
-      <span style="font-size:48px;flex-shrink:0;">🛍️</span>
-      <div>
-        <span style="display:block;background:rgba(255,255,255,0.18);color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;border-radius:20px;padding:2px 12px;margin-bottom:6px;width:fit-content;">ሁሉም ምርቶች</span>
-        <p style="margin:0;color:#fff;font-size:17px;font-weight:800;line-height:1.4;">
-          {% if lang == 'am' %}ሴቶች እና ህፃናት ልብሶችን ሁሉ ይዘው ይሂዱ{% elif lang == 'ar' %}تسوقي ملابس النساء والأطفال الآن{% else %}Shop All Women's & Kids' Clothing{% endif %}
-        </p>
-        <p style="margin:4px 0 0;color:rgba(255,255,255,0.78);font-size:13px;">
-          {% if lang == 'am' %}ዘመናዊ ፋሽን — ወሎ ደሴ ኩታበር{% elif lang == 'ar' %}موضة عصرية — ولو ديسي{% else %}Modern Fashion — Wollo Dessie Kutaber{% endif %}
-        </p>
-      </div>
+<!-- ወድ ሰሚራ Clothing Banner -->
+<a href="{{ url_for('customer.wede_semira') }}" style="
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, #8b1a6b 0%, #c2185b 45%, #ff6b9d 100%);
+    color: white; border-radius: 20px; padding: 28px 32px;
+    text-decoration: none; margin: 36px 0;
+    box-shadow: 0 8px 28px rgba(194,24,91,0.25);
+    transition: all 0.3s; flex-wrap: wrap; gap: 16px;
+    " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(194,24,91,0.35)'"
+       onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(194,24,91,0.25)'">
+    <div style="display:flex;align-items:center;gap:20px;">
+        <span style="font-size:52px;line-height:1;">👗</span>
+        <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;opacity:0.8;text-transform:uppercase;margin-bottom:4px;">NEW SECTION</div>
+            <h3 style="margin:0 0 6px 0;font-size:clamp(18px,3vw,26px);font-weight:900;line-height:1.2;">ሰሚራ የሴቶች እና የልጆች ልብስ እስቶር</h3>
+            <p style="margin:0;font-size:14px;opacity:0.9;">
+                {% if lang == 'am' %}ዘመናዊ ፋሽን — ወሎ ደሴ ኩታበር{% elif lang == 'ar' %}ملابس النساء والأطفال{% else %}Women's & Children's Clothing Store{% endif %}
+            </p>
+        </div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-      <span style="background:rgba(255,255,255,0.18);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;white-space:nowrap;">
-        {% if lang == 'am' %}ሁሉንም ይመልከቱ{% elif lang == 'ar' %}عرض الكل{% else %}View All{% endif %}
-      </span>
-      <span style="color:#fff;font-size:24px;">→</span>
+    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+        <span style="background:rgba(255,255,255,0.2);padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;">👶 {% if lang == 'am' %}የልጆች ልብስ{% else %}Kids{% endif %}</span>
+        <span style="font-size:28px;">→</span>
     </div>
-  </div>
 </a>
 
 <!-- New Products Section -->
