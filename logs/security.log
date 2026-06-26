@@ -19183,3 +19183,4 @@ LINE 2:         DO $
                    ^
 
 2026-06-26 00:27:28,810 - app - WARNING - 404 Error: http://628e4346-e9a4-4e6c-b2dc-6b21f41e0b0f-00-21kusj2lhin1e.riker.replit.dev/static/images/logo.svg
+2026-06-26 01:56:04,518 - app - WARNING - 404 Error: http://1f54d207-70b1-498c-8ad0-5750a98507a1-00-mimbdqaaj69i.kirk.replit.dev/static/images/logo.svg
