@@ -747,6 +747,7 @@ def api_check_auth():
 # ==================== ORDER API ====================
 
 @api_bp.route('/order/place', methods=['POST'])
+@limiter.limit("10 per minute; 30 per hour")
 def api_place_order():
     """Place a new order"""
     if not session.get('user_id'):
@@ -1237,6 +1238,7 @@ def product_reviews(product_id):
 # ==================== NEWSLETTER API ====================
 
 @api_bp.route('/subscribe-newsletter', methods=['POST'])
+@limiter.limit("5 per hour")
 def subscribe_newsletter():
     """Subscribe to newsletter."""
     try:
@@ -1313,6 +1315,7 @@ def api_platform():
 # ==================== SUBMIT ORDER API ====================
 
 @api_bp.route('/submit-order', methods=['POST'])
+@limiter.limit("10 per minute; 30 per hour")
 def api_submit_order():
     """Submit order via AJAX (quick-checkout modal) — supports guests and logged-in users."""
     user_id = session.get('user_id')

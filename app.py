@@ -131,6 +131,14 @@ if not ADMIN_PASSWORD:
         "ADMIN_PASSWORD environment variable is not set. "
         "Set it in the Replit Secrets panel."
     )
+if ADMIN_PASSWORD == '1234':
+    import warnings
+    warnings.warn(
+        "⚠️  SECURITY WARNING: Admin password is still the default '1234'. "
+        "Change ADMIN_PASSWORD in the Replit Secrets panel before deploying!",
+        stacklevel=2
+    )
+    app.logger.warning("⚠️  SECURITY: Default admin password '1234' detected — change it before going live!")
 
 # ── CSRF Protection ──────────────────────────────────────────────────────────
 app.jinja_env.globals['csrf_token'] = generate_csrf

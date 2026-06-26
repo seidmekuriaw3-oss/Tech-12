@@ -126,30 +126,30 @@ def seed_ads(with_media=False):
         
         # Build insert query based on available columns
         insert_query = "INSERT INTO ads (text"
-        placeholders = "?"
+        placeholders = "%s"
         values = []
         
         if 'media' in columns:
             insert_query += ", media"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'type' in columns:
             insert_query += ", type"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'color' in columns:
             insert_query += ", color"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'link' in columns:
             insert_query += ", link"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'is_active' in columns:
             insert_query += ", is_active"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'sort_order' in columns:
             insert_query += ", sort_order"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'created_at' in columns:
             insert_query += ", created_at"
-            placeholders += ", ?"
+            placeholders += ", %s"
         
         insert_query += f") VALUES ({placeholders})"
         
@@ -262,32 +262,32 @@ def seed_single_ad(text, ad_type='general', media=None, link=None):
         
         # Build insert query
         insert_query = "INSERT INTO ads (text"
-        placeholders = "?"
+        placeholders = "%s"
         values = [text]
         
         if media and 'media' in columns:
             insert_query += ", media"
-            placeholders += ", ?"
+            placeholders += ", %s"
             values.append(media)
         
         if 'type' in columns:
             insert_query += ", type"
-            placeholders += ", ?"
+            placeholders += ", %s"
             values.append(ad_type)
         
         if link and 'link' in columns:
             insert_query += ", link"
-            placeholders += ", ?"
+            placeholders += ", %s"
             values.append(link)
         
         if 'is_active' in columns:
             insert_query += ", is_active"
-            placeholders += ", ?"
+            placeholders += ", %s"
             values.append(1)
         
         if 'created_at' in columns:
             insert_query += ", created_at"
-            placeholders += ", ?"
+            placeholders += ", %s"
             values.append(datetime.now().isoformat())
         
         insert_query += f") VALUES ({placeholders})"

@@ -3,3 +3,4 @@
 - [Order discount rate](order-discount.md) — USER_DISCOUNT_RATE in routes/shared.py is the single source of truth; never hardcode 0.9 in route files.
 - [Cart JS uses GET not POST](cart-get-not-post.md) — cart update/remove use GET+query params; POST+JSON was causing "Network error" catch to fire in browser (non-JSON response).
 - [Seed script schema](seed-schema.md) — seed_all.py must use: table `advertisements` (not `ads`), column `compare_price` (not `original_price`), `is_featured` as int 1/0 (not bool); advertisements.image made nullable.
+- [PostgreSQL only — always use %s](postgresql-only.md) — ALL SQL queries must use %s placeholders (never ?); search uses ILIKE not LIKE; user confirmed this is mandatory.
