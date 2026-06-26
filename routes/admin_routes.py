@@ -203,6 +203,8 @@ def product_create():
 
             _MAX_IMG_BYTES = 5 * 1024 * 1024  # 5 MB per image
 
+            _ALLOWED_IMG_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+
             def save_upload(file_obj):
                 file_obj.seek(0, os.SEEK_END)
                 size = file_obj.tell()
@@ -210,7 +212,9 @@ def product_create():
                 if size > _MAX_IMG_BYTES:
                     raise ValueError(f"'{file_obj.filename}' exceeds 5 MB limit")
                 fname = secure_filename(file_obj.filename)
-                ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else 'jpg'
+                ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else ''
+                if ext not in _ALLOWED_IMG_EXT:
+                    raise ValueError(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.")
                 unique = f"product_{uuid.uuid4().hex[:8]}.{ext}"
                 file_obj.save(os.path.join(upload_dir, unique))
                 return f'uploads/products/{unique}'
@@ -294,6 +298,7 @@ def product_edit(pid):
             os.makedirs(upload_dir, exist_ok=True)
 
             _MAX_IMG_BYTES = 5 * 1024 * 1024  # 5 MB per image
+            _ALLOWED_IMG_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
 
             def save_upload(file_obj):
                 file_obj.seek(0, os.SEEK_END)
@@ -302,7 +307,9 @@ def product_edit(pid):
                 if size > _MAX_IMG_BYTES:
                     raise ValueError(f"'{file_obj.filename}' exceeds 5 MB limit")
                 fname = secure_filename(file_obj.filename)
-                ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else 'jpg'
+                ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else ''
+                if ext not in _ALLOWED_IMG_EXT:
+                    raise ValueError(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.")
                 unique = f"product_{uuid.uuid4().hex[:8]}.{ext}"
                 file_obj.save(os.path.join(upload_dir, unique))
                 return f'uploads/products/{unique}'
@@ -542,15 +549,27 @@ def export_products():
         """)
         products_rows = cursor.fetchall()
 
+        def _csv_safe(value):
+            """Prefix formula-injection triggers with a single quote so
+            spreadsheet apps (Excel, Sheets) never evaluate them as formulas.
+            Strip leading whitespace/newlines first so they cannot be used to
+            hide a trigger character from the check."""
+            s = str(value) if value is not None else ''
+            s_stripped = s.lstrip(' \t\r\n')
+            if s_stripped and s_stripped[0] in ('=', '+', '-', '@', '\t', '\r', '\n'):
+                s = "'" + s
+            return s
+
         output = StringIO()
         writer = csv.writer(output)
         writer.writerow(['ID', 'Name (EN)', 'Name (AM)', 'Name (AR)', 'Price', 'Compare Price',
                          'Stock', 'Category', 'Featured', 'Created Date'])
         for p in products_rows:
             writer.writerow([
-                p['id'], p['name'] or '', p['name_am'] or '', p['name_ar'] or '',
+                p['id'],
+                _csv_safe(p['name']), _csv_safe(p['name_am']), _csv_safe(p['name_ar']),
                 p['price'], p['compare_price'] or '', p['stock_quantity'],
-                p['category_name'] or '', 'Yes' if p['is_featured'] else 'No', p['created_at']
+                _csv_safe(p['category_name']), 'Yes' if p['is_featured'] else 'No', p['created_at']
             ])
 
         response = make_response(output.getvalue())
@@ -754,7 +773,36 @@ def import_products():
         if vrow['image_url']:
             try:
                 import requests as _req
-                resp = _req.get(vrow['image_url'], timeout=10, stream=True)
+                import socket as _socket
+                from urllib.parse import urlparse as _urlparse
+                import ipaddress as _ipaddress
+
+                def _assert_safe_host(hostname):
+                    """Resolve hostname and reject any non-global IP (SSRF guard)."""
+                    try:
+                        infos = _socket.getaddrinfo(hostname, None)
+                    except _socket.gaierror:
+                        raise ValueError(f"Cannot resolve hostname: {hostname}")
+                    for info in infos:
+                        addr = info[4][0]
+                        try:
+                            ip = _ipaddress.ip_address(addr)
+                            if not ip.is_global:
+                                raise ValueError(
+                                    f"Image URL resolves to a private/internal address ({addr})"
+                                )
+                        except ValueError as _ve:
+                            if 'private' in str(_ve) or 'internal' in str(_ve):
+                                raise
+
+                _parsed = _urlparse(vrow['image_url'])
+                # Block non-HTTP(S) schemes (SSRF guard)
+                if _parsed.scheme not in ('http', 'https'):
+                    raise ValueError("Only http/https image URLs are allowed")
+                _assert_safe_host(_parsed.hostname or '')
+                # Disable redirects so a redirect to an internal URL cannot bypass the check
+                resp = _req.get(vrow['image_url'], timeout=10, stream=True,
+                                allow_redirects=False)
                 if resp.status_code == 200:
                     ct = resp.headers.get('Content-Type', '').split(';')[0].strip()
                     ext_map = {'image/jpeg': 'jpg', 'image/png': 'png',
@@ -821,12 +869,16 @@ def ad_create():
         link = request.form.get('link', '')
         sort_order = int(request.form.get('sort_order', 0) or 0)
 
+        _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
         image_filename = ''
         image = request.files.get('image')
         if image and image.filename:
             from werkzeug.utils import secure_filename
             filename = secure_filename(image.filename)
-            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'jpg'
+            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+            if ext not in _ALLOWED_AD_EXT:
+                flash(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.", 'error')
+                return redirect(url_for('admin.ad_create'))
             unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
             upload_dir = 'static/uploads/ads'
             os.makedirs(upload_dir, exist_ok=True)
@@ -872,12 +924,16 @@ def ad_edit(aid):
         link = request.form.get('link', '')
         sort_order = int(request.form.get('sort_order', 0) or 0)
 
+        _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
         image_filename = ad['image']
         image = request.files.get('image')
         if image and image.filename:
             from werkzeug.utils import secure_filename
             filename = secure_filename(image.filename)
-            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'jpg'
+            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+            if ext not in _ALLOWED_AD_EXT:
+                flash(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.", 'error')
+                return redirect(url_for('admin.ad_edit', aid=aid))
             unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
             upload_dir = 'static/uploads/ads'
             os.makedirs(upload_dir, exist_ok=True)
@@ -1138,7 +1194,7 @@ def order_update_status(oid):
         return redirect(url_for('admin.order_detail', oid=oid))
 
 
-@admin_bp.route('/orders/delete/<int:oid>')
+@admin_bp.route('/orders/delete/<int:oid>', methods=['POST'])
 @admin_required
 def delete_order(oid):
     try:

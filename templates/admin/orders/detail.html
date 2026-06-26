@@ -357,7 +357,10 @@
             <button onclick="sendWhatsAppMessage()" class="btn btn-secondary">💬 Send WhatsApp Update</button>
             <button onclick="sendEmailUpdate()" class="btn btn-secondary">📧 Send Email Update</button>
             <button onclick="generateInvoice()" class="btn btn-secondary">🧾 Generate Invoice PDF</button>
-            <a href="{{ url_for('admin.delete_order', oid=order.id) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">🗑️ Delete Order</a>
+            <form method="POST" action="{{ url_for('admin.delete_order', oid=order.id) }}" style="display:inline" onsubmit="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-danger">🗑️ Delete Order</button>
+            </form>
         </div>
     </div>
 
