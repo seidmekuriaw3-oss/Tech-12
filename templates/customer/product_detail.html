@@ -694,7 +694,7 @@
             <div class="related-card" onclick="location.href='{{ url_for('customer.product_detail', product_id=related.id) }}'">
                 <div class="related-image">
                     {% if related.thumbnail and related.thumbnail|trim != '' and related.thumbnail != 'None' %}
-                        <img src="{{ url_for('static', filename=related.thumbnail) }}" alt="{{ related.name_am }}" loading="lazy"
+                        <img src="{{ url_for('static', filename=(related.thumbnail if related.thumbnail.startswith('uploads/') else 'uploads/products/' + related.thumbnail)) }}" alt="{{ related.name_am }}" loading="lazy"
                              onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:32px;\'>👗</div>'">
                     {% else %}
                         <div style="font-size: 32px;">👗</div>
@@ -702,6 +702,38 @@
                 </div>
                 <div class="related-name">{{ related.name_am }}</div>
                 <div class="related-price">{{ format_price(related.price) }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recently Viewed Products -->
+    {% if recently_viewed_products and recently_viewed_products|length > 0 %}
+    <div class="related-products" style="margin-top: 40px;">
+        <h2 style="display:flex; align-items:center; gap:10px;">
+            <span>🕐</span>
+            <span>የቅርብ ጊዜ ያዩዋቸው / Recently Viewed</span>
+        </h2>
+        <div class="related-grid" id="recentlyViewedGrid">
+            {% for rv in recently_viewed_products %}
+            <div class="related-card" onclick="location.href='{{ url_for('customer.product_detail', product_id=rv.id) }}'">
+                <div class="related-image" style="position:relative;">
+                    {% if rv.thumbnail and rv.thumbnail|trim != '' and rv.thumbnail != 'None' %}
+                        <img src="{{ url_for('static', filename=(rv.thumbnail if rv.thumbnail.startswith('uploads/') else 'uploads/products/' + rv.thumbnail)) }}"
+                             alt="{{ rv.name_am or rv.name }}" loading="lazy"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:32px;\'>👗</div>'">
+                    {% else %}
+                        <div style="font-size: 32px;">👗</div>
+                    {% endif %}
+                </div>
+                <div class="related-name">{{ rv.name_am or rv.name }}</div>
+                <div class="related-price">
+                    {{ format_price(rv.price) }}
+                    {% if rv.compare_price and rv.compare_price > rv.price %}
+                    <span style="text-decoration:line-through; color:#aaa; font-size:12px; margin-left:4px;">{{ format_price(rv.compare_price) }}</span>
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
         </div>

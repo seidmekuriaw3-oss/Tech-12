@@ -257,6 +257,23 @@ def product_detail(product_id):
         product_dict = dict(product)
         related_list = [dict(p) for p in related_products] if related_products else []
 
+        # Fetch recently viewed products (from session, excluding current)
+        recently_viewed_ids = session.get('recently_viewed', [])
+        rv_ids_excl = [i for i in recently_viewed_ids if i != str(product_id)]
+        recently_viewed_list = []
+        if rv_ids_excl:
+            try:
+                placeholders = ','.join(['%s'] * len(rv_ids_excl))
+                cursor.execute(
+                    f"SELECT id, name, name_am, price, compare_price, thumbnail FROM products WHERE id IN ({placeholders}) AND is_active = 1 LIMIT 6",
+                    rv_ids_excl
+                )
+                rv_rows = cursor.fetchall()
+                rv_map = {str(r['id']): dict(r) for r in rv_rows}
+                recently_viewed_list = [rv_map[i] for i in rv_ids_excl if i in rv_map]
+            except Exception:
+                recently_viewed_list = []
+
         discount = None
         if product_dict.get('compare_price') and product_dict['compare_price'] > product_dict['price']:
             discount = int(((product_dict['compare_price'] - product_dict['price']) / product_dict['compare_price']) * 100)
@@ -282,6 +299,7 @@ def product_detail(product_id):
 
         return render_template('customer/product_detail.html',
                                product=product_dict, related_products=related_list,
+                               recently_viewed_products=recently_viewed_list,
                                discount=discount, final_price=round(final_price, 2),
                                is_logged_in=is_logged_in, lang=lang)
     except Exception as e:
