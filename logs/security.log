@@ -19812,3 +19812,4 @@ LINE 2:         DO $
 2026-06-26 08:11:14,097 - app - WARNING - 404 Error: http://localhost:5000/auth/login
 2026-06-26 08:11:15,789 - app - WARNING - 404 Error: http://localhost:5000/auth/login
 2026-06-26 08:16:52,796 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 08:23:27,744 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
