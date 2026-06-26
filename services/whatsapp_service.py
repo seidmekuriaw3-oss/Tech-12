@@ -67,10 +67,12 @@ def send_owner_order_notification(order_number: str, customer_name: str,
     ]
     if notes:
         lines.append(f"📝 ማስታወሻ: {notes}")
+    store_phone = os.environ.get('WHATSAPP_NUMBER', WHATSAPP_NUMBER)
+    phone_display = store_phone if store_phone.startswith('+') else f"+{store_phone}"
     lines += [
         "━" * 32,
         "✅ Admin: /admin/orders",
-        "📞 +251987957957",
+        f"📞 {phone_display}",
     ]
     message = "\n".join(lines)
 
@@ -199,7 +201,7 @@ class WhatsAppService:
             message += f"💵 *TOTAL:* {total} ETB\n"
             message += "=" * 40 + "\n"
             message += "🙏 Thank you for shopping with SEMIRA FASHION!\n"
-            message += "📞 For inquiries, call: +251987957957"
+            message += f"📞 For inquiries, call: +{WHATSAPP_NUMBER}"
             
             encoded = urllib.parse.quote(message)
             phone = WhatsAppService.format_phone_number(WHATSAPP_NUMBER)
@@ -237,7 +239,7 @@ class WhatsAppService:
             msg += f"💬 *Message:*\n{message_text}\n"
             msg += "=" * 40 + "\n"
             msg += "🕒 We will respond within 24 hours.\n"
-            msg += "📞 Call us: +251987957957"
+            msg += f"📞 Call us: +{WHATSAPP_NUMBER}"
             
             encoded = urllib.parse.quote(msg)
             phone = WhatsAppService.format_phone_number(WHATSAPP_NUMBER)
@@ -314,7 +316,7 @@ class WhatsAppService:
             message += "=" * 35 + "\n\n"
             message += "✅ Thank you for your purchase!\n"
             message += "🔗 Track your order: semirafashion.com/orders\n"
-            message += "📞 Questions? Call: +251987957957"
+            message += f"📞 Questions? Call: +{WHATSAPP_NUMBER}"
             
             encoded = urllib.parse.quote(message)
             phone = WhatsAppService.format_phone_number(customer_phone)
@@ -370,7 +372,7 @@ class WhatsAppService:
                 message += f"📝 *Notes:* {notes}\n\n"
             
             message += "🔗 Track your order: semirafashion.com/orders\n"
-            message += "📞 Questions? Call us: +251987957957\n"
+            message += "📞 Questions? Call us: {WHATSAPP_NUMBER}\n"
             message += "🙏 Thank you for shopping with SEMIRA FASHION!"
             
             encoded = urllib.parse.quote(message)
@@ -480,12 +482,12 @@ def send_customer_status_notification(
     }
     # Amharic messages (primary)
     am_msgs = {
-        'confirmed':  f'ሰላም {customer_name}! ትዕዛዝ #{order_number} ተቀብለናል — በዝግጅት ላይ ነው። ✅\nሰሚራ ፋሽን: +251987957957',
-        'processing': f'ሰላም {customer_name}! ትዕዛዝ #{order_number} በሂደት ላይ ነው። ⚙️\nሰሚራ ፋሽን: +251987957957',
-        'shipped':    f'ሰላም {customer_name}! ✈️ ትዕዛዝ #{order_number} ተላከ — በቅርቡ ይደርስዎታል! 🚚\nሰሚራ ፋሽን: +251987957957',
-        'delivered':  f'ሰላም {customer_name}! 🎉 ትዕዛዝ #{order_number} ደረሰ። ጥሩ ጥቅም ይሁንልዎ!\nሰሚራ ፋሽን: +251987957957',
-        'cancelled':  f'ሰላም {customer_name}! ትዕዛዝ #{order_number} ተሰርዟል። ❌\nለጥያቄ: +251987957957',
-        'pending':    f'ሰላም {customer_name}! ትዕዛዝ #{order_number} ደርሶናል — በቅርቡ እናረጋግጣለን። ⏳\nሰሚራ ፋሽን: +251987957957',
+        'confirmed':  f'ሰላም {customer_name}! ትዕዛዝ #{order_number} ተቀብለናል — በዝግጅት ላይ ነው። ✅\nሰሚራ ፋሽን: {WHATSAPP_NUMBER}',
+        'processing': f'ሰላም {customer_name}! ትዕዛዝ #{order_number} በሂደት ላይ ነው። ⚙️\nሰሚራ ፋሽን: {WHATSAPP_NUMBER}',
+        'shipped':    f'ሰላም {customer_name}! ✈️ ትዕዛዝ #{order_number} ተላከ — በቅርቡ ይደርስዎታል! 🚚\nሰሚራ ፋሽን: {WHATSAPP_NUMBER}',
+        'delivered':  f'ሰላም {customer_name}! 🎉 ትዕዛዝ #{order_number} ደረሰ። ጥሩ ጥቅም ይሁንልዎ!\nሰሚራ ፋሽን: {WHATSAPP_NUMBER}',
+        'cancelled':  f'ሰላም {customer_name}! ትዕዛዝ #{order_number} ተሰርዟል። ❌\nለጥያቄ: {WHATSAPP_NUMBER}',
+        'pending':    f'ሰላም {customer_name}! ትዕዛዝ #{order_number} ደርሶናል — በቅርቡ እናረጋግጣለን። ⏳\nሰሚራ ፋሽን: {WHATSAPP_NUMBER}',
     }
     icon = status_icons.get(status, '📦')
     message = am_msgs.get(status, f'{icon} ትዕዛዝ #{order_number} — {status}')

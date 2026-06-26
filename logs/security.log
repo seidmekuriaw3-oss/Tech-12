@@ -19186,3 +19186,4 @@ LINE 2:         DO $
 2026-06-26 01:56:04,518 - app - WARNING - 404 Error: http://1f54d207-70b1-498c-8ad0-5750a98507a1-00-mimbdqaaj69i.kirk.replit.dev/static/images/logo.svg
 2026-06-26 02:02:59,814 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-26 02:15:45,734 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 02:37:21,640 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!

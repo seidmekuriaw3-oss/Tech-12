@@ -1110,9 +1110,6 @@ def reset_password(token):
 
 # ==================== ORDER TRACKING ====================
 
-WHATSAPP_NUMBER = '251987957957'
-
-
 @customer_bp.route('/track-order', methods=['GET'])
 def track_order_public():
     """Public order tracking — requires order number + phone for security."""

@@ -68,7 +68,7 @@ def allowed_mime_type(file):
         mime = magic.from_buffer(file.read(1024), mime=True)
         file.seek(0)  # Reset file pointer
         return mime in ALLOWED_MIME_TYPES
-    except:
+    except Exception:
         # Fallback to extension check if magic is not available
         return allowed_file(file.filename)
 

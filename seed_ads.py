@@ -371,7 +371,7 @@ if __name__ == "__main__":
     import argparse
     
     # Command line argument parsing
-    parser = argparse.ArgumentParser(description='Seed advertisements for SEMIRA FASHION
+    parser = argparse.ArgumentParser(description='Seed advertisements for SEMIRA FASHION')
     parser.add_argument('--media', action='store_true', help='Try to assign existing media files')
     parser.add_argument('--show', action='store_true', help='Show existing ads')
     parser.add_argument('--clear', action='store_true', help='Clear all ads before seeding')

@@ -221,7 +221,7 @@ def api_get_product(pid):
     if product['images']:
         try:
             images = json.loads(product['images'])
-        except:
+        except (json.JSONDecodeError, ValueError):
             images = [product['thumbnail']] if product['thumbnail'] else []
     
     return jsonify({

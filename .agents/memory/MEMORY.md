@@ -4,3 +4,5 @@
 - [Cart JS uses GET not POST](cart-get-not-post.md) — cart update/remove use GET+query params; POST+JSON was causing "Network error" catch to fire in browser (non-JSON response).
 - [Seed script schema](seed-schema.md) — seed_all.py must use: table `advertisements` (not `ads`), column `compare_price` (not `original_price`), `is_featured` as int 1/0 (not bool); advertisements.image made nullable.
 - [PostgreSQL only — always use %s](postgresql-only.md) — ALL SQL queries must use %s placeholders (never ?); search uses ILIKE not LIKE; user confirmed this is mandatory.
+- [Price columns NUMERIC](price-numeric.md) — products.price, compare_price, cost and order_items.price_at_time all use NUMERIC(12,2) not DOUBLE PRECISION; avoids floating-point rounding on ETB amounts.
+- [Cart session structure](cart-session-structure.md) — cart stored as dict {product_id_str: quantity} in session; get_cart() returns {} default; all cart methods (add, remove, update, count, subtotal, items) expect dict format.

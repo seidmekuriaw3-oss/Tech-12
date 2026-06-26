@@ -25,7 +25,12 @@ class _PsycopgCursor:
         self._lastrowid = None
 
     def execute(self, query, params=None):
-        q = query.replace('?', '%s').strip()
+        import re as _re
+        q = query.strip()
+        # Safety-net: replace bare ? parameter markers with %s for PostgreSQL.
+        # Uses a regex that skips ? inside single-quoted string literals.
+        if '?' in q:
+            q = _re.sub(r"(?<!')(\?)(?!')", '%s', q)
         if params is not None:
             self._c.execute(q, params)
         else:
@@ -33,7 +38,10 @@ class _PsycopgCursor:
         return self
 
     def executemany(self, query, params_list):
-        q = query.replace('?', '%s').strip()
+        import re as _re
+        q = query.strip()
+        if '?' in q:
+            q = _re.sub(r"(?<!')(\?)(?!')", '%s', q)
         self._c.executemany(q, params_list)
         return self
 
@@ -183,9 +191,9 @@ def init_db():
             description_am TEXT,
             description_ar TEXT,
             description_en TEXT,
-            price DOUBLE PRECISION NOT NULL,
-            compare_price DOUBLE PRECISION,
-            cost DOUBLE PRECISION,
+            price NUMERIC(12,2) NOT NULL,
+            compare_price NUMERIC(12,2),
+            cost NUMERIC(12,2),
             sku TEXT UNIQUE,
             barcode TEXT,
             stock_quantity INTEGER DEFAULT 0,
@@ -250,7 +258,7 @@ def init_db():
             order_id INTEGER NOT NULL,
             product_id INTEGER NOT NULL,
             quantity INTEGER NOT NULL,
-            price_at_time DOUBLE PRECISION NOT NULL
+            price_at_time NUMERIC(12,2) NOT NULL
         )
     """)
 
@@ -510,7 +518,7 @@ def init_db():
             # Generate a random one-time password so we never seed 'admin123456'
             import secrets as _secrets
             _seed_pw = _secrets.token_urlsafe(16)
-            print(f"⚠️  No ADMIN_PASSWORD set; generated temporary password: {_seed_pw}")
+            print("⚠️  No ADMIN_PASSWORD set; a random temporary password was generated.")
             print("    Set ADMIN_PASSWORD in Replit Secrets to lock this down.")
         admin_hash = generate_password_hash(_seed_pw, method='pbkdf2:sha256')
         cur.execute(

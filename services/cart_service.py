@@ -23,9 +23,9 @@ class CartService:
         Get the current cart from session.
         
         Returns:
-            list: List of cart items
+            dict: Cart as {product_id_str: quantity}
         """
-        return session.get('cart', [])
+        return session.get('cart', {})
     
     @staticmethod
     def get_count():
