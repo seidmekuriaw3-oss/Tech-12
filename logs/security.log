@@ -19802,3 +19802,5 @@ LINE 2:         DO $
 2026-06-26 04:06:17,981 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-26 04:06:21,504 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-26 04:06:24,959 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 07:26:59,780 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 07:27:16,873 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
