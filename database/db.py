@@ -348,6 +348,20 @@ def init_db():
     cur.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_email TEXT")
     cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS loyalty_points INTEGER DEFAULT 0")
     cur.execute("ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS admin_notes TEXT")
+    # contacts table was accidentally created by api_contact; migrate any data then drop it
+    cur.execute("""
+        SELECT EXISTS (
+            SELECT 1 FROM information_schema.tables
+            WHERE table_name = 'contacts' AND table_schema = 'public'
+        )
+    """)
+    if cur.fetchone()[0]:
+        cur.execute("""
+            INSERT INTO contact_messages (name, email, phone, message, created_at)
+            SELECT name, email, phone, message, created_at FROM contacts
+            ON CONFLICT DO NOTHING
+        """)
+        cur.execute("DROP TABLE contacts")
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS newsletter (
@@ -375,10 +389,13 @@ def init_db():
             id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL,
             product_id INTEGER NOT NULL,
+            price_at_add NUMERIC(10,2),
             created_at TIMESTAMP DEFAULT NOW(),
             UNIQUE (user_id, product_id)
         )
     """)
+    # Migrate existing installations that lack the column
+    cur.execute("ALTER TABLE wishlist ADD COLUMN IF NOT EXISTS price_at_add NUMERIC(10,2)")
 
     cur.execute("CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id)")
@@ -461,12 +478,20 @@ def init_db():
     cur.execute("SELECT COUNT(*) FROM users")
     if cur.fetchone()[0] == 0:
         from werkzeug.security import generate_password_hash
-        admin_hash = generate_password_hash('admin123456', method='pbkdf2:sha256')
+        import os as _os
+        _seed_pw = _os.environ.get('ADMIN_PASSWORD', '')
+        if not _seed_pw:
+            # Generate a random one-time password so we never seed 'admin123456'
+            import secrets as _secrets
+            _seed_pw = _secrets.token_urlsafe(16)
+            print(f"⚠️  No ADMIN_PASSWORD set; generated temporary password: {_seed_pw}")
+            print("    Set ADMIN_PASSWORD in Replit Secrets to lock this down.")
+        admin_hash = generate_password_hash(_seed_pw, method='pbkdf2:sha256')
         cur.execute(
             "INSERT INTO users (username, email, password_hash, full_name, is_admin, is_active) VALUES (%s, %s, %s, %s, %s, %s)",
             ('admin', 'admin@semirafashion.com', admin_hash, 'Administrator', 1, 1)
         )
-        print("✅ Default admin user created")
+        print("✅ Default admin user created (password from ADMIN_PASSWORD env var)")
 
     cur.execute("SELECT COUNT(*) FROM settings")
     if cur.fetchone()[0] == 0:

@@ -15,6 +15,7 @@ from database.db import get_db
 from database.models import Product, Order
 from middleware.auth import is_admin
 from routes.shared import FREE_SHIPPING_THRESHOLD, SHIPPING_COST, calc_cart_totals, USER_DISCOUNT_RATE
+from extensions import limiter
 import json
 import re
 
@@ -591,6 +592,7 @@ def api_cart_count():
 # ==================== USER AUTH API ====================
 
 @api_bp.route('/auth/register', methods=['POST'])
+@limiter.limit("5 per minute; 20 per hour")
 def api_register():
     """Register new user"""
     data = request.get_json()
@@ -654,6 +656,7 @@ def api_register():
 
 
 @api_bp.route('/auth/login', methods=['POST'])
+@limiter.limit("10 per minute; 50 per hour")
 def api_login():
     """Login user"""
     data = request.get_json()
@@ -867,39 +870,28 @@ def api_place_order():
 # ==================== CONTACT API ====================
 
 @api_bp.route('/contact', methods=['POST'])
+@limiter.limit("10 per hour")
 def api_contact():
     """Submit contact form"""
     data = request.get_json()
-    
+
     name = data.get('name', '').strip()
     email = data.get('email', '').strip()
     phone = data.get('phone', '').strip()
     message = data.get('message', '').strip()
-    
+
     if not name or not email or not message:
         return jsonify({'success': False, 'error': 'Name, email, and message are required'}), 400
-    
-    # Save to database or send email
+
     db = get_db()
     cursor = db.cursor()
+    # Use the canonical contact_messages table (no DDL on every request)
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS contacts (
-            id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL,
-            phone TEXT,
-            message TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT NOW()
-        )
-    """)
-    
-    cursor.execute("""
-        INSERT INTO contacts (name, email, phone, message)
+        INSERT INTO contact_messages (name, email, phone, message)
         VALUES (%s, %s, %s, %s)
     """, (name, email, phone, message))
-    
     db.commit()
-    
+
     return jsonify({
         'success': True,
         'message': 'Message sent successfully! We will contact you soon.'
@@ -1113,7 +1105,10 @@ def api_apply_coupon():
         session['applied_coupon'] = {
             'code': code,
             'discount': discount,
-            'coupon_id': coupon['id']
+            'coupon_id': coupon['id'],
+            # Keep raw fields so checkout can recalculate if needed
+            'discount_type': coupon['discount_type'],
+            'discount_value': float(coupon['discount_value']),
         }
         session.modified = True
 
@@ -1323,14 +1318,16 @@ def api_submit_order():
     user_id = session.get('user_id')
     try:
         data = request.get_json()
-        customer_name  = (data.get('customer_name') or '').strip()
-        customer_phone = (data.get('customer_phone') or '').strip()
-        shipping_address = (data.get('customer_address') or '').strip() or 'Not provided'
-        customer_email = (data.get('customer_email') or '').strip() or None
-        notes = (data.get('order_notes') or '').strip()
+        customer_name    = (data.get('customer_name') or '').strip()
+        customer_phone   = (data.get('customer_phone') or '').strip()
+        shipping_address = (data.get('customer_address') or '').strip()
+        customer_email   = (data.get('customer_email') or '').strip() or None
+        notes            = (data.get('order_notes') or '').strip()
 
         if not customer_name or not customer_phone:
             return jsonify({'success': False, 'error': 'Name and phone number are required'}), 400
+        if not shipping_address:
+            return jsonify({'success': False, 'error': 'Delivery address is required'}), 400
 
         db = get_db()
         cursor = db.cursor()
@@ -1366,9 +1363,8 @@ def api_submit_order():
         if not cart_items:
             return jsonify({'success': False, 'error': 'Cart is empty'}), 400
 
-        from middleware.platform import is_android_app
-        android_user = is_android_app()
-        is_logged_in = bool(user_id) or android_user
+        # Discount applies only to authenticated (session) users — not UA-based
+        is_logged_in = bool(user_id)
 
         subtotal = 0
         items_list = []
@@ -1389,6 +1385,33 @@ def api_submit_order():
         subtotal_after_discount = _totals['subtotal_after_discount']
         shipping_cost = _totals['shipping_cost']
         total = _totals['total']
+
+        # Apply coupon if one is active in session (re-validate against current cart)
+        coupon_info = session.pop('applied_coupon', None)
+        if coupon_info:
+            _coupon_id  = coupon_info.get('coupon_id')
+            _disc_type  = coupon_info.get('discount_type')
+            _disc_value = float(coupon_info.get('discount_value', 0))
+            if _coupon_id and _disc_type:
+                cursor.execute("""
+                    SELECT min_order, max_discount, usage_limit, used_count, is_active
+                    FROM coupons WHERE id = %s
+                    AND (valid_to IS NULL OR valid_to >= NOW())
+                """, (_coupon_id,))
+                _fresh = cursor.fetchone()
+                if (_fresh and _fresh['is_active'] and
+                        (_fresh['usage_limit'] is None or _fresh['used_count'] < _fresh['usage_limit'])):
+                    _min_order = float(_fresh['min_order'] or 0)
+                    if subtotal_after_discount >= _min_order:
+                        if _disc_type == 'percentage':
+                            _extra = subtotal_after_discount * _disc_value / 100
+                            if _fresh['max_discount']:
+                                _extra = min(_extra, float(_fresh['max_discount']))
+                        else:
+                            _extra = min(_disc_value, subtotal_after_discount)
+                        _extra = round(_extra, 2)
+                        discount = round(discount + _extra, 2)
+                        total = round(max(0, total - _extra), 2)
 
         import random, string
         from datetime import datetime as _dt

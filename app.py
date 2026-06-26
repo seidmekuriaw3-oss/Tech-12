@@ -21,8 +21,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+from extensions import limiter
 
 from config import Config
 from database.db import get_db, init_db, commit_or_rollback
@@ -91,13 +90,8 @@ if not _secret_key:
     )
 app.secret_key = _secret_key
 
-# Rate Limiter
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["2000000 per day", "100000 per hour"],
-    storage_uri="memory://"
-)
+# Rate Limiter — shared via extensions.py so blueprints can import it
+limiter.init_app(app)
 
 # Upload configuration
 UPLOAD_FOLDER = 'static/uploads'
@@ -631,7 +625,10 @@ def format_date_filter(date_obj, format_type='short'):
 def nl2br_filter(text):
     if not text:
         return ''
-    return text.replace('\n', '<br>')
+    import html
+    from markupsafe import Markup
+    escaped = html.escape(str(text))
+    return Markup(escaped.replace('\n', '<br>'))
 
 
 @app.template_filter('default_value')

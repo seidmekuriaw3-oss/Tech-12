@@ -250,9 +250,10 @@ def product_detail(product_id):
             discount = int(((product_dict['compare_price'] - product_dict['price']) / product_dict['compare_price']) * 100)
 
         is_logged_in = session.get('user_id') is not None
+        from routes.shared import USER_DISCOUNT_RATE
         final_price = product_dict['price']
         if is_logged_in:
-            final_price = product_dict['price'] * 0.9
+            final_price = product_dict['price'] * (1 - USER_DISCOUNT_RATE)
 
         # Fetch live avg rating for this product
         try:
@@ -384,16 +385,12 @@ def wede_semira():
 
         products_rows = cursor.fetchall()
 
-        # Products by category for per-section display
-        cat_products = {}
-        for cat in clothing_cats:
-            cursor.execute("""
-                SELECT p.*, c.name as cat_name, c.name_am as cat_name_am
-                FROM products p LEFT JOIN categories c ON p.category_id = c.id
-                WHERE p.is_active = 1 AND p.category_id = %s
-                ORDER BY p.is_featured DESC, p.id DESC LIMIT 8
-            """, (cat['id'],))
-            cat_products[cat['id']] = [dict(p) for p in cursor.fetchall()]
+        # Products by category for per-section display — built from the bulk query (no N+1)
+        cat_products = {cat['id']: [] for cat in clothing_cats}
+        for p in products_rows:
+            cid = p['category_id']
+            if cid in cat_products and len(cat_products[cid]) < 8:
+                cat_products[cid].append(dict(p))
 
         return render_template('customer/wede_semira.html',
                                clothing_categories=[dict(c) for c in clothing_cats],

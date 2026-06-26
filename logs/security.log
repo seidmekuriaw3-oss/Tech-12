@@ -19178,3 +19178,7 @@ LINE 1: ...thumbnail FROM products WHERE id IN (1) AND is_active = TRUE
 HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
 
 
+2026-06-26 00:16:11,754 - app - ERROR - Database initialization error: syntax error at or near "$"
+LINE 2:         DO $
+                   ^
+

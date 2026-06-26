@@ -469,12 +469,32 @@ def place_order():
 
     coupon_info = session.pop('applied_coupon', None)
     if coupon_info:
-        if coupon_info.get('discount_type') == 'percentage':
-            extra_disc = round(subtotal_after_discount * float(coupon_info['discount_value']) / 100, 2)
-        else:
-            extra_disc = min(float(coupon_info['discount_value']), subtotal_after_discount)
-        discount = round(discount + extra_disc, 2)
-        total = round(max(0, total - extra_disc), 2)
+        # Re-validate coupon against current cart subtotal to prevent stale-discount abuse
+        coupon_id   = coupon_info.get('coupon_id')
+        disc_type   = coupon_info.get('discount_type')
+        disc_value  = float(coupon_info.get('discount_value', 0))
+        extra_disc  = 0.0
+        if coupon_id and disc_type:
+            # Check coupon is still valid and usage limit not exceeded
+            cursor.execute("""
+                SELECT min_order, max_discount, usage_limit, used_count, is_active
+                FROM coupons WHERE id = %s
+                AND (valid_to IS NULL OR valid_to >= NOW())
+            """, (coupon_id,))
+            fresh = cursor.fetchone()
+            if fresh and fresh['is_active'] and (fresh['usage_limit'] is None or fresh['used_count'] < fresh['usage_limit']):
+                min_order = float(fresh['min_order'] or 0)
+                if subtotal_after_discount >= min_order:
+                    if disc_type == 'percentage':
+                        extra_disc = subtotal_after_discount * disc_value / 100
+                        if fresh['max_discount']:
+                            extra_disc = min(extra_disc, float(fresh['max_discount']))
+                    else:
+                        extra_disc = min(disc_value, subtotal_after_discount)
+                    extra_disc = round(extra_disc, 2)
+        if extra_disc > 0:
+            discount = round(discount + extra_disc, 2)
+            total = round(max(0, total - extra_disc), 2)
 
     # Generate order number
     from datetime import datetime

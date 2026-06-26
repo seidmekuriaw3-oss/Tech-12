@@ -13,6 +13,7 @@ from middleware.auth import admin_required
 from database.db import get_db
 from werkzeug.security import generate_password_hash, check_password_hash
 from routes.shared import get_lang, WHATSAPP_NUMBER
+from extensions import limiter
 import os
 import json
 import uuid
@@ -30,6 +31,7 @@ admin_bp = Blueprint('admin', __name__)
 # ==================== ADMIN LOGIN ====================
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("10 per minute; 30 per hour")
 def admin_login():
     if session.get('admin'):
         return redirect(url_for('admin.dashboard'))
@@ -1318,7 +1320,14 @@ def delete_user(uid):
             return jsonify({'success': False, 'error': 'User not found'}), 404
         if user['is_admin']:
             return jsonify({'success': False, 'error': 'Cannot delete admin accounts'}), 403
+        # Remove all user-owned data before deleting the account
         cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (uid,))
+        cursor.execute("DELETE FROM wishlist WHERE user_id = %s", (uid,))
+        cursor.execute("DELETE FROM reviews WHERE user_id = %s", (uid,))
+        cursor.execute("DELETE FROM user_notifications WHERE user_id = %s", (uid,))
+        cursor.execute("DELETE FROM loyalty_transactions WHERE user_id = %s", (uid,))
+        # Nullify user_id on orders so order history is preserved for records
+        cursor.execute("UPDATE orders SET user_id = NULL WHERE user_id = %s", (uid,))
         cursor.execute("DELETE FROM users WHERE id = %s", (uid,))
         conn.commit()
         return jsonify({'success': True})
