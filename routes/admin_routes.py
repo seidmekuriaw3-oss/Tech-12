@@ -73,6 +73,32 @@ def admin_logout():
     return redirect(url_for('admin.admin_login'))
 
 
+# ==================== ADMIN COUNTS API ====================
+
+@admin_bp.route('/api/counts')
+@admin_required
+def admin_counts():
+    """Return sidebar badge counts as JSON for client-side updates."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT
+                (SELECT COUNT(*) FROM products WHERE is_active = 1),
+                (SELECT COUNT(*) FROM advertisements WHERE is_active = 1),
+                (SELECT COUNT(*) FROM orders WHERE status = 'pending')
+        """)
+        row = cursor.fetchone()
+        return jsonify({
+            'products': row[0] or 0,
+            'ads': row[1] or 0,
+            'pending_orders': row[2] or 0,
+        })
+    except Exception as e:
+        current_app.logger.error(f"admin_counts error: {e}")
+        return jsonify({'products': 0, 'ads': 0, 'pending_orders': 0})
+
+
 # ==================== DASHBOARD ====================
 
 @admin_bp.route('/')
@@ -112,13 +138,45 @@ def dashboard():
         recent_orders_rows = cursor.fetchall()
         recent_orders = [dict(o) for o in recent_orders_rows] if recent_orders_rows else []
 
+        # Recent products (last 5) with category name
         cursor.execute("""
-            SELECT * FROM products
-            WHERE stock_quantity <= low_stock_threshold AND stock_quantity > 0
+            SELECT p.id, p.name, p.name_am, p.price, p.compare_price,
+                   p.stock_quantity, p.thumbnail, p.is_active,
+                   c.name as category_name
+            FROM products p LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.is_active = 1
+            ORDER BY p.id DESC LIMIT 5
+        """)
+        recent_products_rows = cursor.fetchall()
+        recent_products = [dict(p) for p in recent_products_rows] if recent_products_rows else []
+
+        # Low-stock products with category name
+        cursor.execute("""
+            SELECT p.*, c.name as category_name
+            FROM products p LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.stock_quantity <= p.low_stock_threshold AND p.stock_quantity > 0
             LIMIT 10
         """)
         low_stock_rows = cursor.fetchall()
         low_stock_products = [dict(p) for p in low_stock_rows] if low_stock_rows else []
+
+        # Out-of-stock products with category name
+        cursor.execute("""
+            SELECT p.*, c.name as category_name
+            FROM products p LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.stock_quantity = 0 AND p.is_active = 1
+            LIMIT 10
+        """)
+        out_of_stock_rows = cursor.fetchall()
+        out_of_stock_products = [dict(p) for p in out_of_stock_rows] if out_of_stock_rows else []
+
+        # Page views count (graceful if table does not exist)
+        try:
+            cursor.execute("SELECT COUNT(*) FROM page_views")
+            total_page_views = cursor.fetchone()[0] or 0
+        except Exception:
+            conn.rollback()
+            total_page_views = 0
 
         stats = {
             'products_count': products_count,
@@ -127,17 +185,26 @@ def dashboard():
             'pending_orders': pending_orders,
             'customers_count': customers_count,
             'total_revenue': total_revenue,
-            'today_orders': today_orders
+            'today_orders': today_orders,
+            'live_visitors': 0,
+            'total_page_views': total_page_views,
         }
 
         return render_template('admin/dashboard.html',
-                               stats=stats, recent_orders=recent_orders,
-                               low_stock_products=low_stock_products, lang=lang)
+                               stats=stats,
+                               recent_orders=recent_orders,
+                               recent_products=recent_products,
+                               low_stock_products=low_stock_products,
+                               out_of_stock_products=out_of_stock_products,
+                               order_stock_alerts=[],
+                               lang=lang)
     except Exception as e:
         current_app.logger.error(f"Dashboard error: {e}")
         flash('Error loading dashboard.', 'error')
         return render_template('admin/dashboard.html',
-                               stats={}, recent_orders=[], low_stock_products=[], lang=lang)
+                               stats={}, recent_orders=[], recent_products=[],
+                               low_stock_products=[], out_of_stock_products=[],
+                               order_stock_alerts=[], lang=lang)
 
 
 # ==================== PRODUCT MANAGEMENT ====================

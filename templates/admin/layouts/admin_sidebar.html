@@ -637,7 +637,7 @@
     });
     
     function fetchCounts() {
-        fetch('{{ url_for('api.api_cart_count') if url_for is defined else "/api/admin/counts" }}')
+        fetch('{{ url_for('admin.admin_counts') }}')
             .then(res => res.json())
             .then(data => {
                 const productsSpan = document.getElementById('productsCount');
