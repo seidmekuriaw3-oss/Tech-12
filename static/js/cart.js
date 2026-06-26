@@ -1,6 +1,13 @@
 // ==================== ETHIOSADAT - CART JAVASCRIPT ====================
 // Professional Shopping Cart Functionality
 
+// Helper: turn DB thumbnail path (e.g. "uploads/products/x.jpg") into a full URL
+function cartThumbUrl(thumbnail) {
+    if (!thumbnail) return '/static/images/placeholder.png';
+    if (thumbnail.startsWith('http') || thumbnail.startsWith('/')) return thumbnail;
+    return '/static/' + thumbnail;
+}
+
 // Cart API endpoints
 const CART_API = {
     count: '/api/cart/count',
