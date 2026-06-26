@@ -19914,3 +19914,986 @@ jinja2.exceptions.TemplateSyntaxError: expected token ',', got 's'
 2026-06-26 09:04:31,417 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-26 09:04:40,036 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-26 09:16:30,883 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:06,767 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:06,765 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:10,742 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:14,259 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:17,905 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:21,420 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:24,949 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:28,462 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:31,931 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:35,425 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:38,962 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:42,496 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:46,009 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:49,521 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:53,031 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:56,503 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:30:59,991 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:03,851 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:08,158 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:11,707 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:15,355 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:18,885 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:22,389 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:25,865 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:29,344 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:32,816 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:36,314 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:39,792 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:43,278 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:46,764 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:50,236 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:53,717 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:31:57,206 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:00,690 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:04,184 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:07,694 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:11,218 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:14,716 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:18,222 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:21,756 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:25,307 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:28,850 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:32,362 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:35,865 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:39,353 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:42,867 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:46,381 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:49,854 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:53,308 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:32:56,827 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:00,304 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:03,780 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:07,258 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:10,761 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:14,315 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:17,834 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:21,470 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:24,983 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:28,498 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:31,987 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:35,496 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:38,971 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:42,452 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:45,935 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:49,415 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:52,878 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:56,346 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:33:59,798 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:03,298 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:06,780 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:10,304 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:13,821 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:17,334 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:20,812 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:24,338 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:27,822 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:31,339 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:34,807 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:38,294 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:41,782 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:45,268 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:48,768 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:52,291 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:55,764 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:34:59,250 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:02,749 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:06,320 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:09,802 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:13,295 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:16,784 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:20,281 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:23,778 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:27,265 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:30,725 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:34,175 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:37,625 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:41,077 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:44,551 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:48,048 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:51,606 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:55,101 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:35:58,559 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:02,049 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:05,504 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:09,163 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:12,698 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:16,163 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:19,685 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:23,165 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:26,654 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:30,303 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:33,771 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:37,221 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:40,681 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:44,163 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:47,646 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:51,136 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:54,620 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:36:58,138 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:01,656 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:05,148 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:08,642 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:12,118 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:15,578 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:19,076 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:22,558 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:26,107 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:29,593 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:33,100 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:36,598 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:40,096 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:43,572 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:47,057 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:50,534 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:54,038 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:37:57,509 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:00,992 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:04,491 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:07,940 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:11,391 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:14,874 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:18,348 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:21,839 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:25,330 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:28,821 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:32,293 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:35,845 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:39,319 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:42,822 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:46,332 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:49,814 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:53,299 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:38:56,765 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:00,226 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:03,727 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:07,222 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:10,670 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:14,176 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:17,686 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:21,168 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:24,657 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:28,112 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:31,585 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:35,120 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:38,596 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:42,075 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:45,565 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:49,041 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:52,575 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:56,047 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:39:59,511 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:03,012 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:06,508 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:09,958 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:13,433 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:16,949 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:20,460 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:23,950 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:27,435 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:30,937 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:34,435 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:37,932 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:41,427 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:44,914 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:48,424 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:51,923 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:55,420 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:40:58,912 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:02,414 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:07,438 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:11,229 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:14,729 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:18,213 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:21,702 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:25,192 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:28,656 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:32,144 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:35,621 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:39,124 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:42,581 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:46,080 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:49,546 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:53,033 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:56,502 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:41:59,981 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:42:03,448 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:42:06,928 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:42:10,426 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:42:13,904 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:42:17,422 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:42:20,908 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 10:14:50,864 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 10:24:35,750 - app - ERROR - Exception on /cart/ [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/cart_routes.py", line 94, in view_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=bool(session.get('user_id')))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+2026-06-26 10:24:36,023 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/cart/ - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:24:36,023 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/cart_routes.py", line 94, in view_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=bool(session.get('user_id')))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:24:39,531 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+2026-06-26 10:24:39,534 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:24:39,534 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:25:00,847 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+2026-06-26 10:25:00,848 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:25:00,848 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:25:15,581 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+2026-06-26 10:25:15,582 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:25:15,582 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:25:18,575 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+2026-06-26 10:25:18,576 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:25:18,576 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:25:25,525 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+2026-06-26 10:25:25,528 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:25:25,529 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 46, in calc_cart_totals
+    subtotal_after_discount = round(subtotal - discount, 2)
+                                    ~~~~~~~~~^~~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:26:15,988 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:26:15,989 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:26:15,990 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:26:21,031 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:26:21,031 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:26:21,032 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:26:28,351 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:26:28,351 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:26:28,352 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:26:43,376 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:26:43,376 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:26:43,377 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:26:55,679 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:26:55,680 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:26:55,681 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:27:03,592 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:27:03,593 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:27:03,594 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:27:16,348 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:27:16,349 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:27:16,350 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:27:18,361 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:27:21,557 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:27:21,558 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:27:21,558 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:27:29,832 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:27:29,833 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:27:29,833 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:27:32,166 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:27:33,668 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:27:33,668 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:27:33,669 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:27:46,290 - app - ERROR - Exception on /cart/ [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/cart_routes.py", line 45, in view_cart
+    discounted_price = round(row['price'] * (1 - USER_DISCOUNT_RATE), 2)
+                             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:27:46,291 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/cart/ - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:27:46,291 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/cart_routes.py", line 45, in view_cart
+    discounted_price = round(row['price'] * (1 - USER_DISCOUNT_RATE), 2)
+                             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:27:50,340 - app - ERROR - Exception on /api/cart [GET]
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:27:50,342 - app - ERROR - 500 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/api/cart - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2026-06-26 10:27:50,344 - app - ERROR - Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/api_routes.py", line 565, in api_get_cart
+    totals = calc_cart_totals(subtotal, is_logged_in=is_logged_in)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/routes/shared.py", line 45, in calc_cart_totals
+    discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
+                     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+
+2026-06-26 10:35:34,760 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!

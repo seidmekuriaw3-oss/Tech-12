@@ -347,7 +347,7 @@ def checkout():
 
         product_ids = [int(pid) for pid in session_cart.keys()]
         placeholders = ','.join(['%s'] * len(product_ids))
-        cursor.execute(f"SELECT id, name, name_am, name_ar, price, thumbnail FROM products WHERE id IN ({placeholders}) AND is_active = TRUE", product_ids)
+        cursor.execute(f"SELECT id, name, name_am, name_ar, price, thumbnail FROM products WHERE id IN ({placeholders}) AND is_active = 1", product_ids)
         products_map = {str(p['id']): p for p in cursor.fetchall()}
 
         for pid_str, qty in session_cart.items():
@@ -406,8 +406,14 @@ def place_order():
     customer_name    = request.form.get('customer_name', '').strip()
     customer_email   = request.form.get('customer_email', '').strip() or None
 
-    # Validate guest required fields
-    if not user_id and (not customer_name or not shipping_phone):
+    # Validate required fields for all users
+    if not shipping_address or len(shipping_address.strip()) < 5:
+        flash('እባክዎ ሙሉ አድራሻዎን ያስገቡ።', 'danger')
+        return redirect(url_for('cart.checkout'))
+    if not shipping_phone:
+        flash('ስልክ ቁጥር ያስፈልጋል።', 'danger')
+        return redirect(url_for('cart.checkout'))
+    if not user_id and not customer_name:
         flash('ስምና ስልክ ቁጥር ያስፈልጋሉ።', 'danger')
         return redirect(url_for('cart.checkout'))
 

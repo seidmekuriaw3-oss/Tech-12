@@ -269,7 +269,7 @@
                 {% for item in cart_items %}
                 <div class="order-item">
                     <span class="order-item-name">{{ item.name_am or item.name }} <span style="color: #999;">x{{ item.quantity }}</span></span>
-                    <span class="order-item-price">{{ format_price(item.discounted_price or item.price) }}</span>
+                    <span class="order-item-price">{{ format_price(item.subtotal) }}</span>
                 </div>
                 {% endfor %}
             </div>
@@ -349,9 +349,21 @@
         clearErrors();
         
         let isValid = true;
+        const name = document.getElementById('customerName').value.trim();
         const address = document.getElementById('shippingAddress').value.trim();
         const phone = document.getElementById('shippingPhone').value.trim();
         const email = document.getElementById('customerEmail').value.trim();
+
+        // Validate name
+        if (!name) {
+            showError('nameError', 'Please enter your full name');
+            document.getElementById('customerName').classList.add('error');
+            isValid = false;
+        } else if (name.length < 2) {
+            showError('nameError', 'Please enter your full name (at least 2 characters)');
+            document.getElementById('customerName').classList.add('error');
+            isValid = false;
+        }
         
         // Validate address
         if (!address) {
@@ -391,7 +403,7 @@
     
     function isValidPhone(phone) {
         const cleaned = phone.replace(/[\s\-\(\)\+]/g, '');
-        const pattern = /^(09|07|2519)[0-9]{8}$/;
+        const pattern = /^(09|07|2519|2517)[0-9]{8}$/;
         return pattern.test(cleaned);
     }
     
