@@ -182,7 +182,7 @@ class CartManager {
             const item = this.cart[i];
             html += `
                 <div class="mini-cart-item d-flex align-center" style="gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color, #eee);">
-                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                    <img src="${getProductImageUrl(item.thumbnail || item.image)}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.src='/static/images/placeholder.png'">
                     <div class="flex-1">
                         <div class="fw-500">${this.truncate(item.name || item.product_name, 25)}</div>
                         <div class="text-muted small">${this.formatPrice(item.price || item.discounted_price)} x ${item.quantity}</div>
@@ -326,6 +326,17 @@ class CartManager {
             this.refreshTimer = null;
         }
     }
+}
+
+// ==================== Image URL Helper ====================
+function getProductImageUrl(thumbnail) {
+    if (!thumbnail || thumbnail === 'None' || String(thumbnail).trim() === '') {
+        return '/static/images/placeholder.png';
+    }
+    const t = String(thumbnail).trim();
+    if (t.startsWith('http') || t.startsWith('/static/')) return t;
+    if (t.startsWith('uploads/')) return '/static/' + t;
+    return '/static/uploads/products/' + t;
 }
 
 // Initialize cart manager
@@ -609,7 +620,7 @@ function updateMiniCartPanelContent(panel) {
                 border-bottom: 1px solid var(--border-color, #eee);
             " data-id="${item.product_id || item.id}">
                 <div style="width: 60px; height: 60px; background: #f5f5f5; border-radius: 8px; overflow: hidden;">
-                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="${getProductImageUrl(item.thumbnail || item.image)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/static/images/placeholder.png'">
                 </div>
                 <div style="flex: 1;">
                     <div style="font-weight: 500;">${manager.truncate(item.name || item.product_name, 30)}</div>
