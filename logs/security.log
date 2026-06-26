@@ -19913,3 +19913,4 @@ jinja2.exceptions.TemplateSyntaxError: expected token ',', got 's'
 2026-06-26 09:04:27,966 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-26 09:04:31,417 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-26 09:04:40,036 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 09:16:30,883 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!

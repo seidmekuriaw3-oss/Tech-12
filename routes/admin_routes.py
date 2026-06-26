@@ -265,6 +265,11 @@ def product_create():
             material = request.form.get('material', '')
             color = request.form.get('color', '')
             sku = request.form.get('sku', '')
+            gender = request.form.get('gender', '')
+            season = request.form.get('season', '')
+            import json as _json
+            sizes_list = request.form.getlist('sizes')
+            sizes = _json.dumps(sizes_list) if sizes_list else None
             is_featured = 1 if request.form.get('is_featured') else 0
             is_new = 1 if request.form.get('is_new') else 0
 
@@ -302,7 +307,6 @@ def product_create():
                 if extra and extra.filename:
                     gallery_paths.append(save_upload(extra))
 
-            import json as _json
             images_json = _json.dumps(gallery_paths) if gallery_paths else None
 
             cursor.execute("""
@@ -310,12 +314,14 @@ def product_create():
                     name, name_am, name_ar, name_en,
                     description, description_am, description_ar, description_en,
                     price, compare_price, stock_quantity, category_id,
-                    material, color, sku, is_featured, is_new, thumbnail, images, is_active
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
+                    material, color, sku, gender, season, sizes,
+                    is_featured, is_new, thumbnail, images, is_active
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
             """, (name, name_am, name_ar, name_en,
                   description, description_am, description_ar, description_en,
                   price, compare_price, stock_quantity, category_id,
-                  material, color, sku, is_featured, is_new, image_filename, images_json))
+                  material, color, sku, gender, season, sizes,
+                  is_featured, is_new, image_filename, images_json))
             conn.commit()
             flash('Product created successfully!', 'success')
             return redirect(url_for('admin.products'))
@@ -364,11 +370,15 @@ def product_edit(pid):
             material = request.form.get('material', '')
             color = request.form.get('color', '')
             sku = request.form.get('sku', '')
+            gender = request.form.get('gender', '')
+            season = request.form.get('season', '')
+            import json as _json
+            sizes_list = request.form.getlist('sizes')
+            sizes = _json.dumps(sizes_list) if sizes_list else None
             is_featured = 1 if request.form.get('is_featured') else 0
             is_new = 1 if request.form.get('is_new') else 0
 
             from werkzeug.utils import secure_filename
-            import json as _json
             upload_dir = 'static/uploads/products'
             os.makedirs(upload_dir, exist_ok=True)
 
@@ -435,13 +445,15 @@ def product_edit(pid):
                     name=%s, name_am=%s, name_ar=%s, name_en=%s,
                     description=%s, description_am=%s, description_ar=%s, description_en=%s,
                     price=%s, compare_price=%s, stock_quantity=%s, category_id=%s,
-                    material=%s, color=%s, sku=%s, is_featured=%s, is_new=%s, thumbnail=%s, images=%s,
+                    material=%s, color=%s, sku=%s, gender=%s, season=%s, sizes=%s,
+                    is_featured=%s, is_new=%s, thumbnail=%s, images=%s,
                     updated_at=CURRENT_TIMESTAMP
                 WHERE id=%s
             """, (name, name_am, name_ar, name_en,
                   description, description_am, description_ar, description_en,
                   price, compare_price, stock_quantity, category_id,
-                  material, color, sku, is_featured, is_new, image_filename, images_json, pid))
+                  material, color, sku, gender, season, sizes,
+                  is_featured, is_new, image_filename, images_json, pid))
             conn.commit()
 
             # Notify wishlist users if price dropped
@@ -520,14 +532,16 @@ def product_duplicate(pid):
                 name, name_am, name_ar, name_en,
                 description, description_am, description_ar, description_en,
                 price, compare_price, stock_quantity, category_id,
-                material, color, sku, is_featured, is_new, thumbnail, is_active
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0)
+                material, color, sku, gender, season, sizes,
+                is_featured, is_new, thumbnail, is_active
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0)
             RETURNING id
         """, (
             new_name, new_name_am, p.get('name_ar'), p.get('name_en'),
             p.get('description'), p.get('description_am'), p.get('description_ar'), p.get('description_en'),
             p.get('price'), p.get('compare_price'), p.get('stock_quantity'), p.get('category_id'),
             p.get('material'), p.get('color'), new_sku,
+            p.get('gender'), p.get('season'), p.get('sizes'),
             p.get('is_featured', 0), p.get('is_new', 0), p.get('thumbnail')
         ))
         row = cursor.fetchone()

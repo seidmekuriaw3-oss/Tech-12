@@ -217,6 +217,11 @@ def init_db():
         )
     """)
 
+    # Fashion-specific columns — added after initial schema so existing DBs are upgraded
+    cur.execute("ALTER TABLE products ADD COLUMN IF NOT EXISTS sizes TEXT")
+    cur.execute("ALTER TABLE products ADD COLUMN IF NOT EXISTS gender TEXT")
+    cur.execute("ALTER TABLE products ADD COLUMN IF NOT EXISTS season TEXT")
+
     cur.execute("""
         CREATE TABLE IF NOT EXISTS cart_items (
             id SERIAL PRIMARY KEY,
