@@ -335,7 +335,7 @@ def checkout():
             return redirect(url_for('customer.index'))
 
         for item in raw_items:
-            orig_price = item['price']
+            orig_price = float(item['price'])
             discounted_price = round(orig_price * (1 - USER_DISCOUNT_RATE), 2)
             subtotal += orig_price * item['quantity']
             cart_items.append({
@@ -366,7 +366,7 @@ def checkout():
             p = products_map.get(pid_str)
             if not p:
                 continue
-            orig_price = p['price']
+            orig_price = float(p['price'])
             subtotal += orig_price * qty
             cart_items.append({
                 'id': None,
@@ -446,7 +446,7 @@ def place_order():
             product_ids = [int(pid) for pid in session_cart.keys()]
             placeholders = ','.join(['%s'] * len(product_ids))
             cursor.execute(
-                f"SELECT id, name, name_am, price, stock_quantity FROM products WHERE id IN ({placeholders}) AND is_active = TRUE FOR UPDATE",
+                f"SELECT id, name, name_am, price, stock_quantity FROM products WHERE id IN ({placeholders}) AND is_active = 1 FOR UPDATE",
                 product_ids
             )
             products_map = {p['id']: p for p in cursor.fetchall()}
@@ -474,8 +474,7 @@ def place_order():
 
     # Calculate totals
     subtotal = sum(
-        (item['price'] if isinstance(item, dict) else item['price']) *
-        (item['quantity'] if isinstance(item, dict) else item['quantity'])
+        float(item['price']) * int(item['quantity'])
         for item in cart_items_raw
     )
     is_logged_in = bool(user_id)
@@ -539,29 +538,39 @@ def place_order():
     ))
     row = cursor.fetchone()
     order_id = row[0] if row else None
+    if not order_id:
+        db.rollback()
+        flash('ትዕዛዙን ማስቀመጥ አልተሳካም። እባክዎ እንደገና ይሞክሩ።', 'danger')
+        return redirect(url_for('cart.checkout'))
 
     # Create order items and update stock atomically
-    for item in cart_items_raw:
-        price = item['price'] if isinstance(item, dict) else item['price']
-        qty   = item['quantity'] if isinstance(item, dict) else item['quantity']
-        pid   = item['product_id'] if isinstance(item, dict) else item['product_id']
-        name  = item['name'] if isinstance(item, dict) else item['name']
-        discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
-        cursor.execute("""
-            INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
-            VALUES (%s, %s, %s, %s)
-        """, (order_id, pid, qty, discounted_price))
-        # Atomic decrement — prevents race condition when two orders compete for the last item
-        cursor.execute("""
-            UPDATE products SET
-                stock_quantity = stock_quantity - %s,
-                sales_count = sales_count + %s
-            WHERE id = %s AND stock_quantity >= %s
-        """, (qty, qty, pid, qty))
-        if cursor.rowcount == 0:
-            db.rollback()
-            flash(f'ይቅርታ! "{name}" ላይ በቂ ዕቃ አልተገኘም። ካርትዎን ያረጋግጡ።', 'danger')
-            return redirect(url_for('cart.view_cart'))
+    try:
+        for item in cart_items_raw:
+            price = float(item['price'])
+            qty   = int(item['quantity'])
+            pid   = int(item['product_id'])
+            name  = item['name']
+            discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
+            cursor.execute("""
+                INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
+                VALUES (%s, %s, %s, %s)
+            """, (order_id, pid, qty, discounted_price))
+            # Atomic decrement — prevents race condition when two orders compete for the last item
+            cursor.execute("""
+                UPDATE products SET
+                    stock_quantity = stock_quantity - %s,
+                    sales_count = sales_count + %s
+                WHERE id = %s AND stock_quantity >= %s
+            """, (qty, qty, pid, qty))
+            if cursor.rowcount == 0:
+                db.rollback()
+                flash(f'ይቅርታ! "{name}" ላይ በቂ ዕቃ አልተገኘም። ካርትዎን ያረጋግጡ።', 'danger')
+                return redirect(url_for('cart.view_cart'))
+    except Exception as _order_err:
+        db.rollback()
+        current_app.logger.error(f"Order items insertion failed: {_order_err}")
+        flash('ትዕዛዙን ማስቀመጥ አልተሳካም። እባክዎ እንደገና ይሞክሩ።', 'danger')
+        return redirect(url_for('cart.checkout'))
 
     # Low-stock check — query updated stock levels within this transaction
     try:
