@@ -419,8 +419,8 @@ def place_order():
     customer_email   = request.form.get('customer_email', '').strip() or None
 
     # Validate required fields for all users
-    if not shipping_address or len(shipping_address.strip()) < 5:
-        flash('እባክዎ ሙሉ አድራሻዎን ያስገቡ።', 'danger')
+    if not shipping_address or len(shipping_address.strip()) < 3:
+        flash('እባክዎ አድራሻዎን ያስገቡ።', 'danger')
         return redirect(url_for('cart.checkout'))
     if not shipping_phone:
         flash('ስልክ ቁጥር ያስፈልጋል።', 'danger')

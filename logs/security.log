@@ -21686,3 +21686,4 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 
 2026-06-26 13:01:11,526 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 13:08:32,948 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
