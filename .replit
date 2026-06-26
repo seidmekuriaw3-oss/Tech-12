@@ -1,7 +1,6 @@
 modules = ["web", "python-3.12", "nodejs-20"]
 
 [deployment]
-router = "application"
 deploymentTarget = "autoscale"
 run = ["gunicorn", "--bind=0.0.0.0:8080", "--reuse-port", "--workers=2", "--timeout=120", "wsgi:app"]
 
