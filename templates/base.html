@@ -1389,6 +1389,87 @@
 
 {% block extra_js %}{% endblock %}
 
+<!-- ======== GLOBAL PASSWORD VISIBILITY TOGGLE ======== -->
+<style>
+.pw-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.pw-wrap input[type="password"],
+.pw-wrap input[type="text"] {
+    width: 100%;
+    padding-right: 44px !important;
+}
+.pw-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    color: #888;
+    font-size: 18px;
+    line-height: 1;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+.pw-toggle-btn:hover,
+.pw-toggle-btn:focus { color: #1a7a4a; outline: none; }
+.pw-toggle-btn svg { pointer-events: none; }
+</style>
+<script>
+(function() {
+    var EYE_OPEN  = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var EYE_CLOSE = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+    function wrapPasswordInputs() {
+        document.querySelectorAll('input[type="password"]').forEach(function(inp) {
+            if (inp.closest('.pw-wrap')) return; // already wrapped
+            var wrap = document.createElement('div');
+            wrap.className = 'pw-wrap';
+            // preserve inline styles & class from original container if any
+            inp.parentNode.insertBefore(wrap, inp);
+            wrap.appendChild(inp);
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'pw-toggle-btn';
+            btn.setAttribute('aria-label', 'ፓስዋርድ አሳይ/ደብቅ');
+            btn.setAttribute('tabindex', '-1');
+            btn.innerHTML = EYE_OPEN;
+            btn.addEventListener('click', function() {
+                var isPassword = inp.type === 'password';
+                inp.type = isPassword ? 'text' : 'password';
+                btn.innerHTML = isPassword ? EYE_CLOSE : EYE_OPEN;
+                btn.setAttribute('aria-label', isPassword ? 'ፓስዋርድ ደብቅ' : 'ፓስዋርድ አሳይ');
+                inp.focus();
+            });
+            wrap.appendChild(btn);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', wrapPasswordInputs);
+    // also run after dynamic content (modals, tab switches)
+    var _pwObs = new MutationObserver(function(mutations) {
+        var hasNew = mutations.some(function(m) {
+            return Array.from(m.addedNodes).some(function(n) {
+                return n.nodeType === 1 && (n.matches('input[type="password"]') || n.querySelector('input[type="password"]'));
+            });
+        });
+        if (hasNew) wrapPasswordInputs();
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        _pwObs.observe(document.body, { childList: true, subtree: true });
+    });
+})();
+</script>
+
 <script>
 (function() {
     var _wlIds = new Set();

@@ -9,6 +9,7 @@ from flask import (
     Blueprint, render_template, request, redirect, url_for,
     flash, session, jsonify, make_response
 )
+from extensions import limiter
 from middleware.auth import user_login_required
 from middleware.platform import get_platform, is_android_app
 from database.db import get_db
@@ -577,6 +578,7 @@ def privacy():
 # ==================== USER AUTHENTICATION ====================
 
 @customer_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute; 20 per hour", methods=["POST"])
 def user_login():
     """User login page."""
     if session.get('user_id'):
@@ -637,6 +639,7 @@ def user_login():
 
 
 @customer_bp.route('/register', methods=['GET', 'POST'])
+@limiter.limit("3 per minute; 10 per hour", methods=["POST"])
 def user_register():
     """User registration page."""
     if session.get('user_id'):
