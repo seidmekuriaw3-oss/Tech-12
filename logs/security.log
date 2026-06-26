@@ -19182,3 +19182,4 @@ HINT:  No operator matches the given name and argument types. You might need to 
 LINE 2:         DO $
                    ^
 
+2026-06-26 00:27:28,810 - app - WARNING - 404 Error: http://628e4346-e9a4-4e6c-b2dc-6b21f41e0b0f-00-21kusj2lhin1e.riker.replit.dev/static/images/logo.svg
