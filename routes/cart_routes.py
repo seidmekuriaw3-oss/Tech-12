@@ -446,7 +446,7 @@ def place_order():
             product_ids = [int(pid) for pid in session_cart.keys()]
             placeholders = ','.join(['%s'] * len(product_ids))
             cursor.execute(
-                f"SELECT id, name, name_am, price, stock_quantity FROM products WHERE id IN ({placeholders}) AND is_active = TRUE FOR UPDATE",
+                f"SELECT id, name, name_am, price, stock_quantity FROM products WHERE id IN ({placeholders}) AND is_active = 1 FOR UPDATE",
                 product_ids
             )
             products_map = {p['id']: p for p in cursor.fetchall()}

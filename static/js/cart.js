@@ -76,11 +76,11 @@ class CartManager {
     }
     
     refresh() {
-        this.fetchCartData();
+        return this.fetchCartData();
     }
     
     fetchCartData(retryCount = 0) {
-        fetch(CART_API.cart)
+        return fetch(CART_API.cart)
             .then(res => res.text())
             .then(text => {
                 if (!text || !text.trim()) return;
@@ -245,7 +245,7 @@ class CartManager {
             const data = JSON.parse(text);
             if (data.success) {
                 if (typeof data.cart_count === 'number') { this.count = data.cart_count; this.updateCartBadges(); }
-                return { success: true, message: data.message || 'Product added to cart!' };
+                return this.fetchCartData().then(() => ({ success: true, message: data.message || 'Product added to cart!' }));
             } else {
                 throw new Error(data.error || data.message || 'Failed to add to cart');
             }
@@ -305,7 +305,7 @@ class CartManager {
     
     clearCart() {
         return fetch(CART_API.clear, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
