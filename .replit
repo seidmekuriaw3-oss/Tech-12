@@ -57,3 +57,7 @@ SHIPPING_COST = "200"
 SECRET_KEY = "f50adc81fc9000168252741358e2930118542efde3a43f4caaaff60ee438e409"
 ADMIN_PASSWORD = "1234"
 ADMIN_USERNAME = "admin"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
