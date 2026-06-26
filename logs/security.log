@@ -21687,3 +21687,11 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 
 2026-06-26 13:01:11,526 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-26 13:08:32,948 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 17:22:01,956 - app - WARNING - Slow request: GET /branches - 2.71s
+2026-06-26 17:22:02,104 - app - WARNING - Slow request: GET /cart/ - 2.86s
+2026-06-26 17:22:03,369 - app - WARNING - Slow request: GET /wede-semira - 1.11s
+2026-06-26 17:49:38,157 - app - WARNING - Slow request: GET /products - 1.49s
+2026-06-26 17:51:06,508 - app - WARNING - Slow request: GET / - 2.41s
+2026-06-26 18:43:16,914 - app - WARNING - Slow request: GET / - 1.10s
+2026-06-26 18:43:20,462 - app - WARNING - Slow request: GET /wede-semira - 1.98s
+2026-06-26 18:55:58,125 - app - ERROR - Product create error: File type '.avif' is not allowed. Use jpg, jpeg, png, webp or gif.

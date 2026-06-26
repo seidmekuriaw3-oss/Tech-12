@@ -245,11 +245,11 @@ def product_create():
         categories = [dict(c) for c in cursor.fetchall()]
 
         if request.method == 'POST':
-            name = request.form.get('name', '')
+            name = request.form.get('name_en', '') or request.form.get('name', '')
             name_am = request.form.get('name_am', '')
             name_ar = request.form.get('name_ar', '')
             name_en = request.form.get('name_en', '') or name
-            description = request.form.get('description', '')
+            description = request.form.get('description_en', '') or request.form.get('description', '')
             description_am = request.form.get('description_am', '')
             description_ar = request.form.get('description_ar', '')
             description_en = request.form.get('description_en', '') or description
@@ -350,11 +350,11 @@ def product_edit(pid):
         categories = [dict(c) for c in cursor.fetchall()]
 
         if request.method == 'POST':
-            name = request.form.get('name', '')
+            name = request.form.get('name_en', '') or request.form.get('name', '')
             name_am = request.form.get('name_am', '')
             name_ar = request.form.get('name_ar', '')
             name_en = request.form.get('name_en', '') or name
-            description = request.form.get('description', '')
+            description = request.form.get('description_en', '') or request.form.get('description', '')
             description_am = request.form.get('description_am', '')
             description_ar = request.form.get('description_ar', '')
             description_en = request.form.get('description_en', '') or description
@@ -952,7 +952,7 @@ def ad_create():
         title = request.form.get('title', '')
         title_am = request.form.get('title_am', '')
         title_ar = request.form.get('title_ar', '')
-        description = request.form.get('description', '')
+        description = request.form.get('ad_text', '') or request.form.get('description', '')
         description_am = request.form.get('description_am', '')
         description_ar = request.form.get('description_ar', '')
         link = request.form.get('link', '')
@@ -1007,7 +1007,7 @@ def ad_edit(aid):
         title = request.form.get('title', '')
         title_am = request.form.get('title_am', '')
         title_ar = request.form.get('title_ar', '')
-        description = request.form.get('description', '')
+        description = request.form.get('ad_text', '') or request.form.get('description', '')
         description_am = request.form.get('description_am', '')
         description_ar = request.form.get('description_ar', '')
         link = request.form.get('link', '')

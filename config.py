@@ -1,8 +1,10 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from the project .env file regardless of the current working directory.
+ENV_FILE = Path(__file__).resolve().parent / '.env'
+load_dotenv(dotenv_path=ENV_FILE, override=False)
 
 class Config:
     """
