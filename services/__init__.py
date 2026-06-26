@@ -190,6 +190,8 @@ __all__ = [
 
 
 # ==================== INITIALIZATION LOG ====================
+import logging
+logger = logging.getLogger(__name__)
 
 logger.warning("✅ Services package initialized successfully")
 logger.warning(f"   - ProductService: Available")

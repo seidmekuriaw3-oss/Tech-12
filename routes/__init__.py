@@ -8,6 +8,7 @@ This package contains all route modules for the application:
 - cart_routes: Cart management routes (add, remove, update, etc.)
 """
 
+import logging as _log
 from flask import Blueprint
 
 # ==================== BLUEPRINT REGISTRATION ====================
@@ -36,13 +37,13 @@ def register_routes(app):
     app.register_blueprint(utility_bp, url_prefix='/')
     app.register_blueprint(islamic_bp, url_prefix='/')
 
-    current_app.logger.warning("✅ All routes registered successfully")
-    current_app.logger.warning(f"   - Customer routes: /")
-    current_app.logger.warning(f"   - Admin routes: /admin")
-    current_app.logger.warning(f"   - API routes: /api")
-    current_app.logger.warning(f"   - Cart routes: /cart")
-    current_app.logger.warning(f"   - Utility routes: / (health, sitemap, robots, lang)")
-    current_app.logger.warning(f"   - Islamic routes: /islamic")
+    _log.getLogger(__name__).warning("✅ All routes registered successfully")
+    _log.getLogger(__name__).warning("   - Customer routes: /")
+    _log.getLogger(__name__).warning("   - Admin routes: /admin")
+    _log.getLogger(__name__).warning("   - API routes: /api")
+    _log.getLogger(__name__).warning("   - Cart routes: /cart")
+    _log.getLogger(__name__).warning("   - Utility routes: / (health, sitemap, robots, lang)")
+    _log.getLogger(__name__).warning("   - Islamic routes: /islamic")
 
 
 # ==================== ROUTE HELPERS ====================
