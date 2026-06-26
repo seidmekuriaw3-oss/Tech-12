@@ -21206,3 +21206,8 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-26 10:40:32,883 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-26 10:40:36,917 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-26 10:41:41,872 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-26 10:42:43,811 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:42:52,178 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:43:02,091 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
+2026-06-26 10:43:10,857 - app - WARNING - 404 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/uploads/products/product_316ea9df.jpg
+2026-06-26 10:43:17,028 - app - WARNING - 404 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/uploads/products/product_316ea9df.jpg

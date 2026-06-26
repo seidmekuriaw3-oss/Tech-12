@@ -280,9 +280,9 @@ def product_detail(product_id):
 
         is_logged_in = session.get('user_id') is not None
         from routes.shared import USER_DISCOUNT_RATE
-        final_price = product_dict['price']
+        final_price = float(product_dict['price'])
         if is_logged_in:
-            final_price = product_dict['price'] * (1 - USER_DISCOUNT_RATE)
+            final_price = float(product_dict['price']) * (1 - USER_DISCOUNT_RATE)
 
         # Fetch live avg rating for this product
         try:

@@ -42,10 +42,10 @@ def view_cart():
         
         rows = cursor.fetchall()
         for row in rows:
-            discounted_price = round(row['price'] * (1 - USER_DISCOUNT_RATE), 2)
+            price = float(row['price'])
+            discounted_price = round(price * (1 - USER_DISCOUNT_RATE), 2)
             # Subtotal uses ORIGINAL price — calc_cart_totals applies the 10% once
-            orig_subtotal = row['price'] * row['quantity']
-            subtotal += orig_subtotal
+            subtotal += price * row['quantity']
 
             cart_items.append({
                 'id': row['id'],
@@ -53,7 +53,7 @@ def view_cart():
                 'name': row['name'],
                 'name_am': row['name_am'],
                 'name_ar': row['name_ar'],
-                'price': row['price'],
+                'price': price,
                 'discounted_price': discounted_price,
                 'quantity': row['quantity'],
                 'thumbnail': row['thumbnail'],
@@ -69,22 +69,23 @@ def view_cart():
             placeholders = ','.join(['%s'] * len(cart))
             cursor.execute(f"""
                 SELECT id, name, name_am, name_ar, price, compare_price, thumbnail, stock_quantity
-                FROM products WHERE id IN ({placeholders})
+                FROM products WHERE id IN ({placeholders}) AND is_active = 1
             """, list(cart.keys()))
             
             products = cursor.fetchall()
             for p in products:
                 quantity = cart.get(str(p['id']), 0)
                 if quantity > 0:
-                    item_subtotal = p['price'] * quantity
+                    price = float(p['price'])
+                    item_subtotal = price * quantity
                     subtotal += item_subtotal
                     cart_items.append({
                         'product_id': p['id'],
                         'name': p['name'],
                         'name_am': p['name_am'],
                         'name_ar': p['name_ar'],
-                        'price': p['price'],
-                        'discounted_price': p['price'],
+                        'price': price,
+                        'discounted_price': price,
                         'quantity': quantity,
                         'thumbnail': p['thumbnail'],
                         'stock_quantity': p['stock_quantity'],
@@ -125,16 +126,27 @@ def go_add_to_cart(product_id):
                        (session['user_id'], product_id))
         existing = cursor.fetchone()
         if existing:
+            new_qty = existing['quantity'] + quantity
+            if new_qty > product['stock_quantity']:
+                flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
+                return redirect(url_for('cart.view_cart'))
             cursor.execute("UPDATE cart_items SET quantity = %s WHERE id = %s",
-                           (existing['quantity'] + quantity, existing['id']))
+                           (new_qty, existing['id']))
         else:
+            if quantity > product['stock_quantity']:
+                flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
+                return redirect(url_for('cart.view_cart'))
             cursor.execute("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s, %s, %s)",
                            (session['user_id'], product_id, quantity))
         db.commit()
     else:
         cart = session.get('cart', {})
         cart_key = str(product_id)
-        cart[cart_key] = cart.get(cart_key, 0) + quantity
+        new_qty = cart.get(cart_key, 0) + quantity
+        if new_qty > product['stock_quantity']:
+            flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
+            return redirect(url_for('cart.view_cart'))
+        cart[cart_key] = new_qty
         session['cart'] = cart
         session.modified = True
     flash('Product added to cart!', 'success')
@@ -261,7 +273,7 @@ def update_cart():
         return redirect(url_for('cart.view_cart'))
     
     if quantity <= 0:
-        return remove_from_cart(product_id)
+        return remove_from_cart(int(product_id))
     
     if session.get('user_id'):
         cursor.execute("""
