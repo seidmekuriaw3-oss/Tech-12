@@ -1,4 +1,6 @@
 from database.db import get_db
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ProductService:
@@ -22,7 +24,7 @@ class ProductService:
                 ORDER BY p.id DESC
             """).fetchall()
         except Exception as e:
-            print(f"Error getting all products: {e}")
+            logger.error(f"Error getting all products: {e}")
             return []
     
     @staticmethod
@@ -42,7 +44,7 @@ class ProductService:
                 ORDER BY p.id DESC
             """).fetchall()
         except Exception as e:
-            print(f"Error getting all admin products: {e}")
+            logger.error(f"Error getting all admin products: {e}")
             return []
     
     @staticmethod
@@ -65,7 +67,7 @@ class ProductService:
                 WHERE p.id = ?
             """, (pid,)).fetchone()
         except Exception as e:
-            print(f"Error getting product by ID {pid}: {e}")
+            logger.error(f"Error getting product by ID {pid}: {e}")
             return None
     
     @staticmethod
@@ -89,7 +91,7 @@ class ProductService:
                 ORDER BY p.id DESC
             """, (category_id,)).fetchall()
         except Exception as e:
-            print(f"Error getting products by category {category_id}: {e}")
+            logger.error(f"Error getting products by category {category_id}: {e}")
             return []
     
     @staticmethod
@@ -113,7 +115,7 @@ class ProductService:
                 ORDER BY p.id DESC LIMIT ?
             """, (limit,)).fetchall()
         except Exception as e:
-            print(f"Error getting featured products: {e}")
+            logger.error(f"Error getting featured products: {e}")
             return []
     
     @staticmethod
@@ -137,7 +139,7 @@ class ProductService:
                 ORDER BY p.id DESC LIMIT ?
             """, (limit,)).fetchall()
         except Exception as e:
-            print(f"Error getting new products: {e}")
+            logger.error(f"Error getting new products: {e}")
             return []
     
     @staticmethod
@@ -165,7 +167,7 @@ class ProductService:
                 ORDER BY p.id DESC
             """, ids).fetchall()
         except Exception as e:
-            print(f"Error getting products by IDs: {e}")
+            logger.error(f"Error getting products by IDs: {e}")
             return []
     
     @staticmethod
@@ -191,7 +193,7 @@ class ProductService:
                 ORDER BY p.id DESC
             """, (search, search, search)).fetchall()
         except Exception as e:
-            print(f"Error searching products: {e}")
+            logger.error(f"Error searching products: {e}")
             return []
     
     @staticmethod
@@ -258,7 +260,7 @@ class ProductService:
             row = cursor.fetchone()
             return row[0] if row else None
         except Exception as e:
-            print(f"Error creating product: {e}")
+            logger.error(f"Error creating product: {e}")
             db.rollback()
             return None
     
@@ -316,7 +318,7 @@ class ProductService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error updating product {pid}: {e}")
+            logger.error(f"Error updating product {pid}: {e}")
             db.rollback()
             return False
     
@@ -337,7 +339,7 @@ class ProductService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error deleting product {pid}: {e}")
+            logger.error(f"Error deleting product {pid}: {e}")
             db.rollback()
             return False
     
@@ -358,7 +360,7 @@ class ProductService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error hard deleting product {pid}: {e}")
+            logger.error(f"Error hard deleting product {pid}: {e}")
             db.rollback()
             return False
     
@@ -383,7 +385,7 @@ class ProductService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error updating stock for product {pid}: {e}")
+            logger.error(f"Error updating stock for product {pid}: {e}")
             db.rollback()
             return False
     
@@ -408,7 +410,7 @@ class ProductService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error restoring stock for product {pid}: {e}")
+            logger.error(f"Error restoring stock for product {pid}: {e}")
             db.rollback()
             return False
     
@@ -433,7 +435,7 @@ class ProductService:
                 ORDER BY p.stock_quantity ASC
             """, (threshold,)).fetchall()
         except Exception as e:
-            print(f"Error getting low stock products: {e}")
+            logger.error(f"Error getting low stock products: {e}")
             return []
     
     @staticmethod
@@ -454,7 +456,7 @@ class ProductService:
                 ORDER BY p.id DESC
             """).fetchall()
         except Exception as e:
-            print(f"Error getting out of stock products: {e}")
+            logger.error(f"Error getting out of stock products: {e}")
             return []
     
     @staticmethod
@@ -479,7 +481,7 @@ class ProductService:
                 ORDER BY p.price ASC
             """, (min_price, max_price)).fetchall()
         except Exception as e:
-            print(f"Error getting products by price range: {e}")
+            logger.error(f"Error getting products by price range: {e}")
             return []
     
     @staticmethod
@@ -501,7 +503,7 @@ class ProductService:
                 ORDER BY c.sort_order ASC
             """).fetchall()
         except Exception as e:
-            print(f"Error getting categories: {e}")
+            logger.error(f"Error getting categories: {e}")
             return []
     
     @staticmethod
@@ -517,7 +519,7 @@ class ProductService:
             result = db.execute("SELECT COUNT(*) FROM products WHERE is_active = 1").fetchone()
             return result[0] if result else 0
         except Exception as e:
-            print(f"Error getting product count: {e}")
+            logger.error(f"Error getting product count: {e}")
             return 0
     
     @staticmethod
@@ -542,7 +544,7 @@ class ProductService:
                 LIMIT ?
             """, (limit,)).fetchall()
         except Exception as e:
-            print(f"Error getting popular products: {e}")
+            logger.error(f"Error getting popular products: {e}")
             return []
     
     @staticmethod
@@ -562,5 +564,5 @@ class ProductService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error incrementing view for product {pid}: {e}")
+            logger.error(f"Error incrementing view for product {pid}: {e}")
             return False

@@ -55,8 +55,8 @@ class Config:
     # WhatsApp Business Integration
     WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '251987957957')
     
-    # Admin Authentication
-    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '1234')
+    # Admin Authentication — no fallback; app.py enforces this at startup
+    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '')
     
     # Shipping Configuration
     FREE_SHIPPING_THRESHOLD = int(os.environ.get('FREE_SHIPPING_THRESHOLD', 5000))
@@ -128,8 +128,8 @@ class Config:
     # Session lifetime (in seconds)
     SESSION_LIFETIME = int(os.environ.get('SESSION_LIFETIME', 86400))  # 24 hours
     
-    # Session cookie settings
-    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True' if os.environ.get('FLASK_ENV') == 'production' else 'False').lower() == 'true'
+    # Secure cookie by default; set SESSION_COOKIE_SECURE=False only for local dev
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True').lower() == 'true'
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     
@@ -187,7 +187,8 @@ class Config:
     # ============================================================
     
     CORS_ENABLED = os.environ.get('CORS_ENABLED', 'False').lower() == 'true'
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '*').split(',')
+    # Never default to '*' — require explicit CORS_ORIGINS in env
+    CORS_ORIGINS = [o.strip() for o in os.environ.get('CORS_ORIGINS', '').split(',') if o.strip()]
     
     # ============================================================
     # UTILITY METHODS
@@ -347,8 +348,8 @@ config_map = {
     'testing': TestingConfig
 }
 
-# Select appropriate configuration
-AppConfig = config_map.get(FLASK_ENV, DevelopmentConfig)
+# Default to the base Config (DEBUG=False) when FLASK_ENV is unrecognised
+AppConfig = config_map.get(FLASK_ENV, Config)
 
 # Ensure configuration is initialized when imported
 if __name__ != '__main__':

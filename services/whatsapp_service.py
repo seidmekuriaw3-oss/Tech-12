@@ -3,6 +3,8 @@ import urllib.parse
 import re
 import threading
 from datetime import datetime
+import logging
+logger = logging.getLogger(__name__)
 
 
 # Get WhatsApp number from environment variable with fallback
@@ -19,11 +21,11 @@ def _send_callmebot(phone: str, message: str, api_key: str):
         url = f"https://api.callmebot.com/whatsapp.php?phone={phone}&text={encoded}&apikey={api_key}"
         resp = _req.get(url, timeout=10)
         if resp.status_code == 200:
-            print(f"✅ WhatsApp notification sent to {phone}")
+            logger.warning(f"✅ WhatsApp notification sent to {phone}")
         else:
-            print(f"⚠️  CallMeBot response {resp.status_code}: {resp.text[:200]}")
+            logger.warning(f"⚠️  CallMeBot response {resp.status_code}: {resp.text[:200]}")
     except Exception as e:
-        print(f"⚠️  WhatsApp notification failed: {e}")
+        logger.warning(f"⚠️  WhatsApp notification failed: {e}")
 
 
 def send_owner_order_notification(order_number: str, customer_name: str,
@@ -38,7 +40,7 @@ def send_owner_order_notification(order_number: str, customer_name: str,
     owner_phone = os.environ.get('WHATSAPP_NUMBER', WHATSAPP_NUMBER)
 
     if not api_key:
-        print("ℹ️  CALLMEBOT_API_KEY not set — WhatsApp owner notification skipped.")
+        logger.warning("ℹ️  CALLMEBOT_API_KEY not set — WhatsApp owner notification skipped.")
         return
 
     # Build the message
@@ -204,7 +206,7 @@ class WhatsAppService:
             return f"https://wa.me/{phone}?text={encoded}"
             
         except Exception as e:
-            print(f"Error preparing order message: {e}")
+            logger.error(f"Error preparing order message: {e}")
             return f"https://wa.me/{WHATSAPP_NUMBER}"
     
     @staticmethod
@@ -242,7 +244,7 @@ class WhatsAppService:
             return f"https://wa.me/{phone}?text={encoded}"
             
         except Exception as e:
-            print(f"Error preparing contact message: {e}")
+            logger.error(f"Error preparing contact message: {e}")
             return f"https://wa.me/{WHATSAPP_NUMBER}"
     
     @staticmethod
@@ -262,7 +264,7 @@ class WhatsAppService:
             phone = WhatsAppService.format_phone_number(to_phone)
             return f"https://wa.me/{phone}?text={encoded}"
         except Exception as e:
-            print(f"Error preparing custom message: {e}")
+            logger.error(f"Error preparing custom message: {e}")
             return None
     
     @staticmethod
@@ -319,7 +321,7 @@ class WhatsAppService:
             return f"https://wa.me/{phone}?text={encoded}"
             
         except Exception as e:
-            print(f"Error preparing invoice: {e}")
+            logger.error(f"Error preparing invoice: {e}")
             return f"https://wa.me/{WHATSAPP_NUMBER}"
     
     @staticmethod
@@ -376,7 +378,7 @@ class WhatsAppService:
             return f"https://wa.me/{phone}?text={encoded}"
             
         except Exception as e:
-            print(f"Error preparing status update: {e}")
+            logger.error(f"Error preparing status update: {e}")
             return None
     
     @staticmethod
@@ -510,12 +512,12 @@ def send_customer_status_notification(
         )
         t.start()
         auto_sent = True
-        print(f"✅ Auto WhatsApp queued → {phone_fmt} [{status}] #{order_number}")
+        logger.warning(f"✅ Auto WhatsApp queued → {phone_fmt} [{status}] #{order_number}")
     else:
         if not api_key:
-            print("ℹ️  CALLMEBOT_API_KEY not set — customer WhatsApp auto-send skipped.")
+            logger.warning("ℹ️  CALLMEBOT_API_KEY not set — customer WhatsApp auto-send skipped.")
         if not phone_digits:
-            print(f"ℹ️  No phone for order #{order_number} — customer WhatsApp skipped.")
+            logger.warning(f"ℹ️  No phone for order #{order_number} — customer WhatsApp skipped.")
 
     return {'auto_sent': auto_sent, 'wa_url': wa_url}
 
@@ -536,16 +538,16 @@ def send_low_stock_alert(products: list):
         return
 
     # Always log — visible in server console even without CallMeBot
-    print(f"⚠️  LOW STOCK ALERT — {len(products)} product(s) at/below threshold:")
+    logger.warning(f"⚠️  LOW STOCK ALERT — {len(products)} product(s) at/below threshold:")
     for p in products:
         qty = p['stock_quantity']
         thr = p.get('low_stock_threshold', 0)
         label = "OUT OF STOCK" if qty == 0 else f"LOW ({qty} left, threshold {thr})"
-        print(f"   • [{p['id']}] {p.get('name_am') or p.get('name', 'Product')} — {label}")
+        logger.warning(f"   • [{p['id']}] {p.get('name_am') or p.get('name', 'Product')} — {label}")
 
     api_key = os.environ.get('CALLMEBOT_API_KEY', '')
     if not api_key:
-        print("ℹ️  CALLMEBOT_API_KEY not set — WhatsApp low-stock alert skipped.")
+        logger.warning("ℹ️  CALLMEBOT_API_KEY not set — WhatsApp low-stock alert skipped.")
         return
 
     owner_phone = os.environ.get('WHATSAPP_NUMBER', WHATSAPP_NUMBER)

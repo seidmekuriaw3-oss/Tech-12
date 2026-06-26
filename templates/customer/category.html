@@ -412,7 +412,7 @@
                         <button class="btn-add-to-cart" onclick="event.stopPropagation(); if(window.addToCart) addToCart('${product.id}', 1, this)">
                             🛒 {% if lang == 'am' %}ጋሪ ጨምር{% else %}Add to Cart{% endif %}
                         </button>
-                        <a href="{{ url_for('customer.product_detail', product_id=0) }}".replace('/0', '/' + ${product.id}) class="view-details" onclick="event.stopPropagation();">
+                        <a href="/products/${encodeURIComponent(product.id)}" class="view-details" onclick="event.stopPropagation();">
                             🔍 {% if lang == 'am' %}ዝርዝር{% else %}View Details{% endif %} →
                         </a>
                     </div>

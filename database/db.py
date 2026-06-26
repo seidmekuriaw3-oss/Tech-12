@@ -457,6 +457,32 @@ def init_db():
     cur.execute("CREATE INDEX IF NOT EXISTS idx_password_reset_token ON password_reset_tokens(token)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_password_reset_email ON password_reset_tokens(email)")
 
+    # --- Foreign-key constraints (idempotent: skip if already present) ---
+    _fk_specs = [
+        ('fk_products_category',    'products',    'category_id',  'categories', 'id', 'SET NULL'),
+        ('fk_order_items_order',     'order_items', 'order_id',     'orders',     'id', 'CASCADE'),
+        ('fk_order_items_product',   'order_items', 'product_id',   'products',   'id', 'SET NULL'),
+        ('fk_wishlist_product',      'wishlist',    'product_id',   'products',   'id', 'CASCADE'),
+        ('fk_reviews_product',       'reviews',     'product_id',   'products',   'id', 'CASCADE'),
+    ]
+    for name, tbl, col, ref_tbl, ref_col, on_delete in _fk_specs:
+        cur.execute("""
+            SELECT 1 FROM information_schema.table_constraints
+            WHERE constraint_name = %s
+              AND table_name      = %s
+              AND constraint_type = 'FOREIGN KEY'
+        """, (name, tbl))
+        if not cur.fetchone():
+            try:
+                cur.execute(
+                    f"ALTER TABLE {tbl} ADD CONSTRAINT {name} "
+                    f"FOREIGN KEY ({col}) REFERENCES {ref_tbl}({ref_col}) "
+                    f"ON DELETE {on_delete} NOT VALID"
+                )
+            except Exception as _fk_err:
+                import logging as _log
+                _log.getLogger(__name__).warning("Could not add FK %s: %s", name, _fk_err)
+
     cur.execute("SELECT COUNT(*) FROM categories")
     if cur.fetchone()[0] == 0:
         defaults = [

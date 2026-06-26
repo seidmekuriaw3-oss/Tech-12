@@ -40,19 +40,23 @@ def admin_login():
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
 
-        admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+        admin_username = os.environ.get('ADMIN_USERNAME', '')
         admin_password = os.environ.get('ADMIN_PASSWORD', '')
 
-        if not admin_password:
-            flash('Admin login is disabled. Set ADMIN_PASSWORD in environment variables.', 'danger')
+        if not admin_username or not admin_password:
+            flash('Admin login is not configured. Set ADMIN_USERNAME and ADMIN_PASSWORD in environment variables.', 'danger')
             return render_template('admin/login.html')
 
         if username == admin_username and password == admin_password:
             session['admin'] = True
             session['admin_username'] = username
             flash('Logged in successfully!', 'success')
-            next_page = request.args.get('next')
-            if next_page and next_page.startswith('/') and not next_page.startswith('//'):
+            next_page = request.args.get('next', '')
+            from werkzeug.security import safe_join  # noqa – only for import check
+            from urllib.parse import urlparse
+            _p = urlparse(next_page)
+            # Allow only relative URLs with no scheme/netloc (prevents open-redirect)
+            if next_page and not _p.scheme and not _p.netloc and next_page.startswith('/'):
                 return redirect(next_page)
             return redirect(url_for('admin.dashboard'))
         else:
@@ -130,7 +134,7 @@ def dashboard():
                                stats=stats, recent_orders=recent_orders,
                                low_stock_products=low_stock_products, lang=lang)
     except Exception as e:
-        print(f"Dashboard error: {e}")
+        current_app.logger.error(f"Dashboard error: {e}")
         flash('Error loading dashboard.', 'error')
         return render_template('admin/dashboard.html',
                                stats={}, recent_orders=[], low_stock_products=[], lang=lang)
@@ -158,7 +162,7 @@ def products():
                                categories=[dict(c) for c in categories_rows] if categories_rows else [],
                                lang=lang)
     except Exception as e:
-        print(f"Admin products error: {e}")
+        current_app.logger.error(f"Admin products error: {e}")
         flash('Error loading products.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -243,7 +247,7 @@ def product_create():
 
         return render_template('admin/products/create.html', categories=categories, lang=lang)
     except Exception as e:
-        print(f"Product create error: {e}")
+        current_app.logger.error(f"Product create error: {e}")
         flash(f'Error creating product: {e}', 'error')
         return redirect(url_for('admin.products'))
 
@@ -377,7 +381,7 @@ def product_edit(pid):
                             link=f'/product/{pid}'
                         )
                 except Exception as _ne:
-                    print(f"[price-drop notify] {_ne}")
+                    current_app.logger.warning(f"[price-drop notify] {_ne}")
 
             flash('Product updated successfully!', 'success')
             return redirect(url_for('admin.products'))
@@ -385,12 +389,12 @@ def product_edit(pid):
         return render_template('admin/products/edit.html',
                                product=dict(product), categories=categories, lang=lang)
     except Exception as e:
-        print(f"Product edit error: {e}")
+        current_app.logger.error(f"Product edit error: {e}")
         flash(f'Error editing product: {e}', 'error')
         return redirect(url_for('admin.products'))
 
 
-@admin_bp.route('/products/delete/<int:pid>', methods=['GET', 'POST', 'DELETE'])
+@admin_bp.route('/products/delete/<int:pid>', methods=['POST', 'DELETE'])
 @admin_required
 def product_delete(pid):
     try:
@@ -398,15 +402,11 @@ def product_delete(pid):
         cursor = conn.cursor()
         cursor.execute("UPDATE products SET is_active = 0 WHERE id = %s", (pid,))
         conn.commit()
-        if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': True, 'message': 'Product deleted successfully'})
-        flash('Product deleted successfully!', 'success')
+        return jsonify({'success': True, 'message': 'Product deleted successfully'})
     except Exception as e:
-        print(f"Product delete error: {e}")
-        if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': False, 'error': str(e)}), 500
-        flash('Error deleting product.', 'error')
-    return redirect(url_for('admin.products'))
+        import logging as _log
+        _log.getLogger(__name__).error("Product delete error: %s", e, exc_info=True)
+        return jsonify({'success': False, 'error': 'Could not delete product'}), 500
 
 
 @admin_bp.route('/products/duplicate/<int:pid>', methods=['GET', 'POST'])
@@ -456,7 +456,7 @@ def product_duplicate(pid):
         flash('Product duplicated successfully!', 'success')
         return redirect(url_for('admin.products'))
     except Exception as e:
-        print(f"Product duplicate error: {e}")
+        current_app.logger.error(f"Product duplicate error: {e}")
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': False, 'error': str(e)}), 500
         flash('Error duplicating product.', 'error')
@@ -560,7 +560,7 @@ def export_products():
         )
         return response
     except Exception as e:
-        print(f"Export products error: {e}")
+        current_app.logger.error(f"Export products error: {e}")
         flash('Error exporting products', 'error')
         return redirect(url_for('admin.products'))
 
@@ -782,7 +782,7 @@ def import_products():
                   vrow['sku'], vrow['is_featured'], vrow['is_new'], thumbnail))
             imported += 1
         except Exception as e:
-            print(f"Import row error: {e}")
+            current_app.logger.error(f"Import row error: {e}")
 
     conn.commit()
     flash(f'Successfully imported {imported} product(s). {len(row_errors)} row(s) skipped.', 'success')
@@ -803,7 +803,7 @@ def ads():
         return render_template('admin/ads/index.html',
                                ads=[dict(a) for a in ads_list] if ads_list else [], lang=lang)
     except Exception as e:
-        print(f"Admin ads error: {e}")
+        current_app.logger.error(f"Admin ads error: {e}")
         flash('Error loading ads.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -910,12 +910,12 @@ def ad_toggle(aid):
         conn.commit()
         flash('Advertisement status toggled!', 'success')
     except Exception as e:
-        print(f"Ad toggle error: {e}")
+        current_app.logger.error(f"Ad toggle error: {e}")
         flash('Error toggling ad.', 'error')
     return redirect(url_for('admin.ads'))
 
 
-@admin_bp.route('/ads/delete/<int:aid>', methods=['GET', 'POST', 'DELETE'])
+@admin_bp.route('/ads/delete/<int:aid>', methods=['POST', 'DELETE'])
 @admin_required
 def ad_delete(aid):
     try:
@@ -923,15 +923,11 @@ def ad_delete(aid):
         cursor = conn.cursor()
         cursor.execute("DELETE FROM advertisements WHERE id = %s", (aid,))
         conn.commit()
-        if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': True, 'message': 'Advertisement deleted successfully'})
-        flash('Advertisement deleted successfully!', 'success')
+        return jsonify({'success': True, 'message': 'Advertisement deleted successfully'})
     except Exception as e:
-        print(f"Ad delete error: {e}")
-        if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': False, 'error': str(e)}), 500
-        flash('Error deleting ad.', 'error')
-    return redirect(url_for('admin.ads'))
+        import logging as _log
+        _log.getLogger(__name__).error("Ad delete error: %s", e, exc_info=True)
+        return jsonify({'success': False, 'error': 'Could not delete advertisement'}), 500
 
 
 @admin_bp.route('/ads/reorder', methods=['POST'])
@@ -997,7 +993,7 @@ def orders():
                                orders=orders_list, status_counts=status_counts,
                                current_status=status, search=search, lang=lang)
     except Exception as e:
-        print(f"Admin orders error: {e}")
+        current_app.logger.error(f"Admin orders error: {e}")
         flash('Error loading orders.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1032,7 +1028,7 @@ def order_detail(oid):
                                order_items=[dict(i) for i in items] if items else [],
                                lang=lang)
     except Exception as e:
-        print(f"Order detail error: {e}")
+        current_app.logger.error(f"Order detail error: {e}")
         flash('Error loading order details.', 'error')
         return redirect(url_for('admin.orders'))
 
@@ -1122,7 +1118,7 @@ def order_update_status(oid):
                 auto_sent     = notif.get('auto_sent', False)
                 wa_notify_url = notif.get('wa_url')
             except Exception as _e:
-                print(f"WhatsApp notification error: {_e}")
+                current_app.logger.error(f"WhatsApp notification error: {_e}")
 
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({
@@ -1135,7 +1131,7 @@ def order_update_status(oid):
         flash(f'Order status updated to {status}!', 'success')
         return redirect(url_for('admin.order_detail', oid=oid))
     except Exception as e:
-        print(f"Order update error: {e}")
+        current_app.logger.error(f"Order update error: {e}")
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': False, 'error': str(e)}), 500
         flash('Error updating order status.', 'error')
@@ -1153,7 +1149,7 @@ def delete_order(oid):
         conn.commit()
         flash('Order deleted successfully!', 'success')
     except Exception as e:
-        print(f"Delete order error: {e}")
+        current_app.logger.error(f"Delete order error: {e}")
         flash('Error deleting order.', 'error')
     return redirect(url_for('admin.orders'))
 
@@ -1192,7 +1188,7 @@ def export_order(oid):
         )
         return response
     except Exception as e:
-        print(f"Export order error: {e}")
+        current_app.logger.error(f"Export order error: {e}")
         flash('Error exporting order.', 'error')
         return redirect(url_for('admin.orders'))
 
@@ -1262,7 +1258,7 @@ th{{background:#1a73e8;color:white}}
 </body></html>"""
         return html
     except Exception as e:
-        print(f"Invoice error: {e}")
+        current_app.logger.error(f"Invoice error: {e}")
         flash('Error generating invoice.', 'error')
         return redirect(url_for('admin.order_detail', oid=oid))
 
@@ -1283,7 +1279,7 @@ def admin_users():
         users = [dict(u) for u in cursor.fetchall()]
         return render_template('admin/users/index.html', users=users, lang=lang)
     except Exception as e:
-        print(f"Admin users error: {e}")
+        current_app.logger.error(f"Admin users error: {e}")
         flash('Error loading users.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1398,7 +1394,7 @@ def admin_customer_detail(uid):
                                top_products=top_products, cart_items=cart_items,
                                lang=lang)
     except Exception as e:
-        print(f"Customer detail error: {e}")
+        current_app.logger.error(f"Customer detail error: {e}")
         flash('Error loading customer details.', 'error')
         return redirect(url_for('admin.admin_users'))
 
@@ -1440,7 +1436,7 @@ def admin_inbox():
                                search=search, unread_count=unread_count,
                                total_count=total_count, lang=lang)
     except Exception as e:
-        print(f"Admin inbox error: {e}")
+        current_app.logger.error(f"Admin inbox error: {e}")
         flash('Error loading inbox.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1585,8 +1581,8 @@ def reports():
                                pending_orders=pending_orders, completed_orders=completed_orders,
                                lang=lang)
     except Exception as e:
-        print(f"Reports error: {e}")
-        import traceback; print(traceback.format_exc())
+        current_app.logger.error(f"Reports error: {e}")
+        current_app.logger.error("Traceback:", exc_info=True)
         flash('Error loading reports.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1658,7 +1654,7 @@ def reports_sales():
                                chart_labels=chart_labels, chart_values=chart_values,
                                start_date=start_date, end_date=end_date, lang=lang)
     except Exception as e:
-        print(f"Reports sales error: {e}")
+        current_app.logger.error(f"Reports sales error: {e}")
         flash('Error loading sales report.', 'error')
         return redirect(url_for('admin.reports'))
 
@@ -1716,7 +1712,7 @@ def reports_products():
                                total_value=stats_dict.get('total_value', 0),
                                lang=lang)
     except Exception as e:
-        print(f"Reports products error: {e}")
+        current_app.logger.error(f"Reports products error: {e}")
         flash('Error loading products report.', 'error')
         return redirect(url_for('admin.reports'))
 
@@ -1757,7 +1753,7 @@ def settings():
             conn.commit()
             flash('Settings saved successfully!', 'success')
         except Exception as e:
-            print(f"Settings save error: {e}")
+            current_app.logger.error(f"Settings save error: {e}")
             flash('Error saving settings.', 'error')
         return redirect(url_for('admin.settings'))
 
@@ -1800,7 +1796,7 @@ def change_password():
         conn.commit()
         flash('Password changed successfully!', 'success')
     except Exception as e:
-        print(f"Admin change password error: {e}")
+        current_app.logger.error(f"Admin change password error: {e}")
         flash('Error changing password. Please try again.', 'error')
 
     return redirect(url_for('admin.settings') + '#change-password')
@@ -1827,7 +1823,7 @@ def backup_database():
             'error': 'This app uses PostgreSQL. Use pg_dump from the shell or Replit Database panel to back up.'
         }), 400
     except Exception as e:
-        print(f"Backup error: {e}")
+        current_app.logger.error(f"Backup error: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
@@ -1872,11 +1868,11 @@ def send_notification():
                     uid = ur[0]
                     notify_user(uid, title, body, type='info', link=link or '')
             except Exception as fan_err:
-                print(f"⚠️ Notification fan-out partial failure: {fan_err}")
+                current_app.logger.warning(f"⚠️ Notification fan-out partial failure: {fan_err}")
 
             flash('Notification sent to all customers!', 'success')
         except Exception as e:
-            print(f"Send notification error: {e}")
+            current_app.logger.error(f"Send notification error: {e}")
             flash('Error sending notification.', 'error')
         return redirect(url_for('admin.send_notification'))
 
@@ -1922,7 +1918,7 @@ def admin_reviews():
                                reviews=[dict(r) for r in reviews_rows] if reviews_rows else [],
                                lang=lang)
     except Exception as e:
-        print(f"Admin reviews error: {e}")
+        current_app.logger.error(f"Admin reviews error: {e}")
         flash('Error loading reviews', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -2016,7 +2012,7 @@ def password_resets():
         return render_template('admin/password_resets/index.html',
                                tokens=tokens, lang=lang)
     except Exception as e:
-        print(f"Password resets admin error: {e}")
+        current_app.logger.error(f"Password resets admin error: {e}")
         flash('Error loading reset tokens.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -2032,6 +2028,6 @@ def invalidate_reset_token(token_id):
         conn.commit()
         flash('Reset token invalidated.', 'success')
     except Exception as e:
-        print(f"Invalidate token error: {e}")
+        current_app.logger.error(f"Invalidate token error: {e}")
         flash('Error invalidating token.', 'error')
     return redirect(url_for('admin.password_resets'))

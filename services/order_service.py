@@ -2,6 +2,8 @@ import json
 from database.db import get_db
 from utils.helpers import generate_order_number
 from datetime import datetime
+import logging
+logger = logging.getLogger(__name__)
 
 
 class OrderService:
@@ -78,7 +80,7 @@ class OrderService:
             return order_id
             
         except Exception as e:
-            print(f"Error creating order: {e}")
+            logger.error(f"Error creating order: {e}")
             db.rollback()
             return None
     
@@ -94,7 +96,7 @@ class OrderService:
             db = get_db()
             return db.execute("SELECT * FROM orders ORDER BY id DESC").fetchall()
         except Exception as e:
-            print(f"Error getting all orders: {e}")
+            logger.error(f"Error getting all orders: {e}")
             return []
     
     @staticmethod
@@ -112,7 +114,7 @@ class OrderService:
             db = get_db()
             return db.execute("SELECT * FROM orders WHERE id = ?", (oid,)).fetchone()
         except Exception as e:
-            print(f"Error getting order by ID {oid}: {e}")
+            logger.error(f"Error getting order by ID {oid}: {e}")
             return None
     
     @staticmethod
@@ -133,7 +135,7 @@ class OrderService:
                 (user_id,)
             ).fetchall()
         except Exception as e:
-            print(f"Error getting orders for user {user_id}: {e}")
+            logger.error(f"Error getting orders for user {user_id}: {e}")
             return []
     
     @staticmethod
@@ -154,7 +156,7 @@ class OrderService:
                 (order_number,)
             ).fetchone()
         except Exception as e:
-            print(f"Error getting order by number {order_number}: {e}")
+            logger.error(f"Error getting order by number {order_number}: {e}")
             return None
     
     @staticmethod
@@ -172,7 +174,7 @@ class OrderService:
         valid_statuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled']
         
         if status not in valid_statuses:
-            print(f"Invalid status: {status}")
+            logger.warning(f"Invalid status: {status}")
             return False
         
         try:
@@ -184,7 +186,7 @@ class OrderService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error updating order {oid} status: {e}")
+            logger.error(f"Error updating order {oid} status: {e}")
             db.rollback()
             return False
     
@@ -203,7 +205,7 @@ class OrderService:
         valid_statuses = ['pending', 'paid', 'failed', 'refunded']
         
         if payment_status not in valid_statuses:
-            print(f"Invalid payment status: {payment_status}")
+            logger.warning(f"Invalid payment status: {payment_status}")
             return False
         
         try:
@@ -215,7 +217,7 @@ class OrderService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error updating order {oid} payment status: {e}")
+            logger.error(f"Error updating order {oid} payment status: {e}")
             db.rollback()
             return False
     
@@ -237,7 +239,7 @@ class OrderService:
                 (status,)
             ).fetchall()
         except Exception as e:
-            print(f"Error getting orders by status {status}: {e}")
+            logger.error(f"Error getting orders by status {status}: {e}")
             return []
     
     @staticmethod
@@ -288,7 +290,7 @@ class OrderService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error deleting order {oid}: {e}")
+            logger.error(f"Error deleting order {oid}: {e}")
             db.rollback()
             return False
     
@@ -312,7 +314,7 @@ class OrderService:
                 WHERE oi.order_id = ?
             """, (order_id,)).fetchall()
         except Exception as e:
-            print(f"Error getting order items for order {order_id}: {e}")
+            logger.error(f"Error getting order items for order {order_id}: {e}")
             return []
     
     @staticmethod
@@ -376,7 +378,7 @@ class OrderService:
                 'today_orders': today_orders
             }
         except Exception as e:
-            print(f"Error getting order stats: {e}")
+            logger.error(f"Error getting order stats: {e}")
             return {
                 'total_orders': 0,
                 'total_revenue': 0,
@@ -405,7 +407,7 @@ class OrderService:
                 (limit,)
             ).fetchall()
         except Exception as e:
-            print(f"Error getting recent orders: {e}")
+            logger.error(f"Error getting recent orders: {e}")
             return []
     
     @staticmethod
@@ -430,7 +432,7 @@ class OrderService:
                 ORDER BY id DESC
             """, (search, search, search)).fetchall()
         except Exception as e:
-            print(f"Error searching orders: {e}")
+            logger.error(f"Error searching orders: {e}")
             return []
     
     @staticmethod
@@ -457,5 +459,5 @@ class OrderService:
                 ORDER BY date DESC
             """, (days,)).fetchall()
         except Exception as e:
-            print(f"Error getting daily sales: {e}")
+            logger.error(f"Error getting daily sales: {e}")
             return []

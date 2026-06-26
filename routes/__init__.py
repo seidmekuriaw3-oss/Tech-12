@@ -36,13 +36,13 @@ def register_routes(app):
     app.register_blueprint(utility_bp, url_prefix='/')
     app.register_blueprint(islamic_bp, url_prefix='/')
 
-    print("✅ All routes registered successfully")
-    print(f"   - Customer routes: /")
-    print(f"   - Admin routes: /admin")
-    print(f"   - API routes: /api")
-    print(f"   - Cart routes: /cart")
-    print(f"   - Utility routes: / (health, sitemap, robots, lang)")
-    print(f"   - Islamic routes: /islamic")
+    current_app.logger.warning("✅ All routes registered successfully")
+    current_app.logger.warning(f"   - Customer routes: /")
+    current_app.logger.warning(f"   - Admin routes: /admin")
+    current_app.logger.warning(f"   - API routes: /api")
+    current_app.logger.warning(f"   - Cart routes: /cart")
+    current_app.logger.warning(f"   - Utility routes: / (health, sitemap, robots, lang)")
+    current_app.logger.warning(f"   - Islamic routes: /islamic")
 
 
 # ==================== ROUTE HELPERS ====================
@@ -173,4 +173,5 @@ __all__ = [
 
 __version__ = '1.0.0'
 
-print("✅ Routes package initialized")
+import logging as _log
+_log.getLogger(__name__).debug("✅ Routes package initialized")

@@ -1,5 +1,17 @@
 import os
+import logging
 from flask import session
+
+logger = logging.getLogger(__name__)
+
+
+def _get_discount_rate():
+    """Return the configured member discount rate (avoids circular import)."""
+    try:
+        from routes.shared import USER_DISCOUNT_RATE
+        return USER_DISCOUNT_RATE
+    except Exception:
+        return 0.10
 
 
 class CartService:
@@ -49,7 +61,7 @@ class CartService:
                 if cart:
                     db = get_db()
                     cursor = db.cursor()
-                    placeholders = ','.join(['?'] * len(cart))
+                    placeholders = ','.join(['%s'] * len(cart))
                     cursor.execute(f"""
                         SELECT id, price FROM products WHERE id IN ({placeholders})
                     """, list(cart.keys()))
@@ -67,7 +79,7 @@ class CartService:
                 return subtotal
             return 0
         except Exception as e:
-            print(f"Error calculating subtotal: {e}")
+            logger.error(f"Error calculating subtotal: {e}")
             return 0
     
     @staticmethod
@@ -133,7 +145,7 @@ class CartService:
                 from database.db import get_db
                 db = get_db()
                 cursor = db.cursor()
-                placeholders = ','.join(['?'] * len(cart))
+                placeholders = ','.join(['%s'] * len(cart))
                 cursor.execute(f"""
                     SELECT id, name, name_am, name_ar, price, compare_price, thumbnail, stock_quantity
                     FROM products WHERE id IN ({placeholders}) AND is_active = 1
@@ -149,7 +161,7 @@ class CartService:
                             'name_am': p['name_am'],
                             'name_ar': p['name_ar'],
                             'price': float(p['price']),
-                            'discounted_price': float(p['price']) * 0.9 if session.get('user_id') else float(p['price']),
+                            'discounted_price': round(float(p['price']) * (1 - _get_discount_rate()), 2) if session.get('user_id') else float(p['price']),
                             'quantity': quantity,
                             'thumbnail': p['thumbnail'],
                             'stock_quantity': p['stock_quantity'],
@@ -168,7 +180,7 @@ class CartService:
             
             return items
         except Exception as e:
-            print(f"Error getting cart items: {e}")
+            logger.error(f"Error getting cart items: {e}")
             return []
     
     @staticmethod
@@ -188,7 +200,7 @@ class CartService:
             from database.db import get_db
             db = get_db()
             cursor = db.cursor()
-            cursor.execute("SELECT id, stock_quantity FROM products WHERE id = ? AND is_active = 1", (product_id,))
+            cursor.execute("SELECT id, stock_quantity FROM products WHERE id = %s AND is_active = 1", (product_id,))
             product = cursor.fetchone()
             
             if not product:
@@ -209,7 +221,7 @@ class CartService:
             return True
             
         except Exception as e:
-            print(f"Error adding item to cart: {e}")
+            logger.error(f"Error adding item to cart: {e}")
             return False
     
     @staticmethod
@@ -234,7 +246,7 @@ class CartService:
             
             return True
         except Exception as e:
-            print(f"Error removing item from cart: {e}")
+            logger.error(f"Error removing item from cart: {e}")
             return False
     
     @staticmethod
@@ -257,7 +269,7 @@ class CartService:
             from database.db import get_db
             db = get_db()
             cursor = db.cursor()
-            cursor.execute("SELECT stock_quantity FROM products WHERE id = ? AND is_active = 1", (product_id,))
+            cursor.execute("SELECT stock_quantity FROM products WHERE id = %s AND is_active = 1", (product_id,))
             product = cursor.fetchone()
             
             if product and product['stock_quantity'] < quantity:
@@ -269,7 +281,7 @@ class CartService:
             session.modified = True
             return True
         except Exception as e:
-            print(f"Error updating cart quantity: {e}")
+            logger.error(f"Error updating cart quantity: {e}")
             return False
     
     @staticmethod
@@ -280,7 +292,7 @@ class CartService:
             session.modified = True
             return True
         except Exception as e:
-            print(f"Error clearing cart: {e}")
+            logger.error(f"Error clearing cart: {e}")
             return False
     
     @staticmethod
@@ -332,7 +344,7 @@ class CartService:
             from database.db import get_db
             db = get_db()
             cursor = db.cursor()
-            cursor.execute("SELECT price FROM products WHERE id = ?", (product_id,))
+            cursor.execute("SELECT price FROM products WHERE id = %s", (product_id,))
             product = cursor.fetchone()
             
             if product:
@@ -376,7 +388,7 @@ class CartService:
             session_cart = session.get('cart', {})
             
             # Get database cart
-            cursor.execute("SELECT product_id, quantity FROM cart_items WHERE user_id = ?", (user_id,))
+            cursor.execute("SELECT product_id, quantity FROM cart_items WHERE user_id = %s", (user_id,))
             db_cart = {str(row['product_id']): row['quantity'] for row in cursor.fetchall()}
             
             # Merge carts (session cart takes priority)
@@ -384,13 +396,13 @@ class CartService:
                 if product_id in db_cart:
                     new_quantity = db_cart[product_id] + quantity
                     cursor.execute("""
-                        UPDATE cart_items SET quantity = ? 
-                        WHERE user_id = ? AND product_id = ?
+                        UPDATE cart_items SET quantity = %s
+                        WHERE user_id = %s AND product_id = %s
                     """, (new_quantity, user_id, product_id))
                 else:
                     cursor.execute("""
                         INSERT INTO cart_items (user_id, product_id, quantity)
-                        VALUES (?, ?, ?)
+                        VALUES (%s, %s, %s)
                     """, (user_id, product_id, quantity))
             
             db.commit()
@@ -401,7 +413,7 @@ class CartService:
             
             return True
         except Exception as e:
-            print(f"Error syncing cart with database: {e}")
+            logger.error(f"Error syncing cart with database: {e}")
             return False
     
     @staticmethod

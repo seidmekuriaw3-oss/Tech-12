@@ -743,7 +743,21 @@ def compress_response(response):
 
 
 @app.after_request
-def add_csp_headers(response):
+def add_security_headers(response):
+    # X-Frame-Options — prevents clickjacking
+    response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
+    # Prevent MIME-type sniffing
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    # Legacy XSS protection for older browsers
+    response.headers.setdefault('X-XSS-Protection', '1; mode=block')
+    # Referrer policy
+    response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
+    # HSTS — only over HTTPS; 1 year max-age
+    if request.is_secure:
+        response.headers.setdefault(
+            'Strict-Transport-Security', 'max-age=31536000; includeSubDomains'
+        )
+    # Content-Security-Policy — HTML responses only
     if 'text/html' in response.headers.get('Content-Type', ''):
         csp = {
             'default-src': "'self'",

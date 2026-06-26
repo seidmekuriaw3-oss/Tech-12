@@ -851,7 +851,7 @@ def api_place_order():
             if _low:
                 _stock_alert(_low)
     except Exception as _e:
-        print(f"Low-stock check error (api): {_e}")
+        current_app.logger.error(f"Low-stock check error (api): {_e}")
 
     # Clear cart
     cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))

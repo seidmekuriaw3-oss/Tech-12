@@ -131,8 +131,9 @@ def index():
                         'surah_name': _meta[2] if _meta else f'Surah {_snum}',
                         'ayah_num':   _v.get('verse', _aidx + 1) if isinstance(_v, dict) else _aidx + 1,
                     }
-        except Exception:
-            pass
+        except Exception as _isl_err:
+            import logging as _log
+            _log.getLogger(__name__).warning("Islamic/Hijri data error: %s", _isl_err)
 
         return render_template('customer/index.html',
                                featured_products=featured_list,
@@ -147,8 +148,8 @@ def index():
                                daily_ayah=daily_ayah,
                                next_event=next_event)
     except Exception as e:
-        import traceback
-        print(f"Home page error: {e}\n{traceback.format_exc()}")
+        import logging as _log
+        _log.getLogger(__name__).error("Home page error: %s", e, exc_info=True)
         return render_template('customer/index.html',
                                featured_products=[], new_products=[], ads=[],
                                categories=[], recently_viewed_products=[],
@@ -199,7 +200,7 @@ def products():
                                page=page, total_pages=total_pages, total=total, lang=lang)
     except Exception as e:
         import traceback
-        print(f"Products page error: {e}\n{traceback.format_exc()}")
+        current_app.logger.error(f"Products page error: {e}\n{traceback.format_exc()}")
         return render_template('customer/product_grid.html',
                                products=[], categories=[], page=1, total_pages=0,
                                total=0, lang=lang)
@@ -273,7 +274,7 @@ def product_detail(product_id):
                                discount=discount, final_price=round(final_price, 2),
                                is_logged_in=is_logged_in, lang=lang)
     except Exception as e:
-        print(f"Product detail error: {e}")
+        current_app.logger.error(f"Product detail error: {e}")
         flash('Error loading product.', 'error')
         return redirect(url_for('customer.products'))
 
@@ -296,7 +297,7 @@ def categories():
         return render_template('customer/categories.html',
                                categories=[dict(c) for c in cats] if cats else [], lang=lang)
     except Exception as e:
-        print(f"Categories error: {e}")
+        current_app.logger.error(f"Categories error: {e}")
         return render_template('customer/categories.html', categories=[], lang=lang)
 
 
@@ -347,7 +348,7 @@ def category_products(category_id=None):
                                page_title=page_title, current_category=category_id,
                                lang=lang)
     except Exception as e:
-        print(f"Category products error: {e}")
+        current_app.logger.error(f"Category products error: {e}")
         flash('Unable to load category products.', 'error')
         return render_template('customer/category.html',
                                products=[], categories=[], page_title='Products',
@@ -398,7 +399,7 @@ def wede_semira():
                                cat_products=cat_products,
                                lang=lang)
     except Exception as e:
-        print(f"Wede Semira page error: {e}")
+        current_app.logger.error(f"Wede Semira page error: {e}")
         return render_template('customer/wede_semira.html',
                                clothing_categories=[], products=[],
                                cat_products={}, lang=lang)
@@ -442,7 +443,7 @@ def search():
                                categories=[dict(c) for c in cats] if cats else [],
                                query=query, lang=lang)
     except Exception as e:
-        print(f"Search error: {e}")
+        current_app.logger.error(f"Search error: {e}")
         flash('Search failed.', 'error')
         return render_template('customer/search.html', products=[], categories=[],
                                query=query, lang=lang)
@@ -472,7 +473,7 @@ def branches():
                                branches=branches_list, phone_numbers=phone_numbers,
                                lang=lang)
     except Exception as e:
-        print(f"Branches error: {e}")
+        current_app.logger.error(f"Branches error: {e}")
         return render_template('customer/branches.html', branches=[], phone_numbers=[], lang=lang)
 
 
@@ -512,7 +513,7 @@ def contact():
             """, (name, email, phone, message))
             conn.commit()
         except Exception as e:
-            print(f"Error saving contact: {e}")
+            current_app.logger.error(f"Error saving contact: {e}")
 
         whatsapp_msg = (f"📬 New Contact Message - SEMIRA FASHION\n\n"
                         f"👤 Name: {name}\n")
@@ -620,7 +621,7 @@ def user_login():
                         conn.commit()
                         session.pop('cart', None)
                     except Exception as _me:
-                        print(f"Cart merge error: {_me}")
+                        current_app.logger.error(f"Cart merge error: {_me}")
                 flash('Login successful!', 'success')
                 next_page = request.args.get('next')
                 if next_page:
@@ -629,7 +630,7 @@ def user_login():
             else:
                 flash('Invalid email or password!', 'danger')
         except Exception as e:
-            print(f"Login error: {e}")
+            current_app.logger.error(f"Login error: {e}")
             flash('Login error. Please try again.', 'danger')
 
     return render_template('auth/user_login.html')
@@ -705,7 +706,7 @@ def user_register():
                     conn.commit()
                     session.pop('cart', None)
                 except Exception as _me:
-                    print(f"Cart merge on register error: {_me}")
+                    current_app.logger.error(f"Cart merge on register error: {_me}")
 
             flash('Registration successful! Welcome to SEMIRA FASHION!', 'success')
 
@@ -729,7 +730,7 @@ def user_register():
 
             return redirect(url_for('customer.index'))
         except Exception as e:
-            print(f"Register error: {e}")
+            current_app.logger.error(f"Register error: {e}")
             flash('Registration failed. Please try again.', 'danger')
 
     return render_template('auth/user_register.html')
@@ -778,7 +779,7 @@ def user_profile():
         return render_template('auth/user_profile.html',
                                user=user, order_stats=order_stats, orders=orders)
     except Exception as e:
-        print(f"Profile error: {e}")
+        current_app.logger.error(f"Profile error: {e}")
         flash('Error loading profile.', 'error')
         return redirect(url_for('customer.index'))
 
@@ -808,7 +809,7 @@ def update_profile():
             return jsonify({'success': True, 'message': 'Profile updated successfully!'})
         flash('Profile updated successfully!', 'success')
     except Exception as e:
-        print(f"Update profile error: {e}")
+        current_app.logger.error(f"Update profile error: {e}")
         if is_ajax:
             return jsonify({'success': False, 'error': str(e)}), 500
         flash('Error updating profile.', 'error')
@@ -835,7 +836,7 @@ def change_password():
         conn.commit()
         return jsonify({'success': True, 'message': 'Password changed successfully'})
     except Exception as e:
-        print(f"Password change error: {e}")
+        current_app.logger.error(f"Password change error: {e}")
         return jsonify({'success': False, 'error': 'Failed to change password'}), 500
 
 
@@ -860,7 +861,7 @@ def delete_account():
         session.clear()
         return jsonify({'success': True, 'message': 'Account deleted successfully'})
     except Exception as e:
-        print(f"Delete account error: {e}")
+        current_app.logger.error(f"Delete account error: {e}")
         return jsonify({'success': False, 'error': 'Failed to delete account'}), 500
 
 
@@ -896,7 +897,7 @@ def user_orders():
                                orders=[dict(o) for o in orders] if orders else [],
                                lang=lang, status_filter=status_filter)
     except Exception as e:
-        print(f"User orders error: {e}")
+        current_app.logger.error(f"User orders error: {e}")
         return render_template('auth/user_orders.html', orders=[], lang=lang, status_filter='')
 
 
@@ -926,7 +927,7 @@ def order_detail(order_id):
                                items=[dict(i) for i in items] if items else [],
                                whatsapp_number=WHATSAPP_NUMBER)
     except Exception as e:
-        print(f"Order detail error: {e}")
+        current_app.logger.error(f"Order detail error: {e}")
         flash('Error loading order.', 'error')
         return redirect(url_for('customer.user_orders'))
 
@@ -993,7 +994,7 @@ def order_confirmation(order_id):
                                items=items_list,
                                whatsapp_url=whatsapp_url)
     except Exception as e:
-        print(f"Order confirmation error: {e}")
+        current_app.logger.error(f"Order confirmation error: {e}")
         flash('Error loading order.', 'error')
         return redirect(url_for('customer.index'))
 
@@ -1049,7 +1050,7 @@ def forgot_password():
                 flash('If an account exists with that email, you will receive a reset link.', 'info')
 
         except Exception as e:
-            print(f"Forgot password error: {e}")
+            current_app.logger.error(f"Forgot password error: {e}")
             flash('Error processing request. Please try again.', 'error')
 
     return render_template('auth/forgot_password.html', lang=lang)
@@ -1068,7 +1069,7 @@ def reset_password(token):
         """, (token,))
         token_row = cursor.fetchone()
     except Exception as e:
-        print(f"Token lookup error: {e}")
+        current_app.logger.error(f"Token lookup error: {e}")
         token_row = None
 
     if (not token_row or token_row['used']
@@ -1101,7 +1102,7 @@ def reset_password(token):
             flash('Password reset successful! Please login with your new password.', 'success')
             return redirect(url_for('customer.user_login'))
         except Exception as e:
-            print(f"Reset password error: {e}")
+            current_app.logger.error(f"Reset password error: {e}")
             flash('Error resetting password. Please try again.', 'error')
 
     return render_template('auth/reset_password.html', token=token, lang=lang)
@@ -1180,7 +1181,7 @@ def track_order_public():
                                order=order_dict, items=items_list, lang=lang,
                                whatsapp_number=WHATSAPP_NUMBER, error=None)
     except Exception as e:
-        print(f"Order tracking error: {e}")
+        current_app.logger.error(f"Order tracking error: {e}")
         return render_template('customer/track_order.html',
                                order=None, items=[], lang=lang,
                                whatsapp_number=WHATSAPP_NUMBER,
@@ -1232,7 +1233,7 @@ def wishlist():
         return render_template('customer/wishlist.html',
                                wishlist=wishlist_list, lang=lang)
     except Exception as e:
-        print(f"Wishlist error: {e}")
+        current_app.logger.error(f"Wishlist error: {e}")
         flash('Error loading wishlist', 'error')
         return redirect(url_for('customer.index'))
 
@@ -1323,7 +1324,7 @@ def dashboard():
                                lang=lang)
     except Exception as e:
         import traceback
-        print(f"Dashboard error: {e}\n{traceback.format_exc()}")
+        current_app.logger.error(f"Dashboard error: {e}\n{traceback.format_exc()}")
         flash('Error loading dashboard.', 'error')
         return redirect(url_for('customer.index'))
 

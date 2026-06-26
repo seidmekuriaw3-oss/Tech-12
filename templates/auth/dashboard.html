@@ -1594,12 +1594,15 @@ function loadNotifications() {
                 const icon  = NOTIF_ICONS[n.type] || 'ℹ️';
                 const color = NOTIF_COLORS[n.type] || '#f3f4f6';
                 const unreadStyle = n.is_read ? '' : 'border-left:4px solid #1a7a4a;';
-                const link = n.link
-                    ? `onclick="window.location.href='${n.link}'"`
+                // Validate link: only allow http/https or safe relative paths (prevent XSS via javascript: URIs)
+                const rawLink = (n.link || '').trim();
+                const safeLink = /^https?:\/\//i.test(rawLink) || /^\/[^/]/i.test(rawLink) ? rawLink : '';
+                const linkAttr = safeLink
+                    ? `data-safe-href="${escapeHtmlDb(safeLink)}" onclick="var h=this.getAttribute('data-safe-href');if(h)window.location.href=h;"`
                     : '';
-                return `<div style="background:${color};border-radius:14px;padding:14px 16px;cursor:${n.link ? 'pointer' : 'default'};
+                return `<div style="background:${color};border-radius:14px;padding:14px 16px;cursor:${safeLink ? 'pointer' : 'default'};
                                ${unreadStyle}display:flex;gap:14px;align-items:flex-start;opacity:${n.is_read ? 0.7 : 1};"
-                          ${link}>
+                          ${linkAttr}>
                     <div style="font-size:24px;flex-shrink:0;margin-top:2px;">${icon}</div>
                     <div style="flex:1;min-width:0;">
                         <div style="font-size:14px;font-weight:${n.is_read ? 600 : 800};color:#1a1a2e;">${escapeHtmlDb(n.title)}</div>

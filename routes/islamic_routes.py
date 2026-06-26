@@ -367,7 +367,7 @@ def prayer_times_api():
             'fallback':   used_fallback,
         })
     except Exception:
-        print(traceback.format_exc())
+        current_app.logger.error("Traceback:", exc_info=True)
         return jsonify({
             'success':  True,
             'date':     datetime.date.today().isoformat(),
@@ -396,7 +396,7 @@ def qibla_direction_api():
         bearing = (math.degrees(math.atan2(x, y)) + 360) % 360
         return jsonify({'success': True, 'bearing': round(bearing, 2)})
     except Exception:
-        print(traceback.format_exc())
+        current_app.logger.error("Traceback:", exc_info=True)
         return jsonify({'success': True, 'bearing': 4.61})
 
 
@@ -425,7 +425,7 @@ def monthly_prayer_times():
             })
         return jsonify({'success': True, 'days': result, 'month': month, 'year': year})
     except Exception:
-        print(traceback.format_exc())
+        current_app.logger.error("Traceback:", exc_info=True)
         return jsonify({'success': False, 'error': 'Calculation error'}), 500
 
 
@@ -461,5 +461,5 @@ def prayer_schedule_csv():
             headers={'Content-Disposition': f'attachment; filename="prayer_times_{month_name}.csv"'}
         )
     except Exception:
-        print(traceback.format_exc())
+        current_app.logger.error("Traceback:", exc_info=True)
         return jsonify({'success': False, 'error': 'Export failed'}), 500

@@ -1,4 +1,6 @@
 from database.db import get_db
+import logging
+logger = logging.getLogger(__name__)
 
 
 class AdService:
@@ -16,7 +18,7 @@ class AdService:
             db = get_db()
             return db.execute("SELECT * FROM advertisements ORDER BY id DESC").fetchall()
         except Exception as e:
-            print(f"Error getting all ads: {e}")
+            logger.error(f"Error getting all ads: {e}")
             return []
     
     @staticmethod
@@ -33,21 +35,24 @@ class AdService:
     def get_active():
         """
         Get only active advertisements for customer display.
-        
+
         Returns:
             list: Active ads ordered by sort_order
         """
         try:
             db = get_db()
             return db.execute(
-                """SELECT * FROM advertisements 
-                   WHERE is_active = 1 
+                """SELECT id, title, title_am, title_ar,
+                          description, description_am, description_ar,
+                          image, media_url, link, sort_order, start_date, end_date
+                   FROM advertisements
+                   WHERE is_active = 1
                    AND (end_date IS NULL OR end_date > NOW())
                    AND (start_date IS NULL OR start_date <= NOW())
                    ORDER BY sort_order ASC, id DESC"""
             ).fetchall()
         except Exception as e:
-            print(f"Error getting active ads: {e}")
+            logger.error(f"Error getting active ads: {e}")
             return []
     
     @staticmethod
@@ -63,9 +68,9 @@ class AdService:
         """
         try:
             db = get_db()
-            return db.execute("SELECT * FROM advertisements WHERE id = ?", (aid,)).fetchone()
+            return db.execute("SELECT * FROM advertisements WHERE id = %s", (aid,)).fetchone()
         except Exception as e:
-            print(f"Error getting ad by ID {aid}: {e}")
+            logger.error(f"Error getting ad by ID {aid}: {e}")
             return None
     
     @staticmethod
@@ -118,7 +123,7 @@ class AdService:
             row = cursor.fetchone()
             return row[0] if row else None
         except Exception as e:
-            print(f"Error creating ad: {e}")
+            logger.error(f"Error creating ad: {e}")
             db.rollback()
             return None
     
@@ -142,11 +147,11 @@ class AdService:
             db = get_db()
             db.execute(
                 """UPDATE advertisements SET 
-                    title=?, title_am=?, title_ar=?, 
-                    description=?, description_am=?, description_ar=?,
-                    image=?, link=?, sort_order=?, is_active=?,
-                    start_date=?, end_date=?, updated_at=CURRENT_TIMESTAMP
-                   WHERE id=?""",
+                    title=%s, title_am=%s, title_ar=%s, 
+                    description=%s, description_am=%s, description_ar=%s,
+                    image=%s, link=%s, sort_order=%s, is_active=%s,
+                    start_date=%s, end_date=%s, updated_at=CURRENT_TIMESTAMP
+                   WHERE id=%s""",
                 (
                     data.get('title', ''),
                     data.get('title_am', ''),
@@ -166,7 +171,7 @@ class AdService:
             db.commit()
             return True
         except Exception as e:
-            print(f"Error updating ad {aid}: {e}")
+            logger.error(f"Error updating ad {aid}: {e}")
             db.rollback()
             return False
     
@@ -183,11 +188,11 @@ class AdService:
         """
         try:
             db = get_db()
-            db.execute("DELETE FROM advertisements WHERE id = ?", (aid,))
+            db.execute("DELETE FROM advertisements WHERE id = %s", (aid,))
             db.commit()
             return True
         except Exception as e:
-            print(f"Error deleting ad {aid}: {e}")
+            logger.error(f"Error deleting ad {aid}: {e}")
             db.rollback()
             return False
     
@@ -205,13 +210,13 @@ class AdService:
         try:
             db = get_db()
             db.execute(
-                "UPDATE advertisements SET is_active = NOT is_active, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                "UPDATE advertisements SET is_active = 1 - is_active, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
                 (aid,)
             )
             db.commit()
             return True
         except Exception as e:
-            print(f"Error toggling ad {aid}: {e}")
+            logger.error(f"Error toggling ad {aid}: {e}")
             db.rollback()
             return False
     
@@ -229,13 +234,13 @@ class AdService:
         try:
             db = get_db()
             db.execute(
-                "UPDATE advertisements SET is_active = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                "UPDATE advertisements SET is_active = 1, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
                 (aid,)
             )
             db.commit()
             return True
         except Exception as e:
-            print(f"Error activating ad {aid}: {e}")
+            logger.error(f"Error activating ad {aid}: {e}")
             db.rollback()
             return False
     
@@ -253,13 +258,13 @@ class AdService:
         try:
             db = get_db()
             db.execute(
-                "UPDATE advertisements SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                "UPDATE advertisements SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
                 (aid,)
             )
             db.commit()
             return True
         except Exception as e:
-            print(f"Error deactivating ad {aid}: {e}")
+            logger.error(f"Error deactivating ad {aid}: {e}")
             db.rollback()
             return False
     
@@ -278,13 +283,13 @@ class AdService:
         try:
             db = get_db()
             db.execute(
-                "UPDATE advertisements SET sort_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                "UPDATE advertisements SET sort_order = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
                 (sort_order, aid)
             )
             db.commit()
             return True
         except Exception as e:
-            print(f"Error updating sort order for ad {aid}: {e}")
+            logger.error(f"Error updating sort order for ad {aid}: {e}")
             db.rollback()
             return False
     
@@ -301,7 +306,7 @@ class AdService:
             result = db.execute("SELECT COUNT(*) FROM advertisements").fetchone()
             return result[0] if result else 0
         except Exception as e:
-            print(f"Error getting ad count: {e}")
+            logger.error(f"Error getting ad count: {e}")
             return 0
     
     @staticmethod
@@ -317,5 +322,5 @@ class AdService:
             result = db.execute("SELECT COUNT(*) FROM advertisements WHERE is_active = 1").fetchone()
             return result[0] if result else 0
         except Exception as e:
-            print(f"Error getting active ad count: {e}")
+            logger.error(f"Error getting active ad count: {e}")
             return 0

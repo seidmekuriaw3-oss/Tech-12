@@ -163,7 +163,7 @@
             
             <div class="form-group">
                 <label>Admin Email</label>
-                <input type="email" name="admin_email" id="admin_email" value="{{ settings.admin_email|default('admin@semirafashion.com') }}" placeholder="admin@example.com">
+                <input type="email" name="admin_email" id="admin_email" required maxlength="254" value="{{ settings.admin_email|default('admin@semirafashion.com') }}" placeholder="admin@example.com">
                 <small>Used for notifications and support</small>
             </div>
             

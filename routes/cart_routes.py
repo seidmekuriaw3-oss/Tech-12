@@ -561,7 +561,7 @@ def place_order():
             if _low:
                 send_low_stock_alert(_low)
     except Exception as _e:
-        print(f"Low-stock check error: {_e}")
+        current_app.logger.error(f"Low-stock check error: {_e}")
 
     # Clear cart
     if user_id:
