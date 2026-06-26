@@ -783,6 +783,30 @@
     {% endfor %}
 </div>
 
+<!-- Mid-Page Promo Banner -->
+<a href="{{ url_for('customer.products') }}" style="display:block;text-decoration:none;margin:32px 0 8px 0;">
+  <div style="background:linear-gradient(135deg,#1a472a 0%,#2d6a4f 60%,#52b788 100%);border-radius:18px;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 4px 18px rgba(0,0,0,0.18);">
+    <div style="display:flex;align-items:center;gap:16px;flex:1;">
+      <span style="font-size:48px;flex-shrink:0;">🛍️</span>
+      <div>
+        <span style="display:block;background:rgba(255,255,255,0.18);color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;border-radius:20px;padding:2px 12px;margin-bottom:6px;width:fit-content;">ሁሉም ምርቶች</span>
+        <p style="margin:0;color:#fff;font-size:17px;font-weight:800;line-height:1.4;">
+          {% if lang == 'am' %}ሴቶች እና ህፃናት ልብሶችን ሁሉ ይዘው ይሂዱ{% elif lang == 'ar' %}تسوقي ملابس النساء والأطفال الآن{% else %}Shop All Women's & Kids' Clothing{% endif %}
+        </p>
+        <p style="margin:4px 0 0;color:rgba(255,255,255,0.78);font-size:13px;">
+          {% if lang == 'am' %}ዘመናዊ ፋሽን — ወሎ ደሴ ኩታበር{% elif lang == 'ar' %}موضة عصرية — ولو ديسي{% else %}Modern Fashion — Wollo Dessie Kutaber{% endif %}
+        </p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <span style="background:rgba(255,255,255,0.18);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;white-space:nowrap;">
+        {% if lang == 'am' %}ሁሉንም ይመልከቱ{% elif lang == 'ar' %}عرض الكل{% else %}View All{% endif %}
+      </span>
+      <span style="color:#fff;font-size:24px;">→</span>
+    </div>
+  </div>
+</a>
+
 <!-- New Products Section -->
 {% if new_products and new_products|length > 0 %}
 <h2 style="margin-top: 40px;">{{ t.new_arrivals }}</h2>
