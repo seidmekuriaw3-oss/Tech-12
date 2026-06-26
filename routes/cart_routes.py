@@ -467,7 +467,9 @@ def place_order():
     total = totals['total']
     discount = totals['discount']
 
-    coupon_info = session.pop('applied_coupon', None)
+    # Read coupon from session but do NOT pop yet — if stock fails we roll back
+    # and the coupon must remain available for the user's next attempt.
+    coupon_info = session.get('applied_coupon')
     if coupon_info:
         # Re-validate coupon against current cart subtotal to prevent stale-discount abuse
         coupon_id   = coupon_info.get('coupon_id')
@@ -570,6 +572,9 @@ def place_order():
         session.pop('cart', None)
 
     db.commit()
+
+    # Coupon was successfully consumed — remove it from session only after commit
+    session.pop('applied_coupon', None)
 
     flash(f'✅ Order placed successfully! Your order number is: {order_number}', 'success')
 

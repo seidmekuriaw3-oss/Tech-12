@@ -77,15 +77,25 @@ def index():
         recently_viewed_ids = session.get('recently_viewed', [])
         recently_viewed_list = []
         if recently_viewed_ids:
-            placeholders = ','.join(['%s' for _ in recently_viewed_ids])
-            cursor.execute(f"""
-                SELECT p.*, c.name as category_name, c.name_am as category_name_am
-                FROM products p LEFT JOIN categories c ON p.category_id = c.id
-                WHERE p.id IN ({placeholders}) AND p.is_active = 1
-            """, [int(i) for i in recently_viewed_ids])
-            rows = cursor.fetchall()
-            row_map = {str(row['id']): row_to_dict(row) for row in rows}
-            recently_viewed_list = [row_map[i] for i in recently_viewed_ids if i in row_map]
+            # Validate each ID is a safe integer before use in query
+            safe_ids = []
+            for i in recently_viewed_ids:
+                try:
+                    safe_ids.append(int(i))
+                except (ValueError, TypeError):
+                    pass
+            if not safe_ids:
+                recently_viewed_ids = []
+            else:
+                placeholders = ','.join(['%s'] * len(safe_ids))
+                cursor.execute(f"""
+                    SELECT p.*, c.name as category_name, c.name_am as category_name_am
+                    FROM products p LEFT JOIN categories c ON p.category_id = c.id
+                    WHERE p.id IN ({placeholders}) AND p.is_active = 1
+                """, safe_ids)
+                rows = cursor.fetchall()
+                row_map = {str(row['id']): row_to_dict(row) for row in rows}
+                recently_viewed_list = [row_map[i] for i in recently_viewed_ids if i in row_map]
 
         platform = get_platform()
         show_about = platform in ('desktop', 'mobile_browser')

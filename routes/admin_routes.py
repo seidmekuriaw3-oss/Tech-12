@@ -186,11 +186,15 @@ def product_create():
             description_am = request.form.get('description_am', '')
             description_ar = request.form.get('description_ar', '')
             description_en = request.form.get('description_en', '') or description
-            price = float(request.form.get('price', 0) or 0)
-            compare_price = request.form.get('compare_price')
-            compare_price = float(compare_price) if compare_price else None
-            stock_quantity = int(request.form.get('stock_quantity', 0) or 0)
-            category_id = int(request.form.get('category_id', 0) or 0) or None
+            try:
+                price = float(request.form.get('price', 0) or 0)
+                compare_price = request.form.get('compare_price')
+                compare_price = float(compare_price) if compare_price else None
+                stock_quantity = int(request.form.get('stock_quantity', 0) or 0)
+                category_id = int(request.form.get('category_id', 0) or 0) or None
+            except (ValueError, TypeError) as e:
+                flash(f'Invalid number in Price, Compare Price, Stock, or Category field: {e}', 'error')
+                return redirect(url_for('admin.product_create'))
             material = request.form.get('material', '')
             color = request.form.get('color', '')
             sku = request.form.get('sku', '')
@@ -281,11 +285,15 @@ def product_edit(pid):
             description_am = request.form.get('description_am', '')
             description_ar = request.form.get('description_ar', '')
             description_en = request.form.get('description_en', '') or description
-            price = float(request.form.get('price', 0) or 0)
-            compare_price = request.form.get('compare_price')
-            compare_price = float(compare_price) if compare_price else None
-            stock_quantity = int(request.form.get('stock_quantity', 0) or 0)
-            category_id = int(request.form.get('category_id', 0) or 0) or None
+            try:
+                price = float(request.form.get('price', 0) or 0)
+                compare_price = request.form.get('compare_price')
+                compare_price = float(compare_price) if compare_price else None
+                stock_quantity = int(request.form.get('stock_quantity', 0) or 0)
+                category_id = int(request.form.get('category_id', 0) or 0) or None
+            except (ValueError, TypeError) as e:
+                flash(f'Invalid number in Price, Compare Price, Stock, or Category field: {e}', 'error')
+                return redirect(url_for('admin.product_edit', pid=pid))
             material = request.form.get('material', '')
             color = request.form.get('color', '')
             sku = request.form.get('sku', '')
@@ -956,19 +964,23 @@ def ad_edit(aid):
     return render_template('admin/ads/edit.html', ad=dict(ad))
 
 
-@admin_bp.route('/ads/toggle/<int:aid>')
+@admin_bp.route('/ads/toggle/<int:aid>', methods=['POST'])
 @admin_required
 def ad_toggle(aid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("UPDATE advertisements SET is_active = NOT is_active WHERE id = %s", (aid,))
+        cursor.execute(
+            "UPDATE advertisements SET is_active = NOT is_active WHERE id = %s RETURNING is_active",
+            (aid,)
+        )
+        row = cursor.fetchone()
         conn.commit()
-        flash('Advertisement status toggled!', 'success')
+        new_status = bool(row[0]) if row else None
+        return jsonify({'success': True, 'is_active': new_status})
     except Exception as e:
         current_app.logger.error(f"Ad toggle error: {e}")
-        flash('Error toggling ad.', 'error')
-    return redirect(url_for('admin.ads'))
+        return jsonify({'success': False, 'error': 'Could not toggle advertisement status'}), 500
 
 
 @admin_bp.route('/ads/delete/<int:aid>', methods=['POST', 'DELETE'])

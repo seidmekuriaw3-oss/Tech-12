@@ -258,18 +258,21 @@ def api_cart_add():
     """Add product to cart"""
     if request.method == 'GET':
         product_id = request.args.get('product_id')
-        quantity = int(request.args.get('quantity', 1))
+        quantity = request.args.get('quantity', 1)
     else:
         data = request.get_json(silent=True) or {}
         product_id = data.get('product_id')
         quantity = data.get('quantity', 1)
-    
+
     if not product_id:
         return jsonify({'success': False, 'error': 'Invalid data'}), 400
-    
-    product_id = int(product_id)
-    quantity = int(quantity)
-    
+
+    try:
+        product_id = int(product_id)
+        quantity = int(quantity)
+    except (ValueError, TypeError):
+        return jsonify({'success': False, 'error': 'Invalid product ID or quantity'}), 400
+
     if not product_id:
         return jsonify({'success': False, 'error': 'Product ID required'}), 400
 
@@ -406,8 +409,10 @@ def api_cart_remove():
         else:
             data = request.get_json(silent=True) or {}
             product_id = data.get('product_id')
-        if product_id:
-            product_id = int(product_id)
+        try:
+            product_id = int(product_id) if product_id else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid product ID'}), 400
 
         if not product_id:
             return jsonify({'success': False, 'error': 'Product ID required'}), 400
@@ -441,14 +446,16 @@ def api_cart_update():
     try:
         if request.method == 'GET':
             product_id = request.args.get('product_id')
-            quantity = int(request.args.get('quantity', 1))
+            quantity = request.args.get('quantity', 1)
         else:
             data = request.get_json(silent=True) or {}
             product_id = data.get('product_id')
             quantity = data.get('quantity', 1)
-        if product_id:
-            product_id = int(product_id)
-        quantity = int(quantity)
+        try:
+            product_id = int(product_id) if product_id else None
+            quantity = int(quantity)
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid product ID or quantity'}), 400
 
         if not product_id:
             return jsonify({'success': False, 'error': 'Product ID required'}), 400
