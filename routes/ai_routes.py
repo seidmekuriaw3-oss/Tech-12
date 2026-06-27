@@ -283,6 +283,22 @@ def smart_fallback(message: str, user_id=None, lang: str = 'am') -> str:
     return f"ሰላም! 🌸 ምን ልርዳዎ? ምርቶች፣ ዋጋ፣ ትዕዛዝ ሁኔታ ሁሉን ልረዳ እችላለሁ። WhatsApp: wa.me/{WHATSAPP_NUMBER}"
 
 
+def _log_conversation(message: str, reply: str, source: str, lang: str,
+                       user_id=None, user_name: str = None, ip: str = None):
+    """Persist a chat turn to ai_conversations table (best-effort, never raises)."""
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO ai_conversations
+                (user_id, user_name, user_message, ai_reply, source, lang, ip_address)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (user_id, user_name, message[:1000], reply[:2000], source, lang, ip))
+        db.commit()
+    except Exception as _e:
+        logger.debug(f"AI conversation log failed (non-fatal): {_e}")
+
+
 @ai_bp.route('/ai-chat', methods=['POST'])
 @limiter.limit("20 per minute; 100 per hour")
 def ai_chat():
@@ -301,12 +317,15 @@ def ai_chat():
             message = message[:500]
 
         api_key = os.environ.get('GROQ_API_KEY', '').strip()
+        user_id   = session.get('user_id')
+        user_name = session.get('username') or session.get('full_name')
+        ip        = request.remote_addr
 
         if not api_key or not _GROQ_AVAILABLE:
-            reply = smart_fallback(message, user_id=session.get('user_id'), lang=lang)
+            reply = smart_fallback(message, user_id=user_id, lang=lang)
+            _log_conversation(message, reply, 'fallback', lang, user_id, user_name, ip)
             return jsonify({'success': True, 'reply': reply, 'source': 'fallback'})
 
-        user_id = session.get('user_id')
         products_context = get_product_context(message)
         orders_context = get_order_context(user_id, message, lang)
 
@@ -334,15 +353,17 @@ def ai_chat():
             temperature=0.7,
         )
         reply = completion.choices[0].message.content.strip()
+        _log_conversation(message, reply, 'groq', lang, user_id, user_name, ip)
         return jsonify({'success': True, 'reply': reply, 'source': 'groq'})
 
     except Exception as e:
         logger.error(f"AI chat error: {e}")
-        fallback = smart_fallback(
-            message or '',
-            user_id=session.get('user_id'),
-            lang=session.get('lang', 'am')
-        )
+        _lang = session.get('lang', 'am')
+        _uid  = session.get('user_id')
+        _name = session.get('username') or session.get('full_name')
+        _ip   = request.remote_addr
+        fallback = smart_fallback(message or '', user_id=_uid, lang=_lang)
+        _log_conversation(message or '', fallback, 'error', _lang, _uid, _name, _ip)
         return jsonify({'success': True, 'reply': fallback, 'source': 'fallback'})
 
 

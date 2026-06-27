@@ -454,6 +454,22 @@ def init_db():
         )
     """)
 
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS ai_conversations (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            user_name TEXT,
+            user_message TEXT NOT NULL,
+            ai_reply TEXT NOT NULL,
+            source VARCHAR(20) DEFAULT 'fallback',
+            lang VARCHAR(5) DEFAULT 'am',
+            ip_address VARCHAR(45),
+            created_at TIMESTAMP DEFAULT NOW()
+        )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_ai_conv_created ON ai_conversations(created_at DESC)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_ai_conv_user ON ai_conversations(user_id)")
+
     cur.execute("CREATE INDEX IF NOT EXISTS idx_user_notif_user ON user_notifications(user_id)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_user_notif_read ON user_notifications(is_read)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_admin_alerts_read ON admin_alerts(is_read)")

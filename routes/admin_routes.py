@@ -1955,6 +1955,110 @@ def change_password():
     return redirect(url_for('admin.settings') + '#change-password')
 
 
+@admin_bp.route('/ai-logs')
+@admin_required
+def ai_logs():
+    """AI conversation log — paginated list with stats and filters."""
+    lang = get_lang()
+    conn = get_db()
+    cursor = conn.cursor()
+
+    page      = max(1, int(request.args.get('page', 1)))
+    per_page  = 20
+    offset    = (page - 1) * per_page
+    source_f  = request.args.get('source', '')   # groq | fallback | error | ''
+    lang_f    = request.args.get('lang', '')
+    q         = request.args.get('q', '').strip()
+    date_from = request.args.get('date_from', '')
+    date_to   = request.args.get('date_to', '')
+
+    # Build WHERE clause
+    wheres = []
+    params = []
+    if source_f:
+        wheres.append("source = %s"); params.append(source_f)
+    if lang_f:
+        wheres.append("lang = %s"); params.append(lang_f)
+    if q:
+        wheres.append("(user_message ILIKE %s OR ai_reply ILIKE %s OR user_name ILIKE %s)")
+        params += [f'%{q}%', f'%{q}%', f'%{q}%']
+    if date_from:
+        wheres.append("created_at::date >= %s"); params.append(date_from)
+    if date_to:
+        wheres.append("created_at::date <= %s"); params.append(date_to)
+
+    where_sql = ('WHERE ' + ' AND '.join(wheres)) if wheres else ''
+
+    # Total count
+    cursor.execute(f"SELECT COUNT(*) FROM ai_conversations {where_sql}", params)
+    total = cursor.fetchone()[0]
+    total_pages = max(1, -(-total // per_page))
+
+    # Rows
+    cursor.execute(f"""
+        SELECT id, user_id, user_name, user_message, ai_reply, source, lang, ip_address, created_at
+        FROM ai_conversations {where_sql}
+        ORDER BY created_at DESC
+        LIMIT %s OFFSET %s
+    """, params + [per_page, offset])
+    rows = cursor.fetchall()
+
+    # Summary stats (always over full table)
+    cursor.execute("""
+        SELECT
+            COUNT(*) AS total,
+            COUNT(*) FILTER (WHERE source = 'groq')     AS groq_count,
+            COUNT(*) FILTER (WHERE source = 'fallback') AS fallback_count,
+            COUNT(*) FILTER (WHERE source = 'error')    AS error_count,
+            COUNT(DISTINCT ip_address)                   AS unique_ips,
+            COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours') AS today
+        FROM ai_conversations
+    """)
+    stats = cursor.fetchone()
+
+    # Top 5 questions
+    cursor.execute("""
+        SELECT user_message, COUNT(*) AS n
+        FROM ai_conversations
+        GROUP BY user_message
+        ORDER BY n DESC
+        LIMIT 5
+    """)
+    top_questions = cursor.fetchall()
+
+    return render_template(
+        'admin/ai_logs.html',
+        lang=lang,
+        rows=rows,
+        stats=stats,
+        top_questions=top_questions,
+        page=page,
+        total_pages=total_pages,
+        total=total,
+        source_f=source_f,
+        lang_f=lang_f,
+        q=q,
+        date_from=date_from,
+        date_to=date_to,
+    )
+
+
+@admin_bp.route('/ai-logs/clear', methods=['POST'])
+@admin_required
+def ai_logs_clear():
+    """Delete all AI conversation logs."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM ai_conversations")
+        conn.commit()
+        flash('All AI conversation logs cleared.', 'success')
+    except Exception as e:
+        current_app.logger.error(f"ai_logs_clear error: {e}")
+        flash('Error clearing logs.', 'error')
+    return redirect(url_for('admin.ai_logs'))
+
+
 @admin_bp.route('/settings/ai-key', methods=['POST'])
 @admin_required
 def save_ai_key():
