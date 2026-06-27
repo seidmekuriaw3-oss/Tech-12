@@ -2,19 +2,33 @@
 (function () {
     'use strict';
 
-    const AI_ENDPOINT = '/api/ai-chat';
-    const SUGGESTIONS_ENDPOINT = '/api/ai-chat/suggestions';
-    const MAX_HISTORY = 16;
+    var AI_ENDPOINT = '/api/ai-chat';
+    var SUGGESTIONS_ENDPOINT = '/api/ai-chat/suggestions';
+    var MAX_HISTORY = 16;
+    var SESSION_KEY = 'semira_ai_history';
 
-    let history = [];
-    let isOpen = false;
-    let isTyping = false;
-    let suggestions = [];
+    var history = [];
+    var isOpen = false;
+    var isTyping = false;
+    var suggestions = [];
 
-    // ---- DOM references (set after DOMContentLoaded) ----
-    let panel, msgList, inputEl, sendBtn, badge, toggleBtn;
+    var panel, msgList, inputEl, sendBtn, badge, toggleBtn;
 
-    // ---- Init ----
+    // ── Load/save history via sessionStorage ──────────────────────────────
+    function loadHistory() {
+        try {
+            var raw = sessionStorage.getItem(SESSION_KEY);
+            if (raw) history = JSON.parse(raw);
+        } catch (e) { history = []; }
+    }
+
+    function saveHistory() {
+        try {
+            sessionStorage.setItem(SESSION_KEY, JSON.stringify(history.slice(-MAX_HISTORY)));
+        } catch (e) {}
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────────
     function init() {
         panel     = document.getElementById('semira-ai-panel');
         msgList   = document.getElementById('semira-ai-messages');
@@ -25,37 +39,47 @@
 
         if (!panel) return;
 
+        loadHistory();
+
         sendBtn.addEventListener('click', handleSend);
         inputEl.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
         });
         inputEl.addEventListener('input', function () {
             sendBtn.disabled = !this.value.trim();
+            // Auto-resize textarea
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
         });
 
-        // Load suggestions
         fetch(SUGGESTIONS_ENDPOINT)
-            .then(r => r.json())
-            .then(d => { if (d.success) suggestions = d.suggestions; })
-            .catch(() => {});
+            .then(function (r) { return r.json(); })
+            .then(function (d) { if (d.success) suggestions = d.suggestions; })
+            .catch(function () {});
 
-        // Show badge pulse after 3s
+        // Pulse badge after 4s if user hasn't opened
         setTimeout(function () {
             if (!isOpen && badge) {
                 badge.style.display = 'flex';
                 badge.classList.add('ai-badge-pulse');
             }
-        }, 3000);
+        }, 4000);
     }
 
-    // ---- Toggle panel ----
+    // ── Toggle / Close ────────────────────────────────────────────────────
     window.toggleAIPanel = function () {
         isOpen = !isOpen;
         if (isOpen) {
             panel.classList.add('open');
-            if (badge) badge.style.display = 'none';
-            if (msgList.children.length === 0) showWelcome();
-            setTimeout(() => inputEl && inputEl.focus(), 300);
+            if (badge) { badge.style.display = 'none'; badge.classList.remove('ai-badge-pulse'); }
+            if (msgList.children.length === 0) {
+                if (history.length > 0) {
+                    restoreHistory();
+                } else {
+                    showWelcome();
+                }
+            }
+            setTimeout(function () { if (inputEl) inputEl.focus(); }, 300);
         } else {
             panel.classList.remove('open');
         }
@@ -66,29 +90,36 @@
         panel.classList.remove('open');
     };
 
-    // ---- Welcome message ----
+    // ── Restore history from sessionStorage ───────────────────────────────
+    function restoreHistory() {
+        history.forEach(function (h) {
+            if (h.role === 'user' || h.role === 'assistant') {
+                appendMessage(h.role, h.content, true);
+            }
+        });
+        scrollBottom();
+    }
+
+    // ── Welcome message ───────────────────────────────────────────────────
     function showWelcome() {
-        const lang = document.documentElement.lang || 'am';
-        let welcome;
-        if (lang === 'ar') {
-            welcome = 'أهلاً! 👗 أنا سيميرا، مساعدك في SEMIRA FASHION. كيف يمكنني مساعدتك اليوم؟';
-        } else if (lang === 'en') {
-            welcome = "Hello! 👗 I'm SEMIRA, your AI shopping assistant. How can I help you today?";
-        } else {
-            welcome = 'ሰላም! 👗 እኔ ሰሚራ ነኝ — የ SEMIRA FASHION AI አስተናጋጅ። ምን ልርዳዎ?';
-        }
-        appendMessage('assistant', welcome);
+        var lang = document.documentElement.lang || 'am';
+        var welcome = {
+            ar: 'أهلاً! 👗 أنا سيميرا، مساعدك في SEMIRA FASHION. كيف يمكنني مساعدتك اليوم؟',
+            en: "Hello! 👗 I'm SEMIRA, your AI shopping assistant. How can I help you today?",
+            am: 'ሰላም! 👗 እኔ ሰሚራ ነኝ — የ SEMIRA FASHION AI አስተናጋጅ። ምን ልርዳዎ?',
+        }[lang] || 'ሰላም! 👗 እኔ ሰሚራ ነኝ — የ SEMIRA FASHION AI አስተናጋጅ። ምን ልርዳዎ?';
+        appendMessage('assistant', welcome, true);
         if (suggestions.length) setTimeout(showSuggestions, 400);
     }
 
-    // ---- Suggestion chips ----
+    // ── Suggestion chips ──────────────────────────────────────────────────
     function showSuggestions() {
         if (!msgList) return;
-        const div = document.createElement('div');
+        var div = document.createElement('div');
         div.className = 'ai-suggestions';
         div.id = 'ai-suggestion-chips';
         suggestions.forEach(function (s) {
-            const btn = document.createElement('button');
+            var btn = document.createElement('button');
             btn.className = 'ai-chip';
             btn.textContent = s;
             btn.onclick = function () {
@@ -102,69 +133,117 @@
         scrollBottom();
     }
 
-    // ---- Send handler ----
+    // ── Send handler ──────────────────────────────────────────────────────
     function handleSend() {
-        const text = inputEl ? inputEl.value.trim() : '';
+        var text = inputEl ? inputEl.value.trim() : '';
         if (!text || isTyping) return;
         inputEl.value = '';
+        inputEl.style.height = 'auto';
         sendBtn.disabled = true;
 
-        // Remove suggestion chips if still visible
-        const chips = document.getElementById('ai-suggestion-chips');
+        var chips = document.getElementById('ai-suggestion-chips');
         if (chips) chips.remove();
 
-        appendMessage('user', text);
+        appendMessage('user', text, true);
         showTyping();
-
-        const payload = { message: text, history: history.slice(-MAX_HISTORY) };
 
         fetch(AI_ENDPOINT, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ message: text, history: history.slice(-MAX_HISTORY) })
         })
-        .then(function (r) { return r.json(); })
+        .then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+        })
         .then(function (d) {
             hideTyping();
-            const reply = d.reply || 'ይቅርታ፣ አሁን ልረዳ አልቻልኩም። እንደገና ይሞክሩ።';
-            appendMessage('assistant', reply);
+            var reply = d.reply || 'ይቅርታ፣ አሁን ልረዳ አልቻልኩም። እንደገና ይሞክሩ።';
+            appendMessage('assistant', reply, true);
             history.push({ role: 'user', content: text });
             history.push({ role: 'assistant', content: reply });
             if (history.length > MAX_HISTORY) history = history.slice(-MAX_HISTORY);
+            saveHistory();
         })
-        .catch(function () {
+        .catch(function (err) {
             hideTyping();
-            appendMessage('assistant', 'ይቅርታ፣ ግንኙነት ችግር ነበር። እንደገና ይሞክሩ።');
+            var lang = document.documentElement.lang || 'am';
+            var errMsg = {
+                ar: 'عذراً، حدث خطأ في الاتصال. حاول مرة أخرى.',
+                en: 'Sorry, a connection error occurred. Please try again.',
+                am: 'ይቅርታ፣ ግንኙነት ችግር ነበር። እንደገና ይሞክሩ።',
+            }[lang] || 'ይቅርታ፣ ግንኙነት ችግር ነበር። እንደገና ይሞክሩ።';
+            appendMessage('assistant', errMsg, true);
+            console.warn('AI Agent error:', err);
         });
     }
 
-    // ---- Append message bubble ----
-    function appendMessage(role, content) {
+    // ── Message bubble ────────────────────────────────────────────────────
+    function appendMessage(role, content, animate) {
         if (!msgList) return;
-        const wrap = document.createElement('div');
+        var wrap = document.createElement('div');
         wrap.className = 'ai-msg-wrap ai-msg-' + role;
 
-        const bubble = document.createElement('div');
+        var bubble = document.createElement('div');
         bubble.className = 'ai-bubble';
-        // Allow links in assistant messages
+
         if (role === 'assistant') {
-            bubble.innerHTML = linkify(escapeHtml(content));
+            // Safe rendering: escape first, then allow whitelisted HTML
+            bubble.innerHTML = safeRender(content);
         } else {
             bubble.textContent = content;
         }
+
         wrap.appendChild(bubble);
         msgList.appendChild(wrap);
         scrollBottom();
 
-        // Animate in
-        requestAnimationFrame(function () { wrap.classList.add('ai-msg-visible'); });
+        if (animate !== false) {
+            requestAnimationFrame(function () { wrap.classList.add('ai-msg-visible'); });
+        } else {
+            wrap.classList.add('ai-msg-visible');
+        }
     }
 
-    // ---- Typing indicator ----
+    // ── Safe HTML renderer (replaces linkify — no XSS) ───────────────────
+    function safeRender(text) {
+        // 1. Escape all HTML entities
+        var escaped = String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        // 2. Convert newlines to <br>
+        escaped = escaped.replace(/\n/g, '<br>');
+
+        // 3. Convert plain https:// URLs to safe links
+        escaped = escaped.replace(
+            /(https?:\/\/[^\s<&"']+)/g,
+            '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+        );
+
+        // 4. Convert wa.me/number shorthand
+        escaped = escaped.replace(
+            /wa\.me\/(\d+)/g,
+            '<a href="https://wa.me/$1" target="_blank" rel="noopener noreferrer" style="color:#25d366;font-weight:600">📱 WhatsApp</a>'
+        );
+
+        // 5. Convert safe internal links like /orders /products
+        escaped = escaped.replace(
+            /\/(orders|products|categories|cart|profile|login|register|about|contact|search|wishlist)((?:\/[a-zA-Z0-9_-]+)*)/g,
+            '<a href="/$1$2" style="color:#1a7a4a;font-weight:600">/$1$2 →</a>'
+        );
+
+        return escaped;
+    }
+
+    // ── Typing indicator ──────────────────────────────────────────────────
     function showTyping() {
         isTyping = true;
         if (!msgList) return;
-        const div = document.createElement('div');
+        var div = document.createElement('div');
         div.className = 'ai-msg-wrap ai-msg-assistant';
         div.id = 'ai-typing-indicator';
         div.innerHTML = '<div class="ai-bubble ai-typing"><span></span><span></span><span></span></div>';
@@ -175,41 +254,16 @@
 
     function hideTyping() {
         isTyping = false;
-        const el = document.getElementById('ai-typing-indicator');
+        var el = document.getElementById('ai-typing-indicator');
         if (el) el.remove();
     }
 
-    // ---- Helpers ----
+    // ── Helpers ───────────────────────────────────────────────────────────
     function scrollBottom() {
         if (msgList) msgList.scrollTop = msgList.scrollHeight;
     }
 
-    function escapeHtml(str) {
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
-    }
-
-    function linkify(str) {
-        // Convert escaped &lt;a href...&gt; back to links
-        str = str.replace(/&lt;a href='([^']+)'([^&]*)&gt;([^&]*)&lt;\/a&gt;/g,
-            '<a href="$1" $2 target="_blank" rel="noopener">$3</a>');
-        // Convert plain URLs to links
-        str = str.replace(/(https?:\/\/[^\s<]+)/g,
-            '<a href="$1" target="_blank" rel="noopener">$1</a>');
-        // WhatsApp shorthand
-        str = str.replace(/wa\.me\/(\d+)/g,
-            '<a href="https://wa.me/$1" target="_blank" rel="noopener" style="color:#25d366;font-weight:600">📱 WhatsApp</a>');
-        // Convert /products links
-        str = str.replace(/href='\/([^']+)'/g, 'href="/$1"');
-        // Newlines to <br>
-        str = str.replace(/\n/g, '<br>');
-        return str;
-    }
-
-    // ---- Boot ----
+    // ── Boot ──────────────────────────────────────────────────────────────
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

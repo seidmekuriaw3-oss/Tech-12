@@ -82,7 +82,7 @@ app.jinja_env.globals["format_price"] = format_price
 app.jinja_env.globals["format_price_number"] = format_price_number
 
 app.config.from_object(Config)
-_secret_key = os.environ.get('SECRET_KEY')
+_secret_key = os.environ.get('SECRET_KEY') or os.environ.get('SESSION_SECRET')
 if not _secret_key:
     raise RuntimeError(
         "SECRET_KEY environment variable is not set. "
