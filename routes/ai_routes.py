@@ -1,17 +1,28 @@
 """
 AI Agent Route for SEMIRA FASHION
-Powered by OpenAI gpt-4o-mini
+Powered by Groq llama-3.3-70b-versatile
 Falls back to smart rule-based responses if no API key.
 """
 import os
 import re
 import logging
+from datetime import datetime
 from flask import Blueprint, request, jsonify, session
 from database.db import get_db
 from routes.shared import WHATSAPP_NUMBER, FREE_SHIPPING_THRESHOLD, SHIPPING_COST
 
 ai_bp = Blueprint('ai', __name__)
 logger = logging.getLogger(__name__)
+
+# Status labels in all 3 languages
+STATUS_LABELS = {
+    'pending':    {'am': '⏳ በመጠባበቅ ላይ',    'en': '⏳ Pending',    'ar': '⏳ قيد الانتظار'},
+    'confirmed':  {'am': '✅ ተረጋግጧል',        'en': '✅ Confirmed',  'ar': '✅ مؤكد'},
+    'processing': {'am': '🔧 በሂደት ላይ',       'en': '🔧 Processing', 'ar': '🔧 قيد المعالجة'},
+    'shipped':    {'am': '🚚 ተላከ',            'en': '🚚 Shipped',    'ar': '🚚 تم الشحن'},
+    'delivered':  {'am': '📦 ደረሰ',            'en': '📦 Delivered',  'ar': '📦 تم التسليم'},
+    'cancelled':  {'am': '❌ ተሰርዟል',          'en': '❌ Cancelled',  'ar': '❌ ملغى'},
+}
 
 STORE_SYSTEM_PROMPT = """You are SEMIRA (ሰሚራ), the friendly AI shopping assistant for SEMIRA FASHION store.
 
@@ -28,17 +39,107 @@ STORE INFO:
 CURRENT PRODUCTS IN STORE:
 {products}
 
+CUSTOMER ORDER HISTORY:
+{orders}
+
+ORDER STATUS RULES:
+- If the customer asks about their order (e.g. "ትዕዛዝ ደረሰ?", "my order status", "where is my order"), look at the ORDER HISTORY above and report exactly.
+- If they mention a specific order number (e.g. 20260626-HK3MF6), find it in the order history and give the status.
+- If no orders are found for this customer, tell them politely and suggest they log in or contact WhatsApp.
+- Never invent order statuses — only use what is shown in ORDER HISTORY.
+
 LANGUAGE RULE: Detect the language the user writes in and ALWAYS respond in the SAME language.
-- If they write in Amharic → respond in Amharic
-- If they write in English → respond in English  
-- If they write in Arabic → respond in Arabic
-- Keep responses SHORT (2-4 sentences max), friendly, and helpful.
-- For product recommendations, mention price and name.
-- For order issues or complex problems, suggest WhatsApp: {whatsapp}
+- Amharic → Amharic | English → English | Arabic → Arabic
+- Keep responses SHORT (2-5 sentences), friendly, and helpful.
+- For product recommendations, mention name and price.
+- For unresolved issues, suggest WhatsApp: {whatsapp}
 - Never make up products not in the list above.
-- Use 🌸 or 👗 emojis occasionally to feel warm and friendly.
-- If asked about sizes, we have all sizes (XS to 3XL for women, 0-14 years for children).
+- Use 🌸 or 👗 emojis occasionally.
+- Sizes: XS–3XL for women, 0–14 years for children.
 """
+
+
+def get_order_context(user_id, user_message: str, lang: str = 'am') -> str:
+    """Fetch order history for the logged-in customer, optionally filtered by order number."""
+    if not user_id:
+        if lang == 'ar':
+            return "الزبون غير مسجل الدخول — لا يمكن عرض الطلبات."
+        elif lang == 'en':
+            return "Customer is not logged in — cannot retrieve orders."
+        else:
+            return "ደንበኛ አልገቡም — ትዕዛዞችን ማሳየት አይቻልም።"
+
+    try:
+        db = get_db()
+        cursor = db.cursor()
+
+        # Check if a specific order number is mentioned
+        order_num_match = re.search(r'\b(\d{8}-[A-Z0-9]{6})\b', user_message.upper())
+        specific_order_num = order_num_match.group(1) if order_num_match else None
+
+        if specific_order_num:
+            cursor.execute("""
+                SELECT o.order_number, o.status, o.payment_status, o.total,
+                       o.shipping_city, o.tracking_number, o.estimated_delivery,
+                       o.created_at,
+                       COUNT(oi.id) AS item_count
+                FROM orders o
+                LEFT JOIN order_items oi ON oi.order_id = o.id
+                WHERE o.user_id = %s AND UPPER(o.order_number) = %s
+                GROUP BY o.id
+                LIMIT 1
+            """, (user_id, specific_order_num))
+        else:
+            cursor.execute("""
+                SELECT o.order_number, o.status, o.payment_status, o.total,
+                       o.shipping_city, o.tracking_number, o.estimated_delivery,
+                       o.created_at,
+                       COUNT(oi.id) AS item_count
+                FROM orders o
+                LEFT JOIN order_items oi ON oi.order_id = o.id
+                WHERE o.user_id = %s
+                GROUP BY o.id
+                ORDER BY o.created_at DESC
+                LIMIT 5
+            """, (user_id,))
+
+        rows = cursor.fetchall()
+        if not rows:
+            if lang == 'ar':
+                return "لا توجد طلبات مسجلة لهذا الحساب."
+            elif lang == 'en':
+                return "No orders found for this account."
+            else:
+                return "በዚህ መለያ ምንም ትዕዛዝ አልተገኘም።"
+
+        lines = []
+        for r in rows:
+            status_raw = r['status'] or 'pending'
+            status_display = STATUS_LABELS.get(status_raw, {}).get(lang, status_raw)
+            pay_status = r['payment_status'] or 'unpaid'
+            total = float(r['total'] or 0)
+            date_str = r['created_at'].strftime('%Y-%m-%d') if r['created_at'] else '?'
+            est_del = r['estimated_delivery'].strftime('%Y-%m-%d') if r['estimated_delivery'] else None
+            tracking = r['tracking_number'] or None
+            city = r['shipping_city'] or ''
+            items = int(r['item_count'] or 0)
+
+            line = (
+                f"• Order #{r['order_number']} | Date: {date_str} | "
+                f"Status: {status_display} | Payment: {pay_status} | "
+                f"Total: {total:,.0f} ETB | Items: {items} | City: {city}"
+            )
+            if tracking:
+                line += f" | Tracking: {tracking}"
+            if est_del:
+                line += f" | Est. Delivery: {est_del}"
+            lines.append(line)
+
+        return "\n".join(lines)
+
+    except Exception as e:
+        logger.error(f"AI order context error: {e}")
+        return "Could not retrieve order information at this time."
 
 
 def get_product_context(user_message: str) -> str:
@@ -105,21 +206,25 @@ def get_product_context(user_message: str) -> str:
         return "Women's and children's clothing available in various categories."
 
 
-def smart_fallback(message: str) -> str:
-    """Rule-based fallback when no OpenAI key is set."""
+def smart_fallback(message: str, user_id=None, lang: str = 'am') -> str:
+    """Rule-based fallback when no Groq key is set."""
     msg = message.lower()
+
+    # Order status — query DB directly even in fallback mode
+    if any(w in msg for w in ['order', 'ትዕዛዝ', 'track', 'status', 'ሁኔታ', 'ደረሰ', 'ዘፈን', 'where is']):
+        if user_id:
+            order_info = get_order_context(user_id, message, lang)
+            if 'Order #' in order_info:
+                return f"📦 የትዕዛዝ ሁኔታ:\n{order_info}\n\nተጨማሪ እርዳታ ከፈለጉ <a href='/orders' style='color:#1a7a4a;font-weight:600'>ትዕዛዞቼ →</a>"
+        return f"📦 ትዕዛዝዎን ለማወቅ <a href='/orders' style='color:#1a7a4a;font-weight:600'>ትዕዛዞቼ →</a> ወይም WhatsApp: wa.me/{WHATSAPP_NUMBER}"
 
     # Greetings
     if any(w in msg for w in ['hello', 'hi ', 'ሰላም', 'selam', 'hey', 'good']):
-        return "ሰላም! 👋 ወደ SEMIRA FASHION እንኳን ደህና መጡ። ምን ልርዳዎ? ምርቶቻችንን ለማየት /products ይጫኑ።"
+        return "ሰላም! 👋 ወደ SEMIRA FASHION እንኳን ደህና መጡ። ምን ልርዳዎ?"
 
-    # Price/shipping
-    if any(w in msg for w in ['shipping', 'delivery', 'ማድረስ', 'አድራሻ', 'ሰጪ']):
-        return f"🚚 ከ{FREE_SHIPPING_THRESHOLD:,} ብር በላይ ትዕዛዝ ሲደርግ ነጻ ማድረሻ ያግኛሉ! ከዚያ ያነሰ ትዕዛዝ {SHIPPING_COST} ብር ማድረሻ ክፍያ አለ።"
-
-    # Orders/tracking
-    if any(w in msg for w in ['order', 'ትዕዛዝ', 'track', 'status', 'ሁኔታ']):
-        return f"📦 ትዕዛዝዎን ለማወቅ '/orders' ገጽ ይጎብኙ ወይም WhatsApp ይጠቀሙ: wa.me/{WHATSAPP_NUMBER}"
+    # Shipping
+    if any(w in msg for w in ['shipping', 'delivery', 'ማድረስ', 'ሰጪ', 'አድርስ']):
+        return f"🚚 ከ{FREE_SHIPPING_THRESHOLD:,} ብር በላይ ትዕዛዝ → ነጻ ማድረሻ! ከዚያ ያነሰ → {SHIPPING_COST} ብር ክፍያ።"
 
     # Return/exchange
     if any(w in msg for w in ['return', 'exchange', 'መመለስ', 'ቅሬታ', 'refund']):
@@ -127,18 +232,17 @@ def smart_fallback(message: str) -> str:
 
     # WhatsApp/contact
     if any(w in msg for w in ['whatsapp', 'call', 'phone', 'ስልክ', 'ደውል', 'contact']):
-        return f"📱 WhatsApp: wa.me/{WHATSAPP_NUMBER}\nደስ ብሎን ሁልጊዜ ለማግኘት ይቻላል!"
+        return f"📱 WhatsApp: wa.me/{WHATSAPP_NUMBER}"
 
     # Size
     if any(w in msg for w in ['size', 'መጠን', 'ሳይዝ', 'fit', 'large', 'small', 'medium']):
-        return "👗 ምርቶቻችን ከ XS እስከ 3XL (ለሴቶች) እና ከ 0 እስከ 14 ዓመት (ለልጆች) ይገኛሉ። ዝርዝር ለማወቅ WhatsApp ያግኙን።"
+        return "👗 XS–3XL (ለሴቶች) እና 0–14 ዓመት (ለልጆች) ይገኛሉ።"
 
     # Products
     if any(w in msg for w in ['product', 'ምርት', 'ልብስ', 'dress', 'ቀሚስ', 'price', 'ዋጋ', 'show', 'አሳይ']):
-        return "👗 ምርቶቻችንን ለማየት ይህን ይጫኑ: <a href='/products' style='color:#1a7a4a;font-weight:600'>ሁሉም ምርቶች →</a>"
+        return "👗 <a href='/products' style='color:#1a7a4a;font-weight:600'>ሁሉም ምርቶች →</a>"
 
-    # Default
-    return f"ሰላም! 🌸 SEMIRA FASHION AI assistant ነኝ። ምርቶቻችንን፣ ዋጋ፣ ወይም ሌሎች ጥያቄዎች ቢኖሩዎ ልርዳዎ! ወይም WhatsApp: wa.me/{WHATSAPP_NUMBER}"
+    return f"ሰላም! 🌸 ምን ልርዳዎ? ምርቶች፣ ዋጋ፣ ትዕዛዝ ሁኔታ — ሁሉን ልረዳ እችላለሁ። WhatsApp: wa.me/{WHATSAPP_NUMBER}"
 
 
 @ai_bp.route('/ai-chat', methods=['POST'])
@@ -159,18 +263,22 @@ def ai_chat():
         api_key = os.environ.get('GROQ_API_KEY', '').strip()
 
         if not api_key:
-            reply = smart_fallback(message)
+            reply = smart_fallback(message, user_id=session.get('user_id'), lang=lang)
             return jsonify({'success': True, 'reply': reply, 'source': 'fallback'})
 
-        # Get product context
+        user_id = session.get('user_id')
+
+        # Get product + order context in parallel logic
         products_context = get_product_context(message)
+        orders_context = get_order_context(user_id, message, lang)
 
         # Build system prompt
         system_content = STORE_SYSTEM_PROMPT.format(
             whatsapp=WHATSAPP_NUMBER,
             free_ship=FREE_SHIPPING_THRESHOLD,
             ship_cost=SHIPPING_COST,
-            products=products_context
+            products=products_context,
+            orders=orders_context
         )
 
         # Build messages list
@@ -199,7 +307,11 @@ def ai_chat():
 
     except Exception as e:
         logger.error(f"AI chat error: {e}")
-        fallback = smart_fallback(message if 'message' in locals() else '')
+        fallback = smart_fallback(
+            message if 'message' in locals() else '',
+            user_id=session.get('user_id'),
+            lang=session.get('lang', 'am')
+        )
         return jsonify({'success': True, 'reply': fallback, 'source': 'fallback'})
 
 
@@ -207,25 +319,41 @@ def ai_chat():
 def ai_suggestions():
     """Return quick suggestion prompts based on language."""
     lang = session.get('lang', 'am')
+    logged_in = bool(session.get('user_id'))
     if lang == 'am':
         suggestions = [
+            "የእኔ ትዕዛዝ ደረሰ?",
             "ለ1000 ብር ምን ቀሚስ አለ?",
             "ለልጆች ምን ምርቶች አሉ?",
             "ዋጋ እና ማድረሻ ሁኔታ",
-            "ስልክ ቁጥር ስጠኝ"
+        ] if logged_in else [
+            "ለ1000 ብር ምን ቀሚስ አለ?",
+            "ለልጆች ምን ምርቶች አሉ?",
+            "ዋጋ እና ማድረሻ ሁኔታ",
+            "ስልክ ቁጥር ስጠኝ",
         ]
     elif lang == 'ar':
         suggestions = [
+            "ما حالة طلبي?",
             "ماذا يوجد تحت 1000 بر؟",
             "ملابس الأطفال المتوفرة",
             "معلومات الشحن والتوصيل",
-            "تواصل معنا"
+        ] if logged_in else [
+            "ماذا يوجد تحت 1000 بر؟",
+            "ملابس الأطفال المتوفرة",
+            "معلومات الشحن والتوصيل",
+            "تواصل معنا",
         ]
     else:
         suggestions = [
+            "Where is my order?",
             "Show dresses under 1000 ETB",
             "What kids clothing do you have?",
             "Shipping & delivery info",
-            "Contact us"
+        ] if logged_in else [
+            "Show dresses under 1000 ETB",
+            "What kids clothing do you have?",
+            "Shipping & delivery info",
+            "Contact us",
         ]
     return jsonify({'success': True, 'suggestions': suggestions})

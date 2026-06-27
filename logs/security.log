@@ -22478,3 +22478,8 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-27 02:19:35,518 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-27 02:20:17,964 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-27 02:20:27,090 - app - WARNING - Slow request: POST /api/ai-chat - 1.68s
+2026-06-27 02:21:56,612 - app - WARNING - Slow request: POST /api/ai-chat - 1.19s
+2026-06-27 02:23:30,030 - app - WARNING - Slow request: POST /api/ai-chat - 1.81s
+2026-06-27 02:24:19,710 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-27 02:24:32,664 - app - WARNING - Slow request: POST /api/ai-chat - 1.06s
+2026-06-27 02:24:34,064 - app - WARNING - Slow request: POST /api/ai-chat - 1.33s
