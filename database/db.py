@@ -25,7 +25,12 @@ class _PsycopgCursor:
         self._lastrowid = None
 
     def execute(self, query, params=None):
-        q = query.replace('?', '%s').strip()
+        import re as _re
+        q = query.strip()
+        # Safety-net: replace bare ? parameter markers with %s for PostgreSQL.
+        # Uses a regex that skips ? inside single-quoted string literals.
+        if '?' in q:
+            q = _re.sub(r"(?<!')(\?)(?!')", '%s', q)
         if params is not None:
             self._c.execute(q, params)
         else:
@@ -33,7 +38,10 @@ class _PsycopgCursor:
         return self
 
     def executemany(self, query, params_list):
-        q = query.replace('?', '%s').strip()
+        import re as _re
+        q = query.strip()
+        if '?' in q:
+            q = _re.sub(r"(?<!')(\?)(?!')", '%s', q)
         self._c.executemany(q, params_list)
         return self
 
@@ -183,9 +191,9 @@ def init_db():
             description_am TEXT,
             description_ar TEXT,
             description_en TEXT,
-            price DOUBLE PRECISION NOT NULL,
-            compare_price DOUBLE PRECISION,
-            cost DOUBLE PRECISION,
+            price NUMERIC(12,2) NOT NULL,
+            compare_price NUMERIC(12,2),
+            cost NUMERIC(12,2),
             sku TEXT UNIQUE,
             barcode TEXT,
             stock_quantity INTEGER DEFAULT 0,
@@ -208,6 +216,11 @@ def init_db():
             updated_at TIMESTAMP DEFAULT NOW()
         )
     """)
+
+    # Fashion-specific columns — added after initial schema so existing DBs are upgraded
+    cur.execute("ALTER TABLE products ADD COLUMN IF NOT EXISTS sizes TEXT")
+    cur.execute("ALTER TABLE products ADD COLUMN IF NOT EXISTS gender TEXT")
+    cur.execute("ALTER TABLE products ADD COLUMN IF NOT EXISTS season TEXT")
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS cart_items (
@@ -250,7 +263,7 @@ def init_db():
             order_id INTEGER NOT NULL,
             product_id INTEGER NOT NULL,
             quantity INTEGER NOT NULL,
-            price_at_time DOUBLE PRECISION NOT NULL
+            price_at_time NUMERIC(12,2) NOT NULL
         )
     """)
 
@@ -263,7 +276,7 @@ def init_db():
             description TEXT,
             description_am TEXT,
             description_ar TEXT,
-            image TEXT NOT NULL,
+            image TEXT,
             media_url TEXT,
             link TEXT,
             sort_order INTEGER DEFAULT 0,
@@ -348,6 +361,20 @@ def init_db():
     cur.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_email TEXT")
     cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS loyalty_points INTEGER DEFAULT 0")
     cur.execute("ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS admin_notes TEXT")
+    # contacts table was accidentally created by api_contact; migrate any data then drop it
+    cur.execute("""
+        SELECT EXISTS (
+            SELECT 1 FROM information_schema.tables
+            WHERE table_name = 'contacts' AND table_schema = 'public'
+        )
+    """)
+    if cur.fetchone()[0]:
+        cur.execute("""
+            INSERT INTO contact_messages (name, email, phone, message, created_at)
+            SELECT name, email, phone, message, created_at FROM contacts
+            ON CONFLICT DO NOTHING
+        """)
+        cur.execute("DROP TABLE contacts")
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS newsletter (
@@ -375,10 +402,13 @@ def init_db():
             id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL,
             product_id INTEGER NOT NULL,
+            price_at_add NUMERIC(10,2),
             created_at TIMESTAMP DEFAULT NOW(),
             UNIQUE (user_id, product_id)
         )
     """)
+    # Migrate existing installations that lack the column
+    cur.execute("ALTER TABLE wishlist ADD COLUMN IF NOT EXISTS price_at_add NUMERIC(10,2)")
 
     cur.execute("CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id)")
@@ -424,6 +454,42 @@ def init_db():
         )
     """)
 
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS coupons (
+            id SERIAL PRIMARY KEY,
+            code TEXT UNIQUE NOT NULL,
+            description TEXT,
+            discount_type TEXT NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
+            discount_value NUMERIC(10,2) NOT NULL,
+            max_discount NUMERIC(10,2),
+            min_order NUMERIC(10,2) DEFAULT 0,
+            usage_limit INTEGER,
+            used_count INTEGER DEFAULT 0,
+            is_active SMALLINT DEFAULT 1,
+            valid_from TIMESTAMP DEFAULT NOW(),
+            valid_to TIMESTAMP,
+            created_at TIMESTAMP DEFAULT NOW()
+        )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_coupons_active ON coupons(is_active)")
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS ai_conversations (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            user_name TEXT,
+            user_message TEXT NOT NULL,
+            ai_reply TEXT NOT NULL,
+            source VARCHAR(20) DEFAULT 'fallback',
+            lang VARCHAR(5) DEFAULT 'am',
+            ip_address VARCHAR(45),
+            created_at TIMESTAMP DEFAULT NOW()
+        )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_ai_conv_created ON ai_conversations(created_at DESC)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_ai_conv_user ON ai_conversations(user_id)")
+
     cur.execute("CREATE INDEX IF NOT EXISTS idx_user_notif_user ON user_notifications(user_id)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_user_notif_read ON user_notifications(is_read)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_admin_alerts_read ON admin_alerts(is_read)")
@@ -439,6 +505,32 @@ def init_db():
     cur.execute("CREATE INDEX IF NOT EXISTS idx_contact_messages_created ON contact_messages(created_at)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_password_reset_token ON password_reset_tokens(token)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_password_reset_email ON password_reset_tokens(email)")
+
+    # --- Foreign-key constraints (idempotent: skip if already present) ---
+    _fk_specs = [
+        ('fk_products_category',    'products',    'category_id',  'categories', 'id', 'SET NULL'),
+        ('fk_order_items_order',     'order_items', 'order_id',     'orders',     'id', 'CASCADE'),
+        ('fk_order_items_product',   'order_items', 'product_id',   'products',   'id', 'SET NULL'),
+        ('fk_wishlist_product',      'wishlist',    'product_id',   'products',   'id', 'CASCADE'),
+        ('fk_reviews_product',       'reviews',     'product_id',   'products',   'id', 'CASCADE'),
+    ]
+    for name, tbl, col, ref_tbl, ref_col, on_delete in _fk_specs:
+        cur.execute("""
+            SELECT 1 FROM information_schema.table_constraints
+            WHERE constraint_name = %s
+              AND table_name      = %s
+              AND constraint_type = 'FOREIGN KEY'
+        """, (name, tbl))
+        if not cur.fetchone():
+            try:
+                cur.execute(
+                    f"ALTER TABLE {tbl} ADD CONSTRAINT {name} "
+                    f"FOREIGN KEY ({col}) REFERENCES {ref_tbl}({ref_col}) "
+                    f"ON DELETE {on_delete} NOT VALID"
+                )
+            except Exception as _fk_err:
+                import logging as _log
+                _log.getLogger(__name__).warning("Could not add FK %s: %s", name, _fk_err)
 
     cur.execute("SELECT COUNT(*) FROM categories")
     if cur.fetchone()[0] == 0:
@@ -461,12 +553,20 @@ def init_db():
     cur.execute("SELECT COUNT(*) FROM users")
     if cur.fetchone()[0] == 0:
         from werkzeug.security import generate_password_hash
-        admin_hash = generate_password_hash('admin123456', method='pbkdf2:sha256')
+        import os as _os
+        _seed_pw = _os.environ.get('ADMIN_PASSWORD', '')
+        if not _seed_pw:
+            # Generate a random one-time password so we never seed 'admin123456'
+            import secrets as _secrets
+            _seed_pw = _secrets.token_urlsafe(16)
+            print("⚠️  No ADMIN_PASSWORD set; a random temporary password was generated.")
+            print("    Set ADMIN_PASSWORD in Replit Secrets to lock this down.")
+        admin_hash = generate_password_hash(_seed_pw, method='pbkdf2:sha256')
         cur.execute(
             "INSERT INTO users (username, email, password_hash, full_name, is_admin, is_active) VALUES (%s, %s, %s, %s, %s, %s)",
             ('admin', 'admin@semirafashion.com', admin_hash, 'Administrator', 1, 1)
         )
-        print("✅ Default admin user created")
+        print("✅ Default admin user created (password from ADMIN_PASSWORD env var)")
 
     cur.execute("SELECT COUNT(*) FROM settings")
     if cur.fetchone()[0] == 0:

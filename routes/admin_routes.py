@@ -7,12 +7,13 @@ inbox, reports, settings, reviews, translations, notifications.
 
 from flask import (
     Blueprint, render_template, request, redirect, url_for,
-    flash, session, jsonify, make_response, send_from_directory, abort
+    flash, session, jsonify, make_response, send_from_directory, abort, current_app
 )
 from middleware.auth import admin_required
 from database.db import get_db
 from werkzeug.security import generate_password_hash, check_password_hash
 from routes.shared import get_lang, WHATSAPP_NUMBER
+from extensions import limiter
 import os
 import json
 import uuid
@@ -30,6 +31,7 @@ admin_bp = Blueprint('admin', __name__)
 # ==================== ADMIN LOGIN ====================
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("10 per minute; 30 per hour")
 def admin_login():
     if session.get('admin'):
         return redirect(url_for('admin.dashboard'))
@@ -38,19 +40,23 @@ def admin_login():
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
 
-        admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+        admin_username = os.environ.get('ADMIN_USERNAME', '')
         admin_password = os.environ.get('ADMIN_PASSWORD', '')
 
-        if not admin_password:
-            flash('Admin login is disabled. Set ADMIN_PASSWORD in environment variables.', 'danger')
+        if not admin_username or not admin_password:
+            flash('Admin login is not configured. Set ADMIN_USERNAME and ADMIN_PASSWORD in environment variables.', 'danger')
             return render_template('admin/login.html')
 
         if username == admin_username and password == admin_password:
             session['admin'] = True
             session['admin_username'] = username
             flash('Logged in successfully!', 'success')
-            next_page = request.args.get('next')
-            if next_page:
+            next_page = request.args.get('next', '')
+            from werkzeug.security import safe_join  # noqa – only for import check
+            from urllib.parse import urlparse
+            _p = urlparse(next_page)
+            # Allow only relative URLs with no scheme/netloc (prevents open-redirect)
+            if next_page and not _p.scheme and not _p.netloc and next_page.startswith('/'):
                 return redirect(next_page)
             return redirect(url_for('admin.dashboard'))
         else:
@@ -65,6 +71,32 @@ def admin_logout():
     session.pop('admin_username', None)
     flash('Logged out successfully!', 'success')
     return redirect(url_for('admin.admin_login'))
+
+
+# ==================== ADMIN COUNTS API ====================
+
+@admin_bp.route('/api/counts')
+@admin_required
+def admin_counts():
+    """Return sidebar badge counts as JSON for client-side updates."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT
+                (SELECT COUNT(*) FROM products WHERE is_active = 1),
+                (SELECT COUNT(*) FROM advertisements WHERE is_active = 1),
+                (SELECT COUNT(*) FROM orders WHERE status = 'pending')
+        """)
+        row = cursor.fetchone()
+        return jsonify({
+            'products': row[0] or 0,
+            'ads': row[1] or 0,
+            'pending_orders': row[2] or 0,
+        })
+    except Exception as e:
+        current_app.logger.error(f"admin_counts error: {e}")
+        return jsonify({'products': 0, 'ads': 0, 'pending_orders': 0})
 
 
 # ==================== DASHBOARD ====================
@@ -106,13 +138,45 @@ def dashboard():
         recent_orders_rows = cursor.fetchall()
         recent_orders = [dict(o) for o in recent_orders_rows] if recent_orders_rows else []
 
+        # Recent products (last 5) with category name
         cursor.execute("""
-            SELECT * FROM products
-            WHERE stock_quantity <= low_stock_threshold AND stock_quantity > 0
+            SELECT p.id, p.name, p.name_am, p.price, p.compare_price,
+                   p.stock_quantity, p.thumbnail, p.is_active,
+                   c.name as category_name
+            FROM products p LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.is_active = 1
+            ORDER BY p.id DESC LIMIT 5
+        """)
+        recent_products_rows = cursor.fetchall()
+        recent_products = [dict(p) for p in recent_products_rows] if recent_products_rows else []
+
+        # Low-stock products with category name
+        cursor.execute("""
+            SELECT p.*, c.name as category_name
+            FROM products p LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.stock_quantity <= p.low_stock_threshold AND p.stock_quantity > 0
             LIMIT 10
         """)
         low_stock_rows = cursor.fetchall()
         low_stock_products = [dict(p) for p in low_stock_rows] if low_stock_rows else []
+
+        # Out-of-stock products with category name
+        cursor.execute("""
+            SELECT p.*, c.name as category_name
+            FROM products p LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.stock_quantity = 0 AND p.is_active = 1
+            LIMIT 10
+        """)
+        out_of_stock_rows = cursor.fetchall()
+        out_of_stock_products = [dict(p) for p in out_of_stock_rows] if out_of_stock_rows else []
+
+        # Page views count (graceful if table does not exist)
+        try:
+            cursor.execute("SELECT COUNT(*) FROM page_views")
+            total_page_views = cursor.fetchone()[0] or 0
+        except Exception:
+            conn.rollback()
+            total_page_views = 0
 
         stats = {
             'products_count': products_count,
@@ -121,17 +185,26 @@ def dashboard():
             'pending_orders': pending_orders,
             'customers_count': customers_count,
             'total_revenue': total_revenue,
-            'today_orders': today_orders
+            'today_orders': today_orders,
+            'live_visitors': 0,
+            'total_page_views': total_page_views,
         }
 
         return render_template('admin/dashboard.html',
-                               stats=stats, recent_orders=recent_orders,
-                               low_stock_products=low_stock_products, lang=lang)
+                               stats=stats,
+                               recent_orders=recent_orders,
+                               recent_products=recent_products,
+                               low_stock_products=low_stock_products,
+                               out_of_stock_products=out_of_stock_products,
+                               order_stock_alerts=[],
+                               lang=lang)
     except Exception as e:
-        print(f"Dashboard error: {e}")
+        current_app.logger.error(f"Dashboard error: {e}")
         flash('Error loading dashboard.', 'error')
         return render_template('admin/dashboard.html',
-                               stats={}, recent_orders=[], low_stock_products=[], lang=lang)
+                               stats={}, recent_orders=[], recent_products=[],
+                               low_stock_products=[], out_of_stock_products=[],
+                               order_stock_alerts=[], lang=lang)
 
 
 # ==================== PRODUCT MANAGEMENT ====================
@@ -156,7 +229,7 @@ def products():
                                categories=[dict(c) for c in categories_rows] if categories_rows else [],
                                lang=lang)
     except Exception as e:
-        print(f"Admin products error: {e}")
+        current_app.logger.error(f"Admin products error: {e}")
         flash('Error loading products.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -180,14 +253,23 @@ def product_create():
             description_am = request.form.get('description_am', '')
             description_ar = request.form.get('description_ar', '')
             description_en = request.form.get('description_en', '') or description
-            price = float(request.form.get('price', 0) or 0)
-            compare_price = request.form.get('compare_price')
-            compare_price = float(compare_price) if compare_price else None
-            stock_quantity = int(request.form.get('stock_quantity', 0) or 0)
-            category_id = int(request.form.get('category_id', 0) or 0) or None
+            try:
+                price = float(request.form.get('price', 0) or 0)
+                compare_price = request.form.get('compare_price')
+                compare_price = float(compare_price) if compare_price else None
+                stock_quantity = int(request.form.get('stock_quantity', 0) or 0)
+                category_id = int(request.form.get('category_id', 0) or 0) or None
+            except (ValueError, TypeError) as e:
+                flash(f'Invalid number in Price, Compare Price, Stock, or Category field: {e}', 'error')
+                return redirect(url_for('admin.product_create'))
             material = request.form.get('material', '')
             color = request.form.get('color', '')
             sku = request.form.get('sku', '')
+            gender = request.form.get('gender', '')
+            season = request.form.get('season', '')
+            import json as _json
+            sizes_list = request.form.getlist('sizes')
+            sizes = _json.dumps(sizes_list) if sizes_list else None
             is_featured = 1 if request.form.get('is_featured') else 0
             is_new = 1 if request.form.get('is_new') else 0
 
@@ -197,6 +279,8 @@ def product_create():
 
             _MAX_IMG_BYTES = 5 * 1024 * 1024  # 5 MB per image
 
+            _ALLOWED_IMG_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+
             def save_upload(file_obj):
                 file_obj.seek(0, os.SEEK_END)
                 size = file_obj.tell()
@@ -204,7 +288,9 @@ def product_create():
                 if size > _MAX_IMG_BYTES:
                     raise ValueError(f"'{file_obj.filename}' exceeds 5 MB limit")
                 fname = secure_filename(file_obj.filename)
-                ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else 'jpg'
+                ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else ''
+                if ext not in _ALLOWED_IMG_EXT:
+                    raise ValueError(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.")
                 unique = f"product_{uuid.uuid4().hex[:8]}.{ext}"
                 file_obj.save(os.path.join(upload_dir, unique))
                 return f'uploads/products/{unique}'
@@ -221,7 +307,6 @@ def product_create():
                 if extra and extra.filename:
                     gallery_paths.append(save_upload(extra))
 
-            import json as _json
             images_json = _json.dumps(gallery_paths) if gallery_paths else None
 
             cursor.execute("""
@@ -229,19 +314,21 @@ def product_create():
                     name, name_am, name_ar, name_en,
                     description, description_am, description_ar, description_en,
                     price, compare_price, stock_quantity, category_id,
-                    material, color, sku, is_featured, is_new, thumbnail, images, is_active
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
+                    material, color, sku, gender, season, sizes,
+                    is_featured, is_new, thumbnail, images, is_active
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1)
             """, (name, name_am, name_ar, name_en,
                   description, description_am, description_ar, description_en,
                   price, compare_price, stock_quantity, category_id,
-                  material, color, sku, is_featured, is_new, image_filename, images_json))
+                  material, color, sku, gender, season, sizes,
+                  is_featured, is_new, image_filename, images_json))
             conn.commit()
             flash('Product created successfully!', 'success')
             return redirect(url_for('admin.products'))
 
         return render_template('admin/products/create.html', categories=categories, lang=lang)
     except Exception as e:
-        print(f"Product create error: {e}")
+        current_app.logger.error(f"Product create error: {e}")
         flash(f'Error creating product: {e}', 'error')
         return redirect(url_for('admin.products'))
 
@@ -271,23 +358,32 @@ def product_edit(pid):
             description_am = request.form.get('description_am', '')
             description_ar = request.form.get('description_ar', '')
             description_en = request.form.get('description_en', '') or description
-            price = float(request.form.get('price', 0) or 0)
-            compare_price = request.form.get('compare_price')
-            compare_price = float(compare_price) if compare_price else None
-            stock_quantity = int(request.form.get('stock_quantity', 0) or 0)
-            category_id = int(request.form.get('category_id', 0) or 0) or None
+            try:
+                price = float(request.form.get('price', 0) or 0)
+                compare_price = request.form.get('compare_price')
+                compare_price = float(compare_price) if compare_price else None
+                stock_quantity = int(request.form.get('stock_quantity', 0) or 0)
+                category_id = int(request.form.get('category_id', 0) or 0) or None
+            except (ValueError, TypeError) as e:
+                flash(f'Invalid number in Price, Compare Price, Stock, or Category field: {e}', 'error')
+                return redirect(url_for('admin.product_edit', pid=pid))
             material = request.form.get('material', '')
             color = request.form.get('color', '')
             sku = request.form.get('sku', '')
+            gender = request.form.get('gender', '')
+            season = request.form.get('season', '')
+            import json as _json
+            sizes_list = request.form.getlist('sizes')
+            sizes = _json.dumps(sizes_list) if sizes_list else None
             is_featured = 1 if request.form.get('is_featured') else 0
             is_new = 1 if request.form.get('is_new') else 0
 
             from werkzeug.utils import secure_filename
-            import json as _json
             upload_dir = 'static/uploads/products'
             os.makedirs(upload_dir, exist_ok=True)
 
             _MAX_IMG_BYTES = 5 * 1024 * 1024  # 5 MB per image
+            _ALLOWED_IMG_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
 
             def save_upload(file_obj):
                 file_obj.seek(0, os.SEEK_END)
@@ -296,7 +392,9 @@ def product_edit(pid):
                 if size > _MAX_IMG_BYTES:
                     raise ValueError(f"'{file_obj.filename}' exceeds 5 MB limit")
                 fname = secure_filename(file_obj.filename)
-                ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else 'jpg'
+                ext = fname.rsplit('.', 1)[1].lower() if '.' in fname else ''
+                if ext not in _ALLOWED_IMG_EXT:
+                    raise ValueError(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.")
                 unique = f"product_{uuid.uuid4().hex[:8]}.{ext}"
                 file_obj.save(os.path.join(upload_dir, unique))
                 return f'uploads/products/{unique}'
@@ -337,31 +435,60 @@ def product_edit(pid):
             all_gallery = kept + new_gallery
             images_json = _json.dumps(all_gallery) if all_gallery else None
 
+            # Fetch old price before update (for price-drop notifications)
+            cursor.execute("SELECT price, name_am, name FROM products WHERE id = %s", (pid,))
+            old_prod = cursor.fetchone()
+            old_price = float(old_prod['price']) if old_prod else None
+
             cursor.execute("""
                 UPDATE products SET
                     name=%s, name_am=%s, name_ar=%s, name_en=%s,
                     description=%s, description_am=%s, description_ar=%s, description_en=%s,
                     price=%s, compare_price=%s, stock_quantity=%s, category_id=%s,
-                    material=%s, color=%s, sku=%s, is_featured=%s, is_new=%s, thumbnail=%s, images=%s,
+                    material=%s, color=%s, sku=%s, gender=%s, season=%s, sizes=%s,
+                    is_featured=%s, is_new=%s, thumbnail=%s, images=%s,
                     updated_at=CURRENT_TIMESTAMP
                 WHERE id=%s
             """, (name, name_am, name_ar, name_en,
                   description, description_am, description_ar, description_en,
                   price, compare_price, stock_quantity, category_id,
-                  material, color, sku, is_featured, is_new, image_filename, images_json, pid))
+                  material, color, sku, gender, season, sizes,
+                  is_featured, is_new, image_filename, images_json, pid))
             conn.commit()
+
+            # Notify wishlist users if price dropped
+            if old_price is not None and price < old_price:
+                try:
+                    from services.notification_service import notify_user
+                    pname = (old_prod['name_am'] or old_prod['name'] or 'Product')
+                    drop_pct = round((old_price - price) / old_price * 100)
+                    cursor.execute(
+                        "SELECT user_id FROM wishlist WHERE product_id = %s", (pid,)
+                    )
+                    wl_users = cursor.fetchall()
+                    for wu in (wl_users or []):
+                        notify_user(
+                            wu['user_id'],
+                            f'🔥 Price Drop on {pname}!',
+                            f'Price dropped {drop_pct}% — now {price:,.0f} ETB (was {old_price:,.0f} ETB). Grab it before it\'s gone!',
+                            type='price_drop',
+                            link=f'/product/{pid}'
+                        )
+                except Exception as _ne:
+                    current_app.logger.warning(f"[price-drop notify] {_ne}")
+
             flash('Product updated successfully!', 'success')
             return redirect(url_for('admin.products'))
 
         return render_template('admin/products/edit.html',
                                product=dict(product), categories=categories, lang=lang)
     except Exception as e:
-        print(f"Product edit error: {e}")
+        current_app.logger.error(f"Product edit error: {e}")
         flash(f'Error editing product: {e}', 'error')
         return redirect(url_for('admin.products'))
 
 
-@admin_bp.route('/products/delete/<int:pid>', methods=['GET', 'POST', 'DELETE'])
+@admin_bp.route('/products/delete/<int:pid>', methods=['POST', 'DELETE'])
 @admin_required
 def product_delete(pid):
     try:
@@ -369,15 +496,11 @@ def product_delete(pid):
         cursor = conn.cursor()
         cursor.execute("UPDATE products SET is_active = 0 WHERE id = %s", (pid,))
         conn.commit()
-        if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': True, 'message': 'Product deleted successfully'})
-        flash('Product deleted successfully!', 'success')
+        return jsonify({'success': True, 'message': 'Product deleted successfully'})
     except Exception as e:
-        print(f"Product delete error: {e}")
-        if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': False, 'error': str(e)}), 500
-        flash('Error deleting product.', 'error')
-    return redirect(url_for('admin.products'))
+        import logging as _log
+        _log.getLogger(__name__).error("Product delete error: %s", e, exc_info=True)
+        return jsonify({'success': False, 'error': 'Could not delete product'}), 500
 
 
 @admin_bp.route('/products/duplicate/<int:pid>', methods=['GET', 'POST'])
@@ -409,14 +532,16 @@ def product_duplicate(pid):
                 name, name_am, name_ar, name_en,
                 description, description_am, description_ar, description_en,
                 price, compare_price, stock_quantity, category_id,
-                material, color, sku, is_featured, is_new, thumbnail, is_active
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0)
+                material, color, sku, gender, season, sizes,
+                is_featured, is_new, thumbnail, is_active
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0)
             RETURNING id
         """, (
             new_name, new_name_am, p.get('name_ar'), p.get('name_en'),
             p.get('description'), p.get('description_am'), p.get('description_ar'), p.get('description_en'),
             p.get('price'), p.get('compare_price'), p.get('stock_quantity'), p.get('category_id'),
             p.get('material'), p.get('color'), new_sku,
+            p.get('gender'), p.get('season'), p.get('sizes'),
             p.get('is_featured', 0), p.get('is_new', 0), p.get('thumbnail')
         ))
         row = cursor.fetchone()
@@ -427,7 +552,7 @@ def product_duplicate(pid):
         flash('Product duplicated successfully!', 'success')
         return redirect(url_for('admin.products'))
     except Exception as e:
-        print(f"Product duplicate error: {e}")
+        current_app.logger.error(f"Product duplicate error: {e}")
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': False, 'error': str(e)}), 500
         flash('Error duplicating product.', 'error')
@@ -513,15 +638,27 @@ def export_products():
         """)
         products_rows = cursor.fetchall()
 
+        def _csv_safe(value):
+            """Prefix formula-injection triggers with a single quote so
+            spreadsheet apps (Excel, Sheets) never evaluate them as formulas.
+            Strip leading whitespace/newlines first so they cannot be used to
+            hide a trigger character from the check."""
+            s = str(value) if value is not None else ''
+            s_stripped = s.lstrip(' \t\r\n')
+            if s_stripped and s_stripped[0] in ('=', '+', '-', '@', '\t', '\r', '\n'):
+                s = "'" + s
+            return s
+
         output = StringIO()
         writer = csv.writer(output)
         writer.writerow(['ID', 'Name (EN)', 'Name (AM)', 'Name (AR)', 'Price', 'Compare Price',
                          'Stock', 'Category', 'Featured', 'Created Date'])
         for p in products_rows:
             writer.writerow([
-                p['id'], p['name'] or '', p['name_am'] or '', p['name_ar'] or '',
+                p['id'],
+                _csv_safe(p['name']), _csv_safe(p['name_am']), _csv_safe(p['name_ar']),
                 p['price'], p['compare_price'] or '', p['stock_quantity'],
-                p['category_name'] or '', 'Yes' if p['is_featured'] else 'No', p['created_at']
+                _csv_safe(p['category_name']), 'Yes' if p['is_featured'] else 'No', p['created_at']
             ])
 
         response = make_response(output.getvalue())
@@ -531,7 +668,7 @@ def export_products():
         )
         return response
     except Exception as e:
-        print(f"Export products error: {e}")
+        current_app.logger.error(f"Export products error: {e}")
         flash('Error exporting products', 'error')
         return redirect(url_for('admin.products'))
 
@@ -725,7 +862,36 @@ def import_products():
         if vrow['image_url']:
             try:
                 import requests as _req
-                resp = _req.get(vrow['image_url'], timeout=10, stream=True)
+                import socket as _socket
+                from urllib.parse import urlparse as _urlparse
+                import ipaddress as _ipaddress
+
+                def _assert_safe_host(hostname):
+                    """Resolve hostname and reject any non-global IP (SSRF guard)."""
+                    try:
+                        infos = _socket.getaddrinfo(hostname, None)
+                    except _socket.gaierror:
+                        raise ValueError(f"Cannot resolve hostname: {hostname}")
+                    for info in infos:
+                        addr = info[4][0]
+                        try:
+                            ip = _ipaddress.ip_address(addr)
+                            if not ip.is_global:
+                                raise ValueError(
+                                    f"Image URL resolves to a private/internal address ({addr})"
+                                )
+                        except ValueError as _ve:
+                            if 'private' in str(_ve) or 'internal' in str(_ve):
+                                raise
+
+                _parsed = _urlparse(vrow['image_url'])
+                # Block non-HTTP(S) schemes (SSRF guard)
+                if _parsed.scheme not in ('http', 'https'):
+                    raise ValueError("Only http/https image URLs are allowed")
+                _assert_safe_host(_parsed.hostname or '')
+                # Disable redirects so a redirect to an internal URL cannot bypass the check
+                resp = _req.get(vrow['image_url'], timeout=10, stream=True,
+                                allow_redirects=False)
                 if resp.status_code == 200:
                     ct = resp.headers.get('Content-Type', '').split(';')[0].strip()
                     ext_map = {'image/jpeg': 'jpg', 'image/png': 'png',
@@ -753,7 +919,7 @@ def import_products():
                   vrow['sku'], vrow['is_featured'], vrow['is_new'], thumbnail))
             imported += 1
         except Exception as e:
-            print(f"Import row error: {e}")
+            current_app.logger.error(f"Import row error: {e}")
 
     conn.commit()
     flash(f'Successfully imported {imported} product(s). {len(row_errors)} row(s) skipped.', 'success')
@@ -774,7 +940,7 @@ def ads():
         return render_template('admin/ads/index.html',
                                ads=[dict(a) for a in ads_list] if ads_list else [], lang=lang)
     except Exception as e:
-        print(f"Admin ads error: {e}")
+        current_app.logger.error(f"Admin ads error: {e}")
         flash('Error loading ads.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -790,14 +956,22 @@ def ad_create():
         description_am = request.form.get('description_am', '')
         description_ar = request.form.get('description_ar', '')
         link = request.form.get('link', '')
-        sort_order = int(request.form.get('sort_order', 0) or 0)
+        try:
+            sort_order = int(request.form.get('sort_order', 0) or 0)
+        except (ValueError, TypeError):
+            flash('Sort order must be a number.', 'error')
+            return redirect(url_for('admin.ad_create'))
 
+        _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
         image_filename = ''
         image = request.files.get('image')
         if image and image.filename:
             from werkzeug.utils import secure_filename
             filename = secure_filename(image.filename)
-            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'jpg'
+            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+            if ext not in _ALLOWED_AD_EXT:
+                flash(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.", 'error')
+                return redirect(url_for('admin.ad_create'))
             unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
             upload_dir = 'static/uploads/ads'
             os.makedirs(upload_dir, exist_ok=True)
@@ -841,14 +1015,22 @@ def ad_edit(aid):
         description_am = request.form.get('description_am', '')
         description_ar = request.form.get('description_ar', '')
         link = request.form.get('link', '')
-        sort_order = int(request.form.get('sort_order', 0) or 0)
+        try:
+            sort_order = int(request.form.get('sort_order', 0) or 0)
+        except (ValueError, TypeError):
+            flash('Sort order must be a number.', 'error')
+            return redirect(url_for('admin.ad_edit', aid=aid))
 
+        _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
         image_filename = ad['image']
         image = request.files.get('image')
         if image and image.filename:
             from werkzeug.utils import secure_filename
             filename = secure_filename(image.filename)
-            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'jpg'
+            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+            if ext not in _ALLOWED_AD_EXT:
+                flash(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.", 'error')
+                return redirect(url_for('admin.ad_edit', aid=aid))
             unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
             upload_dir = 'static/uploads/ads'
             os.makedirs(upload_dir, exist_ok=True)
@@ -871,22 +1053,26 @@ def ad_edit(aid):
     return render_template('admin/ads/edit.html', ad=dict(ad))
 
 
-@admin_bp.route('/ads/toggle/<int:aid>')
+@admin_bp.route('/ads/toggle/<int:aid>', methods=['POST'])
 @admin_required
 def ad_toggle(aid):
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("UPDATE advertisements SET is_active = NOT is_active WHERE id = %s", (aid,))
+        cursor.execute(
+            "UPDATE advertisements SET is_active = NOT is_active WHERE id = %s RETURNING is_active",
+            (aid,)
+        )
+        row = cursor.fetchone()
         conn.commit()
-        flash('Advertisement status toggled!', 'success')
+        new_status = bool(row[0]) if row else None
+        return jsonify({'success': True, 'is_active': new_status})
     except Exception as e:
-        print(f"Ad toggle error: {e}")
-        flash('Error toggling ad.', 'error')
-    return redirect(url_for('admin.ads'))
+        current_app.logger.error(f"Ad toggle error: {e}")
+        return jsonify({'success': False, 'error': 'Could not toggle advertisement status'}), 500
 
 
-@admin_bp.route('/ads/delete/<int:aid>', methods=['GET', 'POST', 'DELETE'])
+@admin_bp.route('/ads/delete/<int:aid>', methods=['POST', 'DELETE'])
 @admin_required
 def ad_delete(aid):
     try:
@@ -894,15 +1080,11 @@ def ad_delete(aid):
         cursor = conn.cursor()
         cursor.execute("DELETE FROM advertisements WHERE id = %s", (aid,))
         conn.commit()
-        if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': True, 'message': 'Advertisement deleted successfully'})
-        flash('Advertisement deleted successfully!', 'success')
+        return jsonify({'success': True, 'message': 'Advertisement deleted successfully'})
     except Exception as e:
-        print(f"Ad delete error: {e}")
-        if request.method in ('DELETE', 'POST') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': False, 'error': str(e)}), 500
-        flash('Error deleting ad.', 'error')
-    return redirect(url_for('admin.ads'))
+        import logging as _log
+        _log.getLogger(__name__).error("Ad delete error: %s", e, exc_info=True)
+        return jsonify({'success': False, 'error': 'Could not delete advertisement'}), 500
 
 
 @admin_bp.route('/ads/reorder', methods=['POST'])
@@ -952,7 +1134,7 @@ def orders():
             query += " AND o.status = %s"
             params.append(status)
         if search:
-            query += " AND (o.order_number LIKE %s OR u.full_name LIKE %s OR o.shipping_phone LIKE %s)"
+            query += " AND (o.order_number ILIKE %s OR u.full_name ILIKE %s OR o.shipping_phone ILIKE %s)"
             s = f'%{search}%'
             params.extend([s, s, s])
         query += " ORDER BY o.id DESC"
@@ -968,7 +1150,7 @@ def orders():
                                orders=orders_list, status_counts=status_counts,
                                current_status=status, search=search, lang=lang)
     except Exception as e:
-        print(f"Admin orders error: {e}")
+        current_app.logger.error(f"Admin orders error: {e}")
         flash('Error loading orders.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1003,7 +1185,7 @@ def order_detail(oid):
                                order_items=[dict(i) for i in items] if items else [],
                                lang=lang)
     except Exception as e:
-        print(f"Order detail error: {e}")
+        current_app.logger.error(f"Order detail error: {e}")
         flash('Error loading order details.', 'error')
         return redirect(url_for('admin.orders'))
 
@@ -1056,6 +1238,7 @@ def order_update_status(oid):
             'pending':    'Your order is pending review.',
         }
         wa_notify_url = None
+        auto_sent = False
 
         # In-app notification for registered users only
         if user_id and prev_status != status:
@@ -1072,7 +1255,7 @@ def order_update_status(oid):
             except Exception:
                 pass
 
-        # WhatsApp notify URL — built for ANY order (guest or registered) with a phone number
+        # WhatsApp customer notification (auto + manual fallback)
         if prev_status != status:
             try:
                 cursor.execute(
@@ -1081,38 +1264,38 @@ def order_update_status(oid):
                 orow = cursor.fetchone()
                 cust_phone = (orow[0] if orow else '') or ''
                 cust_name  = (orow[1] if orow else '') or 'ደንበኛ'
-                if cust_phone:
-                    am_msgs = {
-                        'confirmed':  f'ሰላም {cust_name}! ትዕዛዝ #{order_number} ተቀብለናል እና በዝግጅት ላይ ነው። ✅',
-                        'processing': f'ሰላም {cust_name}! ትዕዛዝ #{order_number} በሂደት ላይ ነው። ⚙️',
-                        'shipped':    f'ሰላም {cust_name}! ትዕዛዝ #{order_number} ተላከ — በቅርቡ ይደርስዎታል! 🚚',
-                        'delivered':  f'ሰላም {cust_name}! ትዕዛዝ #{order_number} ደረሰ። አመሰግናለን! 🎉',
-                        'cancelled':  f'ሰላም {cust_name}! ትዕዛዝ #{order_number} ተሰርዟል። ለጥያቄ 0987957957 ይደውሉ። ❌',
-                        'pending':    f'ሰላም {cust_name}! ትዕዛዝ #{order_number} በግምገማ ላይ ነው። ⏳',
-                    }
-                    wa_text = am_msgs.get(status, f'ትዕዛዝ #{order_number} — {status}')
-                    import urllib.parse as _up
-                    phone_digits = ''.join(filter(str.isdigit, cust_phone))
-                    if phone_digits.startswith('0'):
-                        phone_digits = '251' + phone_digits[1:]
-                    wa_notify_url = f"https://wa.me/{phone_digits}?text={_up.quote(wa_text)}"
-            except Exception:
-                pass
+
+                from services.whatsapp_service import send_customer_status_notification
+                notif = send_customer_status_notification(
+                    order_number=order_number,
+                    customer_name=cust_name,
+                    customer_phone=cust_phone,
+                    status=status,
+                )
+                auto_sent     = notif.get('auto_sent', False)
+                wa_notify_url = notif.get('wa_url')
+            except Exception as _e:
+                current_app.logger.error(f"WhatsApp notification error: {_e}")
 
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': True, 'status': status, 'wa_notify_url': wa_notify_url})
+            return jsonify({
+                'success': True,
+                'status': status,
+                'wa_notify_url': wa_notify_url,
+                'auto_sent': auto_sent,
+            })
 
         flash(f'Order status updated to {status}!', 'success')
         return redirect(url_for('admin.order_detail', oid=oid))
     except Exception as e:
-        print(f"Order update error: {e}")
+        current_app.logger.error(f"Order update error: {e}")
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': False, 'error': str(e)}), 500
         flash('Error updating order status.', 'error')
         return redirect(url_for('admin.order_detail', oid=oid))
 
 
-@admin_bp.route('/orders/delete/<int:oid>')
+@admin_bp.route('/orders/delete/<int:oid>', methods=['POST'])
 @admin_required
 def delete_order(oid):
     try:
@@ -1123,7 +1306,7 @@ def delete_order(oid):
         conn.commit()
         flash('Order deleted successfully!', 'success')
     except Exception as e:
-        print(f"Delete order error: {e}")
+        current_app.logger.error(f"Delete order error: {e}")
         flash('Error deleting order.', 'error')
     return redirect(url_for('admin.orders'))
 
@@ -1162,7 +1345,7 @@ def export_order(oid):
         )
         return response
     except Exception as e:
-        print(f"Export order error: {e}")
+        current_app.logger.error(f"Export order error: {e}")
         flash('Error exporting order.', 'error')
         return redirect(url_for('admin.orders'))
 
@@ -1232,7 +1415,7 @@ th{{background:#1a73e8;color:white}}
 </body></html>"""
         return html
     except Exception as e:
-        print(f"Invoice error: {e}")
+        current_app.logger.error(f"Invoice error: {e}")
         flash('Error generating invoice.', 'error')
         return redirect(url_for('admin.order_detail', oid=oid))
 
@@ -1253,7 +1436,7 @@ def admin_users():
         users = [dict(u) for u in cursor.fetchall()]
         return render_template('admin/users/index.html', users=users, lang=lang)
     except Exception as e:
-        print(f"Admin users error: {e}")
+        current_app.logger.error(f"Admin users error: {e}")
         flash('Error loading users.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1290,7 +1473,14 @@ def delete_user(uid):
             return jsonify({'success': False, 'error': 'User not found'}), 404
         if user['is_admin']:
             return jsonify({'success': False, 'error': 'Cannot delete admin accounts'}), 403
+        # Remove all user-owned data before deleting the account
         cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (uid,))
+        cursor.execute("DELETE FROM wishlist WHERE user_id = %s", (uid,))
+        cursor.execute("DELETE FROM reviews WHERE user_id = %s", (uid,))
+        cursor.execute("DELETE FROM user_notifications WHERE user_id = %s", (uid,))
+        cursor.execute("DELETE FROM loyalty_transactions WHERE user_id = %s", (uid,))
+        # Nullify user_id on orders so order history is preserved for records
+        cursor.execute("UPDATE orders SET user_id = NULL WHERE user_id = %s", (uid,))
         cursor.execute("DELETE FROM users WHERE id = %s", (uid,))
         conn.commit()
         return jsonify({'success': True})
@@ -1361,7 +1551,7 @@ def admin_customer_detail(uid):
                                top_products=top_products, cart_items=cart_items,
                                lang=lang)
     except Exception as e:
-        print(f"Customer detail error: {e}")
+        current_app.logger.error(f"Customer detail error: {e}")
         flash('Error loading customer details.', 'error')
         return redirect(url_for('admin.admin_users'))
 
@@ -1403,7 +1593,7 @@ def admin_inbox():
                                search=search, unread_count=unread_count,
                                total_count=total_count, lang=lang)
     except Exception as e:
-        print(f"Admin inbox error: {e}")
+        current_app.logger.error(f"Admin inbox error: {e}")
         flash('Error loading inbox.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1548,8 +1738,8 @@ def reports():
                                pending_orders=pending_orders, completed_orders=completed_orders,
                                lang=lang)
     except Exception as e:
-        print(f"Reports error: {e}")
-        import traceback; print(traceback.format_exc())
+        current_app.logger.error(f"Reports error: {e}")
+        current_app.logger.error("Traceback:", exc_info=True)
         flash('Error loading reports.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1621,7 +1811,7 @@ def reports_sales():
                                chart_labels=chart_labels, chart_values=chart_values,
                                start_date=start_date, end_date=end_date, lang=lang)
     except Exception as e:
-        print(f"Reports sales error: {e}")
+        current_app.logger.error(f"Reports sales error: {e}")
         flash('Error loading sales report.', 'error')
         return redirect(url_for('admin.reports'))
 
@@ -1679,7 +1869,7 @@ def reports_products():
                                total_value=stats_dict.get('total_value', 0),
                                lang=lang)
     except Exception as e:
-        print(f"Reports products error: {e}")
+        current_app.logger.error(f"Reports products error: {e}")
         flash('Error loading products report.', 'error')
         return redirect(url_for('admin.reports'))
 
@@ -1720,11 +1910,15 @@ def settings():
             conn.commit()
             flash('Settings saved successfully!', 'success')
         except Exception as e:
-            print(f"Settings save error: {e}")
+            current_app.logger.error(f"Settings save error: {e}")
             flash('Error saving settings.', 'error')
         return redirect(url_for('admin.settings'))
 
-    return render_template('admin/settings.html', settings=settings_data, lang=lang)
+    groq_configured = bool(
+        os.environ.get('GROQ_API_KEY') or settings_data.get('groq_api_key')
+    )
+    return render_template('admin/settings.html', settings=settings_data,
+                           lang=lang, groq_configured=groq_configured)
 
 
 @admin_bp.route('/settings/change-password', methods=['POST'])
@@ -1763,10 +1957,179 @@ def change_password():
         conn.commit()
         flash('Password changed successfully!', 'success')
     except Exception as e:
-        print(f"Admin change password error: {e}")
+        current_app.logger.error(f"Admin change password error: {e}")
         flash('Error changing password. Please try again.', 'error')
 
     return redirect(url_for('admin.settings') + '#change-password')
+
+
+@admin_bp.route('/ai-logs')
+@admin_required
+def ai_logs():
+    """AI conversation log — paginated list with stats and filters."""
+    lang = get_lang()
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        page = max(1, int(request.args.get('page', 1)))
+    except (ValueError, TypeError):
+        page = 1
+    per_page  = 20
+    offset    = (page - 1) * per_page
+    source_f  = request.args.get('source', '')   # groq | fallback | error | ''
+    lang_f    = request.args.get('lang', '')
+    q         = request.args.get('q', '').strip()
+    date_from = request.args.get('date_from', '')
+    date_to   = request.args.get('date_to', '')
+
+    # Build WHERE clause
+    wheres = []
+    params = []
+    if source_f:
+        wheres.append("source = %s"); params.append(source_f)
+    if lang_f:
+        wheres.append("lang = %s"); params.append(lang_f)
+    if q:
+        wheres.append("(user_message ILIKE %s OR ai_reply ILIKE %s OR user_name ILIKE %s)")
+        params += [f'%{q}%', f'%{q}%', f'%{q}%']
+    if date_from:
+        wheres.append("created_at::date >= %s"); params.append(date_from)
+    if date_to:
+        wheres.append("created_at::date <= %s"); params.append(date_to)
+
+    where_sql = ('WHERE ' + ' AND '.join(wheres)) if wheres else ''
+
+    # Total count
+    cursor.execute(f"SELECT COUNT(*) FROM ai_conversations {where_sql}", params)
+    total = cursor.fetchone()[0]
+    total_pages = max(1, -(-total // per_page))
+
+    # Rows
+    cursor.execute(f"""
+        SELECT id, user_id, user_name, user_message, ai_reply, source, lang, ip_address, created_at
+        FROM ai_conversations {where_sql}
+        ORDER BY created_at DESC
+        LIMIT %s OFFSET %s
+    """, params + [per_page, offset])
+    rows = cursor.fetchall()
+
+    # Summary stats (always over full table)
+    cursor.execute("""
+        SELECT
+            COUNT(*) AS total,
+            COUNT(*) FILTER (WHERE source = 'groq')     AS groq_count,
+            COUNT(*) FILTER (WHERE source = 'fallback') AS fallback_count,
+            COUNT(*) FILTER (WHERE source = 'error')    AS error_count,
+            COUNT(DISTINCT ip_address)                   AS unique_ips,
+            COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours') AS today
+        FROM ai_conversations
+    """)
+    stats = cursor.fetchone()
+
+    # Top 5 questions
+    cursor.execute("""
+        SELECT user_message, COUNT(*) AS n
+        FROM ai_conversations
+        GROUP BY user_message
+        ORDER BY n DESC
+        LIMIT 5
+    """)
+    top_questions = cursor.fetchall()
+
+    return render_template(
+        'admin/ai_logs.html',
+        lang=lang,
+        rows=rows,
+        stats=stats,
+        top_questions=top_questions,
+        page=page,
+        total_pages=total_pages,
+        total=total,
+        source_f=source_f,
+        lang_f=lang_f,
+        q=q,
+        date_from=date_from,
+        date_to=date_to,
+    )
+
+
+@admin_bp.route('/ai-logs/clear', methods=['POST'])
+@admin_required
+def ai_logs_clear():
+    """Delete all AI conversation logs."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM ai_conversations")
+        conn.commit()
+        flash('All AI conversation logs cleared.', 'success')
+    except Exception as e:
+        current_app.logger.error(f"ai_logs_clear error: {e}")
+        flash('Error clearing logs.', 'error')
+    return redirect(url_for('admin.ai_logs'))
+
+
+@admin_bp.route('/settings/ai-key', methods=['POST'])
+@admin_required
+def save_ai_key():
+    """Save or update GROQ_API_KEY in the settings table and live environment."""
+    key = request.form.get('groq_api_key', '').strip()
+    if not key:
+        flash('No API key entered — existing key kept.', 'info')
+        return redirect(url_for('admin.settings') + '#ai-settings')
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO settings (key, value) VALUES (%s, %s)
+            ON CONFLICT(key) DO UPDATE SET value = %s
+        """, ('groq_api_key', key, key))
+        conn.commit()
+        os.environ['GROQ_API_KEY'] = key
+        flash('Groq API key saved! AI assistant is now using Groq LLM.', 'success')
+    except Exception as e:
+        current_app.logger.error(f"save_ai_key error: {e}")
+        flash('Error saving API key.', 'error')
+    return redirect(url_for('admin.settings') + '#ai-settings')
+
+
+@admin_bp.route('/settings/remove-ai-key', methods=['POST'])
+@admin_required
+def remove_ai_key():
+    """Remove GROQ_API_KEY from settings and environment."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM settings WHERE key = %s", ('groq_api_key',))
+        conn.commit()
+        os.environ.pop('GROQ_API_KEY', None)
+        return jsonify({'success': True})
+    except Exception as e:
+        current_app.logger.error(f"remove_ai_key error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@admin_bp.route('/settings/test-ai', methods=['POST'])
+@admin_required
+def test_ai_key():
+    """Test if the configured GROQ_API_KEY works by sending a minimal request."""
+    api_key = os.environ.get('GROQ_API_KEY', '').strip()
+    if not api_key:
+        return jsonify({'success': False, 'error': 'No GROQ_API_KEY configured.'})
+    try:
+        from groq import Groq
+        client = Groq(api_key=api_key)
+        completion = client.chat.completions.create(
+            model='llama-3.3-70b-versatile',
+            messages=[{'role': 'user', 'content': 'Say OK in one word.'}],
+            max_tokens=5,
+            temperature=0,
+        )
+        reply = completion.choices[0].message.content.strip()
+        return jsonify({'success': True, 'model': 'llama-3.3-70b-versatile', 'sample': reply})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)[:200]})
 
 
 @admin_bp.route('/clear-cache', methods=['GET', 'POST'])
@@ -1790,7 +2153,7 @@ def backup_database():
             'error': 'This app uses PostgreSQL. Use pg_dump from the shell or Replit Database panel to back up.'
         }), 400
     except Exception as e:
-        print(f"Backup error: {e}")
+        current_app.logger.error(f"Backup error: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
@@ -1835,11 +2198,11 @@ def send_notification():
                     uid = ur[0]
                     notify_user(uid, title, body, type='info', link=link or '')
             except Exception as fan_err:
-                print(f"⚠️ Notification fan-out partial failure: {fan_err}")
+                current_app.logger.warning(f"⚠️ Notification fan-out partial failure: {fan_err}")
 
             flash('Notification sent to all customers!', 'success')
         except Exception as e:
-            print(f"Send notification error: {e}")
+            current_app.logger.error(f"Send notification error: {e}")
             flash('Error sending notification.', 'error')
         return redirect(url_for('admin.send_notification'))
 
@@ -1885,7 +2248,7 @@ def admin_reviews():
                                reviews=[dict(r) for r in reviews_rows] if reviews_rows else [],
                                lang=lang)
     except Exception as e:
-        print(f"Admin reviews error: {e}")
+        current_app.logger.error(f"Admin reviews error: {e}")
         flash('Error loading reviews', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1979,7 +2342,7 @@ def password_resets():
         return render_template('admin/password_resets/index.html',
                                tokens=tokens, lang=lang)
     except Exception as e:
-        print(f"Password resets admin error: {e}")
+        current_app.logger.error(f"Password resets admin error: {e}")
         flash('Error loading reset tokens.', 'error')
         return redirect(url_for('admin.dashboard'))
 
@@ -1995,6 +2358,6 @@ def invalidate_reset_token(token_id):
         conn.commit()
         flash('Reset token invalidated.', 'success')
     except Exception as e:
-        print(f"Invalidate token error: {e}")
+        current_app.logger.error(f"Invalidate token error: {e}")
         flash('Error invalidating token.', 'error')
     return redirect(url_for('admin.password_resets'))

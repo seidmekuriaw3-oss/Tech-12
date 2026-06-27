@@ -467,39 +467,6 @@
     updateDateTime();
     setInterval(updateDateTime, 60000);
 
-    // Load total revenue
-    function loadTotalRevenue() {
-        fetch('{{ url_for('admin.reports') }}')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const revenueSpan = document.getElementById('totalRevenue');
-                    if (revenueSpan) {
-                        const revenue = data.total_revenue || 0;
-                        revenueSpan.textContent = revenue.toLocaleString() + ' ETB';
-                    }
-                }
-            })
-            .catch(err => console.error('Error loading revenue:', err));
-    }
-    loadTotalRevenue();
-
-    // Load database info
-    function loadDbInfo() {
-        fetch('{{ url_for('admin.dashboard') }}')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const dbSizeSpan = document.getElementById('dbSize');
-                    if (dbSizeSpan) dbSizeSpan.textContent = data.size || 'Unknown';
-                    const lastBackupSpan = document.getElementById('lastBackup');
-                    if (lastBackupSpan && data.last_backup) lastBackupSpan.textContent = data.last_backup;
-                }
-            })
-            .catch(err => console.error('Error loading DB info:', err));
-    }
-    loadDbInfo();
-
     // Check system status
     function checkSystemStatus() {
         fetch('{{ url_for("utility.health_check") }}')
@@ -519,14 +486,8 @@
             });
     }
     checkSystemStatus();
-    setInterval(checkSystemStatus, 30000);
+    let refreshInterval = setInterval(checkSystemStatus, 30000);
 
-    // Auto-refresh data every minute
-    let refreshInterval = setInterval(() => {
-        loadTotalRevenue();
-        loadDbInfo();
-    }, 60000);
-    
     // Clean up on page unload
     window.addEventListener('beforeunload', () => {
         if (refreshInterval) clearInterval(refreshInterval);

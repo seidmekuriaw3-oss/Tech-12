@@ -34,7 +34,7 @@ SHIPPING_COST = int(os.environ.get('SHIPPING_COST', '200'))
 USER_DISCOUNT_RATE = 0.10          # 10 % discount for logged-in users
 
 
-def calc_cart_totals(subtotal: float, is_logged_in: bool) -> dict:
+def calc_cart_totals(subtotal, is_logged_in: bool) -> dict:
     """
     Compute discount, shipping and grand total from a cart subtotal.
 
@@ -42,6 +42,7 @@ def calc_cart_totals(subtotal: float, is_logged_in: bool) -> dict:
         subtotal, discount, subtotal_after_discount,
         shipping_cost, total, free_shipping, free_shipping_threshold
     """
+    subtotal = float(subtotal or 0)
     discount = round(subtotal * USER_DISCOUNT_RATE, 2) if is_logged_in else 0.0
     subtotal_after_discount = round(subtotal - discount, 2)
     free_shipping = subtotal_after_discount >= FREE_SHIPPING_THRESHOLD

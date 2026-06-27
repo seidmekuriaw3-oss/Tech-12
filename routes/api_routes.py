@@ -10,11 +10,12 @@ This module contains all API endpoints for AJAX requests including:
 - Branch information
 """
 
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, current_app
 from database.db import get_db
 from database.models import Product, Order
 from middleware.auth import is_admin
 from routes.shared import FREE_SHIPPING_THRESHOLD, SHIPPING_COST, calc_cart_totals, USER_DISCOUNT_RATE
+from extensions import limiter
 import json
 import re
 
@@ -39,7 +40,7 @@ def api_search_products():
         SELECT p.*, c.name as category_name
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        WHERE (p.name LIKE %s OR p.name_am LIKE %s OR p.name_ar LIKE %s)
+        WHERE (p.name ILIKE %s OR p.name_am ILIKE %s OR p.name_ar ILIKE %s)
         AND p.is_active = 1
         ORDER BY p.id DESC
         LIMIT 50
@@ -84,11 +85,21 @@ def api_filter_products():
     db = get_db()
     cursor = db.cursor()
     
-    # Build query
+    # Build query (include avg rating and review count via subquery)
     query = """
-        SELECT p.*, c.name as category_name
+        SELECT p.*, c.name as category_name,
+            COALESCE(r.avg_rating, 0) as rating,
+            COALESCE(r.review_count, 0) as reviews
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN (
+            SELECT product_id,
+                   ROUND(AVG(rating)::numeric, 1) as avg_rating,
+                   COUNT(*) as review_count
+            FROM reviews
+            WHERE is_approved = 1
+            GROUP BY product_id
+        ) r ON r.product_id = p.id
         WHERE p.is_active = 1
     """
     params = []
@@ -167,7 +178,9 @@ def api_filter_products():
             'category_id': p['category_id'],
             'category_name': p['category_name'],
             'is_featured': bool(p['is_featured']),
-            'is_new': bool(p['is_new'])
+            'is_new': bool(p['is_new']),
+            'rating': float(p['rating']) if p['rating'] else 0,
+            'reviews': int(p['reviews']) if p['reviews'] else 0
         })
     
     return jsonify({
@@ -208,7 +221,7 @@ def api_get_product(pid):
     if product['images']:
         try:
             images = json.loads(product['images'])
-        except:
+        except (json.JSONDecodeError, ValueError):
             images = [product['thumbnail']] if product['thumbnail'] else []
     
     return jsonify({
@@ -245,21 +258,49 @@ def api_cart_add():
     """Add product to cart"""
     if request.method == 'GET':
         product_id = request.args.get('product_id')
-        quantity = int(request.args.get('quantity', 1))
+        quantity = request.args.get('quantity', 1)
     else:
         data = request.get_json(silent=True) or {}
         product_id = data.get('product_id')
         quantity = data.get('quantity', 1)
-    
+
     if not product_id:
         return jsonify({'success': False, 'error': 'Invalid data'}), 400
-    
-    product_id = int(product_id)
-    quantity = int(quantity)
-    
+
+    try:
+        product_id = int(product_id)
+        quantity = int(quantity)
+    except (ValueError, TypeError):
+        return jsonify({'success': False, 'error': 'Invalid product ID or quantity'}), 400
+
     if not product_id:
         return jsonify({'success': False, 'error': 'Product ID required'}), 400
-    
+
+    # Check product exists and has enough stock
+    db_check = get_db()
+    cur_check = db_check.cursor()
+    cur_check.execute("SELECT id, stock_quantity, is_active FROM products WHERE id = %s", (product_id,))
+    prod_check = cur_check.fetchone()
+    if not prod_check or not prod_check['is_active']:
+        return jsonify({'success': False, 'error': 'Product not available'}), 404
+
+    # For logged-in users, account for what's already in cart
+    existing_qty = 0
+    if session.get('user_id'):
+        cur_check.execute("SELECT quantity FROM cart_items WHERE user_id = %s AND product_id = %s",
+                          (session['user_id'], product_id))
+        ex = cur_check.fetchone()
+        if ex:
+            existing_qty = ex['quantity']
+    else:
+        existing_qty = session.get('cart', {}).get(str(product_id), 0)
+
+    if existing_qty + quantity > prod_check['stock_quantity']:
+        avail = prod_check['stock_quantity'] - existing_qty
+        if avail <= 0:
+            return jsonify({'success': False, 'error': 'No more stock available'}), 400
+        return jsonify({'success': False, 'error': f'Only {avail} more item(s) available'}), 400
+
     # Check if user is logged in
     if session.get('user_id'):
         # Save to database
@@ -299,7 +340,20 @@ def api_cart_add():
         session['cart'] = cart
         session.modified = True
     
-    return jsonify({'success': True, 'message': 'Product added to cart'})
+    # Compute cart count to return
+    try:
+        if session.get('user_id'):
+            db2 = get_db()
+            cur2 = db2.cursor()
+            cur2.execute("SELECT COALESCE(SUM(quantity),0) as c FROM cart_items WHERE user_id=%s", (session['user_id'],))
+            row2 = cur2.fetchone()
+            cart_count = int(row2['c']) if row2 else 0
+        else:
+            cart_count = sum(int(v) for v in session.get('cart', {}).values())
+    except Exception:
+        cart_count = 0
+
+    return jsonify({'success': True, 'message': 'Product added to cart', 'cart_count': cart_count})
 
 
 def _get_cart_totals_data(product_id_removed=None):
@@ -355,8 +409,10 @@ def api_cart_remove():
         else:
             data = request.get_json(silent=True) or {}
             product_id = data.get('product_id')
-        if product_id:
-            product_id = int(product_id)
+        try:
+            product_id = int(product_id) if product_id else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid product ID'}), 400
 
         if not product_id:
             return jsonify({'success': False, 'error': 'Product ID required'}), 400
@@ -390,14 +446,16 @@ def api_cart_update():
     try:
         if request.method == 'GET':
             product_id = request.args.get('product_id')
-            quantity = int(request.args.get('quantity', 1))
+            quantity = request.args.get('quantity', 1)
         else:
             data = request.get_json(silent=True) or {}
             product_id = data.get('product_id')
             quantity = data.get('quantity', 1)
-        if product_id:
-            product_id = int(product_id)
-        quantity = int(quantity)
+        try:
+            product_id = int(product_id) if product_id else None
+            quantity = int(quantity)
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid product ID or quantity'}), 400
 
         if not product_id:
             return jsonify({'success': False, 'error': 'Product ID required'}), 400
@@ -432,7 +490,7 @@ def api_cart_update():
 
         totals = _get_cart_totals_data()
         is_logged_in = bool(session.get('user_id'))
-        discounted_price = item_price * 0.9 if is_logged_in else item_price
+        discounted_price = item_price * (1 - USER_DISCOUNT_RATE) if is_logged_in else item_price
         item_total = round(discounted_price * quantity, 2)
 
         totals['success'] = True
@@ -541,9 +599,10 @@ def api_cart_count():
 # ==================== USER AUTH API ====================
 
 @api_bp.route('/auth/register', methods=['POST'])
+@limiter.limit("5 per minute; 20 per hour")
 def api_register():
     """Register new user"""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     
     full_name = data.get('full_name', '').strip()
     email = data.get('email', '').strip().lower()
@@ -604,9 +663,10 @@ def api_register():
 
 
 @api_bp.route('/auth/login', methods=['POST'])
+@limiter.limit("10 per minute; 50 per hour")
 def api_login():
     """Login user"""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     
     email = data.get('email', '').strip().lower()
     password = data.get('password', '')
@@ -694,12 +754,13 @@ def api_check_auth():
 # ==================== ORDER API ====================
 
 @api_bp.route('/order/place', methods=['POST'])
+@limiter.limit("10 per minute; 30 per hour")
 def api_place_order():
     """Place a new order"""
     if not session.get('user_id'):
         return jsonify({'success': False, 'error': 'Please login to place order'}), 401
     
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     
     # Get cart items
     db = get_db()
@@ -798,7 +859,7 @@ def api_place_order():
             if _low:
                 _stock_alert(_low)
     except Exception as _e:
-        print(f"Low-stock check error (api): {_e}")
+        current_app.logger.error(f"Low-stock check error (api): {_e}")
 
     # Clear cart
     cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (session['user_id'],))
@@ -817,39 +878,28 @@ def api_place_order():
 # ==================== CONTACT API ====================
 
 @api_bp.route('/contact', methods=['POST'])
+@limiter.limit("10 per hour")
 def api_contact():
     """Submit contact form"""
-    data = request.get_json()
-    
+    data = request.get_json(silent=True) or {}
+
     name = data.get('name', '').strip()
     email = data.get('email', '').strip()
     phone = data.get('phone', '').strip()
     message = data.get('message', '').strip()
-    
+
     if not name or not email or not message:
         return jsonify({'success': False, 'error': 'Name, email, and message are required'}), 400
-    
-    # Save to database or send email
+
     db = get_db()
     cursor = db.cursor()
+    # Use the canonical contact_messages table (no DDL on every request)
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS contacts (
-            id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL,
-            phone TEXT,
-            message TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT NOW()
-        )
-    """)
-    
-    cursor.execute("""
-        INSERT INTO contacts (name, email, phone, message)
+        INSERT INTO contact_messages (name, email, phone, message)
         VALUES (%s, %s, %s, %s)
     """, (name, email, phone, message))
-    
     db.commit()
-    
+
     return jsonify({
         'success': True,
         'message': 'Message sent successfully! We will contact you soon.'
@@ -968,18 +1018,23 @@ def api_wishlist_add():
     if not session.get('user_id'):
         return jsonify({'success': False, 'error': 'Please login first'}), 401
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         product_id = data.get('product_id')
         if not product_id:
             return jsonify({'success': False, 'error': 'Product ID required'}), 400
 
         db = get_db()
         cursor = db.cursor()
+        # Fetch current price so we can track price drops later
+        cursor.execute("SELECT price FROM products WHERE id = %s AND is_active = 1", (product_id,))
+        prod = cursor.fetchone()
+        if not prod:
+            return jsonify({'success': False, 'error': 'Product not found'}), 404
         cursor.execute("""
-            INSERT INTO wishlist (user_id, product_id)
-            VALUES (%s, %s)
+            INSERT INTO wishlist (user_id, product_id, price_at_add)
+            VALUES (%s, %s, %s)
             ON CONFLICT (user_id, product_id) DO NOTHING
-        """, (session['user_id'], product_id))
+        """, (session['user_id'], product_id, prod['price']))
         db.commit()
         return jsonify({'success': True, 'message': 'Added to wishlist'})
     except Exception as e:
@@ -992,7 +1047,7 @@ def api_wishlist_remove():
     if not session.get('user_id'):
         return jsonify({'success': False, 'error': 'Please login first'}), 401
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         product_id = data.get('product_id')
         if not product_id:
             return jsonify({'success': False, 'error': 'Product ID required'}), 400
@@ -1013,7 +1068,7 @@ def api_wishlist_remove():
 def api_apply_coupon():
     """Apply discount coupon to cart."""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         code = data.get('code', '').strip().upper()
         if not code:
             return jsonify({'success': False, 'error': 'Coupon code required'}), 400
@@ -1058,7 +1113,10 @@ def api_apply_coupon():
         session['applied_coupon'] = {
             'code': code,
             'discount': discount,
-            'coupon_id': coupon['id']
+            'coupon_id': coupon['id'],
+            # Keep raw fields so checkout can recalculate if needed
+            'discount_type': coupon['discount_type'],
+            'discount_value': float(coupon['discount_value']),
         }
         session.modified = True
 
@@ -1082,7 +1140,14 @@ def product_reviews(product_id):
             cursor = db.cursor()
             cursor.execute("""
                 SELECT r.id, r.rating, r.comment, r.is_approved,
-                       r.created_at, u.full_name as user_name
+                       r.created_at, u.full_name as user_name,
+                       CASE WHEN EXISTS(
+                           SELECT 1 FROM order_items oi
+                           JOIN orders o ON oi.order_id = o.id
+                           WHERE oi.product_id = r.product_id
+                             AND o.user_id = r.user_id
+                             AND o.status = 'delivered'
+                       ) THEN 1 ELSE 0 END as verified_purchase
                 FROM reviews r JOIN users u ON r.user_id = u.id
                 WHERE r.product_id = %s AND r.is_approved = 1
                 ORDER BY r.created_at DESC LIMIT 30
@@ -1180,10 +1245,11 @@ def product_reviews(product_id):
 # ==================== NEWSLETTER API ====================
 
 @api_bp.route('/subscribe-newsletter', methods=['POST'])
+@limiter.limit("5 per hour")
 def subscribe_newsletter():
     """Subscribe to newsletter."""
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         email = data.get('email', '').strip().lower()
         if not email:
             return jsonify({'success': False, 'error': 'Email is required'}), 400
@@ -1209,7 +1275,7 @@ def api_translate():
     """Translate text to target language."""
     try:
         from utils.translation_cache import translate_text
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         text = data.get('text', '').strip()
         target_lang = data.get('target_lang', 'en')
         if not text:
@@ -1226,7 +1292,7 @@ def api_translate_batch():
     """Translate multiple texts at once."""
     try:
         from utils.translation_cache import batch_translate
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         texts = data.get('texts', [])
         target_lang = data.get('target_lang', 'en')
         if not texts or not isinstance(texts, list):
@@ -1256,19 +1322,22 @@ def api_platform():
 # ==================== SUBMIT ORDER API ====================
 
 @api_bp.route('/submit-order', methods=['POST'])
+@limiter.limit("10 per minute; 30 per hour")
 def api_submit_order():
     """Submit order via AJAX (quick-checkout modal) — supports guests and logged-in users."""
     user_id = session.get('user_id')
     try:
-        data = request.get_json()
-        customer_name  = (data.get('customer_name') or '').strip()
-        customer_phone = (data.get('customer_phone') or '').strip()
-        shipping_address = (data.get('customer_address') or '').strip() or 'Not provided'
-        customer_email = (data.get('customer_email') or '').strip() or None
-        notes = (data.get('order_notes') or '').strip()
+        data = request.get_json(silent=True) or {}
+        customer_name    = (data.get('customer_name') or '').strip()
+        customer_phone   = (data.get('customer_phone') or '').strip()
+        shipping_address = (data.get('customer_address') or '').strip()
+        customer_email   = (data.get('customer_email') or '').strip() or None
+        notes            = (data.get('order_notes') or '').strip()
 
         if not customer_name or not customer_phone:
             return jsonify({'success': False, 'error': 'Name and phone number are required'}), 400
+        if not shipping_address:
+            return jsonify({'success': False, 'error': 'Delivery address is required'}), 400
 
         db = get_db()
         cursor = db.cursor()
@@ -1304,9 +1373,8 @@ def api_submit_order():
         if not cart_items:
             return jsonify({'success': False, 'error': 'Cart is empty'}), 400
 
-        from middleware.platform import is_android_app
-        android_user = is_android_app()
-        is_logged_in = bool(user_id) or android_user
+        # Discount applies only to authenticated (session) users — not UA-based
+        is_logged_in = bool(user_id)
 
         subtotal = 0
         items_list = []
@@ -1316,7 +1384,7 @@ def api_submit_order():
             subtotal += price * qty
             items_list.append({
                 'product_id': item['product_id'], 'quantity': qty,
-                'price': round(price * 0.9, 2) if is_logged_in else price,
+                'price': round(price * (1 - USER_DISCOUNT_RATE), 2) if is_logged_in else price,
                 'name': item['name'],
                 'name_am': item['name_am'] or item['name'],
             })
@@ -1327,6 +1395,33 @@ def api_submit_order():
         subtotal_after_discount = _totals['subtotal_after_discount']
         shipping_cost = _totals['shipping_cost']
         total = _totals['total']
+
+        # Apply coupon if one is active in session (re-validate against current cart)
+        coupon_info = session.pop('applied_coupon', None)
+        if coupon_info:
+            _coupon_id  = coupon_info.get('coupon_id')
+            _disc_type  = coupon_info.get('discount_type')
+            _disc_value = float(coupon_info.get('discount_value', 0))
+            if _coupon_id and _disc_type:
+                cursor.execute("""
+                    SELECT min_order, max_discount, usage_limit, used_count, is_active
+                    FROM coupons WHERE id = %s
+                    AND (valid_to IS NULL OR valid_to >= NOW())
+                """, (_coupon_id,))
+                _fresh = cursor.fetchone()
+                if (_fresh and _fresh['is_active'] and
+                        (_fresh['usage_limit'] is None or _fresh['used_count'] < _fresh['usage_limit'])):
+                    _min_order = float(_fresh['min_order'] or 0)
+                    if subtotal_after_discount >= _min_order:
+                        if _disc_type == 'percentage':
+                            _extra = subtotal_after_discount * _disc_value / 100
+                            if _fresh['max_discount']:
+                                _extra = min(_extra, float(_fresh['max_discount']))
+                        else:
+                            _extra = min(_disc_value, subtotal_after_discount)
+                        _extra = round(_extra, 2)
+                        discount = round(discount + _extra, 2)
+                        total = round(max(0, total - _extra), 2)
 
         import random, string
         from datetime import datetime as _dt
@@ -1350,9 +1445,16 @@ def api_submit_order():
                 INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
                 VALUES (%s, %s, %s, %s)
             """, (order_id, item['product_id'], item['quantity'], item['price']))
+            # Atomic decrement — prevents race condition / negative stock
             cursor.execute("""
-                UPDATE products SET stock_quantity = stock_quantity - %s WHERE id = %s
-            """, (item['quantity'], item['product_id']))
+                UPDATE products SET stock_quantity = stock_quantity - %s,
+                    sales_count = COALESCE(sales_count, 0) + %s
+                WHERE id = %s AND stock_quantity >= %s
+            """, (item['quantity'], item['quantity'], item['product_id'], item['quantity']))
+            if cursor.rowcount == 0:
+                db.rollback()
+                return jsonify({'success': False,
+                                'error': f"ይቅርታ! \"{item.get('name', 'ምርት')}\" ላይ በቂ ዕቃ አልተገኘም።"}), 400
 
         if user_id:
             cursor.execute("DELETE FROM cart_items WHERE user_id = %s", (user_id,))

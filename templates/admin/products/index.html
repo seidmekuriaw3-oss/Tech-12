@@ -180,8 +180,8 @@
     <!-- Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
         <div>
-            <h1 style="margin-bottom: 4px;">📦 Products Management</h1>
-            <p style="color: var(--text-muted, #666); margin: 0;">Manage your store products inventory</p>
+            <h1 style="margin-bottom: 4px;">👗 Products Management — ምርቶች</h1>
+            <p style="color: var(--text-muted, #666); margin: 0;">SEMIRA FASHION — ምርቶቹን ያስተዳድሩ</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <a href="{{ url_for('admin.import_products') }}" class="btn btn-outline">📥 Import CSV</a>
@@ -264,7 +264,7 @@
                     </td>
                     <td style="padding: 12px;">
                         <span class="category-badge">
-                            {{ product.category.name_am if product.category else '-' }}
+                            {{ product.category_name or '-' }}
                         </span>
                     </td>
                     <td style="padding: 12px; text-align: center;">
@@ -484,7 +484,7 @@
         const ids = getSelectedIds();
         if (ids.length === 0) return;
         
-        const newCategoryId = prompt('Enter category ID (1=Sofa, 2=Bed, 3=Mejlis, 4=Curtain, 5=Wardrobe, 6=Other):');
+        const newCategoryId = prompt('Enter category ID to assign to selected products:');
         if (!newCategoryId) return;
         
         showLoading(true);

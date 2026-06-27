@@ -8,6 +8,7 @@ This package contains all route modules for the application:
 - cart_routes: Cart management routes (add, remove, update, etc.)
 """
 
+import logging as _log
 from flask import Blueprint
 
 # ==================== BLUEPRINT REGISTRATION ====================
@@ -27,6 +28,7 @@ def register_routes(app):
     from routes.cart_routes import cart_bp
     from routes.utility_routes import utility_bp
     from routes.islamic_routes import islamic_bp
+    from routes.ai_routes import ai_bp
 
     # Register blueprints with URL prefixes
     app.register_blueprint(customer_bp, url_prefix='/')
@@ -35,14 +37,15 @@ def register_routes(app):
     app.register_blueprint(cart_bp, url_prefix='/cart')
     app.register_blueprint(utility_bp, url_prefix='/')
     app.register_blueprint(islamic_bp, url_prefix='/')
+    app.register_blueprint(ai_bp, url_prefix='/api')
 
-    print("✅ All routes registered successfully")
-    print(f"   - Customer routes: /")
-    print(f"   - Admin routes: /admin")
-    print(f"   - API routes: /api")
-    print(f"   - Cart routes: /cart")
-    print(f"   - Utility routes: / (health, sitemap, robots, lang)")
-    print(f"   - Islamic routes: /islamic")
+    _log.getLogger(__name__).warning("✅ All routes registered successfully")
+    _log.getLogger(__name__).warning("   - Customer routes: /")
+    _log.getLogger(__name__).warning("   - Admin routes: /admin")
+    _log.getLogger(__name__).warning("   - API routes: /api")
+    _log.getLogger(__name__).warning("   - Cart routes: /cart")
+    _log.getLogger(__name__).warning("   - Utility routes: / (health, sitemap, robots, lang)")
+    _log.getLogger(__name__).warning("   - Islamic routes: /islamic")
 
 
 # ==================== ROUTE HELPERS ====================
@@ -173,4 +176,5 @@ __all__ = [
 
 __version__ = '1.0.0'
 
-print("✅ Routes package initialized")
+import logging as _log
+_log.getLogger(__name__).debug("✅ Routes package initialized")

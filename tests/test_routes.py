@@ -25,14 +25,14 @@ def test_about_route(client):
     """Test GET /about - about page loads successfully"""
     response = client.get('/about')
     assert response.status_code == 200
-    assert b'About' in response.data or b'ስለ' in response.data
+    assert b'About' in response.data or 'ስለ'.encode('utf-8') in response.data
 
 
 def test_contact_route(client):
     """Test GET /contact - contact page loads successfully"""
     response = client.get('/contact')
     assert response.status_code == 200
-    assert b'Contact' in response.data or b'አግኙን' in response.data
+    assert b'Contact' in response.data or 'አግኙን'.encode('utf-8') in response.data
 
 
 def test_contact_route_post(client):
@@ -51,7 +51,7 @@ def test_cart_route(client):
     """Test GET /cart - cart page loads successfully"""
     response = client.get('/cart')
     assert response.status_code == 200
-    assert b'Cart' in response.data or b'ጋሪ' in response.data
+    assert b'Cart' in response.data or 'ጋሪ'.encode('utf-8') in response.data
 
 
 def test_category_route(client):
@@ -95,7 +95,7 @@ def test_login_route_get(client):
     """Test GET /login - login page loads"""
     response = client.get('/login')
     assert response.status_code == 200
-    assert b'Login' in response.data or b'ግባ' in response.data
+    assert b'Login' in response.data or 'ግባ'.encode('utf-8') in response.data
 
 
 def test_login_route_post_invalid(client):
@@ -103,7 +103,7 @@ def test_login_route_post_invalid(client):
     response = client.post('/login', data={'password': 'wrongpassword'}, follow_redirects=True)
     assert response.status_code == 200
     # Should show error message
-    assert b'Invalid' in response.data or b'ስህተት' in response.data
+    assert b'Invalid' in response.data or 'ስህተት'.encode('utf-8') in response.data
 
 
 def test_login_route_post_valid(client, auth):
@@ -134,7 +134,7 @@ def test_admin_route_with_login(client, auth):
     auth.login()
     response = client.get('/admin')
     assert response.status_code == 200
-    assert b'Dashboard' in response.data or b'ዳሽቦርድ' in response.data
+    assert b'Dashboard' in response.data or 'ዳሽቦርድ'.encode('utf-8') in response.data
 
 
 def test_admin_products_route(client, auth):
@@ -298,7 +298,7 @@ def test_404_handler(client):
     response = client.get('/nonexistent-page-12345')
     assert response.status_code == 404
     # Should show custom 404 page
-    assert b'404' in response.data or b'Page Not Found' in response.data or b'አልተገኘም' in response.data
+    assert b'404' in response.data or b'Page Not Found' in response.data or 'አልተገኘም'.encode('utf-8') in response.data
 
 
 def test_405_handler(client):

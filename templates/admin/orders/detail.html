@@ -357,7 +357,10 @@
             <button onclick="sendWhatsAppMessage()" class="btn btn-secondary">💬 Send WhatsApp Update</button>
             <button onclick="sendEmailUpdate()" class="btn btn-secondary">📧 Send Email Update</button>
             <button onclick="generateInvoice()" class="btn btn-secondary">🧾 Generate Invoice PDF</button>
-            <a href="{{ url_for('admin.delete_order', oid=order.id) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">🗑️ Delete Order</a>
+            <form method="POST" action="{{ url_for('admin.delete_order', oid=order.id) }}" style="display:inline" onsubmit="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-danger">🗑️ Delete Order</button>
+            </form>
         </div>
     </div>
 
@@ -381,6 +384,46 @@
         const num = parseFloat(price);
         if (isNaN(num)) return '0 ETB';
         return num.toLocaleString('en-US') + ' ETB';
+    }
+
+    // WhatsApp notification popup (auto-sent or manual button)
+    function showWaNotifPopup(data) {
+        const old = document.getElementById('wa-notif-popup');
+        if (old) old.remove();
+
+        const box = document.createElement('div');
+        box.id = 'wa-notif-popup';
+        box.style.cssText = 'position:fixed;bottom:80px;right:24px;z-index:9999;background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 4px 28px rgba(0,0,0,0.18);max-width:270px;font-family:inherit;';
+
+        if (data.auto_sent) {
+            box.innerHTML = `
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                    <span style="font-size:22px;">✅</span>
+                    <div>
+                        <div style="font-weight:700;font-size:14px;color:#1a7a3c;">WhatsApp ተልኳል!</div>
+                        <div style="font-size:12px;color:#555;margin-top:2px;">ደንበኛው በራስ ሰር ተነጋገረ</div>
+                    </div>
+                </div>
+                ${data.wa_notify_url ? `<a href="${data.wa_notify_url}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;background:#e8f5e9;color:#1a7a3c;border-radius:50px;text-decoration:none;font-size:12px;font-weight:600;border:1px solid #b2dfdb;">📱 እንደገና ላክ</a>` : ''}`;
+        } else if (data.wa_notify_url) {
+            box.innerHTML = `
+                <div style="font-weight:700;font-size:14px;color:#333;margin-bottom:10px;">✅ Status updated!</div>
+                <a href="${data.wa_notify_url}" target="_blank"
+                   style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;background:#25D366;color:white;border-radius:50px;text-decoration:none;font-size:14px;font-weight:700;text-align:center;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    ደንበኛ ያሳውቁ (WhatsApp)
+                </a>
+                <div style="margin-top:8px;font-size:11px;color:#999;text-align:center;">CALLMEBOT_API_KEY ካለ ራስ ሰር ይልካል</div>`;
+        }
+
+        if (box.innerHTML) {
+            const closeBtn = document.createElement('div');
+            closeBtn.style.cssText = 'margin-top:10px;font-size:12px;color:#aaa;cursor:pointer;text-align:center;';
+            closeBtn.textContent = '× ዝጋ';
+            closeBtn.onclick = () => box.remove();
+            box.appendChild(closeBtn);
+            document.body.appendChild(box);
+        }
     }
 
     // Update order status (renamed to avoid conflict with admin.js global)
@@ -407,26 +450,8 @@
                 } else if (window.showToast) {
                     window.showToast('Order status updated successfully', 'success');
                 }
-                // Show WhatsApp customer notification button if URL is available
-                if (data.wa_notify_url) {
-                    const waBtn = document.createElement('a');
-                    waBtn.href = data.wa_notify_url;
-                    waBtn.target = '_blank';
-                    waBtn.style.cssText = 'display:inline-block;margin:12px auto 0;padding:12px 24px;background:#25D366;color:white;border-radius:50px;text-decoration:none;font-size:14px;font-weight:600;';
-                    waBtn.innerHTML = '📱 ደንበኛ WhatsApp ያሳውቁ';
-                    const container = document.createElement('div');
-                    container.style.cssText = 'position:fixed;bottom:80px;right:24px;z-index:9999;text-align:center;background:white;border-radius:16px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,0.18);';
-                    container.innerHTML = '<div style="font-size:13px;color:#333;margin-bottom:8px;font-weight:600;">✅ Status updated!</div>';
-                    container.appendChild(waBtn);
-                    const closeBtn = document.createElement('div');
-                    closeBtn.style.cssText = 'margin-top:10px;font-size:12px;color:#aaa;cursor:pointer;';
-                    closeBtn.textContent = '× Close';
-                    closeBtn.onclick = () => { container.remove(); location.reload(); };
-                    container.appendChild(closeBtn);
-                    document.body.appendChild(container);
-                } else {
-                    setTimeout(() => location.reload(), 1000);
-                }
+                showWaNotifPopup(data);
+                setTimeout(() => location.reload(), data.wa_notify_url ? 8000 : 1500);
             } else {
                 if (window.showError) window.showError(data.error || 'Failed to update status');
             }

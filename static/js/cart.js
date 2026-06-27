@@ -1,6 +1,13 @@
 // ==================== ETHIOSADAT - CART JAVASCRIPT ====================
 // Professional Shopping Cart Functionality
 
+// Helper: turn DB thumbnail path (e.g. "uploads/products/x.jpg") into a full URL
+function cartThumbUrl(thumbnail) {
+    if (!thumbnail) return '/static/images/placeholder.png';
+    if (thumbnail.startsWith('http') || thumbnail.startsWith('/')) return thumbnail;
+    return '/static/' + thumbnail;
+}
+
 // Cart API endpoints
 const CART_API = {
     count: '/api/cart/count',
@@ -9,7 +16,7 @@ const CART_API = {
     remove: '/api/cart/remove',
     cart: '/api/cart',
     clear: '/cart/clear',
-    checkout: '/checkout'
+    checkout: '/cart/checkout'
 };
 
 // Cart configuration
@@ -182,7 +189,7 @@ class CartManager {
             const item = this.cart[i];
             html += `
                 <div class="mini-cart-item d-flex align-center" style="gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color, #eee);">
-                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                    <img src="${cartThumbUrl(item.thumbnail || item.image)}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:28px\'>👗</span>';">
                     <div class="flex-1">
                         <div class="fw-500">${this.truncate(item.name || item.product_name, 25)}</div>
                         <div class="text-muted small">${this.formatPrice(item.price || item.discounted_price)} x ${item.quantity}</div>
@@ -214,7 +221,7 @@ class CartManager {
                     <span>Total:</span>
                     <span>${this.formatPrice(this.total)}</span>
                 </div>
-                <a href="/checkout" class="btn btn-primary w-100 mt-3">Checkout →</a>
+                <a href="/cart/checkout" class="btn btn-primary w-100 mt-3">Checkout →</a>
             `;
         }
     }
@@ -609,7 +616,7 @@ function updateMiniCartPanelContent(panel) {
                 border-bottom: 1px solid var(--border-color, #eee);
             " data-id="${item.product_id || item.id}">
                 <div style="width: 60px; height: 60px; background: #f5f5f5; border-radius: 8px; overflow: hidden;">
-                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="${cartThumbUrl(item.thumbnail || item.image)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:28px;display:flex;align-items:center;justify-content:center;height:100%\'>👗</span>';">
                 </div>
                 <div style="flex: 1;">
                     <div style="font-weight: 500;">${manager.truncate(item.name || item.product_name, 30)}</div>
@@ -649,7 +656,7 @@ function updateMiniCartPanelContent(panel) {
                 <span>${manager.formatPrice(manager.total)}</span>
             </div>
         </div>
-        <a href="/checkout" class="btn btn-primary w-100" style="text-align: center;">Checkout →</a>
+        <a href="/cart/checkout" class="btn btn-primary w-100" style="text-align: center;">Checkout →</a>
         <button onclick="hideMiniCart();" class="btn btn-outline w-100 mt-2">Continue Shopping</button>
     `;
 }
@@ -673,16 +680,19 @@ function initQuantityInputs() {
     });
     
     // Quantity increment/decrement buttons
+    // Skip buttons without data-id — those are managed by inline onclick handlers (e.g. cart page)
     document.querySelectorAll('.quantity-btn').forEach(btn => {
+        const productId = btn.dataset.id || btn.getAttribute('data-id');
+        if (!productId) return;
         btn.removeEventListener('click', btn._listener);
         btn._listener = function() {
-            const productId = this.dataset.id || this.getAttribute('data-id');
-            const input = document.querySelector(`.cart-item-quantity[data-id="${productId}"], input[data-id="${productId}"]`);
+            const pid = this.dataset.id || this.getAttribute('data-id');
+            const input = document.querySelector(`.cart-item-quantity[data-id="${pid}"], input[data-id="${pid}"]`);
             if (input) {
                 let newVal = parseInt(input.value, 10) + (this.classList.contains('plus') ? 1 : -1);
                 if (newVal < 1) newVal = 1;
                 input.value = newVal;
-                updateCartItem(productId, newVal, input);
+                updateCartItem(pid, newVal, input);
             }
         };
         btn.addEventListener('click', btn._listener);

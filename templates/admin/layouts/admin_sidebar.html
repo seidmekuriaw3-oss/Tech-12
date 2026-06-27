@@ -296,6 +296,20 @@
                 margin-top: 8px;
             ">REPORTS</div>
             
+            <a href="{{ url_for('admin.ai_logs') }}" class="nav-item {% if request.endpoint == 'admin.ai_logs' %}active{% endif %}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 20px;
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            ">
+                <span class="nav-icon">🤖</span>
+                <span class="nav-text">AI Chat Logs</span>
+            </a>
+
             <a href="{{ url_for('admin.reports') }}" class="nav-item {% if request.endpoint in ('admin.reports', 'admin.reports_sales', 'admin.reports_products') %}active{% endif %}" style="
                 display: flex;
                 align-items: center;
@@ -637,7 +651,7 @@
     });
     
     function fetchCounts() {
-        fetch('{{ url_for('api.api_cart_count') if url_for is defined else "/api/admin/counts" }}')
+        fetch('{{ url_for('admin.admin_counts') }}')
             .then(res => res.json())
             .then(data => {
                 const productsSpan = document.getElementById('productsCount');

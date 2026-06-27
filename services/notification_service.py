@@ -4,6 +4,8 @@ In-app notifications stored in DB for both customers and admins.
 """
 
 from database.db import get_db
+import logging
+logger = logging.getLogger(__name__)
 
 
 # ── User (Customer) Notifications ──────────────────────────────────────
@@ -22,7 +24,7 @@ def notify_user(user_id, title, body, type='info', link=''):
         db.commit()
         return True
     except Exception as e:
-        print(f"[notify_user] error: {e}")
+        logger.error(f"[notify_user] error: {e}")
         return False
 
 
@@ -51,7 +53,7 @@ def get_user_notifications(user_id, limit=50):
             })
         return result
     except Exception as e:
-        print(f"[get_user_notifications] error: {e}")
+        logger.error(f"[get_user_notifications] error: {e}")
         return []
 
 
@@ -88,7 +90,7 @@ def mark_user_notifications_read(user_id, notif_id=None):
         db.commit()
         return True
     except Exception as e:
-        print(f"[mark_user_notifications_read] error: {e}")
+        logger.error(f"[mark_user_notifications_read] error: {e}")
         return False
 
 
@@ -107,7 +109,7 @@ def notify_admin(title, body, type='info', link='', ref_order_id=None, ref_user_
         db.commit()
         return True
     except Exception as e:
-        print(f"[notify_admin] error: {e}")
+        logger.error(f"[notify_admin] error: {e}")
         return False
 
 
@@ -137,7 +139,7 @@ def get_admin_alerts(limit=60):
             })
         return result
     except Exception as e:
-        print(f"[get_admin_alerts] error: {e}")
+        logger.error(f"[get_admin_alerts] error: {e}")
         return []
 
 
@@ -165,7 +167,7 @@ def mark_admin_alerts_read(alert_id=None):
         db.commit()
         return True
     except Exception as e:
-        print(f"[mark_admin_alerts_read] error: {e}")
+        logger.error(f"[mark_admin_alerts_read] error: {e}")
         return False
 
 

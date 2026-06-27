@@ -253,7 +253,7 @@
         <!-- Price -->
         <div class="product-price" style="margin: 8px 0;">
             {% if session.get('user_id') %}
-                {% set member_price = (product.price|float * 0.9)|round(2) %}
+                {% set member_price = (product.price|float * member_discount_multiplier)|round(2) %}
                 <span class="current-price" style="font-size:20px;font-weight:bold;color:#1a7a4a;">{{ format_price(member_price) }}</span>
                 <span class="old-price" style="text-decoration:line-through;color:var(--text-muted,#999);font-size:13px;margin-left:8px;">{{ format_price(product.price) }}</span>
                 <span style="background:linear-gradient(135deg,#4caf50,#388e3c);color:white;border-radius:20px;font-size:10px;font-weight:800;padding:2px 8px;margin-left:4px;">-10%</span>
@@ -405,66 +405,11 @@
 
 <script>
     // Navigate to product detail page
-    function goToProduct(productId) {
-        if (productId) {
-            window.location.href = '{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0', '/' + productId);
-        }
-    }
-    
-    // Enhanced add to cart with animation
-    const originalAddToCart = window.addToCart;
-    if (!window.addToCart) {
-        window.addToCart = function(productId, quantity, btn) {
-            if (btn) {
-                btn.classList.add('loading');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '⏳ Adding...';
-                
-                // Simulate add to cart action
-                if (window.showToast) {
-                    window.showToast('Added to cart!', 'success');
-                }
-                
-                setTimeout(() => {
-                    btn.classList.remove('loading');
-                    btn.innerHTML = originalText;
-                }, 1000);
-            }
-        };
-    } else {
-        const userAddToCart = window.addToCart;
-        window.addToCart = function(productId, quantity, btn) {
-            if (btn) {
-                btn.classList.add('loading');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '⏳ Adding...';
-                
-                userAddToCart(productId, quantity, btn);
-                
-                setTimeout(() => {
-                    btn.classList.remove('loading');
-                    btn.innerHTML = originalText;
-                }, 1000);
-            } else {
-                userAddToCart(productId, quantity);
-            }
-        };
-    }
-    
-    // Track product impressions (for analytics)
-    if (typeof gtag !== 'undefined') {
-        document.querySelectorAll('.product-card').forEach((card, index) => {
-            const productId = card.dataset.productId;
+    if (!window.goToProduct) {
+        window.goToProduct = function(productId) {
             if (productId) {
-                gtag('event', 'view_item_list', {
-                    'event_category': 'engagement',
-                    'event_label': `product_card_${productId}`,
-                    'value': index + 1
-                });
+                window.location.href = '{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0', '/' + productId);
             }
-        });
+        };
     }
-    
-    // Make goToProduct globally available
-    window.goToProduct = goToProduct;
 </script>

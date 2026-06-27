@@ -143,26 +143,28 @@ def slugify(text):
 def get_cart_count():
     """
     Get total number of items in cart.
-    
+    Cart is stored as {product_id_str: quantity} dict in session.
+
     Returns:
         int: Total item count
     """
-    cart = session.get('cart', [])
-    return sum(item.get('quantity', 1) for item in cart)
+    cart = session.get('cart', {})
+    if isinstance(cart, dict):
+        return sum(int(qty) for qty in cart.values())
+    return 0
 
 
 def get_cart_subtotal():
     """
     Calculate cart subtotal.
-    
+    Cart is stored as {product_id_str: quantity} dict — price lookup not
+    available here, so returns 0 (subtotal calculation requires DB).
+    Use cart_routes.get_cart_total() for accurate totals.
+
     Returns:
-        float: Subtotal amount
+        float: 0 (stub — cart dict has no price data)
     """
-    cart = session.get('cart', [])
-    total = 0
-    for item in cart:
-        total += float(item.get('price', 0)) * item.get('quantity', 1)
-    return total
+    return 0.0
 
 
 def get_shipping_cost():
@@ -191,32 +193,22 @@ def get_cart_total():
 def add_to_cart(product_id, name, price, quantity=1, image=''):
     """
     Add product to cart.
-    
+    Cart is stored as {product_id_str: quantity} dict in session.
+    Note: name/price/image are not stored in the session dict; they are
+    fetched from the DB when rendering the cart (see cart_routes).
+
     Args:
         product_id (str): Product identifier
-        name (str): Product name
-        price (float): Product price
+        name (str): Product name (not stored — for API compat only)
+        price (float): Product price (not stored — for API compat only)
         quantity (int): Quantity to add
-        image (str): Product image filename
+        image (str): Product image (not stored — for API compat only)
     """
-    cart = session.get('cart', [])
-    
-    # Check if product already exists
-    for item in cart:
-        if str(item.get('id')) == str(product_id):
-            item['quantity'] = item.get('quantity', 1) + quantity
-            session['cart'] = cart
-            session.modified = True
-            return
-    
-    # Add new item
-    cart.append({
-        'id': str(product_id),
-        'name': name,
-        'price': float(price),
-        'quantity': quantity,
-        'image': image
-    })
+    cart = session.get('cart', {})
+    if not isinstance(cart, dict):
+        cart = {}
+    key = str(product_id)
+    cart[key] = cart.get(key, 0) + int(quantity)
     session['cart'] = cart
     session.modified = True
 
@@ -224,12 +216,14 @@ def add_to_cart(product_id, name, price, quantity=1, image=''):
 def remove_from_cart(product_id):
     """
     Remove product from cart.
-    
+
     Args:
         product_id (str): Product identifier
     """
-    cart = session.get('cart', [])
-    cart = [item for item in cart if str(item.get('id')) != str(product_id)]
+    cart = session.get('cart', {})
+    if not isinstance(cart, dict):
+        cart = {}
+    cart.pop(str(product_id), None)
     session['cart'] = cart
     session.modified = True
 
@@ -237,7 +231,7 @@ def remove_from_cart(product_id):
 def update_cart_item(product_id, quantity):
     """
     Update quantity of a cart item.
-    
+
     Args:
         product_id (str): Product identifier
         quantity (int): New quantity (if < 1, removes item)
@@ -245,15 +239,14 @@ def update_cart_item(product_id, quantity):
     if quantity < 1:
         remove_from_cart(product_id)
         return
-    
-    cart = session.get('cart', [])
-    for item in cart:
-        if str(item.get('id')) == str(product_id):
-            item['quantity'] = quantity
-            break
-    
-    session['cart'] = cart
-    session.modified = True
+    cart = session.get('cart', {})
+    if not isinstance(cart, dict):
+        cart = {}
+    key = str(product_id)
+    if key in cart:
+        cart[key] = int(quantity)
+        session['cart'] = cart
+        session.modified = True
 
 
 def clear_cart():
@@ -264,33 +257,29 @@ def clear_cart():
 
 def get_cart_items():
     """
-    Get cart items with calculated totals.
-    
+    Get a minimal list of cart entries {id, quantity}.
+    Price/name lookups require a DB query — use cart_routes for full data.
+
     Returns:
-        list: Cart items with total per item
+        list[dict]: Each entry has 'id' and 'quantity'.
     """
-    cart = session.get('cart', [])
-    items = []
-    for item in cart:
-        items.append({
-            'id': item.get('id'),
-            'name': item.get('name'),
-            'price': float(item.get('price', 0)),
-            'quantity': item.get('quantity', 1),
-            'image': item.get('image', ''),
-            'total': float(item.get('price', 0)) * item.get('quantity', 1)
-        })
-    return items
+    cart = session.get('cart', {})
+    if not isinstance(cart, dict):
+        return []
+    return [{'id': k, 'quantity': v} for k, v in cart.items()]
 
 
 def cart_is_empty():
     """
     Check if cart is empty.
-    
+
     Returns:
         bool: True if cart is empty
     """
-    return len(session.get('cart', [])) == 0
+    cart = session.get('cart', {})
+    if not isinstance(cart, dict):
+        return True
+    return len(cart) == 0
 
 
 # ==================== DATE FORMATTING ====================

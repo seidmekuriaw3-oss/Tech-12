@@ -21,8 +21,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+from extensions import limiter
 
 from config import Config
 from database.db import get_db, init_db, commit_or_rollback
@@ -32,7 +31,7 @@ from database.models import (
 from middleware.auth import login_required, admin_required, user_login_required, get_current_user, is_authenticated
 from middleware.platform import get_platform, is_android_app
 from utils.translation_cache import translate_text, batch_translate, clear_translation_cache, get_translation_stats, FALLBACK_TEXTS
-from routes.shared import WHATSAPP_NUMBER
+from routes.shared import WHATSAPP_NUMBER, USER_DISCOUNT_RATE
 from utils.csrf import generate_csrf, validate_csrf
 
 
@@ -83,7 +82,7 @@ app.jinja_env.globals["format_price"] = format_price
 app.jinja_env.globals["format_price_number"] = format_price_number
 
 app.config.from_object(Config)
-_secret_key = os.environ.get('SECRET_KEY')
+_secret_key = os.environ.get('SECRET_KEY') or os.environ.get('SESSION_SECRET')
 if not _secret_key:
     raise RuntimeError(
         "SECRET_KEY environment variable is not set. "
@@ -91,13 +90,8 @@ if not _secret_key:
     )
 app.secret_key = _secret_key
 
-# Rate Limiter
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["2000000 per day", "100000 per hour"],
-    storage_uri="memory://"
-)
+# Rate Limiter — shared via extensions.py so blueprints can import it
+limiter.init_app(app)
 
 # Upload configuration
 UPLOAD_FOLDER = 'static/uploads'
@@ -137,6 +131,14 @@ if not ADMIN_PASSWORD:
         "ADMIN_PASSWORD environment variable is not set. "
         "Set it in the Replit Secrets panel."
     )
+if ADMIN_PASSWORD == '1234':
+    import warnings
+    warnings.warn(
+        "⚠️  SECURITY WARNING: Admin password is still the default '1234'. "
+        "Change ADMIN_PASSWORD in the Replit Secrets panel before deploying!",
+        stacklevel=2
+    )
+    app.logger.warning("⚠️  SECURITY: Default admin password '1234' detected — change it before going live!")
 
 # ── CSRF Protection ──────────────────────────────────────────────────────────
 app.jinja_env.globals['csrf_token'] = generate_csrf
@@ -204,7 +206,7 @@ TEXTS = {
         'out_of_stock': 'የለም',
         'quick_links': 'ፈጣን አገናኞች',
         'call_us': 'ይደውሉልን',
-        'quality_tagline': 'ጥራት ያለው የቤት እቃ በተመጣጣኝ ዋጋ',
+        'quality_tagline': 'ጥራቱን የጠበቀ የሴቶች እና የልጆች ልብስ በተመጣጣኝ ዋጋ እኛ ጋር ያገኛሉ',
         'free_shipping_msg': '🚚 ከ5,000 ብር በላይ ትዕዛዝ ነጻ ማጓጓዝ',
         'copyright_text': 'መብቱ በህግ የተጠበቀ ነው',
         'order_now': 'አሁን እዘዝ',
@@ -280,7 +282,7 @@ TEXTS = {
         'my_orders': 'My Orders', 'my_cart': 'My Cart',
         'in_stock': 'In Stock', 'out_of_stock': 'Out of Stock',
         'quick_links': 'Quick Links', 'call_us': 'Call Us',
-        'quality_tagline': 'Quality fashion at affordable prices in ወሎ ደሴ ኩታበር',
+        'quality_tagline': 'Premium women\'s and children\'s clothing at affordable prices',
         'free_shipping_msg': '🚚 Free shipping on orders over 5,000 ETB',
         'copyright_text': 'All Rights Reserved',
         'order_now': 'Order Now', 'address': 'Address: ወሎ ደሴ ኩታበር', 'promo': 'Special Offer!',
@@ -350,7 +352,7 @@ TEXTS = {
         'my_orders': 'طلباتي', 'my_cart': 'سلتي',
         'in_stock': 'متوفر', 'out_of_stock': 'غير متوفر',
         'quick_links': 'روابط سريعة', 'call_us': 'اتصل بنا',
-        'quality_tagline': 'أثاث عالي الجودة بأسعار معقولة في أديس أبابا',
+        'quality_tagline': 'ملابس نسائية وأطفال عالية الجودة بأسعار معقولة',
         'free_shipping_msg': '🚚 شحن مجاني للطلبات التي تتجاوز 5,000 بر إثيوبي',
         'copyright_text': 'جميع الحقوق محفوظة',
         'order_now': 'اطلب الآن', 'address': 'العنوان: أديس أبابا', 'promo': 'عرض خاص!',
@@ -490,6 +492,8 @@ def inject_globals():
         'unread_messages_count': unread_messages_count,
         'products_count': products_count,
         'ads_count': ads_count,
+        'user_discount_rate': USER_DISCOUNT_RATE,
+        'member_discount_multiplier': round(1 - USER_DISCOUNT_RATE, 4),
     }
 
 
@@ -629,7 +633,10 @@ def format_date_filter(date_obj, format_type='short'):
 def nl2br_filter(text):
     if not text:
         return ''
-    return text.replace('\n', '<br>')
+    import html
+    from markupsafe import Markup
+    escaped = html.escape(str(text))
+    return Markup(escaped.replace('\n', '<br>'))
 
 
 @app.template_filter('default_value')
@@ -744,7 +751,21 @@ def compress_response(response):
 
 
 @app.after_request
-def add_csp_headers(response):
+def add_security_headers(response):
+    # X-Frame-Options — prevents clickjacking
+    response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
+    # Prevent MIME-type sniffing
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    # Legacy XSS protection for older browsers
+    response.headers.setdefault('X-XSS-Protection', '1; mode=block')
+    # Referrer policy
+    response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
+    # HSTS — only over HTTPS; 1 year max-age
+    if request.is_secure:
+        response.headers.setdefault(
+            'Strict-Transport-Security', 'max-age=31536000; includeSubDomains'
+        )
+    # Content-Security-Policy — HTML responses only
     if 'text/html' in response.headers.get('Content-Type', ''):
         csp = {
             'default-src': "'self'",
@@ -790,6 +811,19 @@ def initialize_app():
         app.logger.info("Database initialized successfully")
     except Exception as e:
         app.logger.error(f"Database initialization error: {str(e)}")
+
+    # Load GROQ_API_KEY from DB settings if not already in environment
+    if not os.environ.get('GROQ_API_KEY'):
+        try:
+            from database.db import get_db as _get_db
+            _cursor = _get_db().cursor()
+            _cursor.execute("SELECT value FROM settings WHERE key = 'groq_api_key'")
+            _row = _cursor.fetchone()
+            if _row and _row[0]:
+                os.environ['GROQ_API_KEY'] = _row[0]
+                app.logger.info("GROQ_API_KEY loaded from database settings")
+        except Exception as _e:
+            app.logger.debug(f"Could not load GROQ_API_KEY from DB: {_e}")
     for directory in ['logs', 'backups', 'static/uploads', 'static/uploads/products',
                       'static/uploads/ads', 'static/images', 'static/css', 'static/js']:
         os.makedirs(directory, exist_ok=True)

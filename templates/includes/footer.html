@@ -96,7 +96,7 @@
         <div class="footer-newsletter">
             <h4>📧 {% if lang == 'am' %}ለዜና ደብዳቤ ይመዝገቡ{% else %}Subscribe to Newsletter{% endif %}</h4>
             <div class="newsletter-form">
-                <input type="email" id="newsletterEmail" placeholder="{% if lang == 'am' %}ኢሜይል ያስገቡ{% else %}Enter your email{% endif %}" aria-label="Email for newsletter">
+                <input type="email" id="newsletterEmail" required maxlength="254" placeholder="{% if lang == 'am' %}ኢሜይል ያስገቡ{% else %}Enter your email{% endif %}" aria-label="Email for newsletter">
                 <button onclick="subscribeNewsletter()">{% if lang == 'am' %}ይመዝገቡ{% else %}Subscribe{% endif %}</button>
             </div>
             <p class="newsletter-note">

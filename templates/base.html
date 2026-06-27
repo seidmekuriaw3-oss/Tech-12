@@ -1389,6 +1389,87 @@
 
 {% block extra_js %}{% endblock %}
 
+<!-- ======== GLOBAL PASSWORD VISIBILITY TOGGLE ======== -->
+<style>
+.pw-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.pw-wrap input[type="password"],
+.pw-wrap input[type="text"] {
+    width: 100%;
+    padding-right: 44px !important;
+}
+.pw-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    color: #888;
+    font-size: 18px;
+    line-height: 1;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+.pw-toggle-btn:hover,
+.pw-toggle-btn:focus { color: #1a7a4a; outline: none; }
+.pw-toggle-btn svg { pointer-events: none; }
+</style>
+<script>
+(function() {
+    var EYE_OPEN  = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var EYE_CLOSE = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+    function wrapPasswordInputs() {
+        document.querySelectorAll('input[type="password"]').forEach(function(inp) {
+            if (inp.closest('.pw-wrap')) return; // already wrapped
+            var wrap = document.createElement('div');
+            wrap.className = 'pw-wrap';
+            // preserve inline styles & class from original container if any
+            inp.parentNode.insertBefore(wrap, inp);
+            wrap.appendChild(inp);
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'pw-toggle-btn';
+            btn.setAttribute('aria-label', 'ፓስዋርድ አሳይ/ደብቅ');
+            btn.setAttribute('tabindex', '-1');
+            btn.innerHTML = EYE_OPEN;
+            btn.addEventListener('click', function() {
+                var isPassword = inp.type === 'password';
+                inp.type = isPassword ? 'text' : 'password';
+                btn.innerHTML = isPassword ? EYE_CLOSE : EYE_OPEN;
+                btn.setAttribute('aria-label', isPassword ? 'ፓስዋርድ ደብቅ' : 'ፓስዋርድ አሳይ');
+                inp.focus();
+            });
+            wrap.appendChild(btn);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', wrapPasswordInputs);
+    // also run after dynamic content (modals, tab switches)
+    var _pwObs = new MutationObserver(function(mutations) {
+        var hasNew = mutations.some(function(m) {
+            return Array.from(m.addedNodes).some(function(n) {
+                return n.nodeType === 1 && (n.matches('input[type="password"]') || n.querySelector('input[type="password"]'));
+            });
+        });
+        if (hasNew) wrapPasswordInputs();
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        _pwObs.observe(document.body, { childList: true, subtree: true });
+    });
+})();
+</script>
+
 <script>
 (function() {
     var _wlIds = new Set();
@@ -1460,5 +1541,311 @@
     document.addEventListener('DOMContentLoaded', _loadWishlistIds);
 })();
 </script>
+
+<!-- ==================== SEMIRA AI AGENT WIDGET ==================== -->
+<style>
+/* ---- Floating Button ---- */
+#semira-ai-toggle {
+    position: fixed;
+    bottom: 80px;
+    right: 18px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a7a4a 0%, #25a865 100%);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(26,122,74,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    transition: transform 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+#semira-ai-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(26,122,74,0.55); }
+#semira-ai-toggle svg { width: 28px; height: 28px; fill: #fff; }
+
+#semira-ai-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 18px;
+    height: 18px;
+    background: #f44336;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #fff;
+    font-weight: 900;
+}
+@keyframes ai-pulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+}
+.ai-badge-pulse { animation: ai-pulse 1.5s infinite; }
+
+/* ---- Panel ---- */
+#semira-ai-panel {
+    position: fixed;
+    bottom: 148px;
+    right: 18px;
+    width: 340px;
+    max-width: calc(100vw - 36px);
+    height: 480px;
+    max-height: calc(100vh - 180px);
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+#semira-ai-panel.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+/* ---- Header ---- */
+.ai-header {
+    background: linear-gradient(135deg, #1a7a4a 0%, #25a865 100%);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.ai-header-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.ai-header-info { flex: 1; }
+.ai-header-name { color: #fff; font-size: 15px; font-weight: 700; line-height: 1.2; }
+.ai-header-status { color: rgba(255,255,255,0.82); font-size: 11px; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+.ai-status-dot { width: 7px; height: 7px; background: #a8ffca; border-radius: 50%; display: inline-block; animation: ai-blink 2s infinite; }
+@keyframes ai-blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.ai-header-close {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+.ai-header-close:hover { background: rgba(255,255,255,0.3); }
+
+/* ---- Messages ---- */
+#semira-ai-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #d4edda transparent;
+    background: #f8fdf9;
+}
+#semira-ai-messages::-webkit-scrollbar { width: 4px; }
+#semira-ai-messages::-webkit-scrollbar-thumb { background: #c3e6cb; border-radius: 4px; }
+
+.ai-msg-wrap {
+    display: flex;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.ai-msg-visible { opacity: 1; transform: translateY(0); }
+.ai-msg-user { justify-content: flex-end; }
+.ai-msg-assistant { justify-content: flex-start; }
+
+.ai-bubble {
+    max-width: 82%;
+    padding: 9px 13px;
+    border-radius: 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+.ai-msg-user .ai-bubble {
+    background: linear-gradient(135deg, #1a7a4a, #25a865);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+.ai-msg-assistant .ai-bubble {
+    background: #fff;
+    color: #333;
+    border: 1px solid #e8f5e9;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.ai-msg-assistant .ai-bubble a { color: #1a7a4a; text-decoration: underline; }
+
+/* ---- Typing dots ---- */
+.ai-typing { display: flex; gap: 5px; align-items: center; padding: 12px 14px !important; }
+.ai-typing span {
+    width: 7px; height: 7px;
+    background: #25a865;
+    border-radius: 50%;
+    animation: ai-dot 1.2s infinite;
+}
+.ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+.ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes ai-dot {
+    0%,80%,100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ---- Suggestion chips ---- */
+.ai-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+.ai-chip {
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    color: #1a7a4a;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+}
+.ai-chip:hover { background: #c8e6c9; transform: scale(1.03); }
+
+/* ---- Input area ---- */
+.ai-input-area {
+    padding: 10px 12px;
+    border-top: 1px solid #e8f5e9;
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    background: #fff;
+    flex-shrink: 0;
+}
+#semira-ai-input {
+    flex: 1;
+    border: 1.5px solid #c8e6c9;
+    border-radius: 20px;
+    padding: 9px 14px;
+    font-size: 13.5px;
+    outline: none;
+    resize: none;
+    max-height: 80px;
+    line-height: 1.4;
+    background: #f8fdf9;
+    color: #333;
+    transition: border-color 0.15s;
+    font-family: inherit;
+}
+#semira-ai-input:focus { border-color: #1a7a4a; background: #fff; }
+#semira-ai-input::placeholder { color: #aaa; }
+#semira-ai-send {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a7a4a, #25a865);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.15s, transform 0.1s;
+}
+#semira-ai-send:disabled { opacity: 0.4; cursor: not-allowed; }
+#semira-ai-send:not(:disabled):hover { transform: scale(1.08); }
+#semira-ai-send svg { width: 18px; height: 18px; fill: #fff; }
+
+/* ---- Powered by ---- */
+.ai-footer-note {
+    text-align: center;
+    font-size: 10px;
+    color: #aaa;
+    padding: 4px 0 6px;
+    background: #fff;
+    flex-shrink: 0;
+}
+
+/* ---- Mobile adjustments ---- */
+@media (max-width: 480px) {
+    #semira-ai-toggle { bottom: 72px; right: 14px; width: 50px; height: 50px; }
+    #semira-ai-panel { bottom: 136px; right: 14px; width: calc(100vw - 28px); height: 420px; }
+}
+</style>
+
+<!-- AI Toggle Button -->
+<button id="semira-ai-toggle" onclick="toggleAIPanel()" aria-label="AI Assistant" title="SEMIRA AI Assistant">
+    <span id="semira-ai-badge" style="display:none">✨</span>
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+        <path d="M9 8h2v8H9zm4 0h2v8h-2z" style="display:none"/>
+        <!-- Sparkle / AI icon -->
+        <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
+        <path d="M19 3l.75 2.25L22 6l-2.25.75L19 9l-.75-2.25L16 6l2.25-.75z" opacity=".7"/>
+        <path d="M5 17l.5 1.5L7 19l-1.5.5L5 21l-.5-1.5L3 19l1.5-.5z" opacity=".6"/>
+    </svg>
+</button>
+
+<!-- AI Chat Panel -->
+<div id="semira-ai-panel" role="dialog" aria-label="SEMIRA AI Assistant">
+    <!-- Header -->
+    <div class="ai-header">
+        <div class="ai-header-avatar">👗</div>
+        <div class="ai-header-info">
+            <div class="ai-header-name">ሰሚራ AI</div>
+            <div class="ai-header-status">
+                <span class="ai-status-dot"></span>
+                {% if lang == 'ar' %}متصل الآن{% elif lang == 'en' %}Online now{% else %}አሁን ዝግጁ ነኝ{% endif %}
+            </div>
+        </div>
+        <button class="ai-header-close" onclick="closeAIPanel()" aria-label="Close">✕</button>
+    </div>
+
+    <!-- Messages -->
+    <div id="semira-ai-messages" role="log" aria-live="polite"></div>
+
+    <!-- Input -->
+    <div class="ai-input-area">
+        <textarea
+            id="semira-ai-input"
+            rows="1"
+            placeholder="{% if lang == 'ar' %}اكتب رسالتك...{% elif lang == 'en' %}Type a message...{% else %}መልዕክት ጻፉ...{% endif %}"
+            aria-label="Message input"
+        ></textarea>
+        <button id="semira-ai-send" disabled aria-label="Send">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+    </div>
+    <div class="ai-footer-note">Powered by SEMIRA AI ✨</div>
+</div>
+
+<script src="{{ url_for('static', filename='js/ai_agent.js') }}"></script>
 </body>
 </html>

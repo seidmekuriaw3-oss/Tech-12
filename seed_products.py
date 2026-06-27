@@ -361,25 +361,25 @@ def seed_products(clear_existing=True, add_images=False):
         
         # Build insert query based on available columns
         insert_query = "INSERT INTO products (name_am, name_en, price, old_price, image, category, description"
-        placeholders = "?, ?, ?, ?, ?, ?, ?"
+        placeholders = "%s, %s, %s, %s, %s, %s, %s"
         values_list = []
         
         # Check for optional columns
         if 'rating' in columns:
             insert_query += ", rating"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'is_active' in columns:
             insert_query += ", is_active"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'featured' in columns:
             insert_query += ", featured"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'stock' in columns:
             insert_query += ", stock"
-            placeholders += ", ?"
+            placeholders += ", %s"
         if 'created_at' in columns:
             insert_query += ", created_at"
-            placeholders += ", ?"
+            placeholders += ", %s"
         
         insert_query += f") VALUES ({placeholders})"
         

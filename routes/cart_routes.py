@@ -10,7 +10,7 @@ This module contains all cart-related routes including:
 - Apply discounts
 """
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session, current_app
 from middleware.auth import user_login_required
 from database.db import get_db
 from routes.shared import calc_cart_totals, FREE_SHIPPING_THRESHOLD, SHIPPING_COST, USER_DISCOUNT_RATE
@@ -42,10 +42,10 @@ def view_cart():
         
         rows = cursor.fetchall()
         for row in rows:
-            discounted_price = round(row['price'] * 0.9, 2)
+            price = float(row['price'])
+            discounted_price = round(price * (1 - USER_DISCOUNT_RATE), 2)
             # Subtotal uses ORIGINAL price — calc_cart_totals applies the 10% once
-            orig_subtotal = row['price'] * row['quantity']
-            subtotal += orig_subtotal
+            subtotal += price * row['quantity']
 
             cart_items.append({
                 'id': row['id'],
@@ -53,7 +53,7 @@ def view_cart():
                 'name': row['name'],
                 'name_am': row['name_am'],
                 'name_ar': row['name_ar'],
-                'price': row['price'],
+                'price': price,
                 'discounted_price': discounted_price,
                 'quantity': row['quantity'],
                 'thumbnail': row['thumbnail'],
@@ -69,22 +69,23 @@ def view_cart():
             placeholders = ','.join(['%s'] * len(cart))
             cursor.execute(f"""
                 SELECT id, name, name_am, name_ar, price, compare_price, thumbnail, stock_quantity
-                FROM products WHERE id IN ({placeholders})
+                FROM products WHERE id IN ({placeholders}) AND is_active = 1
             """, list(cart.keys()))
             
             products = cursor.fetchall()
             for p in products:
                 quantity = cart.get(str(p['id']), 0)
                 if quantity > 0:
-                    item_subtotal = p['price'] * quantity
+                    price = float(p['price'])
+                    item_subtotal = price * quantity
                     subtotal += item_subtotal
                     cart_items.append({
                         'product_id': p['id'],
                         'name': p['name'],
                         'name_am': p['name_am'],
                         'name_ar': p['name_ar'],
-                        'price': p['price'],
-                        'discounted_price': p['price'],
+                        'price': price,
+                        'discounted_price': price,
                         'quantity': quantity,
                         'thumbnail': p['thumbnail'],
                         'stock_quantity': p['stock_quantity'],
@@ -125,16 +126,27 @@ def go_add_to_cart(product_id):
                        (session['user_id'], product_id))
         existing = cursor.fetchone()
         if existing:
+            new_qty = existing['quantity'] + quantity
+            if new_qty > product['stock_quantity']:
+                flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
+                return redirect(url_for('cart.view_cart'))
             cursor.execute("UPDATE cart_items SET quantity = %s WHERE id = %s",
-                           (existing['quantity'] + quantity, existing['id']))
+                           (new_qty, existing['id']))
         else:
+            if quantity > product['stock_quantity']:
+                flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
+                return redirect(url_for('cart.view_cart'))
             cursor.execute("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s, %s, %s)",
                            (session['user_id'], product_id, quantity))
         db.commit()
     else:
         cart = session.get('cart', {})
         cart_key = str(product_id)
-        cart[cart_key] = cart.get(cart_key, 0) + quantity
+        new_qty = cart.get(cart_key, 0) + quantity
+        if new_qty > product['stock_quantity']:
+            flash(f'Sorry, only {product["stock_quantity"]} items available in stock!', 'warning')
+            return redirect(url_for('cart.view_cart'))
+        cart[cart_key] = new_qty
         session['cart'] = cart
         session.modified = True
     flash('Product added to cart!', 'success')
@@ -261,7 +273,7 @@ def update_cart():
         return redirect(url_for('cart.view_cart'))
     
     if quantity <= 0:
-        return remove_from_cart(product_id)
+        return remove_from_cart(int(product_id))
     
     if session.get('user_id'):
         cursor.execute("""
@@ -323,8 +335,8 @@ def checkout():
             return redirect(url_for('customer.index'))
 
         for item in raw_items:
-            orig_price = item['price']
-            discounted_price = round(orig_price * 0.9, 2)
+            orig_price = float(item['price'])
+            discounted_price = round(orig_price * (1 - USER_DISCOUNT_RATE), 2)
             subtotal += orig_price * item['quantity']
             cart_items.append({
                 'id': item['id'] if 'id' in item.keys() else None,
@@ -347,14 +359,14 @@ def checkout():
 
         product_ids = [int(pid) for pid in session_cart.keys()]
         placeholders = ','.join(['%s'] * len(product_ids))
-        cursor.execute(f"SELECT id, name, name_am, name_ar, price, thumbnail FROM products WHERE id IN ({placeholders}) AND is_active = TRUE", product_ids)
+        cursor.execute(f"SELECT id, name, name_am, name_ar, price, thumbnail FROM products WHERE id IN ({placeholders}) AND is_active = 1", product_ids)
         products_map = {str(p['id']): p for p in cursor.fetchall()}
 
         for pid_str, qty in session_cart.items():
             p = products_map.get(pid_str)
             if not p:
                 continue
-            orig_price = p['price']
+            orig_price = float(p['price'])
             subtotal += orig_price * qty
             cart_items.append({
                 'id': None,
@@ -406,8 +418,14 @@ def place_order():
     customer_name    = request.form.get('customer_name', '').strip()
     customer_email   = request.form.get('customer_email', '').strip() or None
 
-    # Validate guest required fields
-    if not user_id and (not customer_name or not shipping_phone):
+    # Validate required fields for all users
+    if not shipping_address or len(shipping_address.strip()) < 5:
+        flash('እባክዎ ሙሉ አድራሻዎን ያስገቡ።', 'danger')
+        return redirect(url_for('cart.checkout'))
+    if not shipping_phone:
+        flash('ስልክ ቁጥር ያስፈልጋል።', 'danger')
+        return redirect(url_for('cart.checkout'))
+    if not user_id and not customer_name:
         flash('ስምና ስልክ ቁጥር ያስፈልጋሉ።', 'danger')
         return redirect(url_for('cart.checkout'))
 
@@ -428,7 +446,7 @@ def place_order():
             product_ids = [int(pid) for pid in session_cart.keys()]
             placeholders = ','.join(['%s'] * len(product_ids))
             cursor.execute(
-                f"SELECT id, name, name_am, price, stock_quantity FROM products WHERE id IN ({placeholders}) AND is_active = TRUE FOR UPDATE",
+                f"SELECT id, name, name_am, price, stock_quantity FROM products WHERE id IN ({placeholders}) AND is_active = 1 FOR UPDATE",
                 product_ids
             )
             products_map = {p['id']: p for p in cursor.fetchall()}
@@ -456,8 +474,7 @@ def place_order():
 
     # Calculate totals
     subtotal = sum(
-        (item['price'] if isinstance(item, dict) else item['price']) *
-        (item['quantity'] if isinstance(item, dict) else item['quantity'])
+        float(item['price']) * int(item['quantity'])
         for item in cart_items_raw
     )
     is_logged_in = bool(user_id)
@@ -467,14 +484,38 @@ def place_order():
     total = totals['total']
     discount = totals['discount']
 
-    coupon_info = session.pop('applied_coupon', None)
+    # Read coupon from session but do NOT pop yet — if stock fails we roll back
+    # and the coupon must remain available for the user's next attempt.
+    coupon_id  = None
+    extra_disc = 0.0
+    coupon_info = session.get('applied_coupon')
     if coupon_info:
-        if coupon_info.get('discount_type') == 'percentage':
-            extra_disc = round(subtotal_after_discount * float(coupon_info['discount_value']) / 100, 2)
-        else:
-            extra_disc = min(float(coupon_info['discount_value']), subtotal_after_discount)
-        discount = round(discount + extra_disc, 2)
-        total = round(max(0, total - extra_disc), 2)
+        # Re-validate coupon against current cart subtotal to prevent stale-discount abuse
+        coupon_id   = coupon_info.get('coupon_id')
+        disc_type   = coupon_info.get('discount_type')
+        disc_value  = float(coupon_info.get('discount_value', 0))
+        extra_disc  = 0.0
+        if coupon_id and disc_type:
+            # Check coupon is still valid and usage limit not exceeded
+            cursor.execute("""
+                SELECT min_order, max_discount, usage_limit, used_count, is_active
+                FROM coupons WHERE id = %s
+                AND (valid_to IS NULL OR valid_to >= NOW())
+            """, (coupon_id,))
+            fresh = cursor.fetchone()
+            if fresh and fresh['is_active'] and (fresh['usage_limit'] is None or fresh['used_count'] < fresh['usage_limit']):
+                min_order = float(fresh['min_order'] or 0)
+                if subtotal_after_discount >= min_order:
+                    if disc_type == 'percentage':
+                        extra_disc = subtotal_after_discount * disc_value / 100
+                        if fresh['max_discount']:
+                            extra_disc = min(extra_disc, float(fresh['max_discount']))
+                    else:
+                        extra_disc = min(disc_value, subtotal_after_discount)
+                    extra_disc = round(extra_disc, 2)
+        if extra_disc > 0:
+            discount = round(discount + extra_disc, 2)
+            total = round(max(0, total - extra_disc), 2)
 
     # Generate order number
     from datetime import datetime
@@ -499,29 +540,39 @@ def place_order():
     ))
     row = cursor.fetchone()
     order_id = row[0] if row else None
+    if not order_id:
+        db.rollback()
+        flash('ትዕዛዙን ማስቀመጥ አልተሳካም። እባክዎ እንደገና ይሞክሩ።', 'danger')
+        return redirect(url_for('cart.checkout'))
 
     # Create order items and update stock atomically
-    for item in cart_items_raw:
-        price = item['price'] if isinstance(item, dict) else item['price']
-        qty   = item['quantity'] if isinstance(item, dict) else item['quantity']
-        pid   = item['product_id'] if isinstance(item, dict) else item['product_id']
-        name  = item['name'] if isinstance(item, dict) else item['name']
-        discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
-        cursor.execute("""
-            INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
-            VALUES (%s, %s, %s, %s)
-        """, (order_id, pid, qty, discounted_price))
-        # Atomic decrement — prevents race condition when two orders compete for the last item
-        cursor.execute("""
-            UPDATE products SET
-                stock_quantity = stock_quantity - %s,
-                sales_count = sales_count + %s
-            WHERE id = %s AND stock_quantity >= %s
-        """, (qty, qty, pid, qty))
-        if cursor.rowcount == 0:
-            db.rollback()
-            flash(f'ይቅርታ! "{name}" ላይ በቂ ዕቃ አልተገኘም። ካርትዎን ያረጋግጡ።', 'danger')
-            return redirect(url_for('cart.view_cart'))
+    try:
+        for item in cart_items_raw:
+            price = float(item['price'])
+            qty   = int(item['quantity'])
+            pid   = int(item['product_id'])
+            name  = item['name']
+            discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
+            cursor.execute("""
+                INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
+                VALUES (%s, %s, %s, %s)
+            """, (order_id, pid, qty, discounted_price))
+            # Atomic decrement — prevents race condition when two orders compete for the last item
+            cursor.execute("""
+                UPDATE products SET
+                    stock_quantity = stock_quantity - %s,
+                    sales_count = sales_count + %s
+                WHERE id = %s AND stock_quantity >= %s
+            """, (qty, qty, pid, qty))
+            if cursor.rowcount == 0:
+                db.rollback()
+                flash(f'ይቅርታ! "{name}" ላይ በቂ ዕቃ አልተገኘም። ካርትዎን ያረጋግጡ።', 'danger')
+                return redirect(url_for('cart.view_cart'))
+    except Exception as _order_err:
+        db.rollback()
+        current_app.logger.error(f"Order items insertion failed: {_order_err}")
+        flash('ትዕዛዙን ማስቀመጥ አልተሳካም። እባክዎ እንደገና ይሞክሩ።', 'danger')
+        return redirect(url_for('cart.checkout'))
 
     # Low-stock check — query updated stock levels within this transaction
     try:
@@ -541,7 +592,17 @@ def place_order():
             if _low:
                 send_low_stock_alert(_low)
     except Exception as _e:
-        print(f"Low-stock check error: {_e}")
+        current_app.logger.error(f"Low-stock check error: {_e}")
+
+    # Increment coupon used_count now that the order is confirmed
+    if coupon_id and extra_disc > 0:
+        try:
+            cursor.execute(
+                "UPDATE coupons SET used_count = used_count + 1 WHERE id = %s",
+                (coupon_id,)
+            )
+        except Exception as _ce:
+            current_app.logger.error(f"Coupon used_count update failed: {_ce}")
 
     # Clear cart
     if user_id:
@@ -550,6 +611,9 @@ def place_order():
         session.pop('cart', None)
 
     db.commit()
+
+    # Coupon was successfully consumed — remove it from session only after commit
+    session.pop('applied_coupon', None)
 
     flash(f'✅ Order placed successfully! Your order number is: {order_number}', 'success')
 
@@ -653,9 +717,9 @@ def get_cart_total():
                 quantity = cart.get(str(p['id']), 0)
                 total += p['price'] * quantity
     
-    # Apply 10% discount for logged in users
+    # Apply member discount for logged-in users
     if session.get('user_id'):
-        total = total * 0.9
+        total = total * (1 - USER_DISCOUNT_RATE)
     
     return round(total, 2)
 

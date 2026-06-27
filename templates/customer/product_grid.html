@@ -554,7 +554,7 @@
             const imageUrl = hasImage ? `{{ url_for('static', filename='') }}${product.thumbnail}` : '';
             const IS_MEMBER = {{ 'true' if session.get('user_id') else 'false' }};
             const baseP = parseFloat(product.price);
-            const memberP = IS_MEMBER ? Math.round(baseP * 0.9 * 100) / 100 : baseP;
+            const memberP = IS_MEMBER ? Math.round(baseP * {{ member_discount_multiplier }} * 100) / 100 : baseP;
             const displayP = memberP;
 
             // Discount badge: member-10% takes priority over compare_price discount

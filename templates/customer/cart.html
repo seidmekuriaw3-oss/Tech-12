@@ -191,7 +191,7 @@
                     flex-shrink: 0;
                 ">
                     {% if item.thumbnail and item.thumbnail != '' %}
-                        <img src="{{ url_for('static', filename=item.thumbnail) }}" alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover;"
+                        <img src="{{ url_for('static', filename=(item.thumbnail if item.thumbnail.startswith('uploads/') else 'uploads/products/' + item.thumbnail)) }}" alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover;"
                              onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:40px;\'>👗</div>'">
                     {% else %}
                         <div style="font-size: 40px;">👗</div>
@@ -216,7 +216,7 @@
                                    data-id="{{ item.product_id }}" readonly>
                             <button class="quantity-btn" onclick="changeQty(this, 1)">+</button>
                         </div>
-                        <a href="#" class="remove-item" onclick="removeCartItem('{{ item.product_id }}'); return false;">🗑️ Remove</a>
+                        <a href="#" class="remove-item" onclick="removeCartItem(this, '{{ item.product_id }}'); return false;">🗑️ Remove</a>
                     </div>
                 </div>
                 
@@ -339,137 +339,133 @@
 
 {% block extra_js %}
 <script>
-(function() {
-    var UPDATE_URL = '{{ url_for('api.api_cart_update') }}';
-    var REMOVE_URL = '{{ url_for('api.api_cart_remove') }}';
-    var CLEAR_URL  = '{{ url_for('cart.clear_cart') }}';
+/* Cart page quantity & remove handlers — standalone, no dependency on cart.js */
+var CART_UPDATE_URL = '/api/cart/update';
+var CART_REMOVE_URL = '/api/cart/remove';
 
-    function formatPriceNumber(price) {
-        if (price === undefined || price === null) return '0';
-        var num = parseFloat(price);
-        if (isNaN(num)) return '0';
-        return num.toLocaleString('en-US');
+function cartFmt(n) {
+    var v = parseFloat(n);
+    return isNaN(v) ? '0' : v.toLocaleString('en-US');
+}
+
+function cartUpdateSummary(d) {
+    var s = document.getElementById('summarySubtotal');
+    var disc = document.getElementById('summaryDiscount');
+    var sh = document.getElementById('summaryShipping');
+    var t = document.getElementById('summaryTotal');
+    if (s && d.subtotal != null) s.textContent = cartFmt(d.subtotal) + ' ETB';
+    if (disc && d.discount > 0) disc.textContent = '- ' + cartFmt(d.discount) + ' ETB';
+    if (sh && d.shipping_cost != null) sh.textContent = d.shipping_cost === 0 ? 'Free' : cartFmt(d.shipping_cost) + ' ETB';
+    if (t && d.total != null) t.textContent = cartFmt(d.total) + ' ETB';
+    if (window.updateCartCount && d.count != null) window.updateCartCount(d.count);
+}
+
+function changeQty(btn, delta) {
+    var wrapper = btn.parentElement;
+    while (wrapper && !wrapper.classList.contains('quantity-wrapper')) {
+        wrapper = wrapper.parentElement;
     }
+    var input = wrapper ? wrapper.querySelector('.quantity-input') : null;
+    if (!input) return;
+    var pid = parseInt(input.getAttribute('data-id'), 10);
+    var newQty = Math.max(1, (parseInt(input.value, 10) || 1) + delta);
+    if (isNaN(pid)) return;
 
-    function updateSummary(data) {
-        var s = document.getElementById('summarySubtotal');
-        var d = document.getElementById('summaryDiscount');
-        var sh = document.getElementById('summaryShipping');
-        var t = document.getElementById('summaryTotal');
-        if (s && data.subtotal != null) s.textContent = formatPriceNumber(data.subtotal) + ' ETB';
-        if (d && data.discount > 0) d.textContent = '- ' + formatPriceNumber(data.discount) + ' ETB';
-        if (sh && data.shipping_cost != null) sh.textContent = data.shipping_cost === 0 ? 'Free' : formatPriceNumber(data.shipping_cost) + ' ETB';
-        if (t && data.total != null) t.textContent = formatPriceNumber(data.total) + ' ETB';
-        if (window.updateCartCount && data.count != null) window.updateCartCount(data.count);
-    }
+    btn.disabled = true;
+    var siblingBtns = wrapper.querySelectorAll('button');
+    siblingBtns.forEach(function(b) { b.disabled = true; });
+    input.style.opacity = '0.5';
 
-    function changeQty(btn, delta) {
-        var wrapper = btn.closest('.quantity-wrapper');
-        var input = wrapper ? wrapper.querySelector('.quantity-input') : null;
-        if (!input) return;
-        var productId = input.getAttribute('data-id');
-        var newQty = Math.max(1, (parseInt(input.value) || 1) + delta);
-        doUpdateQty(productId, newQty, input);
-    }
-
-    function doUpdateQty(productId, newQuantity, input) {
-        if (newQuantity < 1) { doRemoveItem(productId); return; }
-        var inp = input || document.querySelector('.quantity-input[data-id="' + productId + '"]');
-        if (inp) inp.style.opacity = '0.5';
-        fetch(UPDATE_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ product_id: parseInt(productId), quantity: newQuantity })
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (inp) inp.style.opacity = '1';
-            if (data.success) {
-                if (inp) inp.value = newQuantity;
-                var card = document.querySelector('.cart-item[data-id="' + productId + '"]');
-                if (card && data.item_total != null) {
-                    var span = card.querySelector('.item-total');
-                    if (span) span.textContent = formatPriceNumber(data.item_total) + ' ETB';
-                }
-                updateSummary(data);
-                if (window.showToast) window.showToast('Cart updated', 'success');
-            } else {
-                if (window.showToast) window.showToast(data.error || 'Failed to update cart', 'error');
+    fetch(CART_UPDATE_URL + '?product_id=' + pid + '&quantity=' + newQty, {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        input.style.opacity = '1';
+        siblingBtns.forEach(function(b) { b.disabled = false; });
+        if (data.success) {
+            input.value = newQty;
+            var card = wrapper.closest('.cart-item');
+            if (card && data.item_total != null) {
+                var span = card.querySelector('.item-total');
+                if (span) span.textContent = cartFmt(data.item_total) + ' ETB';
             }
-        })
-        .catch(function() {
-            if (inp) inp.style.opacity = '1';
-            if (window.showToast) window.showToast('Network error — please try again', 'error');
-        });
+            cartUpdateSummary(data);
+        } else {
+            alert(data.error || 'Update failed');
+        }
+    })
+    .catch(function() {
+        input.style.opacity = '1';
+        siblingBtns.forEach(function(b) { b.disabled = false; });
+        location.reload();
+    });
+}
+
+function removeCartItem(el, productId) {
+    var pid = parseInt(productId, 10);
+    if (isNaN(pid)) return;
+
+    if (!el._cartConfirming) {
+        el._cartConfirming = true;
+        var orig = el.innerHTML;
+        el.innerHTML = '✓ Tap again to remove';
+        el.style.color = '#e53935';
+        el.style.fontWeight = 'bold';
+        el._cartTimer = setTimeout(function() {
+            el._cartConfirming = false;
+            el.innerHTML = orig;
+            el.style.color = '';
+            el.style.fontWeight = '';
+        }, 3000);
+        return;
     }
 
-    function doRemoveItem(productId) {
-        fetch(REMOVE_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ product_id: parseInt(productId) })
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.success) {
-                var card = document.querySelector('.cart-item[data-id="' + productId + '"]');
-                if (card) {
-                    card.style.transition = 'opacity 0.3s';
-                    card.style.opacity = '0';
-                    setTimeout(function() {
-                        card.remove();
-                        if (!document.querySelector('.cart-item')) location.reload();
-                    }, 300);
-                }
-                updateSummary(data);
-                if (window.showToast) window.showToast('Item removed from cart', 'success');
+    clearTimeout(el._cartTimer);
+    el._cartConfirming = false;
+    el.style.opacity = '0.4';
+    el.style.pointerEvents = 'none';
+
+    fetch(CART_REMOVE_URL + '?product_id=' + pid, {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            var card = document.querySelector('.cart-item[data-id="' + pid + '"]');
+            if (card) {
+                card.style.transition = 'opacity 0.3s, max-height 0.4s';
+                card.style.opacity = '0';
+                setTimeout(function() {
+                    card.remove();
+                    if (!document.querySelector('.cart-item')) location.reload();
+                    else cartUpdateSummary(data);
+                }, 350);
             } else {
-                if (window.showToast) window.showToast(data.error || 'Failed to remove item', 'error');
+                cartUpdateSummary(data);
             }
-        })
-        .catch(function() {
-            if (window.showToast) window.showToast('Network error — please try again', 'error');
-        });
-    }
-
-    function removeCartItem(productId) {
-        if (window.showConfirm) {
-            window.showConfirm('Remove Item', 'Are you sure you want to remove this item?', function() { doRemoveItem(productId); });
         } else {
-            if (confirm('Are you sure you want to remove this item?')) doRemoveItem(productId);
+            el.style.opacity = '';
+            el.style.pointerEvents = '';
+            alert(data.error || 'Remove failed');
         }
-    }
+    })
+    .catch(function() { location.reload(); });
+}
 
-    function clearCart() {
-        function doIt() {
-            fetch(CLEAR_URL, { method: 'GET', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(function() { location.reload(); })
-            .catch(function() { location.reload(); });
-        }
-        if (window.showConfirm) {
-            window.showConfirm('Clear Cart', 'Remove all items from your cart?', doIt);
-        } else {
-            if (confirm('Remove all items from your cart?')) doIt();
-        }
-    }
+function toggleCouponInput() {
+    var inp = document.getElementById('couponInput');
+    if (inp) inp.style.display = (inp.style.display === 'none' || !inp.style.display) ? 'flex' : 'none';
+}
 
-    function toggleCouponInput() {
-        var inp = document.getElementById('couponInput');
-        if (inp) inp.style.display = (inp.style.display === 'none' || !inp.style.display) ? 'flex' : 'none';
-    }
-
-    function applyCoupon() {
-        var code = (document.getElementById('couponCode') || {}).value;
-        if (!code || !code.trim()) { if (window.showToast) window.showToast('Please enter a coupon code', 'warning'); return; }
-        if (window.showToast) window.showToast('Coupon codes are not available yet', 'info');
-    }
-
-    window.changeQty = changeQty;
-    window.updateCartItemQuantity = doUpdateQty;
-    window.removeCartItem = removeCartItem;
-    window.clearCart = clearCart;
-    window.toggleCouponInput = toggleCouponInput;
-    window.applyCoupon = applyCoupon;
-})();
+function applyCoupon() {
+    var code = (document.getElementById('couponCode') || {}).value;
+    if (!code || !code.trim()) { alert('Please enter a coupon code'); return; }
+    alert('Coupon codes are not available yet');
+}
 </script>
 {% endblock %}

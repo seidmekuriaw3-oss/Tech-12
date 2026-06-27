@@ -352,7 +352,7 @@ if __name__ == "__main__":
     import argparse
     
     # Command line argument parsing
-    parser = argparse.ArgumentParser(description='Database management tool for SEMIRA FASHION
+    parser = argparse.ArgumentParser(description='Database management tool for SEMIRA FASHION')
     parser.add_argument('--all', action='store_true', help='Clear all data')
     parser.add_argument('--products', action='store_true', help='Clear only products')
     parser.add_argument('--ads', action='store_true', help='Clear only ads')

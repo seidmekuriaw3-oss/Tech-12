@@ -7,8 +7,9 @@ orders, wishlist, tracking, static info pages.
 
 from flask import (
     Blueprint, render_template, request, redirect, url_for,
-    flash, session, jsonify, make_response
+    flash, session, jsonify, make_response, current_app
 )
+from extensions import limiter
 from middleware.auth import user_login_required
 from middleware.platform import get_platform, is_android_app
 from database.db import get_db
@@ -76,15 +77,25 @@ def index():
         recently_viewed_ids = session.get('recently_viewed', [])
         recently_viewed_list = []
         if recently_viewed_ids:
-            placeholders = ','.join(['%s' for _ in recently_viewed_ids])
-            cursor.execute(f"""
-                SELECT p.*, c.name as category_name, c.name_am as category_name_am
-                FROM products p LEFT JOIN categories c ON p.category_id = c.id
-                WHERE p.id IN ({placeholders}) AND p.is_active = 1
-            """, [int(i) for i in recently_viewed_ids])
-            rows = cursor.fetchall()
-            row_map = {str(row['id']): row_to_dict(row) for row in rows}
-            recently_viewed_list = [row_map[i] for i in recently_viewed_ids if i in row_map]
+            # Validate each ID is a safe integer before use in query
+            safe_ids = []
+            for i in recently_viewed_ids:
+                try:
+                    safe_ids.append(int(i))
+                except (ValueError, TypeError):
+                    pass
+            if not safe_ids:
+                recently_viewed_ids = []
+            else:
+                placeholders = ','.join(['%s'] * len(safe_ids))
+                cursor.execute(f"""
+                    SELECT p.*, c.name as category_name, c.name_am as category_name_am
+                    FROM products p LEFT JOIN categories c ON p.category_id = c.id
+                    WHERE p.id IN ({placeholders}) AND p.is_active = 1
+                """, safe_ids)
+                rows = cursor.fetchall()
+                row_map = {str(row['id']): row_to_dict(row) for row in rows}
+                recently_viewed_list = [row_map[i] for i in recently_viewed_ids if i in row_map]
 
         platform = get_platform()
         show_about = platform in ('desktop', 'mobile_browser')
@@ -131,8 +142,9 @@ def index():
                         'surah_name': _meta[2] if _meta else f'Surah {_snum}',
                         'ayah_num':   _v.get('verse', _aidx + 1) if isinstance(_v, dict) else _aidx + 1,
                     }
-        except Exception:
-            pass
+        except Exception as _isl_err:
+            import logging as _log
+            _log.getLogger(__name__).warning("Islamic/Hijri data error: %s", _isl_err)
 
         return render_template('customer/index.html',
                                featured_products=featured_list,
@@ -147,8 +159,8 @@ def index():
                                daily_ayah=daily_ayah,
                                next_event=next_event)
     except Exception as e:
-        import traceback
-        print(f"Home page error: {e}\n{traceback.format_exc()}")
+        import logging as _log
+        _log.getLogger(__name__).error("Home page error: %s", e, exc_info=True)
         return render_template('customer/index.html',
                                featured_products=[], new_products=[], ads=[],
                                categories=[], recently_viewed_products=[],
@@ -199,7 +211,7 @@ def products():
                                page=page, total_pages=total_pages, total=total, lang=lang)
     except Exception as e:
         import traceback
-        print(f"Products page error: {e}\n{traceback.format_exc()}")
+        current_app.logger.error(f"Products page error: {e}\n{traceback.format_exc()}")
         return render_template('customer/product_grid.html',
                                products=[], categories=[], page=1, total_pages=0,
                                total=0, lang=lang)
@@ -245,14 +257,32 @@ def product_detail(product_id):
         product_dict = dict(product)
         related_list = [dict(p) for p in related_products] if related_products else []
 
+        # Fetch recently viewed products (from session, excluding current)
+        recently_viewed_ids = session.get('recently_viewed', [])
+        rv_ids_excl = [i for i in recently_viewed_ids if i != str(product_id)]
+        recently_viewed_list = []
+        if rv_ids_excl:
+            try:
+                placeholders = ','.join(['%s'] * len(rv_ids_excl))
+                cursor.execute(
+                    f"SELECT id, name, name_am, price, compare_price, thumbnail FROM products WHERE id IN ({placeholders}) AND is_active = 1 LIMIT 6",
+                    rv_ids_excl
+                )
+                rv_rows = cursor.fetchall()
+                rv_map = {str(r['id']): dict(r) for r in rv_rows}
+                recently_viewed_list = [rv_map[i] for i in rv_ids_excl if i in rv_map]
+            except Exception:
+                recently_viewed_list = []
+
         discount = None
         if product_dict.get('compare_price') and product_dict['compare_price'] > product_dict['price']:
             discount = int(((product_dict['compare_price'] - product_dict['price']) / product_dict['compare_price']) * 100)
 
         is_logged_in = session.get('user_id') is not None
-        final_price = product_dict['price']
+        from routes.shared import USER_DISCOUNT_RATE
+        final_price = float(product_dict['price'])
         if is_logged_in:
-            final_price = product_dict['price'] * 0.9
+            final_price = float(product_dict['price']) * (1 - USER_DISCOUNT_RATE)
 
         # Fetch live avg rating for this product
         try:
@@ -269,10 +299,11 @@ def product_detail(product_id):
 
         return render_template('customer/product_detail.html',
                                product=product_dict, related_products=related_list,
+                               recently_viewed_products=recently_viewed_list,
                                discount=discount, final_price=round(final_price, 2),
                                is_logged_in=is_logged_in, lang=lang)
     except Exception as e:
-        print(f"Product detail error: {e}")
+        current_app.logger.error(f"Product detail error: {e}")
         flash('Error loading product.', 'error')
         return redirect(url_for('customer.products'))
 
@@ -295,7 +326,7 @@ def categories():
         return render_template('customer/categories.html',
                                categories=[dict(c) for c in cats] if cats else [], lang=lang)
     except Exception as e:
-        print(f"Categories error: {e}")
+        current_app.logger.error(f"Categories error: {e}")
         return render_template('customer/categories.html', categories=[], lang=lang)
 
 
@@ -346,7 +377,7 @@ def category_products(category_id=None):
                                page_title=page_title, current_category=category_id,
                                lang=lang)
     except Exception as e:
-        print(f"Category products error: {e}")
+        current_app.logger.error(f"Category products error: {e}")
         flash('Unable to load category products.', 'error')
         return render_template('customer/category.html',
                                products=[], categories=[], page_title='Products',
@@ -384,16 +415,12 @@ def wede_semira():
 
         products_rows = cursor.fetchall()
 
-        # Products by category for per-section display
-        cat_products = {}
-        for cat in clothing_cats:
-            cursor.execute("""
-                SELECT p.*, c.name as cat_name, c.name_am as cat_name_am
-                FROM products p LEFT JOIN categories c ON p.category_id = c.id
-                WHERE p.is_active = 1 AND p.category_id = %s
-                ORDER BY p.is_featured DESC, p.id DESC LIMIT 8
-            """, (cat['id'],))
-            cat_products[cat['id']] = [dict(p) for p in cursor.fetchall()]
+        # Products by category for per-section display — built from the bulk query (no N+1)
+        cat_products = {cat['id']: [] for cat in clothing_cats}
+        for p in products_rows:
+            cid = p['category_id']
+            if cid in cat_products and len(cat_products[cid]) < 8:
+                cat_products[cid].append(dict(p))
 
         return render_template('customer/wede_semira.html',
                                clothing_categories=[dict(c) for c in clothing_cats],
@@ -401,7 +428,7 @@ def wede_semira():
                                cat_products=cat_products,
                                lang=lang)
     except Exception as e:
-        print(f"Wede Semira page error: {e}")
+        current_app.logger.error(f"Wede Semira page error: {e}")
         return render_template('customer/wede_semira.html',
                                clothing_categories=[], products=[],
                                cat_products={}, lang=lang)
@@ -445,7 +472,7 @@ def search():
                                categories=[dict(c) for c in cats] if cats else [],
                                query=query, lang=lang)
     except Exception as e:
-        print(f"Search error: {e}")
+        current_app.logger.error(f"Search error: {e}")
         flash('Search failed.', 'error')
         return render_template('customer/search.html', products=[], categories=[],
                                query=query, lang=lang)
@@ -475,7 +502,7 @@ def branches():
                                branches=branches_list, phone_numbers=phone_numbers,
                                lang=lang)
     except Exception as e:
-        print(f"Branches error: {e}")
+        current_app.logger.error(f"Branches error: {e}")
         return render_template('customer/branches.html', branches=[], phone_numbers=[], lang=lang)
 
 
@@ -515,7 +542,7 @@ def contact():
             """, (name, email, phone, message))
             conn.commit()
         except Exception as e:
-            print(f"Error saving contact: {e}")
+            current_app.logger.error(f"Error saving contact: {e}")
 
         whatsapp_msg = (f"📬 New Contact Message - SEMIRA FASHION\n\n"
                         f"👤 Name: {name}\n")
@@ -579,6 +606,7 @@ def privacy():
 # ==================== USER AUTHENTICATION ====================
 
 @customer_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute; 20 per hour", methods=["POST"])
 def user_login():
     """User login page."""
     if session.get('user_id'):
@@ -595,25 +623,54 @@ def user_login():
             user = cursor.fetchone()
 
             if user and check_password_hash(user['password_hash'], password):
+                # Merge guest session cart → DB cart before setting session
+                guest_cart = session.get('cart', {})
                 session['user_id'] = user['id']
                 session['user_name'] = user['full_name']
                 session['user_email'] = user['email']
                 session['user_phone'] = user['phone']
+                if guest_cart:
+                    try:
+                        for pid_str, qty in guest_cart.items():
+                            pid = int(pid_str)
+                            cursor.execute(
+                                "SELECT id, quantity FROM cart_items WHERE user_id=%s AND product_id=%s",
+                                (user['id'], pid)
+                            )
+                            existing = cursor.fetchone()
+                            if existing:
+                                cursor.execute(
+                                    "UPDATE cart_items SET quantity = quantity + %s WHERE id = %s",
+                                    (qty, existing['id'])
+                                )
+                            else:
+                                cursor.execute(
+                                    "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s,%s,%s)",
+                                    (user['id'], pid, qty)
+                                )
+                        conn.commit()
+                        session.pop('cart', None)
+                    except Exception as _me:
+                        current_app.logger.error(f"Cart merge error: {_me}")
                 flash('Login successful!', 'success')
-                next_page = request.args.get('next')
-                if next_page:
+                next_page = request.args.get('next', '')
+                from urllib.parse import urlparse as _urlparse
+                _p = _urlparse(next_page)
+                # Only allow same-site relative URLs (no scheme / netloc)
+                if next_page and not _p.scheme and not _p.netloc and next_page.startswith('/'):
                     return redirect(next_page)
                 return redirect(url_for('customer.index'))
             else:
                 flash('Invalid email or password!', 'danger')
         except Exception as e:
-            print(f"Login error: {e}")
+            current_app.logger.error(f"Login error: {e}")
             flash('Login error. Please try again.', 'danger')
 
     return render_template('auth/user_login.html')
 
 
 @customer_bp.route('/register', methods=['GET', 'POST'])
+@limiter.limit("3 per minute; 10 per hour", methods=["POST"])
 def user_register():
     """User registration page."""
     if session.get('user_id'):
@@ -670,6 +727,21 @@ def user_register():
             session['user_email'] = email
             session['user_phone'] = phone
 
+            # Merge any guest session cart into DB cart
+            guest_cart = session.get('cart', {})
+            if guest_cart:
+                try:
+                    for pid_str, qty in guest_cart.items():
+                        pid = int(pid_str)
+                        cursor.execute(
+                            "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (%s,%s,%s)",
+                            (user_id, pid, qty)
+                        )
+                    conn.commit()
+                    session.pop('cart', None)
+                except Exception as _me:
+                    current_app.logger.error(f"Cart merge on register error: {_me}")
+
             flash('Registration successful! Welcome to SEMIRA FASHION!', 'success')
 
             try:
@@ -692,7 +764,7 @@ def user_register():
 
             return redirect(url_for('customer.index'))
         except Exception as e:
-            print(f"Register error: {e}")
+            current_app.logger.error(f"Register error: {e}")
             flash('Registration failed. Please try again.', 'danger')
 
     return render_template('auth/user_register.html')
@@ -741,7 +813,7 @@ def user_profile():
         return render_template('auth/user_profile.html',
                                user=user, order_stats=order_stats, orders=orders)
     except Exception as e:
-        print(f"Profile error: {e}")
+        current_app.logger.error(f"Profile error: {e}")
         flash('Error loading profile.', 'error')
         return redirect(url_for('customer.index'))
 
@@ -771,7 +843,7 @@ def update_profile():
             return jsonify({'success': True, 'message': 'Profile updated successfully!'})
         flash('Profile updated successfully!', 'success')
     except Exception as e:
-        print(f"Update profile error: {e}")
+        current_app.logger.error(f"Update profile error: {e}")
         if is_ajax:
             return jsonify({'success': False, 'error': str(e)}), 500
         flash('Error updating profile.', 'error')
@@ -783,7 +855,7 @@ def update_profile():
 @user_login_required
 def change_password():
     """Change user password (AJAX)."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     new_password = data.get('password', '')
 
     if not new_password or len(new_password) < 6:
@@ -798,7 +870,7 @@ def change_password():
         conn.commit()
         return jsonify({'success': True, 'message': 'Password changed successfully'})
     except Exception as e:
-        print(f"Password change error: {e}")
+        current_app.logger.error(f"Password change error: {e}")
         return jsonify({'success': False, 'error': 'Failed to change password'}), 500
 
 
@@ -806,7 +878,7 @@ def change_password():
 @user_login_required
 def delete_account():
     """Delete user account (AJAX)."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     password = data.get('password', '')
 
     try:
@@ -823,7 +895,7 @@ def delete_account():
         session.clear()
         return jsonify({'success': True, 'message': 'Account deleted successfully'})
     except Exception as e:
-        print(f"Delete account error: {e}")
+        current_app.logger.error(f"Delete account error: {e}")
         return jsonify({'success': False, 'error': 'Failed to delete account'}), 500
 
 
@@ -859,7 +931,7 @@ def user_orders():
                                orders=[dict(o) for o in orders] if orders else [],
                                lang=lang, status_filter=status_filter)
     except Exception as e:
-        print(f"User orders error: {e}")
+        current_app.logger.error(f"User orders error: {e}")
         return render_template('auth/user_orders.html', orders=[], lang=lang, status_filter='')
 
 
@@ -889,7 +961,7 @@ def order_detail(order_id):
                                items=[dict(i) for i in items] if items else [],
                                whatsapp_number=WHATSAPP_NUMBER)
     except Exception as e:
-        print(f"Order detail error: {e}")
+        current_app.logger.error(f"Order detail error: {e}")
         flash('Error loading order.', 'error')
         return redirect(url_for('customer.user_orders'))
 
@@ -956,7 +1028,7 @@ def order_confirmation(order_id):
                                items=items_list,
                                whatsapp_url=whatsapp_url)
     except Exception as e:
-        print(f"Order confirmation error: {e}")
+        current_app.logger.error(f"Order confirmation error: {e}")
         flash('Error loading order.', 'error')
         return redirect(url_for('customer.index'))
 
@@ -1012,7 +1084,7 @@ def forgot_password():
                 flash('If an account exists with that email, you will receive a reset link.', 'info')
 
         except Exception as e:
-            print(f"Forgot password error: {e}")
+            current_app.logger.error(f"Forgot password error: {e}")
             flash('Error processing request. Please try again.', 'error')
 
     return render_template('auth/forgot_password.html', lang=lang)
@@ -1031,7 +1103,7 @@ def reset_password(token):
         """, (token,))
         token_row = cursor.fetchone()
     except Exception as e:
-        print(f"Token lookup error: {e}")
+        current_app.logger.error(f"Token lookup error: {e}")
         token_row = None
 
     if (not token_row or token_row['used']
@@ -1064,16 +1136,13 @@ def reset_password(token):
             flash('Password reset successful! Please login with your new password.', 'success')
             return redirect(url_for('customer.user_login'))
         except Exception as e:
-            print(f"Reset password error: {e}")
+            current_app.logger.error(f"Reset password error: {e}")
             flash('Error resetting password. Please try again.', 'error')
 
     return render_template('auth/reset_password.html', token=token, lang=lang)
 
 
 # ==================== ORDER TRACKING ====================
-
-WHATSAPP_NUMBER = '251987957957'
-
 
 @customer_bp.route('/track-order', methods=['GET'])
 def track_order_public():
@@ -1143,7 +1212,7 @@ def track_order_public():
                                order=order_dict, items=items_list, lang=lang,
                                whatsapp_number=WHATSAPP_NUMBER, error=None)
     except Exception as e:
-        print(f"Order tracking error: {e}")
+        current_app.logger.error(f"Order tracking error: {e}")
         return render_template('customer/track_order.html',
                                order=None, items=[], lang=lang,
                                whatsapp_number=WHATSAPP_NUMBER,
@@ -1168,18 +1237,34 @@ def wishlist():
         cursor = conn.cursor()
 
         cursor.execute("""
-            SELECT w.*, p.name, p.name_am, p.name_ar, p.price, p.compare_price, p.thumbnail
+            SELECT w.id, w.product_id, w.created_at, w.price_at_add,
+                   p.name, p.name_am, p.name_ar, p.price, p.compare_price, p.thumbnail,
+                   p.stock_quantity
             FROM wishlist w JOIN products p ON w.product_id = p.id
             WHERE w.user_id = %s AND p.is_active = 1
             ORDER BY w.created_at DESC
         """, (session['user_id'],))
         wishlist_items = cursor.fetchall()
-        wishlist_list = [dict(i) for i in wishlist_items] if wishlist_items else []
+        wishlist_list = []
+        for item in (wishlist_items or []):
+            d = dict(item)
+            # Calculate price drop info
+            if d.get('price_at_add') and d['price_at_add'] > d['price']:
+                d['price_dropped'] = True
+                d['price_drop_amount'] = round(float(d['price_at_add']) - float(d['price']), 2)
+                d['price_drop_pct'] = round(
+                    (d['price_drop_amount'] / float(d['price_at_add'])) * 100
+                )
+            else:
+                d['price_dropped'] = False
+                d['price_drop_amount'] = 0
+                d['price_drop_pct'] = 0
+            wishlist_list.append(d)
 
         return render_template('customer/wishlist.html',
                                wishlist=wishlist_list, lang=lang)
     except Exception as e:
-        print(f"Wishlist error: {e}")
+        current_app.logger.error(f"Wishlist error: {e}")
         flash('Error loading wishlist', 'error')
         return redirect(url_for('customer.index'))
 
@@ -1270,7 +1355,7 @@ def dashboard():
                                lang=lang)
     except Exception as e:
         import traceback
-        print(f"Dashboard error: {e}\n{traceback.format_exc()}")
+        current_app.logger.error(f"Dashboard error: {e}\n{traceback.format_exc()}")
         flash('Error loading dashboard.', 'error')
         return redirect(url_for('customer.index'))
 

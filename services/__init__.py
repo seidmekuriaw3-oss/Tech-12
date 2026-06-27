@@ -190,11 +190,13 @@ __all__ = [
 
 
 # ==================== INITIALIZATION LOG ====================
+import logging
+logger = logging.getLogger(__name__)
 
-print("✅ Services package initialized successfully")
-print(f"   - ProductService: Available")
-print(f"   - CartService: Available")
-print(f"   - OrderService: Available")
-print(f"   - AdService: Available")
-print(f"   - WhatsAppService: Available")
-print(f"   - NotificationService: Available")
+logger.warning("✅ Services package initialized successfully")
+logger.warning(f"   - ProductService: Available")
+logger.warning(f"   - CartService: Available")
+logger.warning(f"   - OrderService: Available")
+logger.warning(f"   - AdService: Available")
+logger.warning(f"   - WhatsAppService: Available")
+logger.warning(f"   - NotificationService: Available")
