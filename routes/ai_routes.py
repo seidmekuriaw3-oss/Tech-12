@@ -156,7 +156,7 @@ def ai_chat():
         if len(message) > 500:
             message = message[:500]
 
-        api_key = os.environ.get('OPENAI_API_KEY', '').strip()
+        api_key = os.environ.get('GROQ_API_KEY', '').strip()
 
         if not api_key:
             reply = smart_fallback(message)
@@ -185,17 +185,17 @@ def ai_chat():
 
         messages.append({'role': 'user', 'content': message})
 
-        # Call OpenAI
-        from openai import OpenAI
-        client = OpenAI(api_key=api_key)
+        # Call Groq
+        from groq import Groq
+        client = Groq(api_key=api_key)
         completion = client.chat.completions.create(
-            model='gpt-4o-mini',
+            model='llama-3.3-70b-versatile',
             messages=messages,
             max_tokens=400,
             temperature=0.7,
         )
         reply = completion.choices[0].message.content.strip()
-        return jsonify({'success': True, 'reply': reply, 'source': 'openai'})
+        return jsonify({'success': True, 'reply': reply, 'source': 'groq'})
 
     except Exception as e:
         logger.error(f"AI chat error: {e}")
