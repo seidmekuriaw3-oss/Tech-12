@@ -811,6 +811,19 @@ def initialize_app():
         app.logger.info("Database initialized successfully")
     except Exception as e:
         app.logger.error(f"Database initialization error: {str(e)}")
+
+    # Load GROQ_API_KEY from DB settings if not already in environment
+    if not os.environ.get('GROQ_API_KEY'):
+        try:
+            from database.db import get_db as _get_db
+            _cursor = _get_db().cursor()
+            _cursor.execute("SELECT value FROM settings WHERE key = 'groq_api_key'")
+            _row = _cursor.fetchone()
+            if _row and _row[0]:
+                os.environ['GROQ_API_KEY'] = _row[0]
+                app.logger.info("GROQ_API_KEY loaded from database settings")
+        except Exception as _e:
+            app.logger.debug(f"Could not load GROQ_API_KEY from DB: {_e}")
     for directory in ['logs', 'backups', 'static/uploads', 'static/uploads/products',
                       'static/uploads/ads', 'static/images', 'static/css', 'static/js']:
         os.makedirs(directory, exist_ok=True)

@@ -22487,3 +22487,4 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-27 02:31:27,771 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-27 02:51:05,962 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-27 02:51:28,322 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /api/ai-chat
+2026-06-27 02:58:23,827 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!

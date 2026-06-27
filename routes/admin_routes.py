@@ -1906,7 +1906,11 @@ def settings():
             flash('Error saving settings.', 'error')
         return redirect(url_for('admin.settings'))
 
-    return render_template('admin/settings.html', settings=settings_data, lang=lang)
+    groq_configured = bool(
+        os.environ.get('GROQ_API_KEY') or settings_data.get('groq_api_key')
+    )
+    return render_template('admin/settings.html', settings=settings_data,
+                           lang=lang, groq_configured=groq_configured)
 
 
 @admin_bp.route('/settings/change-password', methods=['POST'])
@@ -1949,6 +1953,68 @@ def change_password():
         flash('Error changing password. Please try again.', 'error')
 
     return redirect(url_for('admin.settings') + '#change-password')
+
+
+@admin_bp.route('/settings/ai-key', methods=['POST'])
+@admin_required
+def save_ai_key():
+    """Save or update GROQ_API_KEY in the settings table and live environment."""
+    key = request.form.get('groq_api_key', '').strip()
+    if not key:
+        flash('No API key entered — existing key kept.', 'info')
+        return redirect(url_for('admin.settings') + '#ai-settings')
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO settings (key, value) VALUES (%s, %s)
+            ON CONFLICT(key) DO UPDATE SET value = %s
+        """, ('groq_api_key', key, key))
+        conn.commit()
+        os.environ['GROQ_API_KEY'] = key
+        flash('Groq API key saved! AI assistant is now using Groq LLM.', 'success')
+    except Exception as e:
+        current_app.logger.error(f"save_ai_key error: {e}")
+        flash('Error saving API key.', 'error')
+    return redirect(url_for('admin.settings') + '#ai-settings')
+
+
+@admin_bp.route('/settings/remove-ai-key', methods=['POST'])
+@admin_required
+def remove_ai_key():
+    """Remove GROQ_API_KEY from settings and environment."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM settings WHERE key = %s", ('groq_api_key',))
+        conn.commit()
+        os.environ.pop('GROQ_API_KEY', None)
+        return jsonify({'success': True})
+    except Exception as e:
+        current_app.logger.error(f"remove_ai_key error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@admin_bp.route('/settings/test-ai', methods=['POST'])
+@admin_required
+def test_ai_key():
+    """Test if the configured GROQ_API_KEY works by sending a minimal request."""
+    api_key = os.environ.get('GROQ_API_KEY', '').strip()
+    if not api_key:
+        return jsonify({'success': False, 'error': 'No GROQ_API_KEY configured.'})
+    try:
+        from groq import Groq
+        client = Groq(api_key=api_key)
+        completion = client.chat.completions.create(
+            model='llama-3.3-70b-versatile',
+            messages=[{'role': 'user', 'content': 'Say OK in one word.'}],
+            max_tokens=5,
+            temperature=0,
+        )
+        reply = completion.choices[0].message.content.strip()
+        return jsonify({'success': True, 'model': 'llama-3.3-70b-versatile', 'sample': reply})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)[:200]})
 
 
 @admin_bp.route('/clear-cache', methods=['GET', 'POST'])
