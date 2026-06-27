@@ -36,15 +36,19 @@ def seed_all(clear_existing=True):
 
         cat_ids = {}
         for name_am, name_en, name_ar in category_defs:
-            cursor.execute("""
-                INSERT INTO categories (name, name_am, name_ar, is_active)
-                VALUES (%s, %s, %s, 1)
-                ON CONFLICT (name) DO UPDATE SET name_am=EXCLUDED.name_am, name_ar=EXCLUDED.name_ar
-                RETURNING id
-            """, (name_en, name_am, name_ar))
-            row = cursor.fetchone()
-            if row:
-                cat_ids[name_am] = row[0]
+            # Try to find existing category first, then insert if not found
+            cursor.execute("SELECT id FROM categories WHERE name = %s OR name_am = %s LIMIT 1", (name_en, name_am))
+            existing = cursor.fetchone()
+            if existing:
+                cat_ids[name_am] = existing[0]
+            else:
+                cursor.execute("""
+                    INSERT INTO categories (name, name_am, name_ar, is_active)
+                    VALUES (%s, %s, %s, 1) RETURNING id
+                """, (name_en, name_am, name_ar))
+                row = cursor.fetchone()
+                if row:
+                    cat_ids[name_am] = row[0]
 
         conn.commit()
         print(f"   ✅ {len(cat_ids)} categories ready")
