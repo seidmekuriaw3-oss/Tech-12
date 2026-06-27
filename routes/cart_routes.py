@@ -486,6 +486,8 @@ def place_order():
 
     # Read coupon from session but do NOT pop yet — if stock fails we roll back
     # and the coupon must remain available for the user's next attempt.
+    coupon_id  = None
+    extra_disc = 0.0
     coupon_info = session.get('applied_coupon')
     if coupon_info:
         # Re-validate coupon against current cart subtotal to prevent stale-discount abuse
@@ -591,6 +593,16 @@ def place_order():
                 send_low_stock_alert(_low)
     except Exception as _e:
         current_app.logger.error(f"Low-stock check error: {_e}")
+
+    # Increment coupon used_count now that the order is confirmed
+    if coupon_id and extra_disc > 0:
+        try:
+            cursor.execute(
+                "UPDATE coupons SET used_count = used_count + 1 WHERE id = %s",
+                (coupon_id,)
+            )
+        except Exception as _ce:
+            current_app.logger.error(f"Coupon used_count update failed: {_ce}")
 
     # Clear cart
     if user_id:

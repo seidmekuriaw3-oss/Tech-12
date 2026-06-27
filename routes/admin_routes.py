@@ -956,7 +956,11 @@ def ad_create():
         description_am = request.form.get('description_am', '')
         description_ar = request.form.get('description_ar', '')
         link = request.form.get('link', '')
-        sort_order = int(request.form.get('sort_order', 0) or 0)
+        try:
+            sort_order = int(request.form.get('sort_order', 0) or 0)
+        except (ValueError, TypeError):
+            flash('Sort order must be a number.', 'error')
+            return redirect(url_for('admin.ad_create'))
 
         _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
         image_filename = ''
@@ -1011,7 +1015,11 @@ def ad_edit(aid):
         description_am = request.form.get('description_am', '')
         description_ar = request.form.get('description_ar', '')
         link = request.form.get('link', '')
-        sort_order = int(request.form.get('sort_order', 0) or 0)
+        try:
+            sort_order = int(request.form.get('sort_order', 0) or 0)
+        except (ValueError, TypeError):
+            flash('Sort order must be a number.', 'error')
+            return redirect(url_for('admin.ad_edit', aid=aid))
 
         _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
         image_filename = ad['image']
@@ -1963,7 +1971,10 @@ def ai_logs():
     conn = get_db()
     cursor = conn.cursor()
 
-    page      = max(1, int(request.args.get('page', 1)))
+    try:
+        page = max(1, int(request.args.get('page', 1)))
+    except (ValueError, TypeError):
+        page = 1
     per_page  = 20
     offset    = (page - 1) * per_page
     source_f  = request.args.get('source', '')   # groq | fallback | error | ''

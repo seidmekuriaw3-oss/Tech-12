@@ -56,21 +56,16 @@ def allowed_file(filename):
 
 def allowed_mime_type(file):
     """
-    Check if file MIME type is allowed using python-magic.
-    
+    Check if file MIME type is allowed.
+    Falls back to extension-based check (python-magic not installed).
+
     Args:
         file: File object to check
-    
+
     Returns:
         bool: True if MIME type is allowed, False otherwise
     """
-    try:
-        mime = magic.from_buffer(file.read(1024), mime=True)
-        file.seek(0)  # Reset file pointer
-        return mime in ALLOWED_MIME_TYPES
-    except Exception:
-        # Fallback to extension check if magic is not available
-        return allowed_file(file.filename)
+    return allowed_file(getattr(file, 'filename', ''))
 
 
 def validate_file_size(file, is_image=True):
