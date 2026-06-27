@@ -189,7 +189,7 @@ class CartManager {
             const item = this.cart[i];
             html += `
                 <div class="mini-cart-item d-flex align-center" style="gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color, #eee);">
-                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                    <img src="${cartThumbUrl(item.thumbnail || item.image)}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:28px\'>👗</span>';">
                     <div class="flex-1">
                         <div class="fw-500">${this.truncate(item.name || item.product_name, 25)}</div>
                         <div class="text-muted small">${this.formatPrice(item.price || item.discounted_price)} x ${item.quantity}</div>
@@ -616,7 +616,7 @@ function updateMiniCartPanelContent(panel) {
                 border-bottom: 1px solid var(--border-color, #eee);
             " data-id="${item.product_id || item.id}">
                 <div style="width: 60px; height: 60px; background: #f5f5f5; border-radius: 8px; overflow: hidden;">
-                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="${cartThumbUrl(item.thumbnail || item.image)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:28px;display:flex;align-items:center;justify-content:center;height:100%\'>👗</span>';">
                 </div>
                 <div style="flex: 1;">
                     <div style="font-weight: 500;">${manager.truncate(item.name || item.product_name, 30)}</div>
