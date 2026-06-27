@@ -28,6 +28,7 @@ def register_routes(app):
     from routes.cart_routes import cart_bp
     from routes.utility_routes import utility_bp
     from routes.islamic_routes import islamic_bp
+    from routes.ai_routes import ai_bp
 
     # Register blueprints with URL prefixes
     app.register_blueprint(customer_bp, url_prefix='/')
@@ -36,6 +37,7 @@ def register_routes(app):
     app.register_blueprint(cart_bp, url_prefix='/cart')
     app.register_blueprint(utility_bp, url_prefix='/')
     app.register_blueprint(islamic_bp, url_prefix='/')
+    app.register_blueprint(ai_bp, url_prefix='/api')
 
     _log.getLogger(__name__).warning("✅ All routes registered successfully")
     _log.getLogger(__name__).warning("   - Customer routes: /")
