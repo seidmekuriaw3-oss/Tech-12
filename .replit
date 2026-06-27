@@ -56,11 +56,3 @@ FREE_SHIPPING_THRESHOLD = "5000"
 SHIPPING_COST = "200"
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "1234"
-
-[[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 8081
-externalPort = 8081
