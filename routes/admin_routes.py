@@ -962,7 +962,9 @@ def ad_create():
             flash('Sort order must be a number.', 'error')
             return redirect(url_for('admin.ad_create'))
 
-        _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+        _ALLOWED_IMG_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+        _ALLOWED_VID_EXT = {'mp4', 'webm', 'mov', 'avi', 'ogg'}
+        _ALLOWED_AD_EXT  = _ALLOWED_IMG_EXT | _ALLOWED_VID_EXT
         image_filename = ''
         image = request.files.get('image')
         if image and image.filename:
@@ -970,7 +972,7 @@ def ad_create():
             filename = secure_filename(image.filename)
             ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
             if ext not in _ALLOWED_AD_EXT:
-                flash(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.", 'error')
+                flash(f"File type '.{ext}' is not allowed. Use jpg/png/webp/gif or mp4/webm/mov.", 'error')
                 return redirect(url_for('admin.ad_create'))
             unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
             upload_dir = 'static/uploads/ads'
@@ -1021,7 +1023,9 @@ def ad_edit(aid):
             flash('Sort order must be a number.', 'error')
             return redirect(url_for('admin.ad_edit', aid=aid))
 
-        _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+        _ALLOWED_IMG_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+        _ALLOWED_VID_EXT = {'mp4', 'webm', 'mov', 'avi', 'ogg'}
+        _ALLOWED_AD_EXT  = _ALLOWED_IMG_EXT | _ALLOWED_VID_EXT
         image_filename = ad['image']
         image = request.files.get('image')
         if image and image.filename:
@@ -1029,7 +1033,7 @@ def ad_edit(aid):
             filename = secure_filename(image.filename)
             ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
             if ext not in _ALLOWED_AD_EXT:
-                flash(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.", 'error')
+                flash(f"File type '.{ext}' is not allowed. Use jpg/png/webp/gif or mp4/webm/mov.", 'error')
                 return redirect(url_for('admin.ad_edit', aid=aid))
             unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
             upload_dir = 'static/uploads/ads'
