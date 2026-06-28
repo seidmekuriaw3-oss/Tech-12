@@ -272,22 +272,6 @@
         box-shadow: 0 4px 14px rgba(0,0,0,0.2);
     }
     
-    /* Products Grid - Mobile: 2, Desktop: 4 */
-    .products-grid {
-        display: grid !important;
-        gap: 12px !important;
-        margin-top: 20px !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
-    
-    /* Tablet and Desktop: 4 columns */
-    @media (min-width: 768px) {
-        .products-grid {
-            gap: 25px !important;
-            grid-template-columns: repeat(4, 1fr) !important;
-        }
-    }
-    
     /* About Section */
     .about-section {
         background: var(--bg-white, white);
@@ -426,8 +410,9 @@
         color: var(--text-color, #222);
         line-height: 1.35; font-weight: 600;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
         overflow: hidden;
     }
     .pc-price-row { display: flex; align-items: baseline; gap: 5px; }
