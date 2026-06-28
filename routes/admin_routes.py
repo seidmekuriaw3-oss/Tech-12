@@ -1046,8 +1046,9 @@ def ad_edit(aid):
         description_am = request.form.get('description_am', '')
         description_ar = request.form.get('description_ar', '')
         link = request.form.get('link', '')
+        is_active = 1 if request.form.get('is_active') else 0
         try:
-            sort_order = int(request.form.get('sort_order', 0) or 0)
+            sort_order = int(float(request.form.get('sort_order', 0) or 0))
         except (ValueError, TypeError):
             flash('Sort order must be a number.', 'error')
             return redirect(url_for('admin.ad_edit', aid=aid))
@@ -1101,14 +1102,20 @@ def ad_edit(aid):
 
         media_url = request.form.get('media_url', ad.get('media_url', '') or '').strip()
 
-        cursor.execute("""
-            UPDATE advertisements SET
-                title=%s, title_am=%s, title_ar=%s, description=%s, description_am=%s, description_ar=%s,
-                image=%s, media_url=%s, link=%s, sort_order=%s
-            WHERE id=%s
-        """, (title, title_am, title_ar, description, description_am, description_ar,
-              image_filename, media_url, link, sort_order, aid))
-        conn.commit()
+        try:
+            cursor.execute("""
+                UPDATE advertisements SET
+                    title=%s, title_am=%s, title_ar=%s, description=%s, description_am=%s, description_ar=%s,
+                    image=%s, media_url=%s, link=%s, sort_order=%s, is_active=%s
+                WHERE id=%s
+            """, (title, title_am, title_ar, description, description_am, description_ar,
+                  image_filename, media_url, link, sort_order, is_active, aid))
+            conn.commit()
+        except Exception as _db_err:
+            conn.rollback()
+            current_app.logger.error(f"Ad edit DB error for ad {aid}: {_db_err}")
+            flash(f'Database error saving advertisement: {_db_err}', 'error')
+            return redirect(url_for('admin.ad_edit', aid=aid))
         flash('Advertisement updated successfully!', 'success')
         return redirect(url_for('admin.ads'))
 
