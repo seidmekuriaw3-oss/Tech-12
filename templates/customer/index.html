@@ -144,31 +144,110 @@
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-        min-height: 260px;
-        position: relative;
+        display: flex;
+        flex-direction: column;
+        background: white;
     }
 
-    /* Video card — full-cover video, text bar only at bottom */
-    .ad-grid-video {
+    /* ── VIDEO CARD: full-bleed, caption at bottom ── */
+    .adg-video-card {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
         position: relative;
-        min-height: 260px;
+        aspect-ratio: 9/16;
         background: #000;
-        overflow: hidden;
+        cursor: pointer;
     }
-    .adg-video-side {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        background: #000;
-        overflow: hidden;
-    }
-    .adg-video-side video {
+    .adg-video-card video {
         position: absolute;
         inset: 0;
         width: 100%; height: 100%;
         object-fit: cover;
         display: block;
     }
+    .adg-video-card .adg-video-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        transition: background 0.2s;
+    }
+    .adg-video-card:hover .adg-video-overlay {
+        background: rgba(0,0,0,0.1);
+    }
+    .adg-video-card .adg-video-play {
+        width: 64px; height: 64px;
+        background: rgba(255,255,255,0.18);
+        border: 3px solid rgba(255,255,255,0.8);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 26px; color: white;
+        backdrop-filter: blur(6px);
+        transition: transform 0.2s, background 0.2s;
+        pointer-events: none;
+    }
+    .adg-video-card:hover .adg-video-play {
+        transform: scale(1.1);
+        background: rgba(255,255,255,0.28);
+    }
+    .adg-video-card .adg-video-caption {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        z-index: 3;
+        background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+        padding: 40px 16px 18px;
+        color: white;
+        pointer-events: none;
+    }
+    .adg-video-card .adg-video-caption a { pointer-events: all; }
+    .adg-video-card .adg-video-caption h3 {
+        font-size: 15px; font-weight: 800; margin: 0 0 10px;
+        line-height: 1.3;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+    }
+    .adg-video-caption-btn {
+        display: inline-block;
+        background: white;
+        color: #1a7a4a;
+        padding: 7px 18px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    /* Visual area — full-bleed image/video/gradient on top of card */
+    .adg-visual {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #1a7a4a;
+        min-height: 200px;
+    }
+    .adg-visual img {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover; display: block;
+    }
+    .adg-visual video {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover; display: block;
+    }
+    .adg-visual-gradient {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 64px;
+    }
+
+    /* Play button for video */
     .adg-play-zone {
         position: absolute;
         inset: 0;
@@ -180,12 +259,12 @@
         background: transparent;
     }
     .adg-play-btn {
-        width: 64px; height: 64px;
+        width: 60px; height: 60px;
         background: rgba(255,255,255,0.22);
         border: 3px solid rgba(255,255,255,0.85);
         border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        font-size: 26px; color: white;
+        font-size: 24px; color: white;
         backdrop-filter: blur(4px);
         transition: transform 0.2s, background 0.2s;
         pointer-events: none;
@@ -194,82 +273,42 @@
         transform: scale(1.12);
         background: rgba(255,255,255,0.38);
     }
-    /* Text bar overlaid at bottom of video */
-    .adg-text-side {
-        position: absolute;
-        bottom: 0; left: 0; right: 0;
-        z-index: 3;
+
+    /* Text section BELOW the full visual */
+    .adg-text-below {
+        padding: 14px 18px 16px;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-        padding: 28px 20px 14px;
-        background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
-        color: white;
-        pointer-events: none;
+        gap: 7px;
+        background: white;
+        border-top: 1px solid #eee;
     }
-    .adg-text-side a { pointer-events: all; }
-    .adg-text-side h3 {
-        font-size: 16px; font-weight: 800; margin: 0;
-        line-height: 1.3;
-        text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        width: 100%;
+    .adg-text-below h3 {
+        font-size: 15px; font-weight: 800; margin: 0;
+        color: #1a1a1a; line-height: 1.35;
     }
-    .adg-text-side p {
-        font-size: 12px; opacity: 0.9; margin: 0;
-        line-height: 1.4; display: none;
+    .adg-text-below p {
+        font-size: 13px; color: #555; margin: 0;
+        line-height: 1.5;
     }
-
-    /* Image card */
-    .ad-grid-image {
-        display: flex;
-        align-items: flex-end;
-        min-height: 260px;
-    }
-    .adg-image-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
-    }
-    .adg-image-text {
-        position: relative;
-        z-index: 2;
-        padding: 20px 24px;
-        color: white;
-        text-align: center;
-        width: 100%;
-    }
-    .adg-image-text h3 { font-size: 20px; font-weight: 800; margin: 0 0 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
-    .adg-image-text p  { font-size: 13px; opacity: 0.9; margin: 0 0 10px; }
-
-    /* Text-only card */
-    .ad-grid-text {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        text-align: center;
-        padding: 30px 24px;
-    }
-    .adg-text-center h3 { font-size: 22px; font-weight: 800; margin: 0 0 8px; }
-    .adg-text-center p  { font-size: 14px; opacity: 0.92; margin: 0 0 16px; line-height: 1.5; }
 
     /* Shared button */
     .adg-btn {
         display: inline-block;
-        background: white;
-        color: #1a7a4a;
-        padding: 10px 24px;
+        background: #1a7a4a;
+        color: white;
+        padding: 8px 20px;
         border-radius: 50px;
         text-decoration: none;
         font-weight: 700;
         font-size: 13px;
         transition: transform 0.2s, box-shadow 0.2s;
+        align-self: flex-start;
+        margin-top: 2px;
     }
     .adg-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 14px rgba(26,122,74,0.35);
     }
     
     /* About Section */
@@ -609,30 +648,61 @@
             {% set is_video = (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) or (ad.media_url and ad.media_url|trim != '' and ad.media_url.lower().endswith(vid_exts)) %}
             {% set video_src = (url_for('static', filename=ad.image) if (ad.image and ad.image|trim != '' and ad.image.lower().endswith(vid_exts)) else ad.media_url) if is_video else '' %}
             {% set is_image = ad.image and ad.image|trim != '' and not is_video %}
-            <div class="slider-slide {% if is_video %}has-video{% elif is_image %}has-image{% endif %}"
-                 {% if is_image %}style="background-image: url('{{ url_for('static', filename=ad.image) }}');"{% endif %}>
+            {% set grad_colors = ['#1a7a4a,#0f5232', '#667eea,#764ba2', '#f093fb,#f5576c', '#f5a623,#e08e0b', '#00b09b,#96c93d'] %}
+            {% set icons = ['🎉','✨','🚚','👶','🌟'] %}
+
+            {# Each slide: visual on top, text BELOW #}
+            <div class="slider-slide" style="background:none; padding:0; min-height:auto; display:flex; flex-direction:column; overflow:hidden; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.1);">
+
+                {# ── VIDEO: full-bleed, caption at bottom ── #}
                 {% if is_video %}
-                <div class="ad-video-col">
-                    <video src="{{ video_src }}"
-                           autoplay muted loop playsinline
+                <div style="position:relative; width:100%; aspect-ratio:9/16; min-height:300px; background:#000; overflow:hidden;">
+                    <video src="{{ video_src }}" autoplay muted loop playsinline
                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;"></video>
-                    <div class="video-click-zone" onclick="playFullscreen('{{ video_src }}')" title="Click to watch fullscreen">
-                        <div class="video-play-btn">▶</div>
+                    <div style="position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;cursor:pointer;"
+                         onclick="playFullscreen('{{ video_src }}')">
+                        <div style="width:60px;height:60px;background:rgba(255,255,255,0.2);border:3px solid rgba(255,255,255,0.85);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:white;backdrop-filter:blur(6px);">▶</div>
+                    </div>
+                    <div style="position:absolute;bottom:0;left:0;right:0;z-index:3;background:linear-gradient(to top,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.4) 55%,transparent 100%);padding:36px 16px 18px;color:white;pointer-events:none;">
+                        <h3 style="font-size:14px;font-weight:800;margin:0 0 10px;text-shadow:0 1px 6px rgba(0,0,0,0.9);">{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
+                        <a href="{{ ad.link if ad.link else url_for('customer.products') }}"
+                           style="pointer-events:all;display:inline-block;background:white;color:#1a7a4a;padding:6px 16px;border-radius:50px;text-decoration:none;font-weight:700;font-size:12px;">{{ t.shop_now }} →</a>
                     </div>
                 </div>
-                <div class="ad-text-col">
-                    <div class="ad-text-col-inner">
-                        <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
+
+                {# ── IMAGE: full-bleed 16:9, text below ── #}
+                {% elif is_image %}
+                <div style="display:flex;flex-direction:column;">
+                    <div style="position:relative; width:100%; aspect-ratio:16/9; min-height:200px; overflow:hidden; flex-shrink:0;">
+                        <img src="{{ url_for('static', filename=ad.image) }}"
+                             alt="{{ localized_ad_title(ad) or 'Ad' }}"
+                             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
                     </div>
-                    <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="slide-btn">{{ t.shop_now }}</a>
+                    <div style="background:white; padding:12px 16px 14px; display:flex; flex-direction:column; gap:6px;">
+                        <h3 style="font-size:14px; font-weight:800; margin:0; color:#1a1a1a;">{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
+                        {% set ad_desc = localized_ad_description(ad) %}
+                        {% if ad_desc %}<p style="font-size:12px; color:#555; margin:0;">{{ ad_desc }}</p>{% endif %}
+                        <a href="{{ ad.link if ad.link else url_for('customer.products') }}"
+                           style="display:inline-block;background:#1a7a4a;color:white;padding:6px 16px;border-radius:50px;text-decoration:none;font-weight:700;font-size:12px;align-self:flex-start;">{{ t.shop_now }} →</a>
+                    </div>
                 </div>
+
+                {# ── TEXT-ONLY: gradient 16:9, text below ── #}
                 {% else %}
-                <div class="slide-content">
-                    <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
-                    <p>{{ localized_ad_description(ad) or t.quality_tagline }}</p>
-                    <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="slide-btn">{{ t.shop_now }}</a>
+                <div style="display:flex;flex-direction:column;">
+                    <div style="position:relative; width:100%; aspect-ratio:16/9; min-height:180px; flex-shrink:0; background:linear-gradient(135deg,{{ grad_colors[loop.index0 % grad_colors|length] }}); display:flex; align-items:center; justify-content:center; font-size:72px;">
+                        {{ icons[loop.index0 % icons|length] }}
+                    </div>
+                    <div style="background:white; padding:12px 16px 14px; display:flex; flex-direction:column; gap:6px;">
+                        <h3 style="font-size:14px; font-weight:800; margin:0; color:#1a1a1a;">{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
+                        {% set ad_desc = localized_ad_description(ad) %}
+                        {% if ad_desc %}<p style="font-size:12px; color:#555; margin:0;">{{ ad_desc }}</p>{% endif %}
+                        <a href="{{ ad.link if ad.link else url_for('customer.products') }}"
+                           style="display:inline-block;background:#1a7a4a;color:white;padding:6px 16px;border-radius:50px;text-decoration:none;font-weight:700;font-size:12px;align-self:flex-start;">{{ t.shop_now }} →</a>
+                    </div>
                 </div>
                 {% endif %}
+
             </div>
             {% endfor %}
         </div>
@@ -650,46 +720,49 @@
     {% set is_image = ad.image and ad.image|trim != '' and not is_video %}
 
     {% if is_video %}
-    {# Video card: full-cover video with text overlay at bottom #}
-    <div class="ad-grid-card ad-grid-video">
-        <div class="adg-video-side">
-            <video autoplay muted loop playsinline>
-                <source src="{{ video_src }}" type="video/mp4">
-                <source src="{{ video_src }}" type="video/webm">
-            </video>
-            <div class="adg-play-zone" onclick="playFullscreen('{{ video_src }}')" title="Click to watch fullscreen">
-                <div class="adg-play-btn">▶</div>
-            </div>
+    {# Video card: full-bleed vertical video, compact caption at bottom #}
+    {% set poster_src = url_for('static', filename=ad.image.replace('.mp4','_poster.jpg').replace('.webm','_poster.jpg').replace('.mov','_poster.jpg')) if ad.image else '' %}
+    <div class="adg-video-card">
+        <video autoplay muted loop playsinline poster="{{ poster_src }}">
+            <source src="{{ video_src }}" type="video/mp4">
+            <source src="{{ video_src }}" type="video/webm">
+        </video>
+        <div class="adg-video-overlay" onclick="playFullscreen('{{ video_src }}')">
+            <div class="adg-video-play">▶</div>
         </div>
-        <div class="adg-text-side">
+        <div class="adg-video-caption">
             <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
-            <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="adg-btn" style="pointer-events:all;">{{ t.shop_now }} →</a>
+            <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="adg-video-caption-btn">{{ t.shop_now }} →</a>
         </div>
     </div>
 
     {% elif is_image %}
-    {# Image card: full-cover image with text at bottom #}
-    <div class="ad-grid-card ad-grid-image"
-         style="background-image:url('{{ url_for('static', filename=ad.image) }}');background-size:cover;background-position:center;">
-        <div class="adg-image-overlay"></div>
-        <div class="adg-image-text">
+    {# Image card: image on top, text section below #}
+    <div class="ad-grid-card">
+        <div class="adg-visual">
+            <img src="{{ url_for('static', filename=ad.image) }}"
+                 alt="{{ localized_ad_title(ad) or 'Advertisement' }}" loading="lazy">
+        </div>
+        <div class="adg-text-below">
             <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
-            {% set ad_desc = localized_ad_description(ad) or t.quality_tagline %}
+            {% set ad_desc = localized_ad_description(ad) %}
             {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
             <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="adg-btn">{{ t.shop_now }} →</a>
         </div>
     </div>
 
     {% else %}
-    {# Text-only card: gradient background #}
-    <div class="ad-grid-card ad-grid-text" style="background:linear-gradient(135deg,
-        {% if loop.index % 3 == 0 %}#667eea,#764ba2
-        {% elif loop.index % 3 == 2 %}#f093fb,#f5576c
-        {% else %}#1a7a4a,#0f5232{% endif %});">
-        <div class="adg-text-center">
-            <div style="font-size:44px;margin-bottom:12px;">🎉</div>
+    {# Text-only card: gradient visual on top, text section below #}
+    {% set grad_colors = ['#1a7a4a,#0f5232', '#667eea,#764ba2', '#f093fb,#f5576c', '#f5a623,#e08e0b', '#00b09b,#96c93d'] %}
+    <div class="ad-grid-card">
+        <div class="adg-visual adg-visual-gradient"
+             style="background:linear-gradient(135deg,{{ grad_colors[(loop.index0 % grad_colors|length)] }});">
+            {% set icons = ['🎉','✨','🚚','👶','🌟'] %}
+            <span>{{ icons[loop.index0 % icons|length] }}</span>
+        </div>
+        <div class="adg-text-below">
             <h3>{{ localized_ad_title(ad) or '🎉 ' ~ t.promo }}</h3>
-            {% set ad_desc = localized_ad_description(ad) or t.quality_tagline %}
+            {% set ad_desc = localized_ad_description(ad) %}
             {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
             <a href="{{ ad.link if ad.link else url_for('customer.products') }}" class="adg-btn">{{ t.shop_now }} →</a>
         </div>

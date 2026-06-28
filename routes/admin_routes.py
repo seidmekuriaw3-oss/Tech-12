@@ -962,21 +962,52 @@ def ad_create():
             flash('Sort order must be a number.', 'error')
             return redirect(url_for('admin.ad_create'))
 
-        _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+        _ALLOWED_IMG_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+        _ALLOWED_VID_EXT = {'mp4', 'webm', 'mov', 'avi', 'ogg'}
+        _ALLOWED_AD_EXT  = _ALLOWED_IMG_EXT | _ALLOWED_VID_EXT
         image_filename = ''
         image = request.files.get('image')
         if image and image.filename:
             from werkzeug.utils import secure_filename
+            import subprocess as _sp
             filename = secure_filename(image.filename)
             ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
             if ext not in _ALLOWED_AD_EXT:
-                flash(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.", 'error')
+                flash(f"File type '.{ext}' is not allowed. Use jpg/png/webp/gif or mp4/webm/mov.", 'error')
                 return redirect(url_for('admin.ad_create'))
-            unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
             upload_dir = 'static/uploads/ads'
             os.makedirs(upload_dir, exist_ok=True)
-            image.save(os.path.join(upload_dir, unique_filename))
-            image_filename = f'uploads/ads/{unique_filename}'
+            unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
+            saved_path = os.path.join(upload_dir, unique_filename)
+            image.save(saved_path)
+            if ext in _ALLOWED_VID_EXT:
+                base_id = uuid.uuid4().hex[:8]
+                converted_name = f"ad_{base_id}.mp4"
+                converted_path = os.path.join(upload_dir, converted_name)
+                poster_name    = f"ad_{base_id}_poster.jpg"
+                poster_path    = os.path.join(upload_dir, poster_name)
+                try:
+                    r = _sp.run(
+                        ['ffmpeg', '-i', saved_path,
+                         '-c:v', 'libx264', '-preset', 'fast', '-crf', '23',
+                         '-c:a', 'aac', '-b:a', '128k',
+                         '-movflags', '+faststart', '-pix_fmt', 'yuv420p',
+                         converted_path, '-y'],
+                        capture_output=True, timeout=120
+                    )
+                    if r.returncode == 0:
+                        os.remove(saved_path)
+                        image_filename = f'uploads/ads/{converted_name}'
+                        _sp.run(['ffmpeg', '-i', converted_path,
+                                 '-ss', '00:00:01', '-vframes', '1',
+                                 '-update', '1', poster_path, '-y'],
+                                capture_output=True, timeout=30)
+                    else:
+                        image_filename = f'uploads/ads/{unique_filename}'
+                except Exception:
+                    image_filename = f'uploads/ads/{unique_filename}'
+            else:
+                image_filename = f'uploads/ads/{unique_filename}'
 
         media_url = request.form.get('media_url', '').strip()
 
@@ -1021,21 +1052,52 @@ def ad_edit(aid):
             flash('Sort order must be a number.', 'error')
             return redirect(url_for('admin.ad_edit', aid=aid))
 
-        _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+        _ALLOWED_IMG_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+        _ALLOWED_VID_EXT = {'mp4', 'webm', 'mov', 'avi', 'ogg'}
+        _ALLOWED_AD_EXT  = _ALLOWED_IMG_EXT | _ALLOWED_VID_EXT
         image_filename = ad['image']
         image = request.files.get('image')
         if image and image.filename:
             from werkzeug.utils import secure_filename
+            import subprocess as _sp
             filename = secure_filename(image.filename)
             ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
             if ext not in _ALLOWED_AD_EXT:
-                flash(f"File type '.{ext}' is not allowed. Use jpg, jpeg, png, webp or gif.", 'error')
+                flash(f"File type '.{ext}' is not allowed. Use jpg/png/webp/gif or mp4/webm/mov.", 'error')
                 return redirect(url_for('admin.ad_edit', aid=aid))
-            unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
             upload_dir = 'static/uploads/ads'
             os.makedirs(upload_dir, exist_ok=True)
-            image.save(os.path.join(upload_dir, unique_filename))
-            image_filename = f'uploads/ads/{unique_filename}'
+            unique_filename = f"ad_{uuid.uuid4().hex[:8]}.{ext}"
+            saved_path = os.path.join(upload_dir, unique_filename)
+            image.save(saved_path)
+            if ext in _ALLOWED_VID_EXT:
+                base_id = uuid.uuid4().hex[:8]
+                converted_name = f"ad_{base_id}.mp4"
+                converted_path = os.path.join(upload_dir, converted_name)
+                poster_name    = f"ad_{base_id}_poster.jpg"
+                poster_path    = os.path.join(upload_dir, poster_name)
+                try:
+                    r = _sp.run(
+                        ['ffmpeg', '-i', saved_path,
+                         '-c:v', 'libx264', '-preset', 'fast', '-crf', '23',
+                         '-c:a', 'aac', '-b:a', '128k',
+                         '-movflags', '+faststart', '-pix_fmt', 'yuv420p',
+                         converted_path, '-y'],
+                        capture_output=True, timeout=120
+                    )
+                    if r.returncode == 0:
+                        os.remove(saved_path)
+                        image_filename = f'uploads/ads/{converted_name}'
+                        _sp.run(['ffmpeg', '-i', converted_path,
+                                 '-ss', '00:00:01', '-vframes', '1',
+                                 '-update', '1', poster_path, '-y'],
+                                capture_output=True, timeout=30)
+                    else:
+                        image_filename = f'uploads/ads/{unique_filename}'
+                except Exception:
+                    image_filename = f'uploads/ads/{unique_filename}'
+            else:
+                image_filename = f'uploads/ads/{unique_filename}'
 
         media_url = request.form.get('media_url', ad.get('media_url', '') or '').strip()
 

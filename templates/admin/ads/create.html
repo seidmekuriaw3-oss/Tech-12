@@ -169,12 +169,12 @@
             
             <div class="form-group">
                 <label>Link URL (Optional)</label>
-                <input type="url" 
+                <input type="text" 
                        name="link" 
                        id="ad_link"
                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
-                       placeholder="https://ethiosadat.com/category/sale">
-                <small style="color: #666; display: block; margin-top: 4px;">Clicking the ad will redirect to this URL</small>
+                       placeholder="/products or https://example.com/sale">
+                <small style="color: #666; display: block; margin-top: 4px;">Clicking the ad will redirect to this URL. Use /products, /cart, or a full URL.</small>
             </div>
         </div>
 
@@ -226,13 +226,13 @@
             <div class="form-group">
                 <label>Upload Media</label>
                 <input type="file" 
-                       name="media" 
+                       name="image" 
                        id="ad_media" 
-                       accept="image/*,video/*"
+                       accept="image/*,video/mp4,video/webm,video/quicktime,video/avi"
                        style="width: 100%; padding: 8px;"
                        onchange="previewMedia(this)">
                 <small style="color: #666; display: block; margin-top: 8px;">
-                    Supported formats: JPG, PNG, GIF, WEBP, MP4, WebM (Max 16MB)
+                    ምስሎች: JPG, PNG, WEBP, GIF &nbsp;|&nbsp; ቪዲዮ: MP4, WebM, MOV (Max 50MB)
                 </small>
             </div>
             
