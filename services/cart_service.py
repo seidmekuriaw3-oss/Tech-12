@@ -69,7 +69,7 @@ class CartService:
                     subtotal = 0
                     for p in products:
                         quantity = cart.get(str(p['id']), 0)
-                        subtotal += p['price'] * quantity
+                        subtotal += float(p['price'] or 0) * quantity
                     return subtotal
             elif isinstance(cart, list):
                 # Cart is stored as list of items
@@ -160,12 +160,12 @@ class CartService:
                             'name': p['name'],
                             'name_am': p['name_am'],
                             'name_ar': p['name_ar'],
-                            'price': float(p['price']),
-                            'discounted_price': round(float(p['price']) * (1 - _get_discount_rate()), 2) if session.get('user_id') else float(p['price']),
+                            'price': float(p['price'] or 0),
+                            'discounted_price': round(float(p['price'] or 0) * (1 - _get_discount_rate()), 2) if session.get('user_id') else float(p['price'] or 0),
                             'quantity': quantity,
                             'thumbnail': p['thumbnail'],
                             'stock_quantity': p['stock_quantity'],
-                            'subtotal': float(p['price']) * quantity
+                            'subtotal': float(p['price'] or 0) * quantity
                         })
             elif isinstance(cart, list):
                 for item in cart:

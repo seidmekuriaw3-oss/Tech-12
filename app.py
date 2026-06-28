@@ -82,7 +82,7 @@ app.jinja_env.globals["format_price"] = format_price
 app.jinja_env.globals["format_price_number"] = format_price_number
 
 app.config.from_object(Config)
-_secret_key = os.environ.get('SECRET_KEY')
+_secret_key = os.environ.get('SECRET_KEY') or os.environ.get('SESSION_SECRET')
 if not _secret_key:
     raise RuntimeError(
         "SECRET_KEY environment variable is not set. "
@@ -206,7 +206,7 @@ TEXTS = {
         'out_of_stock': 'የለም',
         'quick_links': 'ፈጣን አገናኞች',
         'call_us': 'ይደውሉልን',
-        'quality_tagline': 'ጥራት ያለው የቤት እቃ በተመጣጣኝ ዋጋ',
+        'quality_tagline': 'ጥራቱን የጠበቀ የሴቶች እና የልጆች ልብስ በተመጣጣኝ ዋጋ እኛ ጋር ያገኛሉ',
         'free_shipping_msg': '🚚 ከ5,000 ብር በላይ ትዕዛዝ ነጻ ማጓጓዝ',
         'copyright_text': 'መብቱ በህግ የተጠበቀ ነው',
         'order_now': 'አሁን እዘዝ',
@@ -282,7 +282,7 @@ TEXTS = {
         'my_orders': 'My Orders', 'my_cart': 'My Cart',
         'in_stock': 'In Stock', 'out_of_stock': 'Out of Stock',
         'quick_links': 'Quick Links', 'call_us': 'Call Us',
-        'quality_tagline': 'Quality fashion at affordable prices in ወሎ ደሴ ኩታበር',
+        'quality_tagline': 'Premium women\'s and children\'s clothing at affordable prices',
         'free_shipping_msg': '🚚 Free shipping on orders over 5,000 ETB',
         'copyright_text': 'All Rights Reserved',
         'order_now': 'Order Now', 'address': 'Address: ወሎ ደሴ ኩታበር', 'promo': 'Special Offer!',
@@ -352,7 +352,7 @@ TEXTS = {
         'my_orders': 'طلباتي', 'my_cart': 'سلتي',
         'in_stock': 'متوفر', 'out_of_stock': 'غير متوفر',
         'quick_links': 'روابط سريعة', 'call_us': 'اتصل بنا',
-        'quality_tagline': 'أثاث عالي الجودة بأسعار معقولة في أديس أبابا',
+        'quality_tagline': 'ملابس نسائية وأطفال عالية الجودة بأسعار معقولة',
         'free_shipping_msg': '🚚 شحن مجاني للطلبات التي تتجاوز 5,000 بر إثيوبي',
         'copyright_text': 'جميع الحقوق محفوظة',
         'order_now': 'اطلب الآن', 'address': 'العنوان: أديس أبابا', 'promo': 'عرض خاص!',
@@ -811,6 +811,19 @@ def initialize_app():
         app.logger.info("Database initialized successfully")
     except Exception as e:
         app.logger.error(f"Database initialization error: {str(e)}")
+
+    # Load GROQ_API_KEY from DB settings if not already in environment
+    if not os.environ.get('GROQ_API_KEY'):
+        try:
+            from database.db import get_db as _get_db
+            _cursor = _get_db().cursor()
+            _cursor.execute("SELECT value FROM settings WHERE key = 'groq_api_key'")
+            _row = _cursor.fetchone()
+            if _row and _row[0]:
+                os.environ['GROQ_API_KEY'] = _row[0]
+                app.logger.info("GROQ_API_KEY loaded from database settings")
+        except Exception as _e:
+            app.logger.debug(f"Could not load GROQ_API_KEY from DB: {_e}")
     for directory in ['logs', 'backups', 'static/uploads', 'static/uploads/products',
                       'static/uploads/ads', 'static/images', 'static/css', 'static/js']:
         os.makedirs(directory, exist_ok=True)

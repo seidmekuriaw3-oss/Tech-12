@@ -1,4 +1,4 @@
-modules = ["web", "python-3.12", "nodejs-20"]
+modules = ["web", "python-3.12", "nodejs-20", "postgresql-16"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -51,15 +51,12 @@ FLASK_ENV = "development"
 DEBUG = "False"
 HOST = "0.0.0.0"
 PORT = "5000"
-WHATSAPP_NUMBER = "251906020606"
+WHATSAPP_NUMBER = "251987957957"
 FREE_SHIPPING_THRESHOLD = "5000"
 SHIPPING_COST = "200"
 ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "1234"
 
 [[ports]]
 localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 8081
-externalPort = 8081
+externalPort = 5000

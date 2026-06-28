@@ -474,8 +474,7 @@ def place_order():
 
     # Calculate totals
     subtotal = sum(
-        (item['price'] if isinstance(item, dict) else item['price']) *
-        (item['quantity'] if isinstance(item, dict) else item['quantity'])
+        float(item['price']) * int(item['quantity'])
         for item in cart_items_raw
     )
     is_logged_in = bool(user_id)
@@ -487,6 +486,8 @@ def place_order():
 
     # Read coupon from session but do NOT pop yet — if stock fails we roll back
     # and the coupon must remain available for the user's next attempt.
+    coupon_id  = None
+    extra_disc = 0.0
     coupon_info = session.get('applied_coupon')
     if coupon_info:
         # Re-validate coupon against current cart subtotal to prevent stale-discount abuse
@@ -539,13 +540,17 @@ def place_order():
     ))
     row = cursor.fetchone()
     order_id = row[0] if row else None
+    if not order_id:
+        db.rollback()
+        flash('ትዕዛዙን ማስቀመጥ አልተሳካም። እባክዎ እንደገና ይሞክሩ።', 'danger')
+        return redirect(url_for('cart.checkout'))
 
     # Create order items and update stock atomically
     for item in cart_items_raw:
-        price = float(item['price'])
-        qty   = item['quantity']
-        pid   = item['product_id']
-        name  = item['name']
+        price = item['price'] if isinstance(item, dict) else item['price']
+        qty   = item['quantity'] if isinstance(item, dict) else item['quantity']
+        pid   = item['product_id'] if isinstance(item, dict) else item['product_id']
+        name  = item['name'] if isinstance(item, dict) else item['name']
         discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
         cursor.execute("""
             INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
@@ -582,6 +587,16 @@ def place_order():
                 send_low_stock_alert(_low)
     except Exception as _e:
         current_app.logger.error(f"Low-stock check error: {_e}")
+
+    # Increment coupon used_count now that the order is confirmed
+    if coupon_id and extra_disc > 0:
+        try:
+            cursor.execute(
+                "UPDATE coupons SET used_count = used_count + 1 WHERE id = %s",
+                (coupon_id,)
+            )
+        except Exception as _ce:
+            current_app.logger.error(f"Coupon used_count update failed: {_ce}")
 
     # Clear cart
     if user_id:

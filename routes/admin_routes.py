@@ -956,7 +956,11 @@ def ad_create():
         description_am = request.form.get('description_am', '')
         description_ar = request.form.get('description_ar', '')
         link = request.form.get('link', '')
-        sort_order = int(request.form.get('sort_order', 0) or 0)
+        try:
+            sort_order = int(request.form.get('sort_order', 0) or 0)
+        except (ValueError, TypeError):
+            flash('Sort order must be a number.', 'error')
+            return redirect(url_for('admin.ad_create'))
 
         _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
         image_filename = ''
@@ -1011,7 +1015,11 @@ def ad_edit(aid):
         description_am = request.form.get('description_am', '')
         description_ar = request.form.get('description_ar', '')
         link = request.form.get('link', '')
-        sort_order = int(request.form.get('sort_order', 0) or 0)
+        try:
+            sort_order = int(request.form.get('sort_order', 0) or 0)
+        except (ValueError, TypeError):
+            flash('Sort order must be a number.', 'error')
+            return redirect(url_for('admin.ad_edit', aid=aid))
 
         _ALLOWED_AD_EXT = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
         image_filename = ad['image']
@@ -1906,7 +1914,11 @@ def settings():
             flash('Error saving settings.', 'error')
         return redirect(url_for('admin.settings'))
 
-    return render_template('admin/settings.html', settings=settings_data, lang=lang)
+    groq_configured = bool(
+        os.environ.get('GROQ_API_KEY') or settings_data.get('groq_api_key')
+    )
+    return render_template('admin/settings.html', settings=settings_data,
+                           lang=lang, groq_configured=groq_configured)
 
 
 @admin_bp.route('/settings/change-password', methods=['POST'])
@@ -1949,6 +1961,175 @@ def change_password():
         flash('Error changing password. Please try again.', 'error')
 
     return redirect(url_for('admin.settings') + '#change-password')
+
+
+@admin_bp.route('/ai-logs')
+@admin_required
+def ai_logs():
+    """AI conversation log — paginated list with stats and filters."""
+    lang = get_lang()
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        page = max(1, int(request.args.get('page', 1)))
+    except (ValueError, TypeError):
+        page = 1
+    per_page  = 20
+    offset    = (page - 1) * per_page
+    source_f  = request.args.get('source', '')   # groq | fallback | error | ''
+    lang_f    = request.args.get('lang', '')
+    q         = request.args.get('q', '').strip()
+    date_from = request.args.get('date_from', '')
+    date_to   = request.args.get('date_to', '')
+
+    # Build WHERE clause
+    wheres = []
+    params = []
+    if source_f:
+        wheres.append("source = %s"); params.append(source_f)
+    if lang_f:
+        wheres.append("lang = %s"); params.append(lang_f)
+    if q:
+        wheres.append("(user_message ILIKE %s OR ai_reply ILIKE %s OR user_name ILIKE %s)")
+        params += [f'%{q}%', f'%{q}%', f'%{q}%']
+    if date_from:
+        wheres.append("created_at::date >= %s"); params.append(date_from)
+    if date_to:
+        wheres.append("created_at::date <= %s"); params.append(date_to)
+
+    where_sql = ('WHERE ' + ' AND '.join(wheres)) if wheres else ''
+
+    # Total count
+    cursor.execute(f"SELECT COUNT(*) FROM ai_conversations {where_sql}", params)
+    total = cursor.fetchone()[0]
+    total_pages = max(1, -(-total // per_page))
+
+    # Rows
+    cursor.execute(f"""
+        SELECT id, user_id, user_name, user_message, ai_reply, source, lang, ip_address, created_at
+        FROM ai_conversations {where_sql}
+        ORDER BY created_at DESC
+        LIMIT %s OFFSET %s
+    """, params + [per_page, offset])
+    rows = cursor.fetchall()
+
+    # Summary stats (always over full table)
+    cursor.execute("""
+        SELECT
+            COUNT(*) AS total,
+            COUNT(*) FILTER (WHERE source = 'groq')     AS groq_count,
+            COUNT(*) FILTER (WHERE source = 'fallback') AS fallback_count,
+            COUNT(*) FILTER (WHERE source = 'error')    AS error_count,
+            COUNT(DISTINCT ip_address)                   AS unique_ips,
+            COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours') AS today
+        FROM ai_conversations
+    """)
+    stats = cursor.fetchone()
+
+    # Top 5 questions
+    cursor.execute("""
+        SELECT user_message, COUNT(*) AS n
+        FROM ai_conversations
+        GROUP BY user_message
+        ORDER BY n DESC
+        LIMIT 5
+    """)
+    top_questions = cursor.fetchall()
+
+    return render_template(
+        'admin/ai_logs.html',
+        lang=lang,
+        rows=rows,
+        stats=stats,
+        top_questions=top_questions,
+        page=page,
+        total_pages=total_pages,
+        total=total,
+        source_f=source_f,
+        lang_f=lang_f,
+        q=q,
+        date_from=date_from,
+        date_to=date_to,
+    )
+
+
+@admin_bp.route('/ai-logs/clear', methods=['POST'])
+@admin_required
+def ai_logs_clear():
+    """Delete all AI conversation logs."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM ai_conversations")
+        conn.commit()
+        flash('All AI conversation logs cleared.', 'success')
+    except Exception as e:
+        current_app.logger.error(f"ai_logs_clear error: {e}")
+        flash('Error clearing logs.', 'error')
+    return redirect(url_for('admin.ai_logs'))
+
+
+@admin_bp.route('/settings/ai-key', methods=['POST'])
+@admin_required
+def save_ai_key():
+    """Save or update GROQ_API_KEY in the settings table and live environment."""
+    key = request.form.get('groq_api_key', '').strip()
+    if not key:
+        flash('No API key entered — existing key kept.', 'info')
+        return redirect(url_for('admin.settings') + '#ai-settings')
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO settings (key, value) VALUES (%s, %s)
+            ON CONFLICT(key) DO UPDATE SET value = %s
+        """, ('groq_api_key', key, key))
+        conn.commit()
+        os.environ['GROQ_API_KEY'] = key
+        flash('Groq API key saved! AI assistant is now using Groq LLM.', 'success')
+    except Exception as e:
+        current_app.logger.error(f"save_ai_key error: {e}")
+        flash('Error saving API key.', 'error')
+    return redirect(url_for('admin.settings') + '#ai-settings')
+
+
+@admin_bp.route('/settings/remove-ai-key', methods=['POST'])
+@admin_required
+def remove_ai_key():
+    """Remove GROQ_API_KEY from settings and environment."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM settings WHERE key = %s", ('groq_api_key',))
+        conn.commit()
+        os.environ.pop('GROQ_API_KEY', None)
+        return jsonify({'success': True})
+    except Exception as e:
+        current_app.logger.error(f"remove_ai_key error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@admin_bp.route('/settings/test-ai', methods=['POST'])
+@admin_required
+def test_ai_key():
+    """Test if the configured GROQ_API_KEY works by sending a minimal request."""
+    api_key = os.environ.get('GROQ_API_KEY', '').strip()
+    if not api_key:
+        return jsonify({'success': False, 'error': 'No GROQ_API_KEY configured.'})
+    try:
+        from groq import Groq
+        client = Groq(api_key=api_key)
+        completion = client.chat.completions.create(
+            model='llama-3.3-70b-versatile',
+            messages=[{'role': 'user', 'content': 'Say OK in one word.'}],
+            max_tokens=5,
+            temperature=0,
+        )
+        reply = completion.choices[0].message.content.strip()
+        return jsonify({'success': True, 'model': 'llama-3.3-70b-versatile', 'sample': reply})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)[:200]})
 
 
 @admin_bp.route('/clear-cache', methods=['GET', 'POST'])

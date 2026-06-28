@@ -1,6 +1,13 @@
 // ==================== ETHIOSADAT - CART JAVASCRIPT ====================
 // Professional Shopping Cart Functionality
 
+// Helper: turn DB thumbnail path (e.g. "uploads/products/x.jpg") into a full URL
+function cartThumbUrl(thumbnail) {
+    if (!thumbnail) return '/static/images/placeholder.png';
+    if (thumbnail.startsWith('http') || thumbnail.startsWith('/')) return thumbnail;
+    return '/static/' + thumbnail;
+}
+
 // Cart API endpoints
 const CART_API = {
     count: '/api/cart/count',
@@ -182,7 +189,7 @@ class CartManager {
             const item = this.cart[i];
             html += `
                 <div class="mini-cart-item d-flex align-center" style="gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color, #eee);">
-                    <img src="${getProductImageUrl(item.thumbnail || item.image)}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.src='/static/images/placeholder.png'">
+                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
                     <div class="flex-1">
                         <div class="fw-500">${this.truncate(item.name || item.product_name, 25)}</div>
                         <div class="text-muted small">${this.formatPrice(item.price || item.discounted_price)} x ${item.quantity}</div>
@@ -620,7 +627,7 @@ function updateMiniCartPanelContent(panel) {
                 border-bottom: 1px solid var(--border-color, #eee);
             " data-id="${item.product_id || item.id}">
                 <div style="width: 60px; height: 60px; background: #f5f5f5; border-radius: 8px; overflow: hidden;">
-                    <img src="${getProductImageUrl(item.thumbnail || item.image)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/static/images/placeholder.png'">
+                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div style="flex: 1;">
                     <div style="font-weight: 500;">${manager.truncate(item.name || item.product_name, 30)}</div>

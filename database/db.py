@@ -276,7 +276,7 @@ def init_db():
             description TEXT,
             description_am TEXT,
             description_ar TEXT,
-            image TEXT NOT NULL,
+            image TEXT,
             media_url TEXT,
             link TEXT,
             sort_order INTEGER DEFAULT 0,
@@ -453,6 +453,42 @@ def init_db():
             created_at TIMESTAMP DEFAULT NOW()
         )
     """)
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS coupons (
+            id SERIAL PRIMARY KEY,
+            code TEXT UNIQUE NOT NULL,
+            description TEXT,
+            discount_type TEXT NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
+            discount_value NUMERIC(10,2) NOT NULL,
+            max_discount NUMERIC(10,2),
+            min_order NUMERIC(10,2) DEFAULT 0,
+            usage_limit INTEGER,
+            used_count INTEGER DEFAULT 0,
+            is_active SMALLINT DEFAULT 1,
+            valid_from TIMESTAMP DEFAULT NOW(),
+            valid_to TIMESTAMP,
+            created_at TIMESTAMP DEFAULT NOW()
+        )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_coupons_active ON coupons(is_active)")
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS ai_conversations (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            user_name TEXT,
+            user_message TEXT NOT NULL,
+            ai_reply TEXT NOT NULL,
+            source VARCHAR(20) DEFAULT 'fallback',
+            lang VARCHAR(5) DEFAULT 'am',
+            ip_address VARCHAR(45),
+            created_at TIMESTAMP DEFAULT NOW()
+        )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_ai_conv_created ON ai_conversations(created_at DESC)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_ai_conv_user ON ai_conversations(user_id)")
 
     cur.execute("CREATE INDEX IF NOT EXISTS idx_user_notif_user ON user_notifications(user_id)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_user_notif_read ON user_notifications(is_read)")
