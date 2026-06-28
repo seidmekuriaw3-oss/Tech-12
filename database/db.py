@@ -4,11 +4,25 @@ PostgreSQL backend using psycopg2 with a sqlite3-compatible adapter layer.
 """
 
 import os
+from urllib.parse import urlparse
+
 import psycopg2
 import psycopg2.extras
 from flask import g
 
-DATABASE_URL = os.environ.get('DATABASE_URL')
+
+def _get_database_url():
+    """Return the configured PostgreSQL connection URL and validate it."""
+    db_url = (os.environ.get('DATABASE_URL') or '').strip()
+    if not db_url:
+        raise RuntimeError('DATABASE_URL must be set to a PostgreSQL connection string.')
+
+    parsed = urlparse(db_url)
+    if parsed.scheme not in {'postgres', 'postgresql'}:
+        raise RuntimeError(
+            f"Unsupported database URL scheme '{parsed.scheme}'. This app requires PostgreSQL."
+        )
+    return db_url
 
 
 class _PsycopgCursor:
@@ -110,8 +124,9 @@ class _PsycopgConn:
 
 def _raw_connect():
     """Open a raw psycopg2 connection with DictCursor as the default factory."""
+    db_url = _get_database_url()
     conn = psycopg2.connect(
-        DATABASE_URL,
+        db_url,
         cursor_factory=psycopg2.extras.DictCursor
     )
     # Set session timezone to Ethiopia (UTC+3) so NOW() matches dates

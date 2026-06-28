@@ -980,16 +980,42 @@ def order_confirmation(order_id):
             cursor.execute("SELECT * FROM orders WHERE id = %s AND user_id = %s",
                            (order_id, user_id))
         else:
-            # Guest: order must be a guest order (user_id IS NULL) and must match
-            # the order_id stored in session right after place_order
-            last_order_id = session.get('last_order_id')
-            if not last_order_id or int(last_order_id) != order_id:
-                flash('Order not found!', 'danger')
+            # Guest: validate using secure token from session
+            # Token prevents unauthorized access to other guests' orders
+            guest_order_token = session.get('guest_order_token')
+            if not guest_order_token:
+                flash('ትዕዛዝ ማየት ያልተፈቀደ ነው።', 'danger')
                 return redirect(url_for('customer.index'))
-            cursor.execute("SELECT * FROM orders WHERE id = %s AND user_id IS NULL",
-                           (order_id,))
+            
+            # Query the order and verify token matches
+            cursor.execute("""
+                SELECT * FROM orders WHERE id = %s AND user_id IS NULL
+            """, (order_id,))
+            order = cursor.fetchone()
+            
+            if not order:
+                flash('ትዕዛዝ አልተገኘም።', 'danger')
+                return redirect(url_for('customer.index'))
+            
+            # Verify token is valid for this specific order
+            # Token should be a hash of order_id + order_number + phone to prevent guessing
+            import hmac
+            import hashlib
+            expected_token = hmac.new(
+                current_app.config['SECRET_KEY'].encode(),
+                f"{order['id']}-{order['order_number']}-{order['shipping_phone']}".encode(),
+                hashlib.sha256
+            ).hexdigest()
+            
+            if guest_order_token != expected_token:
+                current_app.logger.warning(f"Invalid guest order token for order {order_id}")
+                flash('ትዕዛዝ ማየት ያልተፈቀደ ነው።', 'danger')
+                return redirect(url_for('customer.index'))
+            
+        if not 'order' in locals():
+            # For logged-in users, fetch the order if not already fetched
+            order = cursor.fetchone()
 
-        order = cursor.fetchone()
         if not order:
             flash('Order not found!', 'danger')
             return redirect(url_for('customer.index'))

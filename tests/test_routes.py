@@ -11,6 +11,8 @@ This module contains tests for all route endpoints including:
 
 import pytest
 
+from database.db import get_db
+
 
 # ==================== CUSTOMER ROUTES TESTS ====================
 
@@ -19,6 +21,29 @@ def test_index_route(client):
     response = client.get('/')
     assert response.status_code == 200
     assert b'Ethiosadat' in response.data or b'Furniture' in response.data
+
+
+def test_home_page_renders_translated_ads(client, app):
+    """The home page should render translated ad titles/descriptions when present."""
+    with app.app_context():
+        db = get_db()
+        cur = db.cursor()
+        cur.execute(
+            """
+            INSERT INTO advertisements (
+                title, title_am, description, description_am, image, link, sort_order, is_active,
+                start_date, end_date, created_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW() + INTERVAL '7 days', NOW())
+            """,
+            ('', 'ለበጋ ቅናሽ', '', 'እስከ 30% ቅናሽ በምርቶች', '', '/products', 1, 1),
+        )
+        db.commit()
+
+    response = client.get('/')
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert 'ለበጋ ቅናሽ' in html
+    assert 'እስከ 30% ቅናሽ በምርቶች' in html
 
 
 def test_about_route(client):

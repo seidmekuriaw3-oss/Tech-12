@@ -24,7 +24,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import limiter
 
 from config import Config
-from database.db import get_db, init_db, commit_or_rollback
+from database.db import get_db, init_db, commit_or_rollback, _get_database_url
 from database.models import (
     User, Category, Product, CartItem, Order, OrderItem, Advertisement, Branch, Notification
 )
@@ -82,6 +82,7 @@ app.jinja_env.globals["format_price"] = format_price
 app.jinja_env.globals["format_price_number"] = format_price_number
 
 app.config.from_object(Config)
+app.config['DATABASE_URL'] = _get_database_url()
 _secret_key = os.environ.get('SECRET_KEY') or os.environ.get('SESSION_SECRET')
 if not _secret_key:
     raise RuntimeError(
@@ -528,29 +529,36 @@ def inject_language():
         except (KeyError, TypeError):
             return ''
 
+    def _get_ad_field_value(ad, field_names, default=''):
+        if ad is None:
+            return default
+        if isinstance(ad, dict):
+            for field in field_names:
+                value = ad.get(field)
+                if value not in (None, ''):
+                    return value
+            return default
+        for field in field_names:
+            value = getattr(ad, field, None)
+            if value not in (None, ''):
+                return value
+        return default
+
     def localized_ad_title(ad, lang=None):
-        lng = lang or current_lang
-        try:
-            if lng == 'am':
-                return ad['title_am'] or ad['title'] or ''
-            elif lng == 'ar':
-                return ad['title_ar'] or ad['title'] or ''
-            else:
-                return ad['title'] or ''
-        except (KeyError, TypeError):
-            return ''
+        lng = (lang or current_lang or '').lower()
+        if lng == 'am':
+            return _get_ad_field_value(ad, ['title_am', 'title', 'title_en', 'title_ar'], '')
+        if lng == 'ar':
+            return _get_ad_field_value(ad, ['title_ar', 'title', 'title_am', 'title_en'], '')
+        return _get_ad_field_value(ad, ['title_en', 'title', 'title_am', 'title_ar'], '')
 
     def localized_ad_description(ad, lang=None):
-        lng = lang or current_lang
-        try:
-            if lng == 'am':
-                return ad['description_am'] or ad['description'] or ''
-            elif lng == 'ar':
-                return ad['description_ar'] or ad['description'] or ''
-            else:
-                return ad['description'] or ''
-        except (KeyError, TypeError):
-            return ''
+        lng = (lang or current_lang or '').lower()
+        if lng == 'am':
+            return _get_ad_field_value(ad, ['description_am', 'description', 'description_en', 'description_ar', 'text'], '')
+        if lng == 'ar':
+            return _get_ad_field_value(ad, ['description_ar', 'description', 'description_am', 'description_en', 'text'], '')
+        return _get_ad_field_value(ad, ['description_en', 'description', 'description_am', 'description_ar', 'text'], '')
 
     def category_name(cat, lang=None):
         lng = lang or current_lang

@@ -21211,3 +21211,309 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-26 10:43:02,091 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-26 10:43:10,857 - app - WARNING - 404 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/uploads/products/product_316ea9df.jpg
 2026-06-26 10:43:17,028 - app - WARNING - 404 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/uploads/products/product_316ea9df.jpg
+2026-06-28 10:05:55,494 - app - ERROR - Database initialization error: 'charmap' codec can't encode character '\u2705' in position 0: character maps to <undefined>
+2026-06-28 10:08:59,333 - app - ERROR - Database initialization error: 'charmap' codec can't encode character '\u2705' in position 0: character maps to <undefined>
+2026-06-28 10:35:29,654 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:35:29,662 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:35:29,700 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:40:19,858 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/sale.jpg
+2026-06-28 10:40:19,862 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/shipping.jpg
+2026-06-28 10:40:19,865 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/new.jpg
+2026-06-28 10:40:32,424 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/ads/new.jpg
+2026-06-28 10:42:08,110 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/sale.jpg
+2026-06-28 10:42:08,134 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/shipping.jpg
+2026-06-28 10:42:08,141 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/new.jpg
+2026-06-28 10:42:31,762 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:42:31,770 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:42:31,788 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:50:27,613 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:50:27,646 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:50:27,659 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:50:38,071 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:50:38,099 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:50:38,119 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:51:11,689 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:51:11,711 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:51:11,719 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:55:19,876 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:55:19,964 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:21,233 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:21,675 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:55:22,081 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 10:55:22,391 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:55:22,862 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:55:23,354 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:55:24,028 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:55:24,710 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 10:55:24,893 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:25,479 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 10:55:26,380 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:55:26,628 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:55:26,659 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:55:26,881 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:27,318 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 10:55:28,064 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:28,813 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:55:29,307 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:55:29,692 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 10:55:30,147 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:34,179 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:34,598 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:55:36,638 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:55:37,123 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 10:55:37,493 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:55:38,261 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:55:38,660 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:40,147 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:55:42,012 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:55:42,144 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 10:55:42,911 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:43,391 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:51,473 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:55:54,154 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:54,353 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:55:54,862 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:55,719 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:55:56,227 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:58,074 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:58,311 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:56:01,470 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 10:56:06,398 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:56:10,038 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:56:10,748 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:56:10,927 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:56:11,659 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:56:11,861 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:56:12,017 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:56:15,883 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 10:56:40,987 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:57:07,847 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:57:08,916 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 10:57:10,004 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:57:22,646 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:57:22,776 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:57:22,883 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/2
+2026-06-28 10:57:23,167 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:57:23,299 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:57:23,467 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:57:24,026 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:57:24,315 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:57:30,276 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:57:30,292 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:57:30,364 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:57:36,363 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:57:37,023 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:57:48,328 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:57:48,415 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:57:48,491 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:57:57,518 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:57:58,707 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:57:58,852 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:58:00,111 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 10:58:01,560 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 10:58:42,937 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 10:58:44,571 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:02:17,728 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/14
+2026-06-28 11:02:18,066 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/14
+2026-06-28 11:02:54,282 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:03:19,094 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/14
+2026-06-28 11:03:19,654 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:03:22,249 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:03:32,590 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:03:33,351 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:03:38,233 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:03:39,243 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:03:46,825 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:03:47,074 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:03:47,693 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:05:00,420 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:05:00,954 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:05:01,435 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:05:13,153 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:05:14,332 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:05:14,436 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:05:15,300 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:05:16,207 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:05:16,842 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:05:18,036 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:05:18,517 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:05:21,349 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:05:26,732 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:05:27,398 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:05:27,646 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:05:32,452 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:05:36,794 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:06:08,278 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:06:08,706 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:06:26,691 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:06:32,295 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:06:32,479 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:06:32,824 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:06:38,709 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:06:38,871 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:06:39,573 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:06:40,541 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:06:41,145 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:06:41,301 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:06:41,755 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:06:41,967 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:06:43,025 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:06:44,359 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:06:45,667 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:06:45,850 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:06:46,874 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:06:47,435 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:06:50,109 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:06:50,337 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:06:50,658 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:06:51,319 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:06:51,723 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:07:12,267 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:07:12,272 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:07:12,350 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:07:14,780 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:07:15,903 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:07:16,331 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:07:57,054 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:07:57,240 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/2
+2026-06-28 11:07:57,374 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:07:59,389 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:08:00,543 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:08:00,857 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:08:01,077 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:08:01,262 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:08:02,232 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:08:06,363 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:08:07,245 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:08:07,513 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:08:11,255 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:08:11,471 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:08:12,296 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:08:23,392 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:09:04,256 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:09:04,351 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:09:04,724 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:09:05,485 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:09:09,715 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:09:10,919 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:09:12,481 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:09:12,557 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:09:12,660 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:09:14,236 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:09:14,601 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:09:19,133 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:09:19,541 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:09:20,072 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:09:30,495 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:09:31,846 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:09:32,188 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:09:42,390 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:09:43,305 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:09:46,108 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:09:48,586 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:09:48,752 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:09:53,550 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:09:56,073 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:09:59,056 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:10:04,951 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:10:08,004 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:10:14,626 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:10:14,912 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:10:18,148 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:10:23,377 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:10:23,413 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:10:23,477 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:11:25,867 - app - WARNING - 404 Error: http://localhost.test/category/all
+2026-06-28 11:11:25,901 - app - WARNING - 404 Error: http://localhost.test/category/invalid-category-name
+2026-06-28 11:11:26,668 - app - WARNING - 404 Error: http://localhost.test/checkout
+2026-06-28 11:11:26,985 - app - WARNING - 404 Error: http://localhost.test/nonexistent-page-12345
+2026-06-28 11:12:10,268 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:12:12,244 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:12:12,264 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:12:12,313 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:12:20,244 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:12:24,034 - app - WARNING - Slow request: GET /about - 1.00s
+2026-06-28 11:12:27,345 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:12:27,547 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:12:27,594 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:12:29,062 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:12:54,527 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:12:54,543 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:12:54,623 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:13:53,880 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:13:53,886 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:13:53,892 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:14:09,927 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:14:09,933 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:14:09,936 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:14:12,937 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:14:12,973 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:14:13,019 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:14:15,334 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:14:15,346 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:14:15,362 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:14:23,313 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 11:14:23,642 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:14:24,122 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:14:24,797 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:14:24,955 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:14:25,300 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:14:26,215 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:15:07,627 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/sale.jpg
+2026-06-28 11:15:07,642 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/shipping.jpg
+2026-06-28 11:15:07,648 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/new.jpg
+2026-06-28 11:16:04,709 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/sale.jpg
+2026-06-28 11:16:04,742 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/shipping.jpg
+2026-06-28 11:16:04,749 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/new.jpg
+2026-06-28 11:16:27,124 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:16:27,153 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:16:27,181 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:16:40,255 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:16:41,221 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:16:41,565 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:18:00,950 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:18:01,367 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:20:31,541 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:20:31,882 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:20:32,648 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:20:34,810 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:20:34,899 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:20:34,910 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:22:20,204 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:22:48,035 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:22:48,040 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:22:48,065 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:22:56,706 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:22:57,187 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 11:23:04,336 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:23:04,341 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:23:04,367 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:23:06,759 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:23:07,106 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:23:07,708 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:29:42,002 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:29:42,024 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:29:42,040 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:32:24,386 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:32:25,160 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 11:32:37,322 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/2
+2026-06-28 11:32:37,455 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:32:37,876 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:32:38,017 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:32:38,205 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:32:38,616 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:34:33,231 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:34:33,235 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:34:33,251 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:35:15,310 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:35:15,334 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:35:15,347 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:36:17,023 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:36:17,186 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:36:17,273 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:51:49,783 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:51:49,800 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:51:49,821 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:52:05,617 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:52:05,749 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:52:05,818 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
