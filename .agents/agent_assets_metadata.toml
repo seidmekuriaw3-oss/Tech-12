@@ -1,0 +1,62 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "zKG_qdWf2ZiFH4IN6-_hv"
+uri = "file://static/uploads/products/product_seed_002.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "1rolzeuxt8aSLuo3sepNx"
+uri = "file://static/uploads/products/product_seed_003.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Q1gHaTXH0Q_O0Y6LFasyd"
+uri = "file://static/uploads/products/product_seed_004.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ctm5CgyzWbf25aNRfup9g"
+uri = "file://static/uploads/products/product_seed_005.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "OizL8pGJ2SLybB4DJFtsP"
+uri = "file://static/uploads/products/product_seed_006.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "JbSdD78gA8nsU1K2Pb_gj"
+uri = "file://static/uploads/products/product_seed_007.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "mEB_KcpzKiMgGWareI8-y"
+uri = "file://static/uploads/products/product_seed_008.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "VfTmnRn4gFtr8NsUgpoJs"
+uri = "file://static/uploads/products/product_seed_009.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "HwsW3cH2a0saIRusDpMOO"
+uri = "file://static/uploads/products/product_seed_010.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "prBBEWu7i_r61OOxRh71a"
+uri = "file://static/uploads/products/product_seed_011.png"
+type = "image"
+title = "generated_image"

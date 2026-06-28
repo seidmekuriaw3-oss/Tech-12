@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
+  <rect width="400" height="500" fill="#c9a96e" rx="16"/>
+  <rect x="0" y="380" width="400" height="120" fill="#a07840" rx="0"/>
+  <rect x="0" y="380" width="400" height="16" fill="#a07840" rx="0"/>
+  <text x="200" y="230" font-size="110" text-anchor="middle" dominant-baseline="middle">🧶</text>
+  <text x="200" y="420" font-size="22" font-family="Arial,sans-serif" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">Knit Cardigan</text>
+  <text x="200" y="455" font-size="15" font-family="Arial,sans-serif" fill="rgba(255,255,255,0.8)" text-anchor="middle">SEMIRA FASHION</text>
+</svg>
