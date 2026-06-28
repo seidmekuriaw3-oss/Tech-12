@@ -149,16 +149,18 @@
         background: white;
     }
 
-    /* Visual area (top of card) — image, video, or gradient */
+    /* Visual area — full-bleed image/video/gradient on top of card */
     .adg-visual {
         width: 100%;
-        height: 180px;
+        aspect-ratio: 16 / 9;
         position: relative;
         overflow: hidden;
         flex-shrink: 0;
         background: #1a7a4a;
+        min-height: 200px;
     }
     .adg-visual img {
+        position: absolute; inset: 0;
         width: 100%; height: 100%;
         object-fit: cover; display: block;
     }
@@ -171,7 +173,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 52px;
+        font-size: 64px;
     }
 
     /* Play button for video */
@@ -186,12 +188,12 @@
         background: transparent;
     }
     .adg-play-btn {
-        width: 56px; height: 56px;
+        width: 60px; height: 60px;
         background: rgba(255,255,255,0.22);
         border: 3px solid rgba(255,255,255,0.85);
         border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        font-size: 22px; color: white;
+        font-size: 24px; color: white;
         backdrop-filter: blur(4px);
         transition: transform 0.2s, background 0.2s;
         pointer-events: none;
@@ -201,14 +203,14 @@
         background: rgba(255,255,255,0.38);
     }
 
-    /* Text section BELOW the visual */
+    /* Text section BELOW the full visual */
     .adg-text-below {
-        padding: 16px 20px 18px;
+        padding: 14px 18px 16px;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 7px;
         background: white;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid #eee;
     }
     .adg-text-below h3 {
         font-size: 15px; font-weight: 800; margin: 0;
@@ -224,7 +226,7 @@
         display: inline-block;
         background: #1a7a4a;
         color: white;
-        padding: 9px 22px;
+        padding: 8px 20px;
         border-radius: 50px;
         text-decoration: none;
         font-weight: 700;
@@ -596,24 +598,24 @@
             {# Each slide: visual on top, text BELOW #}
             <div class="slider-slide" style="background:none; padding:0; min-height:auto; display:flex; flex-direction:column; overflow:hidden; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.1);">
 
-                {# ── Visual area (top) ── #}
+                {# ── Visual area (top) — full bleed 16:9 ── #}
                 {% if is_video %}
-                <div style="position:relative; width:100%; height:180px; background:#000; overflow:hidden; flex-shrink:0;">
+                <div style="position:relative; width:100%; aspect-ratio:16/9; min-height:200px; background:#000; overflow:hidden; flex-shrink:0;">
                     <video src="{{ video_src }}" autoplay muted loop playsinline
                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;"></video>
                     <div style="position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;cursor:pointer;"
                          onclick="playFullscreen('{{ video_src }}')">
-                        <div style="width:52px;height:52px;background:rgba(255,255,255,0.22);border:3px solid rgba(255,255,255,0.85);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;backdrop-filter:blur(4px);">▶</div>
+                        <div style="width:56px;height:56px;background:rgba(255,255,255,0.22);border:3px solid rgba(255,255,255,0.85);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;backdrop-filter:blur(4px);">▶</div>
                     </div>
                 </div>
                 {% elif is_image %}
-                <div style="width:100%; height:180px; overflow:hidden; flex-shrink:0;">
+                <div style="position:relative; width:100%; aspect-ratio:16/9; min-height:200px; overflow:hidden; flex-shrink:0;">
                     <img src="{{ url_for('static', filename=ad.image) }}"
                          alt="{{ localized_ad_title(ad) or 'Ad' }}"
-                         style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
+                         style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
                 </div>
                 {% else %}
-                <div style="width:100%; height:140px; flex-shrink:0; background:linear-gradient(135deg,{{ grad_colors[loop.index0 % grad_colors|length] }}); display:flex; align-items:center; justify-content:center; font-size:56px;">
+                <div style="position:relative; width:100%; aspect-ratio:16/9; min-height:180px; flex-shrink:0; background:linear-gradient(135deg,{{ grad_colors[loop.index0 % grad_colors|length] }}); display:flex; align-items:center; justify-content:center; font-size:72px;">
                     {{ icons[loop.index0 % icons|length] }}
                 </div>
                 {% endif %}
