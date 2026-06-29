@@ -514,7 +514,7 @@ def api_get_cart():
             SELECT ci.*, p.name, p.name_am, p.name_ar, p.price, p.compare_price, p.thumbnail
             FROM cart_items ci
             JOIN products p ON ci.product_id = p.id
-            WHERE ci.user_id = %s
+            WHERE ci.user_id = %s AND p.is_active = 1
         """, (session['user_id'],))
         
         rows = cursor.fetchall()
@@ -540,7 +540,7 @@ def api_get_cart():
             placeholders = ','.join(['%s'] * len(cart))
             cursor.execute(f"""
                 SELECT id, name, name_am, name_ar, price, compare_price, thumbnail
-                FROM products WHERE id IN ({placeholders})
+                FROM products WHERE id IN ({placeholders}) AND is_active = 1
             """, list(cart.keys()))
             
             products = cursor.fetchall()

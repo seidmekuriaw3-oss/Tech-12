@@ -250,9 +250,19 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Additional Notes</label>
+                    <label>ክፍያ ዘዴ / Payment Method <span class="required">*</span></label>
+                    <select name="payment_method" id="paymentMethod" class="form-control" required>
+                        <option value="cash" selected>💵 Cash on Delivery (ሲደርስ ክፍያ)</option>
+                        <option value="telebirr">📱 TeleBirr</option>
+                        <option value="bank">🏦 Bank Transfer (የባንክ ዝውውር)</option>
+                        <option value="card">💳 Card Payment</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>ማስታወሻ / Additional Notes</label>
                     <textarea name="notes" id="orderNotes" class="form-control" 
-                              rows="4" placeholder="Special instructions or notes about your order..."></textarea>
+                              rows="3" placeholder="Special instructions or notes about your order..."></textarea>
                 </div>
                 
                 <button type="submit" id="submitBtn" class="btn btn-primary btn-submit">
@@ -302,7 +312,7 @@
             </div>
             {% else %}
             <div class="free-shipping-notice warning">
-                🚚 Add {{ format_price(free_shipping_threshold - (subtotal - discount)) }} more for free shipping
+                🚚 Add {{ format_price(free_shipping_threshold - subtotal_after_discount) }} more for free shipping
             </div>
             {% endif %}
             

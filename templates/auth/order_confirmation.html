@@ -234,7 +234,8 @@
         {% for item in items %}
         <div class="order-item-row">
             {% if item.thumbnail %}
-            <img src="{{ url_for('static', filename=item.thumbnail) }}" alt="{{ item.name }}" class="item-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            {% set thumb = item.thumbnail if item.thumbnail.startswith('uploads/') else 'uploads/products/' + item.thumbnail %}
+            <img src="{{ url_for('static', filename=thumb) }}" alt="{{ item.name }}" class="item-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="item-thumb-placeholder" style="display:none;">👗</div>
             {% else %}
             <div class="item-thumb-placeholder">👗</div>

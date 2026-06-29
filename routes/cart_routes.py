@@ -37,7 +37,7 @@ def view_cart():
             SELECT ci.*, p.name, p.name_am, p.name_ar, p.price, p.compare_price, p.thumbnail, p.stock_quantity
             FROM cart_items ci
             JOIN products p ON ci.product_id = p.id
-            WHERE ci.user_id = %s
+            WHERE ci.user_id = %s AND p.is_active = 1
         """, (session['user_id'],))
         
         rows = cursor.fetchall()
@@ -326,7 +326,7 @@ def checkout():
             SELECT ci.*, p.name, p.name_am, p.name_ar, p.price, p.thumbnail
             FROM cart_items ci
             JOIN products p ON ci.product_id = p.id
-            WHERE ci.user_id = %s
+            WHERE ci.user_id = %s AND p.is_active = 1
         """, (user_id,))
         raw_items = cursor.fetchall()
 
@@ -465,9 +465,6 @@ def place_order():
     if notes and len(notes) > 500:
         flash('ማስታወሻ 500 ፊደሎች ያነስ መሆን አለበት።', 'danger')
         return redirect(url_for('cart.checkout'))
-    if not user_id and not customer_name:
-        flash('ስምና ስልክ ቁጥር ያስፈልጋሉ።', 'danger')
-        return redirect(url_for('cart.checkout'))
 
     cart_items_raw = []
 
@@ -476,7 +473,7 @@ def place_order():
             SELECT ci.product_id, ci.quantity, p.price, p.name, p.name_am, p.stock_quantity
             FROM cart_items ci
             JOIN products p ON ci.product_id = p.id
-            WHERE ci.user_id = %s
+            WHERE ci.user_id = %s AND p.is_active = 1
             FOR UPDATE OF p
         """, (user_id,))
         cart_items_raw = cursor.fetchall()
@@ -645,7 +642,7 @@ def place_order():
         qty   = item['quantity'] if isinstance(item, dict) else item['quantity']
         pid   = item['product_id'] if isinstance(item, dict) else item['product_id']
         name  = item['name'] if isinstance(item, dict) else item['name']
-        discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
+        discounted_price = round(float(price) * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
         cursor.execute("""
             INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
             VALUES (%s, %s, %s, %s)
@@ -793,7 +790,7 @@ def get_cart_total():
             WHERE ci.user_id = %s
         """, (session['user_id'],))
         result = cursor.fetchone()
-        total = result['total'] or 0
+        total = float(result['total'] or 0)
     else:
         cart = session.get('cart', {})
         if cart:
@@ -808,7 +805,7 @@ def get_cart_total():
     
     # Apply member discount for logged-in users
     if session.get('user_id'):
-        total = total * (1 - USER_DISCOUNT_RATE)
+        total = float(total) * (1 - USER_DISCOUNT_RATE)
     
     return round(total, 2)
 
