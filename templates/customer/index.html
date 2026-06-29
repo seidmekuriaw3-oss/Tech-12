@@ -10,16 +10,16 @@
 <style>
     /* ══ ADS CAROUSEL ══ */
     .ads-crsl-wrap {
-        margin: 24px 0 8px;
+        margin: 24px 14px 6px;
         position: relative;
     }
     .ads-crsl-viewport {
         overflow: hidden;
-        border-radius: 20px;
+        border-radius: 18px;
     }
     .ads-crsl-track {
         display: flex;
-        gap: 14px;
+        gap: 12px;
         transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         will-change: transform;
         cursor: grab;
@@ -31,16 +31,17 @@
         cursor: grabbing;
     }
     .ads-crsl-slide {
-        flex: 0 0 calc(50% - 7px);
+        flex: 0 0 calc(46% - 6px);
         min-width: 0;
-        border-radius: 20px;
+        border-radius: 18px;
         overflow: hidden;
         position: relative;
         aspect-ratio: 4/5;
         background: #111;
-        box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+        box-shadow: 0 6px 24px rgba(0,0,0,0.22);
         display: block;
         text-decoration: none;
+        cursor: pointer;
     }
     .ads-crsl-slide img,
     .ads-crsl-slide video {
@@ -50,28 +51,34 @@
     }
     .ads-crsl-overlay {
         position: absolute; inset: 0; z-index: 2;
-        background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.25) 45%, transparent 72%);
+        background: linear-gradient(to top,
+            rgba(0,0,0,0.92) 0%,
+            rgba(0,0,0,0.55) 40%,
+            rgba(0,0,0,0.15) 65%,
+            transparent 100%);
     }
     .ads-crsl-caption {
         position: absolute; bottom: 0; left: 0; right: 0;
-        z-index: 3; padding: 24px 16px 18px;
-        color: white;
+        z-index: 3; padding: 28px 14px 16px;
+        color: #fff;
         pointer-events: none;
     }
     .ads-crsl-caption h3 {
-        font-size: 14px; font-weight: 800; margin: 0 0 10px;
-        line-height: 1.35; text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+        font-size: 13px; font-weight: 900; margin: 0 0 9px;
+        line-height: 1.35; color: #fff;
+        text-shadow: 0 2px 10px rgba(0,0,0,1), 0 1px 3px rgba(0,0,0,0.9);
     }
     .ads-crsl-caption p {
-        font-size: 12px; margin: 0 0 10px; opacity: 0.9; line-height: 1.4;
+        font-size: 11px; margin: 0 0 9px;
+        color: rgba(255,255,255,0.95); line-height: 1.4;
+        text-shadow: 0 1px 5px rgba(0,0,0,0.9);
     }
     .ads-crsl-chip {
         display: inline-block;
-        background: white; color: #1a7a4a;
-        padding: 6px 16px; border-radius: 30px;
-        font-weight: 700; font-size: 12px;
-        pointer-events: all;
-        text-decoration: none;
+        background: rgba(255,255,255,0.95); color: #0d5c35;
+        padding: 5px 13px; border-radius: 30px;
+        font-weight: 800; font-size: 11px;
+        pointer-events: all; text-decoration: none;
     }
     .ads-crsl-play {
         position: absolute; inset: 0; z-index: 4;
@@ -79,24 +86,24 @@
         pointer-events: none;
     }
     .ads-crsl-play-icon {
-        width: 56px; height: 56px;
-        background: rgba(255,255,255,0.18);
-        border: 3px solid rgba(255,255,255,0.85);
+        width: 50px; height: 50px;
+        background: rgba(255,255,255,0.2);
+        border: 3px solid rgba(255,255,255,0.9);
         border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        font-size: 20px; color: white;
+        font-size: 18px; color: white;
         backdrop-filter: blur(6px);
         transition: transform 0.2s, background 0.2s;
     }
     .ads-crsl-slide:hover .ads-crsl-play-icon,
     .ads-crsl-slide:active .ads-crsl-play-icon {
-        transform: scale(1.12);
-        background: rgba(255,255,255,0.3);
+        transform: scale(1.1);
+        background: rgba(255,255,255,0.32);
     }
     /* dots */
     .ads-crsl-dots {
         display: flex; justify-content: center; gap: 7px;
-        margin-top: 14px;
+        margin-top: 12px;
     }
     .ads-crsl-dot {
         width: 8px; height: 8px; border-radius: 4px;
@@ -105,41 +112,104 @@
         border: none; padding: 0;
     }
     .ads-crsl-dot.on {
-        width: 22px;
-        background: #1a7a4a;
+        width: 22px; background: #1a7a4a;
     }
-    /* fullscreen overlay */
-    .ads-fs-overlay {
-        position: fixed; inset: 0; z-index: 9999;
-        background: #000;
-        display: none;
-        align-items: center; justify-content: center;
-    }
-    .ads-fs-overlay video {
-        width: 100%; height: 100%;
-        object-fit: contain;
-    }
-    .ads-fs-close {
-        position: absolute; top: 18px; right: 18px;
-        width: 44px; height: 44px;
-        background: rgba(255,255,255,0.12);
-        border: 2px solid rgba(255,255,255,0.5);
-        border-radius: 50%; color: white; font-size: 20px;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer; z-index: 10000;
-        backdrop-filter: blur(6px);
-    }
-    /* gradient bg card */
+    /* gradient bg card icon */
     .ads-crsl-grad-icon {
         position: absolute; inset: 0;
         display: flex; align-items: center; justify-content: center;
-        font-size: 88px; opacity: 0.35;
+        font-size: 80px; opacity: 0.3;
     }
     @media (max-width: 640px) {
-        .ads-crsl-slide {
-            flex: 0 0 calc(80% - 7px);
-        }
+        .ads-crsl-wrap { margin: 20px 10px 6px; }
+        .ads-crsl-slide { flex: 0 0 calc(74% - 6px); }
     }
+
+    /* ══ STORIES VIEWER ══ */
+    .ads-stories-overlay {
+        position: fixed; inset: 0; z-index: 9999;
+        background: #000;
+        display: none;
+        flex-direction: column;
+        touch-action: none;
+        overscroll-behavior: none;
+    }
+    .ads-stories-overlay.open { display: flex; }
+
+    /* top progress bars */
+    .ads-stories-bars {
+        position: absolute; top: 0; left: 0; right: 0;
+        display: flex; gap: 4px; padding: 14px 14px 0;
+        z-index: 12; pointer-events: none;
+    }
+    .ads-stories-bar {
+        flex: 1; height: 3px; border-radius: 2px;
+        background: rgba(255,255,255,0.3); overflow: hidden;
+    }
+    .ads-stories-bar-fill {
+        height: 100%; background: #fff; width: 0%; border-radius: 2px;
+    }
+
+    /* header row */
+    .ads-stories-header {
+        position: absolute; top: 26px; left: 14px; right: 14px;
+        z-index: 12; display: flex; align-items: center; justify-content: space-between;
+    }
+    .ads-stories-logo {
+        font-size: 13px; font-weight: 800; color: #fff;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+        display: flex; align-items: center; gap: 6px;
+    }
+    .ads-stories-close {
+        width: 38px; height: 38px;
+        background: rgba(0,0,0,0.35); border: 1.5px solid rgba(255,255,255,0.4);
+        border-radius: 50%; color: white; font-size: 18px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; backdrop-filter: blur(4px);
+    }
+
+    /* media fills screen */
+    .ads-stories-media {
+        position: absolute; inset: 0; overflow: hidden;
+    }
+
+    /* gradient overlay bottom */
+    .ads-stories-bottom {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+        padding: 60px 20px 50px; z-index: 10; color: #fff;
+    }
+    .ads-stories-bottom h2 {
+        font-size: 22px; font-weight: 900; margin: 0 0 10px; line-height: 1.3;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .ads-stories-bottom p {
+        font-size: 14px; margin: 0 0 18px; opacity: 0.92; line-height: 1.5;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+    }
+    .ads-stories-shop-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #fff; color: #0d5c35;
+        padding: 11px 24px; border-radius: 30px;
+        font-weight: 800; font-size: 14px;
+        text-decoration: none;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+    }
+
+    /* swipe down hint */
+    .ads-stories-hint {
+        position: absolute; bottom: 12px; left: 0; right: 0; z-index: 11;
+        text-align: center; color: rgba(255,255,255,0.45); font-size: 11px;
+        pointer-events: none;
+    }
+
+    /* tap nav zones (invisible) */
+    .ads-stories-nav {
+        position: absolute; top: 0; bottom: 0;
+        width: 35%; z-index: 11;
+    }
+    .ads-stories-nav.left  { left: 0; }
+    .ads-stories-nav.right { right: 0; }
     
     /* About Section */
     .about-section {
@@ -484,8 +554,17 @@
             {% set ad_link  = ad.link if ad.link else url_for('customer.products') %}
 
             {% if is_video %}
-            {# ── VIDEO slide: click → fullscreen ── #}
-            <div class="ads-crsl-slide" onclick="adsOpenFs('{{ video_src }}')" style="cursor:pointer;">
+            {# ── VIDEO slide ── #}
+            <div class="ads-crsl-slide"
+                 onclick="adsStoriesOpen({{ loop.index0 }})"
+                 data-type="video"
+                 data-src="{{ video_src }}"
+                 data-poster="{{ poster_src }}"
+                 data-title="{{ ad_title | e }}"
+                 data-desc="{{ ad_desc | e if ad_desc else '' }}"
+                 data-link="{{ ad_link }}"
+                 data-gradient=""
+                 data-icon="">
                 <video autoplay muted loop playsinline poster="{{ poster_src }}">
                     <source src="{{ video_src }}" type="video/mp4">
                 </video>
@@ -499,7 +578,16 @@
 
             {% elif is_image %}
             {# ── IMAGE slide ── #}
-            <a class="ads-crsl-slide" href="{{ ad_link }}">
+            <div class="ads-crsl-slide"
+                 onclick="adsStoriesOpen({{ loop.index0 }})"
+                 data-type="image"
+                 data-src="{{ url_for('static', filename=ad.image) }}"
+                 data-poster=""
+                 data-title="{{ ad_title | e }}"
+                 data-desc="{{ ad_desc | e if ad_desc else '' }}"
+                 data-link="{{ ad_link }}"
+                 data-gradient=""
+                 data-icon="">
                 <img src="{{ url_for('static', filename=ad.image) }}" alt="{{ ad_title }}" loading="lazy">
                 <div class="ads-crsl-overlay"></div>
                 <div class="ads-crsl-caption">
@@ -507,12 +595,21 @@
                     {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
                     <span class="ads-crsl-chip">{{ t.shop_now }} →</span>
                 </div>
-            </a>
+            </div>
 
             {% else %}
-            {# ── TEXT-ONLY gradient slide ── #}
-            <a class="ads-crsl-slide" href="{{ ad_link }}"
-               style="background:linear-gradient({{ grad_list[loop.index0 % grad_list|length] }});">
+            {# ── GRADIENT slide ── #}
+            <div class="ads-crsl-slide"
+                 onclick="adsStoriesOpen({{ loop.index0 }})"
+                 data-type="gradient"
+                 data-src=""
+                 data-poster=""
+                 data-title="{{ ad_title | e }}"
+                 data-desc="{{ ad_desc | e if ad_desc else '' }}"
+                 data-link="{{ ad_link }}"
+                 data-gradient="{{ grad_list[loop.index0 % grad_list|length] }}"
+                 data-icon="{{ icon_list[loop.index0 % icon_list|length] }}"
+                 style="background:linear-gradient({{ grad_list[loop.index0 % grad_list|length] }});">
                 <div class="ads-crsl-grad-icon">{{ icon_list[loop.index0 % icon_list|length] }}</div>
                 <div class="ads-crsl-overlay"></div>
                 <div class="ads-crsl-caption">
@@ -520,7 +617,7 @@
                     {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
                     <span class="ads-crsl-chip">{{ t.shop_now }} →</span>
                 </div>
-            </a>
+            </div>
             {% endif %}
         {% endfor %}
         </div>
@@ -530,10 +627,22 @@
     {% endif %}
 </div>
 
-{# Fullscreen video overlay #}
-<div class="ads-fs-overlay" id="adsFsOverlay" onclick="adsCloseFs()">
-    <video id="adsFsVideo" controls playsinline style="max-height:100vh;max-width:100vw;object-fit:contain;"></video>
-    <button class="ads-fs-close" onclick="event.stopPropagation();adsCloseFs()">✕</button>
+{# ── STORIES VIEWER OVERLAY ── #}
+<div class="ads-stories-overlay" id="adsStoriesOverlay">
+    <div class="ads-stories-bars" id="adsStoriesBars"></div>
+    <div class="ads-stories-header">
+        <div class="ads-stories-logo">👗 SEMIRA FASHION</div>
+        <button class="ads-stories-close" onclick="adsStoriesClose()">✕</button>
+    </div>
+    <div class="ads-stories-media" id="adsStoriesMedia"></div>
+    <div class="ads-stories-nav left"  id="adsStoriesLeft"></div>
+    <div class="ads-stories-nav right" id="adsStoriesRight"></div>
+    <div class="ads-stories-bottom" id="adsStoriesBottom">
+        <h2 id="adsStoriesTitle"></h2>
+        <p  id="adsStoriesDesc" style="display:none;"></p>
+        <a  id="adsStoriesBtn" href="#" class="ads-stories-shop-btn">{{ t.shop_now }} →</a>
+    </div>
+    <div class="ads-stories-hint">↕ ወደ ታች ጥቅጥቅ ለመዝጋት</div>
 </div>
 
 {% endif %}
@@ -912,118 +1021,202 @@
     });
 })();
 
-    /* ── ADS CAROUSEL ── */
+    /* ══ ADS CAROUSEL ══ */
     (function() {
-        const track = document.getElementById('adsCrslTrack');
+        var track = document.getElementById('adsCrslTrack');
         if (!track) return;
-        const slides = [...track.querySelectorAll('.ads-crsl-slide')];
-        const dotsWrap = document.getElementById('adsCrslDots');
-        const n = slides.length;
+        var slides = Array.from(track.querySelectorAll('.ads-crsl-slide'));
+        var dotsWrap = document.getElementById('adsCrslDots');
+        var n = slides.length;
         if (!n) return;
-        let cur = 0, autoTimer = null;
-        let dragStartX = 0, dragStartTx = 0, isDragging = false;
+        var cur = 0, autoTimer = null;
+        var dragStartX = 0, dragStartTx = 0, isDragging = false, didDrag = false;
 
-        /* build pill dots */
-        const dots = slides.map(function(_, i) {
+        var dots = slides.map(function(_, i) {
             if (!dotsWrap) return null;
-            const d = document.createElement('button');
+            var d = document.createElement('button');
             d.className = 'ads-crsl-dot' + (i === 0 ? ' on' : '');
-            d.setAttribute('aria-label', 'Go to slide ' + (i + 1));
             d.addEventListener('click', function() { goTo(i); resetAuto(); });
             dotsWrap.appendChild(d);
             return d;
         });
 
-        function slideWidth() {
-            if (!slides[0]) return 0;
-            const rect = slides[0].getBoundingClientRect();
-            return rect.width + 14; /* card width + gap */
+        function slideW() {
+            return slides[0] ? slides[0].getBoundingClientRect().width + 12 : 0;
         }
-
-        function setTransform(px, animated) {
-            track.style.transition = animated ? 'transform 0.5s cubic-bezier(0.4,0,0.2,1)' : 'none';
-            track.style.transform = 'translateX(-' + px + 'px)';
+        function setTx(px, anim) {
+            track.style.transition = anim ? 'transform 0.5s cubic-bezier(0.4,0,0.2,1)' : 'none';
+            track.style.transform = 'translateX(-' + Math.max(0, px) + 'px)';
         }
-
-        function goTo(index) {
-            cur = ((index % n) + n) % n;
-            setTransform(cur * slideWidth(), true);
-            dots.forEach(function(d, i) { if (d) d.classList.toggle('on', i === cur); });
+        function goTo(i) {
+            cur = ((i % n) + n) % n;
+            setTx(cur * slideW(), true);
+            dots.forEach(function(d, j) { if (d) d.classList.toggle('on', j === cur); });
         }
-
-        function next() { goTo(cur + 1); }
-
-        function startAuto() {
-            clearInterval(autoTimer);
-            autoTimer = setInterval(next, 4000);
-        }
+        function startAuto() { clearInterval(autoTimer); autoTimer = setInterval(function(){ goTo(cur+1); }, 4200); }
         function resetAuto() { startAuto(); }
         function stopAuto()  { clearInterval(autoTimer); }
 
-        /* mouse drag */
+        /* drag/swipe on carousel (NOT on stories open clicks) */
         track.addEventListener('mousedown', function(e) {
-            isDragging = true;
-            dragStartX = e.clientX;
-            dragStartTx = cur * slideWidth();
-            track.classList.add('ads-dragging');
-            stopAuto();
+            isDragging = true; didDrag = false;
+            dragStartX = e.clientX; dragStartTx = cur * slideW();
+            track.classList.add('ads-dragging'); stopAuto();
         });
         document.addEventListener('mouseup', function(e) {
             if (!isDragging) return;
-            isDragging = false;
-            track.classList.remove('ads-dragging');
+            isDragging = false; track.classList.remove('ads-dragging');
             var diff = dragStartX - e.clientX;
-            if (Math.abs(diff) > 50) { diff > 0 ? goTo(cur + 1) : goTo(cur - 1); }
-            else goTo(cur);
+            if (Math.abs(diff) > 50) { didDrag = true; diff > 0 ? goTo(cur+1) : goTo(cur-1); }
+            else { setTx(cur * slideW(), true); }
             resetAuto();
+            setTimeout(function(){ didDrag = false; }, 100);
         });
         document.addEventListener('mousemove', function(e) {
             if (!isDragging) return;
-            setTransform(dragStartTx + (dragStartX - e.clientX), false);
+            didDrag = Math.abs(dragStartX - e.clientX) > 5;
+            setTx(dragStartTx + (dragStartX - e.clientX), false);
+        });
+        var tsx = 0;
+        track.addEventListener('touchstart', function(e) {
+            tsx = e.touches[0].clientX; stopAuto(); didDrag = false;
+        }, {passive:true});
+        track.addEventListener('touchmove', function(e) {
+            var diff = tsx - e.touches[0].clientX;
+            if (Math.abs(diff) > 8) { didDrag = true; setTx(cur*slideW()+diff, false); }
+        }, {passive:true});
+        track.addEventListener('touchend', function(e) {
+            var diff = tsx - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) { diff > 0 ? goTo(cur+1) : goTo(cur-1); }
+            else { setTx(cur*slideW(), true); }
+            resetAuto();
+            setTimeout(function(){ didDrag = false; }, 100);
+        }, {passive:true});
+
+        /* intercept slide click — ignore if it was a drag */
+        slides.forEach(function(slide, i) {
+            slide.addEventListener('click', function(e) {
+                if (didDrag) { e.stopImmediatePropagation(); e.preventDefault(); }
+            }, true);
         });
 
-        /* touch swipe */
-        var touchStartX = 0;
-        track.addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-            stopAuto();
-        }, {passive: true});
-        track.addEventListener('touchend', function(e) {
-            var diff = touchStartX - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 40) { diff > 0 ? goTo(cur + 1) : goTo(cur - 1); }
-            resetAuto();
-        }, {passive: true});
-
-        /* pause on hover */
         track.addEventListener('mouseenter', stopAuto);
         track.addEventListener('mouseleave', startAuto);
-
-        /* re-calc on resize */
-        window.addEventListener('resize', function() { setTransform(cur * slideWidth(), false); });
-
+        window.addEventListener('resize', function(){ setTx(cur*slideW(), false); });
         startAuto();
     })();
 
-    /* ── FULLSCREEN VIDEO ── */
-    window.adsOpenFs = function(src) {
-        var overlay = document.getElementById('adsFsOverlay');
-        var vid     = document.getElementById('adsFsVideo');
-        if (!overlay || !vid) return;
-        vid.src = src;
-        overlay.style.display = 'flex';
-        vid.play().catch(function(){});
-        document.body.style.overflow = 'hidden';
-    };
-    window.adsCloseFs = function() {
-        var overlay = document.getElementById('adsFsOverlay');
-        var vid     = document.getElementById('adsFsVideo');
-        if (overlay) overlay.style.display = 'none';
-        if (vid)     { vid.pause(); vid.src = ''; }
-        document.body.style.overflow = '';
-    };
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') window.adsCloseFs && adsCloseFs();
-    });
+    /* ══ STORIES VIEWER ══ */
+    (function() {
+        var overlay  = document.getElementById('adsStoriesOverlay');
+        if (!overlay) return;
+        var barsWrap = document.getElementById('adsStoriesBars');
+        var mediaEl  = document.getElementById('adsStoriesMedia');
+        var titleEl  = document.getElementById('adsStoriesTitle');
+        var descEl   = document.getElementById('adsStoriesDesc');
+        var btnEl    = document.getElementById('adsStoriesBtn');
+        var slides   = Array.from(document.querySelectorAll('.ads-crsl-slide'));
+        var n = slides.length;
+        var cur = 0, stTimer = null, bars = [];
+        var DURATION = 5500;
+
+        function buildBars() {
+            barsWrap.innerHTML = ''; bars = [];
+            for (var i = 0; i < n; i++) {
+                var bar = document.createElement('div');
+                bar.className = 'ads-stories-bar';
+                var fill = document.createElement('div');
+                fill.className = 'ads-stories-bar-fill';
+                bar.appendChild(fill);
+                barsWrap.appendChild(bar);
+                bars.push(fill);
+            }
+        }
+
+        function animBar(idx, dur) {
+            var f = bars[idx]; if (!f) return;
+            f.style.transition = 'none'; f.style.width = '0%';
+            requestAnimationFrame(function(){ requestAnimationFrame(function(){
+                f.style.transition = 'width '+dur+'ms linear'; f.style.width = '100%';
+            }); });
+        }
+
+        function showStory(index) {
+            clearTimeout(stTimer);
+            cur = ((index % n) + n) % n;
+            bars.forEach(function(b, i){
+                b.style.transition = 'none';
+                b.style.width = i < cur ? '100%' : '0%';
+            });
+            var s = slides[cur];
+            var type = s.dataset.type;
+            mediaEl.innerHTML = '';
+            titleEl.textContent = s.dataset.title || '';
+            var desc = s.dataset.desc || '';
+            descEl.textContent = desc; descEl.style.display = desc ? '' : 'none';
+            btnEl.href = s.dataset.link || '#';
+
+            if (type === 'video') {
+                var v = document.createElement('video');
+                v.src = s.dataset.src;
+                if (s.dataset.poster) v.poster = s.dataset.poster;
+                v.autoplay = true; v.controls = false; v.playsinline = true;
+                v.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;';
+                mediaEl.appendChild(v);
+                v.addEventListener('loadedmetadata', function(){
+                    var dur = Math.min((v.duration||10)*1000, 60000);
+                    animBar(cur, dur);
+                    stTimer = setTimeout(function(){ showStory(cur+1); }, dur+150);
+                });
+                v.play().catch(function(){});
+            } else if (type === 'image') {
+                var img = document.createElement('img');
+                img.src = s.dataset.src;
+                img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
+                mediaEl.appendChild(img);
+                animBar(cur, DURATION);
+                stTimer = setTimeout(function(){ showStory(cur+1); }, DURATION);
+            } else {
+                var div = document.createElement('div');
+                div.style.cssText = 'position:absolute;inset:0;background:linear-gradient('+(s.dataset.gradient||'135deg,#1a7a4a,#0f5232')+');display:flex;align-items:center;justify-content:center;font-size:110px;';
+                div.textContent = s.dataset.icon || '🎉';
+                mediaEl.appendChild(div);
+                animBar(cur, DURATION);
+                stTimer = setTimeout(function(){ showStory(cur+1); }, DURATION);
+            }
+        }
+
+        window.adsStoriesOpen = function(index) {
+            buildBars();
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            showStory(index || 0);
+        };
+        window.adsStoriesClose = function() {
+            clearTimeout(stTimer);
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+            mediaEl.innerHTML = '';
+        };
+
+        document.getElementById('adsStoriesLeft').addEventListener('click', function(){ showStory(cur-1); });
+        document.getElementById('adsStoriesRight').addEventListener('click', function(){ showStory(cur+1); });
+
+        /* swipe down to close */
+        var stsy = 0;
+        overlay.addEventListener('touchstart', function(e){ stsy = e.touches[0].clientY; }, {passive:true});
+        overlay.addEventListener('touchend', function(e){
+            var dy = e.changedTouches[0].clientY - stsy;
+            if (dy > 70) { adsStoriesClose(); }
+        }, {passive:true});
+
+        document.addEventListener('keydown', function(e){
+            if (!overlay.classList.contains('open')) return;
+            if (e.key === 'Escape')     adsStoriesClose();
+            if (e.key === 'ArrowRight') showStory(cur+1);
+            if (e.key === 'ArrowLeft')  showStory(cur-1);
+        });
+    })();
 </script>
 {% endblock %}
 
