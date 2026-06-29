@@ -21523,3 +21523,5 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-28 11:10:05,486 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-28 11:32:27,100 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-28 11:32:42,266 - app - WARNING - 404 Error: http://b1318053-4869-4e32-a73d-94ae73027c5e-00-imdsyn5bkt1h.spock.replit.dev/static/uploads/ads/ad_f7a1f401.mp4
+2026-06-29 00:08:18,552 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-29 00:21:48,220 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
