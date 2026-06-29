@@ -60,3 +60,7 @@ SECRET_KEY = "11adf448023739e000ea19b58259258ae978667500a27c466c1b48ec337f98ee"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 8081
+externalPort = 8081
