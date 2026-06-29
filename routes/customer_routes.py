@@ -1234,13 +1234,34 @@ def track_order_public():
         items = cursor.fetchall()
         items_list = [dict(i) for i in items] if items else []
 
+        # Fetch status history for timeline timestamps
+        cursor.execute("""
+            SELECT status, note, changed_at
+            FROM order_status_history
+            WHERE order_id = %s
+            ORDER BY changed_at ASC
+        """, (order_dict['id'],))
+        history_rows = cursor.fetchall()
+        # Build dict: status → first timestamp it was reached
+        status_history = {}
+        for row in history_rows:
+            s = row['status']
+            if s not in status_history:
+                status_history[s] = {'time': row['changed_at'], 'note': row['note']}
+
+        # Fallback: if no history yet, use order created_at for pending
+        if not status_history and order_dict.get('created_at'):
+            status_history['pending'] = {'time': order_dict['created_at'], 'note': None}
+
         return render_template('customer/track_order.html',
                                order=order_dict, items=items_list, lang=lang,
+                               status_history=status_history,
                                whatsapp_number=WHATSAPP_NUMBER, error=None)
     except Exception as e:
         current_app.logger.error(f"Order tracking error: {e}")
         return render_template('customer/track_order.html',
                                order=None, items=[], lang=lang,
+                               status_history={},
                                whatsapp_number=WHATSAPP_NUMBER,
                                error='Error loading order. Please try again.')
 

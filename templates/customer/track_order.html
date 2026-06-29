@@ -3,32 +3,43 @@
 
 {% block extra_css %}
 <style>
-    .track-wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px 60px; }
+    .track-wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 80px; }
 
+    /* ===== HEADER ===== */
     .track-header {
-        background: linear-gradient(135deg, #1a7a4a, #0f5232);
-        border-radius: 20px;
-        padding: 32px 24px;
+        background: linear-gradient(135deg, #1a7a4a 0%, #0f5232 100%);
+        border-radius: 24px;
+        padding: 36px 28px;
         color: white;
         text-align: center;
         margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
     }
-    .track-header h1 { margin: 0 0 8px; font-size: 1.6rem; }
-    .track-header p  { margin: 0; opacity: .88; }
+    .track-header::before {
+        content: '';
+        position: absolute;
+        top: -40px; right: -40px;
+        width: 180px; height: 180px;
+        background: rgba(255,255,255,.07);
+        border-radius: 50%;
+    }
+    .track-header h1 { margin: 0 0 6px; font-size: 1.7rem; position: relative; }
+    .track-header p  { margin: 0; opacity: .88; position: relative; }
 
+    /* ===== SEARCH ===== */
     .search-card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 18px rgba(0,0,0,.09);
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.08);
         padding: 28px 24px;
         margin-bottom: 24px;
     }
-    .search-row { display: flex; gap: 10px; }
     .search-input {
-        flex: 1;
+        width: 100%; box-sizing: border-box;
         border: 2px solid #e0e0e0;
-        border-radius: 12px;
-        padding: 12px 16px;
+        border-radius: 14px;
+        padding: 13px 16px;
         font-size: 1rem;
         background: var(--bg-white, white);
         color: var(--text-color, #333);
@@ -37,78 +48,201 @@
     }
     .search-input:focus { border-color: #1a7a4a; }
     .search-btn {
-        background: #1a7a4a;
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 12px 22px;
-        font-size: 1rem;
-        font-weight: 700;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: background .2s;
+        width: 100%; padding: 14px;
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        color: white; border: none;
+        border-radius: 14px;
+        font-size: 1rem; font-weight: 700;
+        cursor: pointer; transition: opacity .2s;
     }
-    .search-btn:hover { background: #1557b0; }
+    .search-btn:hover { opacity: .9; }
 
-    .card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.07); padding: 24px; margin-bottom: 18px; }
-    .card-title { font-size: 1rem; font-weight: 700; color: #333; margin: 0 0 18px; padding-bottom: 12px; border-bottom: 2px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
+    /* ===== CARD ===== */
+    .card {
+        background: var(--bg-white, white);
+        border-radius: 20px;
+        box-shadow: 0 2px 16px rgba(0,0,0,.07);
+        padding: 24px;
+        margin-bottom: 18px;
+    }
+    .card-title {
+        font-size: 1rem; font-weight: 700;
+        color: var(--text-color, #333);
+        margin: 0 0 20px;
+        padding-bottom: 14px;
+        border-bottom: 2px solid var(--border-color-light, #f0f0f0);
+        display: flex; align-items: center; gap: 8px;
+    }
 
-    /* Timeline */
-    .timeline { position: relative; padding-left: 36px; }
-    .timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 2px; background: #e0e0e0; }
-    .tl-item { position: relative; margin-bottom: 28px; }
+    /* ===== STATUS BADGE ===== */
+    .status-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 5px 16px;
+        border-radius: 50px;
+        font-size: .78rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .5px;
+    }
+    .s-pending    { background: #fff3e0; color: #e65100; }
+    .s-confirmed  { background: #e3f2fd; color: #0d47a1; }
+    .s-processing { background: #f3e5f5; color: #6a1b9a; }
+    .s-shipped    { background: #e8eaf6; color: #283593; }
+    .s-delivered  { background: #e8f5e9; color: #2e7d32; }
+    .s-cancelled  { background: #ffebee; color: #c62828; }
+
+    /* ===== TIMELINE ===== */
+    .timeline { position: relative; padding-left: 42px; }
+    .timeline::before {
+        content: '';
+        position: absolute; left: 17px; top: 14px; bottom: 14px;
+        width: 2px; background: var(--border-color-light, #e8e8e8);
+    }
+    .tl-item { position: relative; margin-bottom: 30px; }
     .tl-item:last-child { margin-bottom: 0; }
+
     .tl-dot {
-        position: absolute;
-        left: -30px;
-        top: 2px;
-        width: 28px;
-        height: 28px;
+        position: absolute; left: -31px; top: 3px;
+        width: 30px; height: 30px;
         border-radius: 50%;
-        background: #e0e0e0;
-        color: #999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        border: 3px solid white;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px;
+        background: var(--border-color-light, #e8e8e8);
+        color: #aaa;
+        border: 3px solid var(--bg-white, white);
         box-shadow: 0 0 0 2px #e0e0e0;
+        transition: all .3s;
     }
-    .tl-dot.done { background: #4caf50; color: white; box-shadow: 0 0 0 2px #4caf50; }
-    .tl-dot.active { background: #1a7a4a; color: white; box-shadow: 0 0 0 3px rgba(26,122,74,.25); animation: tl-pulse 1.5s infinite; }
-    .tl-dot.cancel { background: #f44336; color: white; box-shadow: 0 0 0 2px #f44336; }
-    @keyframes tl-pulse { 0%,100%{box-shadow:0 0 0 3px rgba(26,122,74,.25)} 50%{box-shadow:0 0 0 7px rgba(26,122,74,.08)} }
-    .tl-title { font-weight: 700; color: #333; font-size: .95rem; margin-bottom: 3px; }
+    .tl-dot.done {
+        background: #4caf50; color: white;
+        box-shadow: 0 0 0 2px #4caf50;
+    }
+    .tl-dot.active {
+        background: #1a7a4a; color: white;
+        box-shadow: 0 0 0 3px rgba(26,122,74,.25);
+        animation: tl-pulse 2s infinite;
+    }
+    .tl-dot.cancel {
+        background: #f44336; color: white;
+        box-shadow: 0 0 0 2px #f44336;
+    }
+    @keyframes tl-pulse {
+        0%,100% { box-shadow: 0 0 0 3px rgba(26,122,74,.25); }
+        50%      { box-shadow: 0 0 0 8px rgba(26,122,74,.06); }
+    }
+
+    .tl-body { padding-top: 2px; }
+    .tl-title {
+        font-weight: 700; font-size: .97rem;
+        color: var(--text-color, #333);
+        margin-bottom: 3px;
+    }
     .tl-title.active { color: #1a7a4a; }
-    .tl-desc { color: #777; font-size: .85rem; line-height: 1.5; }
+    .tl-title.muted  { color: #bbb; }
+    .tl-time {
+        font-size: .78rem;
+        color: #4caf50;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+    .tl-desc { color: #888; font-size: .84rem; line-height: 1.5; }
+    .tl-note {
+        margin-top: 5px; font-size: .8rem;
+        color: #555; background: #f5f5f5;
+        padding: 4px 10px; border-radius: 8px;
+        display: inline-block;
+    }
 
-    /* Order summary */
-    .order-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .meta-item label { font-size: .75rem; color: #999; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 3px; }
-    .meta-item span { font-weight: 600; color: #333; font-size: .93rem; }
+    /* ===== ORDER META ===== */
+    .order-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .meta-item label {
+        font-size: .72rem; color: #999;
+        text-transform: uppercase; letter-spacing: .6px;
+        display: block; margin-bottom: 3px;
+    }
+    .meta-item span { font-weight: 600; color: var(--text-color, #222); font-size: .93rem; }
 
-    .status-badge { display: inline-block; padding: 4px 14px; border-radius: 50px; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
-    .s-pending { background: #fff3e0; color: #e65100; }
-    .s-processing { background: #e3f2fd; color: #0f5232; }
-    .s-shipped { background: #f3e5f5; color: #6a1b9a; }
-    .s-delivered { background: #e8f5e9; color: #2e7d32; }
-    .s-cancelled { background: #ffebee; color: #c62828; }
-
-    .item-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+    /* ===== ITEMS ===== */
+    .item-row {
+        display: flex; align-items: center; gap: 14px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border-color-light, #f5f5f5);
+    }
     .item-row:last-child { border-bottom: none; }
-    .item-thumb { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; background: #f0f0f0; flex-shrink: 0; }
-    .item-thumb-ph { width: 48px; height: 48px; border-radius: 8px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-    .item-info { flex: 1; }
-    .item-name { font-weight: 600; color: #222; font-size: .88rem; }
-    .item-qty  { color: #888; font-size: .8rem; }
+    .item-thumb {
+        width: 52px; height: 52px;
+        border-radius: 10px; object-fit: cover;
+        background: #f0f0f0; flex-shrink: 0;
+    }
+    .item-thumb-ph {
+        width: 52px; height: 52px;
+        border-radius: 10px; background: #f5f5f5;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; flex-shrink: 0;
+    }
+    .item-info { flex: 1; min-width: 0; }
+    .item-name { font-weight: 600; color: var(--text-color, #222); font-size: .88rem; }
+    .item-qty  { color: #888; font-size: .8rem; margin-top: 2px; }
     .item-price { font-weight: 700; color: #1a7a4a; font-size: .88rem; white-space: nowrap; }
 
-    .btn-wa { display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: white; text-decoration: none; border-radius: 12px; padding: 12px 22px; font-weight: 700; width: 100%; justify-content: center; box-sizing: border-box; }
+    /* ===== AUTO-REFRESH PILL ===== */
+    .refresh-pill {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #e8f5e9; color: #2e7d32;
+        border-radius: 50px; padding: 5px 14px;
+        font-size: .78rem; font-weight: 600;
+        border: 1px solid #c8e6c9;
+    }
+    .refresh-dot {
+        width: 7px; height: 7px;
+        background: #4caf50; border-radius: 50%;
+        animation: blink 1.2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
+    /* ===== WHATSAPP BTN ===== */
+    .btn-wa {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: #25D366; color: white;
+        text-decoration: none; border-radius: 14px;
+        padding: 14px 24px;
+        font-weight: 700; font-size: 1rem;
+        width: 100%; justify-content: center;
+        box-sizing: border-box;
+        transition: opacity .2s;
+    }
+    .btn-wa:hover { opacity: .9; }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-bar-wrap {
+        background: var(--border-color-light, #f0f0f0);
+        border-radius: 10px; height: 8px;
+        overflow: hidden; margin: 16px 0 4px;
+    }
+    .progress-bar-fill {
+        height: 100%; border-radius: 10px;
+        background: linear-gradient(90deg, #4caf50, #1a7a4a);
+        transition: width .8s ease;
+    }
+    .progress-label {
+        font-size: .75rem; color: #888;
+        text-align: right;
+    }
+
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 540px) {
-        .search-row { flex-direction: column; }
         .order-meta { grid-template-columns: 1fr; }
         .track-header h1 { font-size: 1.3rem; }
+        .track-header { padding: 28px 20px; }
+        .card { padding: 18px; }
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+        .tl-note { background: #2a2a2a; color: #ccc; }
+        .refresh-pill { background: #1a3a2a; border-color: #2a5a3a; color: #6fcf97; }
     }
 </style>
 {% endblock %}
@@ -116,37 +250,38 @@
 {% block content %}
 <div class="track-wrap">
 
+    <!-- Header -->
     <div class="track-header">
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">📦</div>
+        <div style="font-size: 3rem; margin-bottom: 12px;">📦</div>
         <h1>Track Your Order</h1>
-        <p>ትዕዛዝ ቁጥርዎን እና ስልክ ቁጥርዎን ያስገቡ</p>
-        <p style="opacity:.75;font-size:.88rem;">Enter your order number and phone number to see status updates</p>
+        <p>ትዕዛዝ ቁጥርዎን ያስገቡ — ሁሉንም ዝማኔዎች ያዩ</p>
+        <p style="opacity:.7; font-size:.85rem; margin-top:4px;">Enter your order number and phone number</p>
     </div>
 
     <!-- Search Form -->
     <div class="search-card">
-        <p style="margin: 0 0 16px; color: #555; font-size: .93rem;">
-            📋 Use the order number from your confirmation message + the phone you placed the order with.
+        <p style="margin: 0 0 16px; color: var(--text-muted, #666); font-size: .93rem;">
+            📋 ትዕዛዝ ቁጥሩ ከ WhatsApp ወይም email ማረጋገጫዎ ላይ ይገኛል።
         </p>
-        <form method="GET" action="{{ url_for('customer.track_order_public') }}">
-            <div class="search-row" style="flex-direction: column; gap: 12px;">
+        <form method="GET" action="{{ url_for('customer.track_order_public') }}" id="trackForm">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
                 <input type="text" name="order" class="search-input"
-                       placeholder="Order number — e.g. 20260622-ABC123"
+                       placeholder="ትዕዛዝ ቁጥር — e.g. 20260622-ABC123"
                        value="{{ request.args.get('order', '') }}"
-                       style="width:100%;box-sizing:border-box;"
+                       style="text-transform: uppercase;"
                        required>
                 <input type="tel" name="phone" class="search-input"
-                       placeholder="Phone number — e.g. 09xxxxxxxx"
+                       placeholder="ስልክ ቁጥር — e.g. 09xxxxxxxx"
                        value="{{ request.args.get('phone', '') }}"
-                       style="width:100%;box-sizing:border-box;"
                        required>
-                <button type="submit" class="search-btn" style="width:100%;padding:14px;">
-                    🔍 Track My Order
+                <button type="submit" class="search-btn">
+                    🔍 ትዕዛዝ ይፈልጉ
                 </button>
             </div>
         </form>
     </div>
 
+    <!-- Error -->
     {% if error %}
     <div class="card" style="border-left: 5px solid #f44336; background: #fff8f8;">
         <p style="margin: 0; color: #c62828; font-weight: 600;">❌ {{ error }}</p>
@@ -154,100 +289,153 @@
     {% endif %}
 
     {% if order %}
+    {% set terminal = order.status in ('delivered', 'cancelled') %}
 
-    <!-- Status Overview -->
+    <!-- Auto-refresh pill (only for non-terminal orders) -->
+    {% if not terminal %}
+    <div style="text-align: right; margin-bottom: 12px;">
+        <span class="refresh-pill" id="refreshPill">
+            <span class="refresh-dot"></span>
+            <span id="refreshLabel">30 ሰከንድ ውስጥ ይዘምናል</span>
+        </span>
+    </div>
+    {% endif %}
+
+    <!-- Status Overview Card -->
     <div class="card">
-        <div class="card-title">📦 Order Status</div>
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
             <div>
-                <div style="font-size: 1.2rem; font-weight: 700; color: #222;">Order #{{ order.order_number }}</div>
-                <div style="font-size: .85rem; color: #888; margin-top: 4px;">
-                    Placed {{ order.created_at.strftime('%B %d, %Y') if order.created_at else '' }}
+                <div style="font-size: 1.25rem; font-weight: 800; color: var(--text-color, #222);">
+                    #{{ order.order_number }}
+                </div>
+                <div style="font-size: .83rem; color: var(--text-muted, #888); margin-top: 4px;">
+                    📅 ትዕዛዝ ደርሷል: {{ order.created_at.strftime('%d %b %Y, %H:%M') if order.created_at else '—' }}
                 </div>
             </div>
             <span class="status-badge s-{{ order.status }}">
                 {% if order.status == 'pending' %}⏳ Pending
-                {% elif order.status == 'processing' %}🔄 Processing
+                {% elif order.status == 'confirmed' %}✅ Confirmed
+                {% elif order.status == 'processing' %}⚙️ Processing
                 {% elif order.status == 'shipped' %}🚚 Shipped
-                {% elif order.status == 'delivered' %}✅ Delivered
+                {% elif order.status == 'delivered' %}🎉 Delivered
                 {% elif order.status == 'cancelled' %}❌ Cancelled
                 {% else %}{{ order.status|title }}
                 {% endif %}
             </span>
         </div>
 
-        <!-- Timeline -->
-        {% if order.status != 'cancelled' %}
-        {% set steps = [
-            ('pending',    '⏳', 'Order Placed',    'Your order has been received and is being reviewed.'),
-            ('processing', '🔄', 'Processing',      'Our team is preparing your items for delivery.'),
-            ('shipped',    '🚚', 'Out for Delivery', 'Your order is on its way to you!'),
-            ('delivered',  '✅', 'Delivered',        'Order delivered successfully. Thank you for shopping with us!'),
-        ] %}
-        {% set step_keys = ['pending', 'processing', 'shipped', 'delivered'] %}
+        {% if order.status == 'cancelled' %}
+        <!-- Cancelled state -->
+        <div style="background: #fff3f3; border-radius: 14px; padding: 18px; color: #c62828; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+            ❌ ይህ ትዕዛዝ ተሰርዟል። ለጥያቄ ከዚህ በታች ባለው WhatsApp ያነጋግሩን።
+        </div>
+
+        {% else %}
+        <!-- Progress bar -->
+        {% set step_keys = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'] %}
         {% set current_idx = step_keys.index(order.status) if order.status in step_keys else 0 %}
-        <div class="timeline">
-            {% for key, icon, title, desc in steps %}
+        {% set progress_pct = ((current_idx + 1) / step_keys|length * 100)|round|int %}
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width: {{ progress_pct }}%;"></div>
+        </div>
+        <div class="progress-label">{{ progress_pct }}% complete</div>
+
+        <!-- Timeline -->
+        {% set steps = [
+            ('pending',    '⏳', 'ትዕዛዝ ደርሷል',      'Order Placed',    'ትዕዛዝዎ ደርሶናል — በቅርቡ እናረጋግጣለን።'),
+            ('confirmed',  '✅', 'ተረጋግጧል',          'Confirmed',       'ትዕዛዝዎ ተረጋግጧል — ለዝግጅት ተዘጋጅቷል።'),
+            ('processing', '⚙️', 'በዝግጅት ላይ ነው',   'Processing',      'ቡድናችን ዕቃዎን እየዘጋጀ ነው።'),
+            ('shipped',    '🚚', 'ተላኮ',             'Out for Delivery','ትዕዛዝዎ ወደ እርስዎ በመሄድ ላይ ነው!'),
+            ('delivered',  '🎉', 'ደረሰ',             'Delivered',       'ትዕዛዝዎ ደርሷል። ጥሩ ጥቅም ይሁንልዎ!'),
+        ] %}
+
+        <div class="timeline" style="margin-top: 24px;">
+            {% for key, icon, am_title, en_title, desc in steps %}
             {% set i = loop.index0 %}
+            {% set is_done   = i < current_idx %}
+            {% set is_active = i == current_idx %}
+            {% set is_future = i > current_idx %}
+            {% set hist = status_history.get(key, {}) if status_history is defined else {} %}
             <div class="tl-item">
-                <div class="tl-dot {% if i < current_idx %}done{% elif i == current_idx %}active{% endif %}">
+                <div class="tl-dot {% if is_done %}done{% elif is_active %}active{% endif %}">
                     {{ icon }}
                 </div>
-                <div class="tl-title {% if i == current_idx %}active{% endif %}">{{ title }}</div>
-                <div class="tl-desc">{{ desc }}</div>
+                <div class="tl-body">
+                    <div class="tl-title {% if is_active %}active{% elif is_future %}muted{% endif %}">
+                        {{ am_title }} <span style="font-weight:400; color:#aaa; font-size:.85em;">/ {{ en_title }}</span>
+                    </div>
+                    {% if hist and hist.time %}
+                    <div class="tl-time">
+                        ✔ {{ hist.time.strftime('%d %b %Y · %H:%M') }}
+                    </div>
+                    {% elif is_active %}
+                    <div class="tl-time" style="color: #1a7a4a;">● አሁን ይሄ ደረጃ ላይ ነዎት</div>
+                    {% endif %}
+                    {% if not is_future %}
+                    <div class="tl-desc">{{ desc }}</div>
+                    {% if hist and hist.note %}
+                    <span class="tl-note">📝 {{ hist.note }}</span>
+                    {% endif %}
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
-        </div>
-        {% else %}
-        <div style="background: #fff3f3; border-radius: 10px; padding: 16px; color: #c62828; font-weight: 600;">
-            ❌ This order was cancelled. Please contact support if you have questions.
         </div>
         {% endif %}
     </div>
 
-    <!-- Order Details -->
+    <!-- Order Information -->
     <div class="card">
-        <div class="card-title">📋 Order Information</div>
+        <div class="card-title">📋 የትዕዛዝ መረጃ</div>
         <div class="order-meta">
             <div class="meta-item">
-                <label>Total Amount</label>
-                <span style="color: #1a7a4a;">{{ "{:,.0f}".format(order.total) }} ETB</span>
+                <label>ጠቅላላ ክፍያ / Total</label>
+                <span style="color: #1a7a4a; font-size: 1.1rem;">{{ "{:,.0f}".format(order.total) }} ETB</span>
             </div>
             <div class="meta-item">
-                <label>Payment</label>
+                <label>ክፍያ ዘዴ / Payment</label>
                 <span>{{ order.payment_method|title if order.payment_method else 'Cash on Delivery' }}</span>
             </div>
             <div class="meta-item">
-                <label>City</label>
+                <label>ከተማ / City</label>
                 <span>{{ order.shipping_city or 'ወሎ ደሴ ኩታበር' }}</span>
             </div>
             <div class="meta-item">
-                <label>Items</label>
-                <span>{{ items|length }} item{% if items|length != 1 %}s{% endif %}</span>
+                <label>ዕቃዎች / Items</label>
+                <span>{{ items|length }} ዕቃ{% if items|length != 1 %}ዎች{% endif %}</span>
             </div>
             {% if order.shipping_phone %}
             <div class="meta-item">
-                <label>Contact Phone</label>
+                <label>ስልክ / Phone</label>
                 <span>{{ order.shipping_phone }}</span>
             </div>
             {% endif %}
             {% if order.shipping_address %}
-            <div class="meta-item" style="grid-column: 1/-1;">
-                <label>Delivery Address</label>
+            <div class="meta-item" style="grid-column: 1 / -1;">
+                <label>አድራሻ / Delivery Address</label>
                 <span>{{ order.shipping_address }}</span>
+            </div>
+            {% endif %}
+            {% if order.notes %}
+            <div class="meta-item" style="grid-column: 1 / -1;">
+                <label>ማስታወሻ / Notes</label>
+                <span style="font-weight: 400; color: #666;">{{ order.notes }}</span>
             </div>
             {% endif %}
         </div>
     </div>
 
-    <!-- Items -->
+    <!-- Ordered Items -->
     {% if items %}
     <div class="card">
-        <div class="card-title">🛍️ Items</div>
+        <div class="card-title">🛍️ የታዘዙ ዕቃዎች</div>
         {% for item in items %}
         <div class="item-row">
             {% if item.thumbnail %}
-            <img src="{{ url_for('static', filename=item.thumbnail) }}" alt="{{ item.name }}" class="item-thumb"
+            {% set thumb = item.thumbnail if item.thumbnail.startswith('uploads/') else 'uploads/products/' + item.thumbnail %}
+            <img src="{{ url_for('static', filename=thumb) }}"
+                 alt="{{ item.name_am or item.name }}"
+                 class="item-thumb"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="item-thumb-ph" style="display:none;">👗</div>
             {% else %}
@@ -255,22 +443,80 @@
             {% endif %}
             <div class="item-info">
                 <div class="item-name">{{ item.name_am or item.name }}</div>
-                <div class="item-qty">Qty: {{ item.quantity }}</div>
+                <div class="item-qty">ብዛት: {{ item.quantity }}</div>
             </div>
             <div class="item-price">{{ "{:,.0f}".format(item.price_at_time * item.quantity) }} ETB</div>
         </div>
         {% endfor %}
+
+        <!-- Order totals summary -->
+        <div style="margin-top: 16px; padding-top: 14px; border-top: 2px solid var(--border-color-light, #f0f0f0);">
+            {% if order.discount and order.discount > 0 %}
+            <div style="display:flex; justify-content:space-between; color: #888; font-size:.88rem; margin-bottom:6px;">
+                <span>ቅናሽ</span><span style="color:#4caf50;">- {{ "{:,.0f}".format(order.discount) }} ETB</span>
+            </div>
+            {% endif %}
+            <div style="display:flex; justify-content:space-between; color: #888; font-size:.88rem; margin-bottom:6px;">
+                <span>Shipping</span>
+                <span>{% if order.shipping_fee == 0 %}Free{% else %}{{ "{:,.0f}".format(order.shipping_fee) }} ETB{% endif %}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.05rem; color: var(--text-color,#222);">
+                <span>ጠቅላላ</span>
+                <span style="color:#1a7a4a;">{{ "{:,.0f}".format(order.total) }} ETB</span>
+            </div>
+        </div>
     </div>
     {% endif %}
 
     <!-- WhatsApp Support -->
-    <a href="https://wa.me/{{ whatsapp_number }}?text=Hello!+I+need+help+with+order+%23{{ order.order_number }}"
-       target="_blank" class="btn-wa">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        💬 Contact Support via WhatsApp
+    <a href="https://wa.me/{{ whatsapp_number }}?text={{ ('ሰላም! የትዕዛዝ ቁጥሬ ' + order.order_number + ' ነው። ስለ ትዕዛዜ ሁኔታ ማወቅ እፈልጋለሁ።')|urlencode }}"
+       target="_blank" rel="noopener" class="btn-wa">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        💬 WhatsApp ይጠቀሙ ለድጋፍ
     </a>
 
     {% endif %}
 
 </div>
+
+{% if order and not terminal %}
+<script>
+(function () {
+    var REFRESH_SECS = 30;
+    var remaining = REFRESH_SECS;
+    var label = document.getElementById('refreshLabel');
+
+    function tick() {
+        remaining--;
+        if (remaining <= 0) {
+            location.reload();
+            return;
+        }
+        if (label) label.textContent = remaining + ' ሰከንድ ውስጥ ይዘምናል';
+        setTimeout(tick, 1000);
+    }
+    setTimeout(tick, 1000);
+
+    // Phone input auto-format
+    var phoneInput = document.querySelector('input[name="phone"]');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 13);
+        });
+    }
+
+    // Order number uppercase
+    var orderInput = document.querySelector('input[name="order"]');
+    if (orderInput) {
+        orderInput.addEventListener('input', function () {
+            var pos = this.selectionStart;
+            this.value = this.value.toUpperCase();
+            this.setSelectionRange(pos, pos);
+        });
+    }
+})();
+</script>
+{% endif %}
 {% endblock %}

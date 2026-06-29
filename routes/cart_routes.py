@@ -636,6 +636,15 @@ def place_order():
         flash('ትዕዛዙን ማስቀመጥ አልተሳካም። እባክዎ እንደገና ይሞክሩ።', 'danger')
         return redirect(url_for('cart.checkout'))
 
+    # Record initial pending status in history
+    try:
+        cursor.execute(
+            "INSERT INTO order_status_history (order_id, status, note) VALUES (%s, 'pending', 'ትዕዛዝ ደርሷል')",
+            (order_id,)
+        )
+    except Exception as _he:
+        current_app.logger.warning(f"Could not record order history: {_he}")
+
     # Create order items and update stock atomically
     for item in cart_items_raw:
         price = item['price'] if isinstance(item, dict) else item['price']

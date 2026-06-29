@@ -21538,3 +21538,5 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-29 02:14:21,130 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-29 02:15:49,160 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-06-29 02:22:11,582 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-29 02:25:51,184 - app - WARNING - Slow request: POST /admin/ads/edit/7 - 3.30s
+2026-06-29 02:28:20,986 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!

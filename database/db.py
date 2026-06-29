@@ -487,6 +487,17 @@ def init_db():
         )
     """)
     cur.execute("CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code)")
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS order_status_history (
+            id SERIAL PRIMARY KEY,
+            order_id INTEGER NOT NULL,
+            status VARCHAR(30) NOT NULL,
+            note TEXT,
+            changed_at TIMESTAMP DEFAULT NOW()
+        )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_osh_order ON order_status_history(order_id, changed_at)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_coupons_active ON coupons(is_active)")
 
     cur.execute("""

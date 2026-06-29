@@ -1281,6 +1281,17 @@ def order_update_status(oid):
         cursor.execute("UPDATE orders SET status = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
                        (status, oid))
 
+        # Record status change in history
+        if prev_status != status:
+            status_note = request.form.get('status_note', '').strip() or None
+            try:
+                cursor.execute(
+                    "INSERT INTO order_status_history (order_id, status, note) VALUES (%s, %s, %s)",
+                    (oid, status, status_note)
+                )
+            except Exception as _he:
+                current_app.logger.warning(f"Could not record status history: {_he}")
+
         if status == 'delivered' and prev_status != 'delivered' and user_id:
             points_earned = max(1, int(order_total // 100))
             cursor.execute(
@@ -1335,11 +1346,13 @@ def order_update_status(oid):
                 cust_name  = (orow[1] if orow else '') or 'ደንበኛ'
 
                 from services.whatsapp_service import send_customer_status_notification
+                track_url = url_for('customer.track_order_public', order=order_number, _external=True)
                 notif = send_customer_status_notification(
                     order_number=order_number,
                     customer_name=cust_name,
                     customer_phone=cust_phone,
                     status=status,
+                    notes=f'ትዕዛዝ ይከታተሉ: {track_url}',
                 )
                 auto_sent     = notif.get('auto_sent', False)
                 wa_notify_url = notif.get('wa_url')
