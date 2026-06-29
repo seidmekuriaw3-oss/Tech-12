@@ -415,6 +415,16 @@
         }
     }
     
+    function getProductImgUrl(thumbnail) {
+        if (!thumbnail || thumbnail === 'None' || !String(thumbnail).trim()) {
+            return '{{ url_for("static", filename="images/placeholder.png") }}';
+        }
+        const t = String(thumbnail).trim();
+        if (t.startsWith('http') || t.startsWith('/static/')) return t;
+        if (t.startsWith('uploads/')) return '/static/' + t;
+        return '/static/uploads/products/' + t;
+    }
+
     function renderCartModal(data) {
         const cart = data.items || [];
         const subtotal = data.subtotal || 0;
@@ -448,7 +458,7 @@
             itemsDiv.innerHTML = cart.map(item => `
                 <div class="cart-item" data-id="${item.product_id}">
                     <div class="cart-item-image">
-                        ${item.thumbnail ? `<img src="/static/${item.thumbnail}" alt="${escapeHtml(item.name_am || item.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:32px;\\'>👗</div>';">` : '<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 32px;">👗</div>'}
+                        ${item.thumbnail ? `<img src="{{ url_for('static', filename='') }}${item.thumbnail}" alt="${escapeHtml(item.name)}" onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">` : '<div style="display: flex; align-items: center; justify-content: center; height: 100%;">👗</div>'}
                     </div>
                     <div class="cart-item-details">
                         <div class="cart-item-name">${escapeHtml(item.name_am || item.name)}</div>

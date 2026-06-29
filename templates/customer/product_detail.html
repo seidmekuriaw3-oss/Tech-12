@@ -791,23 +791,10 @@
         }
         
         const btn = document.getElementById('addToCartBtn');
-        const originalText = btn ? btn.innerHTML : '';
-        
-        if (btn) {
-            btn.innerHTML = '⏳ Adding...';
-            btn.disabled = true;
-        }
         
         if (window.addToCart) {
             window.addToCart(productId, currentQuantity, btn);
         }
-        
-        setTimeout(() => {
-            if (btn) {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }, 1000);
     }
     
     // Make functions globally available

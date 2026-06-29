@@ -10,9 +10,14 @@ import sys
 import argparse
 import subprocess
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Add current directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# Load environment variables from the project .env file.
+ENV_FILE = Path(__file__).resolve().parent / '.env'
+load_dotenv(dotenv_path=ENV_FILE, override=False)
 
 def print_banner():
     """Display application banner"""
@@ -92,7 +97,7 @@ def init_database():
     """Initialize the database"""
     print("\n📦 Initializing database...")
     try:
-        from app import init_database as init_db
+        from database.db import init_db
         init_db()
         print("✅ Database initialized successfully!")
     except Exception as e:

@@ -83,11 +83,11 @@ class CartManager {
     }
     
     refresh() {
-        this.fetchCartData();
+        return this.fetchCartData();
     }
     
     fetchCartData(retryCount = 0) {
-        fetch(CART_API.cart)
+        return fetch(CART_API.cart)
             .then(res => res.text())
             .then(text => {
                 if (!text || !text.trim()) return;
@@ -189,7 +189,7 @@ class CartManager {
             const item = this.cart[i];
             html += `
                 <div class="mini-cart-item d-flex align-center" style="gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color, #eee);">
-                    <img src="${cartThumbUrl(item.thumbnail || item.image)}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:28px\'>👗</span>';">
+                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" alt="${item.name || item.product_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
                     <div class="flex-1">
                         <div class="fw-500">${this.truncate(item.name || item.product_name, 25)}</div>
                         <div class="text-muted small">${this.formatPrice(item.price || item.discounted_price)} x ${item.quantity}</div>
@@ -252,7 +252,7 @@ class CartManager {
             const data = JSON.parse(text);
             if (data.success) {
                 if (typeof data.cart_count === 'number') { this.count = data.cart_count; this.updateCartBadges(); }
-                return { success: true, message: data.message || 'Product added to cart!' };
+                return this.fetchCartData().then(() => ({ success: true, message: data.message || 'Product added to cart!' }));
             } else {
                 throw new Error(data.error || data.message || 'Failed to add to cart');
             }
@@ -312,7 +312,7 @@ class CartManager {
     
     clearCart() {
         return fetch(CART_API.clear, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
@@ -333,6 +333,17 @@ class CartManager {
             this.refreshTimer = null;
         }
     }
+}
+
+// ==================== Image URL Helper ====================
+function getProductImageUrl(thumbnail) {
+    if (!thumbnail || thumbnail === 'None' || String(thumbnail).trim() === '') {
+        return '/static/images/placeholder.png';
+    }
+    const t = String(thumbnail).trim();
+    if (t.startsWith('http') || t.startsWith('/static/')) return t;
+    if (t.startsWith('uploads/')) return '/static/' + t;
+    return '/static/uploads/products/' + t;
 }
 
 // Initialize cart manager
@@ -616,7 +627,7 @@ function updateMiniCartPanelContent(panel) {
                 border-bottom: 1px solid var(--border-color, #eee);
             " data-id="${item.product_id || item.id}">
                 <div style="width: 60px; height: 60px; background: #f5f5f5; border-radius: 8px; overflow: hidden;">
-                    <img src="${cartThumbUrl(item.thumbnail || item.image)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:28px;display:flex;align-items:center;justify-content:center;height:100%\'>👗</span>';">
+                    <img src="${item.thumbnail || item.image || '/static/images/placeholder.png'}" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div style="flex: 1;">
                     <div style="font-weight: 500;">${manager.truncate(item.name || item.product_name, 30)}</div>

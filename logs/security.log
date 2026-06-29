@@ -21211,1286 +21211,319 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-26 10:43:02,091 - app - ERROR - Product detail error: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-26 10:43:10,857 - app - WARNING - 404 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/uploads/products/product_316ea9df.jpg
 2026-06-26 10:43:17,028 - app - WARNING - 404 Error: http://bf3b98fd-4a6b-4582-b1e9-1f503cfd1824-00-3ev0gf4jh3efg.worf.replit.dev/uploads/products/product_316ea9df.jpg
-2026-06-26 17:17:06,403 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:06,440 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:08,348 - app - ERROR - Database initialization error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-DETAIL:  Key (typname, typnamespace)=(users, 2200) already exists.
-
-2026-06-26 17:17:11,749 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:15,325 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:18,828 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:22,324 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:25,827 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:29,296 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:32,756 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:36,260 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:39,730 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:43,269 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:46,783 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:50,344 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:53,825 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:17:57,316 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:00,805 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:04,288 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:07,772 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:11,295 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:14,766 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:18,266 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:21,763 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:25,268 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:28,762 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:32,230 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:35,700 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:39,204 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:42,681 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:46,175 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:49,685 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:53,258 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:18:56,774 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:00,243 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:03,731 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:07,195 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:10,692 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:14,199 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:17,696 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:21,216 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:24,694 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:28,182 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:31,651 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:35,127 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:38,619 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:42,118 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:45,624 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:49,192 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:52,687 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:56,230 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:19:59,726 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:03,222 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:06,703 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:10,193 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:13,659 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:17,187 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:20,714 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:24,179 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:27,646 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:31,147 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:34,641 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:38,094 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:41,596 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:45,082 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:48,565 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:52,091 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:55,651 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:20:59,197 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:02,682 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:06,227 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:09,693 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:13,225 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:16,712 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:20,178 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:23,674 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:27,173 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:30,676 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:34,170 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:37,658 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:41,155 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:44,621 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:48,129 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:51,576 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:55,075 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:21:58,578 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:02,112 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:05,632 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:09,141 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:12,594 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:16,078 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:19,564 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:23,016 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:26,487 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:29,940 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:33,400 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:36,918 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:40,446 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:43,918 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:47,429 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:50,934 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:54,397 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:22:57,886 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:01,364 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:06,302 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:10,060 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:13,531 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:16,989 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:20,446 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:23,926 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:27,392 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:30,868 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:34,355 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:37,841 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:41,301 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:44,760 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:48,219 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:51,706 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:55,182 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:23:58,666 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:02,130 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:05,609 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:09,120 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:12,584 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:16,065 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:19,569 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:23,030 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:26,490 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:29,955 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:33,459 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:36,926 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:40,388 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:43,879 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:47,432 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:50,901 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:54,376 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:24:57,849 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:01,318 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:04,831 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:08,314 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:11,844 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:15,320 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:18,774 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:22,254 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:25,710 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:29,173 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:32,814 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:36,324 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:39,776 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:43,248 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:46,737 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:50,212 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:53,674 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:25:57,331 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:00,802 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:04,295 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:07,771 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:11,221 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:14,737 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:18,247 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:21,799 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:25,312 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:28,810 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:32,295 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:35,758 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:39,281 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:42,792 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:46,266 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:49,773 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:53,313 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:26:56,863 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:00,381 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:03,863 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:07,401 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:10,925 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:14,407 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:17,894 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:21,366 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:24,868 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:28,050 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:29,064 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:32,571 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:36,098 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:39,647 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:43,209 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:46,718 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:50,169 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:53,665 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:27:57,150 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:00,627 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:04,077 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:07,557 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:11,073 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:14,553 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:18,050 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:21,533 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:25,021 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:28,496 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:32,038 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:35,570 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:39,053 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:42,649 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:46,223 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:49,738 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:53,268 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:28:56,774 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:00,366 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:03,875 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:07,418 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:10,925 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:14,439 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:17,927 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:21,437 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:24,901 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:28,457 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:31,982 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:35,522 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:39,074 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:42,578 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:46,244 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:49,765 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:53,246 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:29:56,743 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:00,250 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:03,807 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:07,340 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:10,846 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:14,329 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:17,809 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:21,326 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:24,807 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:28,266 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:31,776 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:35,262 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:38,754 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:42,224 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:45,726 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:49,203 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:52,719 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:56,215 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:30:59,701 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:03,173 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:06,680 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:10,169 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:13,636 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:17,087 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:20,558 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:24,017 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:27,470 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:30,959 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:34,463 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:38,015 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:41,486 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:44,923 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:48,414 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:51,896 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:55,383 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:31:58,847 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:02,365 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:05,924 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:09,476 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:12,977 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:16,454 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:19,926 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:23,439 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:26,922 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:30,394 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:33,863 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:37,359 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:40,823 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:44,285 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:47,761 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:51,288 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:54,781 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:32:58,235 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:01,721 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:06,483 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:10,519 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:14,092 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:17,575 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:21,099 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:24,615 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:28,101 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:31,577 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:35,048 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:38,518 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:42,023 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:45,508 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:49,001 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:52,496 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:55,978 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:33:59,503 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:03,056 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:06,543 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:10,046 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:13,543 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:17,010 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:20,509 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:24,045 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:27,575 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:31,083 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:34,586 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:38,076 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:41,591 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:45,111 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:48,595 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:52,055 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:55,536 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:34:59,007 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:02,523 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:05,993 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:09,461 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:12,962 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:16,431 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:19,990 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:23,459 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:26,957 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:30,431 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:33,909 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:37,421 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:40,883 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:44,344 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:47,821 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:51,305 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:54,789 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:35:58,250 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:01,748 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:05,246 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:08,714 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:12,207 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:15,691 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:19,239 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:22,735 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:26,210 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:29,685 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:33,131 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:36,597 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:40,071 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:43,523 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:46,962 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:50,416 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:53,924 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:36:57,385 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:00,928 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:04,385 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:07,864 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:11,348 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:14,847 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:18,337 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:21,827 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:25,359 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:28,849 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:32,321 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:35,777 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:39,307 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:42,786 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:46,247 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:49,759 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:53,224 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:37:56,732 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:00,183 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:03,637 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:07,100 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:10,596 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:14,093 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:17,558 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:21,043 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:24,538 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:28,054 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:31,530 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:35,010 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:38,486 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:41,955 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:45,434 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:48,897 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:52,394 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:55,885 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:38:59,361 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:02,832 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:06,298 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:09,779 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:13,262 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:16,737 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:20,217 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:23,701 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:27,163 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:30,727 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:34,216 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:37,699 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:41,189 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:44,661 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:48,191 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:51,649 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:55,144 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:39:58,626 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:02,128 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:05,615 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:09,190 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:12,717 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:16,180 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:19,688 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:23,167 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:26,654 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:30,104 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:33,822 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:37,446 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:40,937 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:44,426 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:47,910 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:51,393 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:54,914 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:40:58,447 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:01,938 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:05,435 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:08,916 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:12,382 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:15,874 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:19,359 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:22,846 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:26,373 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:29,856 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:33,349 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:36,876 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:40,542 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:44,096 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:47,599 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:51,112 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:54,603 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:41:58,089 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:01,553 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:05,062 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:08,720 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:12,247 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:15,735 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:19,236 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:22,724 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:26,191 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:29,721 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:33,192 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:36,682 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:40,310 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:43,810 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:47,364 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:50,856 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:54,310 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:42:57,827 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:01,297 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:06,294 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:10,249 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:13,925 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:17,424 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:20,930 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:24,426 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:27,914 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:31,396 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:34,889 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:38,388 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:41,913 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:45,408 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:48,921 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:52,417 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:55,904 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:43:59,407 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:02,933 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:06,379 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:09,848 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:13,319 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:16,803 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:20,259 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:23,790 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:27,313 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:30,866 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:34,376 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:37,886 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:41,380 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:44,856 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:48,345 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:51,824 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:55,342 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:44:58,835 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:02,341 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:05,823 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:09,280 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:12,754 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:16,237 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:19,704 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:23,174 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:26,663 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:30,147 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:33,645 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:37,149 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:40,637 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:44,127 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:47,637 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:51,118 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:54,669 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:45:58,130 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:01,633 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:05,155 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:08,629 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:12,097 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:15,598 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:19,205 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:22,826 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:26,377 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:29,890 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:33,383 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:36,874 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:40,388 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:43,893 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:47,397 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:50,909 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:54,406 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:46:57,885 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:01,363 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:04,864 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:08,319 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:11,820 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:15,330 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:18,838 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:22,288 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:25,767 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:29,300 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:32,809 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:36,296 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:39,781 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:43,260 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:46,743 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:50,211 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:53,690 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:47:57,175 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:00,655 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:04,142 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:07,627 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:11,134 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:14,708 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:18,395 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:22,108 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:25,614 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:29,135 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:32,687 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:36,268 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:39,748 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:43,254 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:46,802 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:50,303 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:53,789 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:48:57,305 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:01,127 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:04,629 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:08,130 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:11,662 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:15,165 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:18,640 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:22,123 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:25,598 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:29,087 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:32,579 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:36,054 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:39,542 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:43,026 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:46,500 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:49,985 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:53,497 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:49:56,983 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:00,488 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:04,003 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:07,503 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:10,993 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:14,462 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:17,920 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:21,398 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:24,923 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:28,393 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:31,946 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:35,422 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:38,895 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:42,368 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:45,892 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:49,412 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:52,938 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:57,712 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:50:58,760 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:02,404 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:06,049 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:09,706 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:13,207 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:16,733 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:20,213 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:23,692 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:27,225 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:30,769 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:34,324 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:37,820 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:41,311 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:44,886 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:48,461 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:51,968 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:55,809 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:51:59,450 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:02,987 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:06,538 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:10,049 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:13,560 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:17,055 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:20,527 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:24,024 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:27,640 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:31,130 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:34,644 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:38,092 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:41,560 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:45,022 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:48,478 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:51,977 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:55,448 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:52:58,945 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:02,412 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:07,554 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:11,532 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:15,152 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:18,693 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:22,218 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:25,727 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:29,264 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:32,745 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:36,264 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:39,752 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:43,252 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:46,751 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:50,243 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:53,723 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:53:57,210 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:00,678 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:04,451 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:08,137 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:11,667 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:15,181 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:18,679 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:22,187 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:25,689 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:29,172 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:32,672 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:36,184 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:39,798 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:43,356 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:46,922 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:50,446 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:53,914 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:54:57,419 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:00,993 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:04,492 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:08,060 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:11,605 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:15,138 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:18,627 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:22,117 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:25,610 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:29,094 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:32,578 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:36,059 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:39,551 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:43,063 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:46,509 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:49,992 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:53,568 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:55:57,132 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:00,662 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:04,185 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:07,690 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:11,331 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:14,922 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:18,439 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:21,938 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:25,458 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:28,930 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:32,422 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:35,890 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:39,389 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:42,923 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:46,425 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:49,938 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:53,441 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:56:54,919 - app - ERROR - Exception on /cart/checkout [GET]
-Traceback (most recent call last):
-  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/workspace/routes/cart_routes.py", line 339, in checkout
-    discounted_price = round(orig_price * (1 - USER_DISCOUNT_RATE), 2)
-                             ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
-2026-06-26 17:56:54,925 - app - ERROR - 500 Error: http://2aaea5cd-119f-4cab-b756-6368cae89500-00-1ha3hpfaj2zfp.worf.replit.dev/cart/checkout - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
-2026-06-26 17:56:54,926 - app - ERROR - Traceback (most recent call last):
-  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 2190, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1486, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/workspace/.pythonlibs/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/workspace/routes/cart_routes.py", line 339, in checkout
-    discounted_price = round(orig_price * (1 - USER_DISCOUNT_RATE), 2)
-                             ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
-
-2026-06-26 17:56:56,975 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:00,479 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:03,965 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:07,515 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:11,025 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:14,556 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:18,183 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:21,752 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:25,449 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:28,993 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:32,511 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:36,016 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:39,649 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:43,204 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:46,763 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:50,363 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:53,853 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:57:57,363 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:00,808 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:04,284 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:07,796 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:11,275 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:14,812 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:18,304 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:21,783 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:25,550 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:29,191 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:32,741 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:36,255 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:39,798 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:43,327 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:46,806 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:50,296 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:53,934 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:58:57,479 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:00,965 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:04,450 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:07,944 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:11,465 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:14,997 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:18,587 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:22,103 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:25,642 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:29,235 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:32,750 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:36,359 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:39,981 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:43,517 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:47,048 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:50,559 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:54,076 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 17:59:57,628 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:01,240 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:04,759 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:08,246 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:11,749 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:15,254 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:18,713 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:22,262 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:25,758 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:29,310 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:32,824 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:36,345 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:39,836 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:43,329 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:46,842 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:50,356 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:53,852 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:00:57,356 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:00,912 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:04,399 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:07,981 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:11,474 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:14,987 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:18,482 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:21,935 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:25,455 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:29,001 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:32,601 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:36,069 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:39,567 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:43,045 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:46,535 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:50,066 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:53,568 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:01:57,120 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:00,649 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:05,999 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:07,035 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:10,747 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:14,403 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:17,938 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:21,425 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:25,003 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:28,522 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:31,999 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:35,483 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:38,956 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:42,458 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:45,959 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:49,430 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:52,910 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:02:56,036 - app - WARNING - 404 Error: http://localhost:5000/checkout
-2026-06-26 18:02:56,399 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:00,006 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:03,594 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:04,063 - app - WARNING - 404 Error: http://localhost:5000/checkout
-2026-06-26 18:03:08,527 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:09,981 - app - WARNING - 404 Error: http://localhost:5000/checkout
-2026-06-26 18:03:12,419 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:15,989 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:19,512 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:23,020 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:26,518 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:30,032 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:33,614 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:37,123 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:40,704 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:44,198 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:47,749 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:51,252 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:54,770 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:03:58,334 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:01,850 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:05,448 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:08,940 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:12,413 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:15,896 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:19,391 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:22,868 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:26,344 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:29,841 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:33,360 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:36,816 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:40,315 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:43,792 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:47,314 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:50,830 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:54,332 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:04:57,828 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:01,348 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:04,823 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:08,343 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:11,867 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:15,380 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:18,845 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:22,307 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:25,789 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:29,267 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:32,773 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:36,322 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:39,811 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:43,290 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:46,793 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:50,294 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:53,772 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:05:57,270 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:00,747 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:04,408 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:07,956 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:11,605 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:15,158 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:18,690 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:22,208 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:25,811 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:29,306 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:32,783 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:33,690 - app - WARNING - 404 Error: http://2aaea5cd-119f-4cab-b756-6368cae89500-00-1ha3hpfaj2zfp.worf.replit.dev/product/uploads/products/product_eba364d0.jpg
-2026-06-26 18:06:36,283 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:39,788 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:43,303 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:46,817 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:50,310 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:53,796 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:06:57,308 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:00,788 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:04,253 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:07,709 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:11,200 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:14,721 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:18,259 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:21,755 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:25,235 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:28,737 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:32,243 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:35,732 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:39,229 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:42,836 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:46,299 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:49,780 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:53,253 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:07:56,761 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:00,282 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:03,781 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:07,279 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:10,751 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:14,251 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:17,800 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:21,301 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:24,778 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:28,244 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:31,733 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:35,282 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:38,843 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:42,337 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:45,853 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:49,326 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:52,815 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:56,317 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:08:59,812 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:03,322 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:06,817 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:10,306 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:13,786 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:17,264 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:20,798 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:24,302 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:27,814 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:31,297 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:34,779 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:38,259 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:41,029 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:41,766 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:45,298 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:48,790 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:52,258 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:55,781 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:09:59,312 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:02,804 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:06,347 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:09,846 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:13,325 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:16,830 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:20,335 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:23,849 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:27,317 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:30,835 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:34,330 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:37,867 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:41,435 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:44,902 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:48,356 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:51,882 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:55,356 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:10:58,847 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:02,342 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:05,809 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:09,325 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:12,818 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:16,313 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:19,805 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:23,324 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:26,851 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:30,356 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:33,898 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:37,461 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:40,944 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:44,447 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:48,016 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:51,502 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:55,005 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:11:58,468 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:01,958 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:05,467 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:08,955 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:12,533 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:16,028 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:19,486 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:22,942 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:26,428 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:29,992 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:33,490 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:36,975 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:40,426 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:43,877 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:47,365 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:50,861 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:54,350 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:12:57,825 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:01,286 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:05,998 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:09,882 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:13,451 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:16,935 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:20,427 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:23,891 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:27,404 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:31,126 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:34,777 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:38,264 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:41,781 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:45,277 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:48,765 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:52,255 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:55,776 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:13:59,302 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:02,779 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:06,278 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:09,768 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:13,259 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:16,761 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:20,240 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:23,742 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:27,210 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:30,751 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:34,245 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:37,742 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:41,214 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:44,694 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:48,176 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:51,646 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:55,122 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:14:58,632 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:02,207 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:05,710 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:09,261 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:12,750 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:16,238 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:19,704 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:23,183 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:26,646 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:30,142 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:33,645 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:37,125 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:40,655 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:44,179 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:47,659 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:51,122 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:54,686 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:15:58,211 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:01,680 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:05,155 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:08,632 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:12,186 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:15,707 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:19,218 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:22,696 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:26,244 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:29,732 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:33,223 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:36,718 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:40,232 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:43,792 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:47,332 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:50,916 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:54,473 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:16:57,950 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:01,417 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:04,985 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:08,494 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:12,024 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:15,533 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:19,023 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:22,549 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:26,111 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:29,663 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:33,151 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:36,605 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:40,133 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:43,651 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:47,185 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:50,893 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:54,606 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:17:58,207 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:01,698 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:05,265 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:08,737 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:12,210 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:15,674 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:19,189 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:22,696 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:26,169 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:29,638 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:33,114 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:36,594 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:40,107 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:43,620 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:47,093 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:50,607 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:54,204 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:18:57,712 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:01,182 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:04,673 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:08,156 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:11,665 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:15,155 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:18,621 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:22,089 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:25,653 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:29,142 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:32,662 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:36,147 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:39,601 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:43,092 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:46,676 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:50,179 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:53,666 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:19:57,153 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:00,679 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:04,163 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:07,631 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:11,113 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:14,607 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:18,085 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:21,564 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:25,031 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:28,501 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:31,979 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:35,492 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:38,976 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:42,448 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:45,948 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:49,471 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:52,954 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:56,454 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:20:59,926 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:03,391 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:06,886 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:10,375 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:13,873 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:17,364 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:20,860 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:24,351 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:27,910 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:31,413 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:34,871 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:38,345 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:41,838 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:45,302 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:48,779 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:52,279 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:55,755 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:21:59,226 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:02,687 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:06,168 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:09,702 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:13,198 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:16,689 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:20,191 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:23,654 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:27,134 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:30,628 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:34,110 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:37,628 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:41,119 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:44,623 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:48,105 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:51,574 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:55,107 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:22:58,600 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:02,152 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:07,469 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:11,872 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:15,357 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:18,813 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:22,267 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:25,750 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:29,228 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:32,751 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:36,251 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:39,727 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:43,191 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:46,678 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:50,176 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:53,712 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:23:57,249 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:00,724 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:04,206 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:07,695 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:11,212 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:14,771 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:18,253 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:21,834 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:25,370 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:28,946 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:32,497 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:36,041 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:39,551 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:43,083 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:46,577 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:50,058 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:53,627 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:24:57,127 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:00,651 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:04,257 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:07,796 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:11,308 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:14,796 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:18,255 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:21,732 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:25,231 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:28,694 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:32,193 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:35,713 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:39,191 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:42,666 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:46,143 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:49,654 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:53,147 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:25:56,653 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:00,140 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:03,701 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:07,255 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:10,734 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:14,180 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:17,790 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:21,325 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:24,819 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:28,312 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:31,793 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:35,293 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:38,776 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:42,278 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:45,755 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:49,219 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:52,703 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:56,195 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:26:59,732 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:03,231 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:06,764 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:10,309 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:13,827 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:17,301 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:20,769 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:24,258 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:27,756 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:31,225 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:34,711 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:38,171 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-26 18:27:41,681 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 01:40:01,450 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 01:41:29,198 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 01:51:16,878 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:03,781 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:03,782 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:08,025 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:11,519 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:14,987 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:18,476 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:21,961 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:25,406 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:28,850 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:19:35,518 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:20:17,964 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:20:27,090 - app - WARNING - Slow request: POST /api/ai-chat - 1.68s
-2026-06-27 02:21:56,612 - app - WARNING - Slow request: POST /api/ai-chat - 1.19s
-2026-06-27 02:23:30,030 - app - WARNING - Slow request: POST /api/ai-chat - 1.81s
-2026-06-27 02:24:19,710 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:24:32,664 - app - WARNING - Slow request: POST /api/ai-chat - 1.06s
-2026-06-27 02:24:34,064 - app - WARNING - Slow request: POST /api/ai-chat - 1.33s
-2026-06-27 02:30:53,686 - app - WARNING - Slow request: POST /api/ai-chat - 1.15s
-2026-06-27 02:31:27,771 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:51:05,962 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 02:51:28,322 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /api/ai-chat
-2026-06-27 02:58:23,827 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 03:04:16,467 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 03:04:29,024 - app - WARNING - Slow request: POST /api/ai-chat - 1.66s
-2026-06-27 04:27:17,844 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 04:34:19,613 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 04:38:37,352 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
-2026-06-27 04:40:37,428 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-28 10:05:55,494 - app - ERROR - Database initialization error: 'charmap' codec can't encode character '\u2705' in position 0: character maps to <undefined>
+2026-06-28 10:08:59,333 - app - ERROR - Database initialization error: 'charmap' codec can't encode character '\u2705' in position 0: character maps to <undefined>
+2026-06-28 10:35:29,654 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:35:29,662 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:35:29,700 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:40:19,858 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/sale.jpg
+2026-06-28 10:40:19,862 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/shipping.jpg
+2026-06-28 10:40:19,865 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/new.jpg
+2026-06-28 10:40:32,424 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/ads/new.jpg
+2026-06-28 10:42:08,110 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/sale.jpg
+2026-06-28 10:42:08,134 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/shipping.jpg
+2026-06-28 10:42:08,141 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/new.jpg
+2026-06-28 10:42:31,762 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:42:31,770 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:42:31,788 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:50:27,613 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:50:27,646 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:50:27,659 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:50:38,071 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:50:38,099 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:50:38,119 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:51:11,689 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:51:11,711 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:51:11,719 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:55:19,876 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:55:19,964 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:21,233 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:21,675 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:55:22,081 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 10:55:22,391 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:55:22,862 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:55:23,354 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:55:24,028 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:55:24,710 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 10:55:24,893 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:25,479 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 10:55:26,380 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:55:26,628 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:55:26,659 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:55:26,881 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:27,318 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 10:55:28,064 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:28,813 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:55:29,307 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:55:29,692 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 10:55:30,147 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:34,179 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:34,598 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:55:36,638 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:55:37,123 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 10:55:37,493 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:55:38,261 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:55:38,660 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:40,147 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:55:42,012 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:55:42,144 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 10:55:42,911 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:43,391 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:51,473 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:55:54,154 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:54,353 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:55:54,862 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:55,719 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:55:56,227 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:55:58,074 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 10:55:58,311 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:56:01,470 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 10:56:06,398 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:56:10,038 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:56:10,748 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:56:10,927 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:56:11,659 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:56:11,861 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 10:56:12,017 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 10:56:15,883 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 10:56:40,987 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:57:07,847 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:57:08,916 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 10:57:10,004 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:57:22,646 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:57:22,776 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:57:22,883 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/2
+2026-06-28 10:57:23,167 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:57:23,299 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:57:23,467 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 10:57:24,026 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:57:24,315 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 10:57:30,276 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:57:30,292 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:57:30,364 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:57:36,363 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:57:37,023 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:57:48,328 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 10:57:48,415 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 10:57:48,491 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 10:57:57,518 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 10:57:58,707 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 10:57:58,852 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 10:58:00,111 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 10:58:01,560 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 10:58:42,937 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 10:58:44,571 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:02:17,728 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/14
+2026-06-28 11:02:18,066 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/14
+2026-06-28 11:02:54,282 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:03:19,094 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/14
+2026-06-28 11:03:19,654 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:03:22,249 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:03:32,590 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:03:33,351 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:03:38,233 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:03:39,243 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:03:46,825 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:03:47,074 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:03:47,693 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:05:00,420 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:05:00,954 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:05:01,435 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:05:13,153 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:05:14,332 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:05:14,436 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:05:15,300 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:05:16,207 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:05:16,842 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:05:18,036 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:05:18,517 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:05:21,349 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:05:26,732 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:05:27,398 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:05:27,646 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:05:32,452 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:05:36,794 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:06:08,278 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:06:08,706 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:06:26,691 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:06:32,295 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:06:32,479 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:06:32,824 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:06:38,709 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:06:38,871 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:06:39,573 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:06:40,541 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:06:41,145 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:06:41,301 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:06:41,755 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:06:41,967 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:06:43,025 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:06:44,359 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:06:45,667 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:06:45,850 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:06:46,874 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:06:47,435 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:06:50,109 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:06:50,337 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:06:50,658 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:06:51,319 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:06:51,723 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:07:12,267 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:07:12,272 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:07:12,350 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:07:14,780 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:07:15,903 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:07:16,331 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:07:57,054 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:07:57,240 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/2
+2026-06-28 11:07:57,374 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:07:59,389 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:08:00,543 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:08:00,857 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:08:01,077 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:08:01,262 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:08:02,232 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:08:06,363 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:08:07,245 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:08:07,513 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:08:11,255 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:08:11,471 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:08:12,296 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:08:23,392 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:09:04,256 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:09:04,351 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:09:04,724 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:09:05,485 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:09:09,715 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:09:10,919 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/20
+2026-06-28 11:09:12,481 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:09:12,557 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:09:12,660 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:09:14,236 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:09:14,601 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:09:19,133 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:09:19,541 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:09:20,072 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:09:30,495 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:09:31,846 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:09:32,188 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:09:42,390 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:09:43,305 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:09:46,108 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:09:48,586 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:09:48,752 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:09:53,550 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:09:56,073 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:09:59,056 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:10:04,951 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/9
+2026-06-28 11:10:08,004 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:10:14,626 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/6
+2026-06-28 11:10:14,912 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:10:18,148 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:10:23,377 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:10:23,413 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:10:23,477 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:11:25,867 - app - WARNING - 404 Error: http://localhost.test/category/all
+2026-06-28 11:11:25,901 - app - WARNING - 404 Error: http://localhost.test/category/invalid-category-name
+2026-06-28 11:11:26,668 - app - WARNING - 404 Error: http://localhost.test/checkout
+2026-06-28 11:11:26,985 - app - WARNING - 404 Error: http://localhost.test/nonexistent-page-12345
+2026-06-28 11:12:10,268 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:12:12,244 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:12:12,264 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:12:12,313 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:12:20,244 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:12:24,034 - app - WARNING - Slow request: GET /about - 1.00s
+2026-06-28 11:12:27,345 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:12:27,547 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:12:27,594 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:12:29,062 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:12:54,527 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:12:54,543 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:12:54,623 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:13:53,880 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:13:53,886 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:13:53,892 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:14:09,927 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:14:09,933 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:14:09,936 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:14:12,937 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:14:12,973 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:14:13,019 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:14:15,334 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:14:15,346 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:14:15,362 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:14:23,313 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 11:14:23,642 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:14:24,122 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/12
+2026-06-28 11:14:24,797 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:14:24,955 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:14:25,300 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/15
+2026-06-28 11:14:26,215 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:15:07,627 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/sale.jpg
+2026-06-28 11:15:07,642 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/shipping.jpg
+2026-06-28 11:15:07,648 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/new.jpg
+2026-06-28 11:16:04,709 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/sale.jpg
+2026-06-28 11:16:04,742 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/shipping.jpg
+2026-06-28 11:16:04,749 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/uploads/ads/new.jpg
+2026-06-28 11:16:27,124 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:16:27,153 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:16:27,181 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:16:40,255 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:16:41,221 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:16:41,565 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/18
+2026-06-28 11:18:00,950 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:18:01,367 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:20:31,541 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:20:31,882 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:20:32,648 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:20:34,810 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:20:34,899 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:20:34,910 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:22:20,204 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:22:48,035 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:22:48,040 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:22:48,065 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:22:56,706 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:22:57,187 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 11:23:04,336 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:23:04,341 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:23:04,367 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:23:06,759 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/17
+2026-06-28 11:23:07,106 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:23:07,708 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:29:42,002 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:29:42,024 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:29:42,040 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:32:24,386 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/11
+2026-06-28 11:32:25,160 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/5
+2026-06-28 11:32:37,322 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/2
+2026-06-28 11:32:37,455 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/1
+2026-06-28 11:32:37,876 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/19
+2026-06-28 11:32:38,017 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/16
+2026-06-28 11:32:38,205 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/13
+2026-06-28 11:32:38,616 - app - WARNING - Rate limit exceeded: 127.0.0.1 - /product/10
+2026-06-28 11:34:33,231 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:34:33,235 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:34:33,251 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:35:15,310 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:35:15,334 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:35:15,347 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:36:17,023 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:36:17,186 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:36:17,273 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:51:49,783 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:51:49,800 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:51:49,821 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 11:52:05,617 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/sale.jpg
+2026-06-28 11:52:05,749 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/shipping.jpg
+2026-06-28 11:52:05,818 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/ads/new.jpg
+2026-06-28 09:23:13,910 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-28 09:23:20,158 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-28 11:09:39,122 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-28 11:10:05,486 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-28 11:32:27,100 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-28 11:32:42,266 - app - WARNING - 404 Error: http://b1318053-4869-4e32-a73d-94ae73027c5e-00-imdsyn5bkt1h.spock.replit.dev/static/uploads/ads/ad_f7a1f401.mp4
+2026-06-29 00:08:18,552 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-29 00:21:48,220 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-29 00:38:21,221 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-06-29 00:53:25,875 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!

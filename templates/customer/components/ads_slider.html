@@ -24,15 +24,16 @@
                         <source src="{{ url_for('static', filename=ad.image) }}" type="video/webm">
                     </video>
                     <!-- Dark gradient overlay so text is readable -->
-                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.1) 100%);"></div>
+                    <div style="position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.1) 100%);"></div>
                     <!-- Text overlay -->
-                    <div style="position: relative; z-index: 2; padding: 24px 40px; color: white; text-align: center; min-height: 320px; display: flex; align-items: center; justify-content: flex-end; flex-direction: column;">
-                        {% if ad.title and ad.title != '' %}
-                        <h3 class="slide-title" style="font-size: 26px; margin-bottom: 8px; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.7); width: 100%; text-align: center;">{{ ad.title }}</h3>
+                    <div style="position: absolute; inset: 0; z-index: 2; padding: 24px 40px; color: white; text-align: center; display: flex; align-items: center; justify-content: flex-end; flex-direction: column; gap: 12px; overflow: hidden;">
+                        {% set ad_title = localized_ad_title(ad) or '' %}
+                        {% set ad_text = localized_ad_description(ad) or '' %}
+                        {% if ad_title and ad_title != '' %}
+                        <h3 class="slide-title" style="font-size: 26px; margin: 0; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.7); width: 100%; text-align: center; line-height: 1.3; word-wrap: break-word; overflow-wrap: break-word; hyphens: auto;">{{ ad_title }}</h3>
                         {% endif %}
-                        {% set ad_text = ad.description if ad.description else ad.text if ad.text else '' %}
                         {% if ad_text %}
-                        <p class="slide-text" style="font-size: 15px; margin-bottom: 18px; opacity: 0.95; max-width: 80%; text-shadow: 0 1px 4px rgba(0,0,0,0.7); text-align: center; width: 100%;">{{ ad_text }}</p>
+                        <p class="slide-text" style="font-size: 15px; margin: 0; opacity: 0.95; max-width: 90%; text-shadow: 0 1px 4px rgba(0,0,0,0.7); text-align: center; width: 100%; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word; hyphens: auto;">{{ ad_text }}</p>
                         {% endif %}
                         <div style="width: 100%; text-align: center;">
                             <a href="{{ ad.link if ad.link else '/products' }}" class="slide-btn" style="
@@ -55,14 +56,15 @@
                     <img src="{{ url_for('static', filename=ad.image) }}"
                          style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;"
                          alt="{{ ad.title or 'Advertisement' }}" loading="lazy">
-                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 60%, transparent 100%);"></div>
-                    <div style="position: relative; z-index: 2; padding: 40px 60px; color: white; text-align: center; min-height: 320px; display: flex; align-items: flex-end; justify-content: center; flex-direction: column;">
-                        {% if ad.title and ad.title != '' %}
-                        <h3 class="slide-title" style="font-size: 26px; margin-bottom: 8px; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.7); width: 100%; text-align: center;">{{ ad.title }}</h3>
+                    <div style="position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 60%, transparent 100%);"></div>
+                    <div style="position: absolute; inset: 0; z-index: 2; padding: 40px 60px; color: white; text-align: center; display: flex; align-items: flex-end; justify-content: center; flex-direction: column; gap: 12px; overflow: hidden;">
+                        {% set ad_title = localized_ad_title(ad) or '' %}
+                        {% set ad_text = localized_ad_description(ad) or '' %}
+                        {% if ad_title and ad_title != '' %}
+                        <h3 class="slide-title" style="font-size: 26px; margin: 0; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.7); width: 100%; text-align: center; line-height: 1.3; word-wrap: break-word; overflow-wrap: break-word; hyphens: auto;">{{ ad_title }}</h3>
                         {% endif %}
-                        {% set ad_text = ad.description if ad.description else ad.text if ad.text else '' %}
                         {% if ad_text %}
-                        <p class="slide-text" style="font-size: 15px; margin-bottom: 18px; opacity: 0.95; max-width: 80%; text-shadow: 0 1px 4px rgba(0,0,0,0.7); text-align: center; width: 100%;">{{ ad_text }}</p>
+                        <p class="slide-text" style="font-size: 15px; margin: 0; opacity: 0.95; max-width: 90%; text-shadow: 0 1px 4px rgba(0,0,0,0.7); text-align: center; width: 100%; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word; hyphens: auto;">{{ ad_text }}</p>
                         {% endif %}
                         <div style="width: 100%; text-align: center;">
                             <a href="{{ ad.link if ad.link else '/products' }}" class="slide-btn" style="
@@ -86,13 +88,15 @@
                         {% else %}#1a7a4a, #0f5232{% endif %});
                     padding: 40px 60px; color: white; text-align: center;
                     min-height: 250px; display: flex; align-items: center;
-                    justify-content: center; flex-direction: column;">
-                    <div class="slide-icon" style="font-size: 48px; margin-bottom: 15px;">🎉</div>
-                    {% if ad.title and ad.title != '' %}
-                    <h3 class="slide-title" style="font-size: 24px; margin-bottom: 10px; font-weight: bold;">{{ ad.title }}</h3>
+                    justify-content: center; flex-direction: column; gap: 15px; overflow: hidden;">
+                    <div class="slide-icon" style="font-size: 48px; margin: 0; flex-shrink: 0;">🎉</div>
+                    {% set ad_title = localized_ad_title(ad) or '' %}
+                    {% set ad_text = localized_ad_description(ad) or 'Special offer available!' %}
+                    {% if ad_title and ad_title != '' %}
+                    <h3 class="slide-title" style="font-size: 24px; margin: 0; font-weight: bold; line-height: 1.3; word-wrap: break-word; overflow-wrap: break-word; hyphens: auto;">{{ ad_title }}</h3>
                     {% endif %}
-                    <p class="slide-text" style="font-size: 16px; margin-bottom: 20px; opacity: 0.95; max-width: 80%;">
-                        {{ ad.description if ad.description else ad.text if ad.text else 'Special offer available!' }}
+                    <p class="slide-text" style="font-size: 16px; margin: 0; opacity: 0.95; max-width: 90%; line-height: 1.4; word-wrap: break-word; overflow-wrap: break-word; hyphens: auto;">
+                        {{ ad_text }}
                     </p>
                     <a href="{{ ad.link if ad.link else '/products' }}" class="slide-btn" style="
                         display: inline-block; background: white; color: #1a7a4a;

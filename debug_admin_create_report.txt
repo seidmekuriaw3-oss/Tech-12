@@ -1,0 +1,221 @@
+login_status=200
+create_status=200
+product_count=0
+row=None
+--- login body snippet ---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin Login - SEMIRA FASHION</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a7a4a, #0f5232);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Background decoration */
+        body::before {
+            content: '👗';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.05;
+            bottom: -50px;
+            right: -50px;
+            transform: rotate(-15deg);
+            pointer-events: none;
+        }
+        
+        body::after {
+            content: '🛋️';
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.05;
+            top: -30px;
+            left: -30px;
+            transform: rotate(10deg);
+            pointer-events: none;
+        }
+        
+        .login-card {
+            background: var(--bg-white, white);
+            padding: 45px 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
+            font-size: 64px;
+            margin-bot
+--- create body snippet ---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin Login - SEMIRA FASHION</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a7a4a, #0f5232);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Background decoration */
+        body::before {
+            content: '👗';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.05;
+            bottom: -50px;
+            right: -50px;
+            transform: rotate(-15deg);
+            pointer-events: none;
+        }
+        
+        body::after {
+            content: '🛋️';
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.05;
+            top: -30px;
+            left: -30px;
+            transform: rotate(10deg);
+            pointer-events: none;
+        }
+        
+        .login-card {
+            background: var(--bg-white, white);
+            padding: 45px 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+        
+        .login-card h2 {
+            color: var(--primary, #1a7a4a);
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+        
+        .login-subtitle {
+            color: var(--text-muted, #666);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color, #333);
+            font-size: 14px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color, #e0e0e0);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: var(--bg-input, #fafafa);
+            color: var(--text-color, #333);
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #1a7a4a;
+            background: var(--bg-white, white);
+            box-shadow: 0 0 0 3px rgba(26,122,74,0.1);
+        }
+        
+        .login-card button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1a7a4a, #0f5232);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+        }
+        
+        .login-card button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(26,122,74,0.4);
+        }
+        
+        .login-card button:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            color: #f44336;
+    

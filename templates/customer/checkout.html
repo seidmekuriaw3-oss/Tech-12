@@ -347,54 +347,58 @@
         
         // Reset errors
         clearErrors();
+        hideBanner();
         
         let isValid = true;
+        const errors = [];
         const name = document.getElementById('customerName').value.trim();
         const address = document.getElementById('shippingAddress').value.trim();
         const phone = document.getElementById('shippingPhone').value.trim();
         const email = document.getElementById('customerEmail').value.trim();
 
         // Validate name
-        if (!name) {
-            showError('nameError', 'Please enter your full name');
+        if (!name || name.length < 2) {
+            showError('nameError', 'ሙሉ ስምዎን ያስገቡ (ቢያንስ 2 ፊደሎች)');
             document.getElementById('customerName').classList.add('error');
-            isValid = false;
-        } else if (name.length < 2) {
-            showError('nameError', 'Please enter your full name (at least 2 characters)');
-            document.getElementById('customerName').classList.add('error');
+            errors.push('ሙሉ ስም');
             isValid = false;
         }
         
         // Validate address
-        if (!address) {
-            showError('addressError', 'Please enter your shipping address');
+        if (!address || address.length < 3) {
+            showError('addressError', 'አድራሻዎን ያስገቡ');
             document.getElementById('shippingAddress').classList.add('error');
-            isValid = false;
-        } else if (address.length < 5) {
-            showError('addressError', 'Please enter a complete address');
-            document.getElementById('shippingAddress').classList.add('error');
+            errors.push('አድራሻ');
             isValid = false;
         }
         
         // Validate phone
         if (!phone) {
-            showError('phoneError', 'Please enter your phone number');
+            showError('phoneError', 'ስልክ ቁጥር ያስፈልጋል');
             document.getElementById('shippingPhone').classList.add('error');
+            errors.push('ስልክ');
             isValid = false;
         } else if (!isValidPhone(phone)) {
-            showError('phoneError', 'Please enter a valid Ethiopian phone number (09xxxxxxxx, 07xxxxxxxx, or 2519xxxxxxxx)');
+            showError('phoneError', 'ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ (09xxxxxxxx, 07xxxxxxxx ወይም 2519xxxxxxxx)');
             document.getElementById('shippingPhone').classList.add('error');
+            errors.push('ስልክ');
             isValid = false;
         }
         
         // Validate email if provided
         if (email && !isValidEmail(email)) {
-            showError('emailError', 'Please enter a valid email address');
+            showError('emailError', 'ትክክለኛ ኢሜይል ያስገቡ');
             document.getElementById('customerEmail').classList.add('error');
+            errors.push('ኢሜይል');
             isValid = false;
         }
         
-        if (isValid) {
+        if (!isValid) {
+            showBanner('❌ እባክዎ ቀይ ምልክቶቹን ያስተካክሉ፤ ከዚያ እንደገና ይሞክሩ።');
+            // Scroll to first error field
+            const firstError = document.querySelector('.form-control.error');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
             submitOrder();
         }
         
@@ -420,6 +424,25 @@
     function clearErrors() {
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
         document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+    }
+
+    function showBanner(msg) {
+        let banner = document.getElementById('validationBanner');
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.id = 'validationBanner';
+            banner.style.cssText = 'background:#ffebee;border:2px solid #f44336;border-radius:10px;padding:14px 18px;margin-bottom:18px;color:#c62828;font-weight:600;font-size:15px;';
+            const form = document.getElementById('checkoutForm');
+            form.insertBefore(banner, form.firstChild);
+        }
+        banner.textContent = msg;
+        banner.style.display = 'block';
+        banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function hideBanner() {
+        const b = document.getElementById('validationBanner');
+        if (b) b.style.display = 'none';
     }
     
     function submitOrder() {

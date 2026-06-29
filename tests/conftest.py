@@ -77,14 +77,30 @@ def db(app):
 @pytest.fixture
 def auth(client):
     """Authentication helper for admin routes."""
+    os.environ.setdefault('ADMIN_USERNAME', 'admin')
+    os.environ.setdefault('ADMIN_PASSWORD', 'test1234')
+
     class AuthActions:
+        def csrf_token(self):
+            """Return a CSRF token for the current test session."""
+            with client.session_transaction() as sess:
+                token = sess.get('_csrf_token')
+                if not token:
+                    token = 'test-csrf-token'
+                    sess['_csrf_token'] = token
+                return token
+
         def login(self, password='test1234'):
             """Login as admin."""
-            return client.post('/login', data={'password': password}, follow_redirects=True)
+            return client.post('/admin/login', data={
+                'username': 'admin',
+                'password': password,
+                'csrf_token': self.csrf_token(),
+            }, follow_redirects=True)
         
         def logout(self):
             """Logout admin."""
-            return client.get('/logout', follow_redirects=True)
+            return client.get('/admin/logout', follow_redirects=True)
         
         def is_logged_in(self):
             """Check if admin is logged in."""

@@ -58,7 +58,7 @@ def view_cart():
                 'quantity': row['quantity'],
                 'thumbnail': row['thumbnail'],
                 'stock_quantity': row['stock_quantity'],
-                'subtotal': round(discounted_price * row['quantity'], 2)
+                'subtotal': round(price * row['quantity'], 2)  # Show original price in cart
             })
     else:
         # Get cart from session
@@ -410,20 +410,60 @@ def place_order():
     cursor = db.cursor()
 
     # Get form data
-    shipping_address = request.form.get('shipping_address', '')
-    shipping_city    = request.form.get('shipping_city', '')
+    shipping_address = request.form.get('shipping_address', '').strip()
+    shipping_city    = request.form.get('shipping_city', '').strip()
     shipping_phone   = request.form.get('shipping_phone', '').strip()
-    notes            = request.form.get('notes', '')
-    payment_method   = request.form.get('payment_method', 'cash')
+    notes            = request.form.get('notes', '').strip()
+    payment_method   = request.form.get('payment_method', 'cash').lower().strip()
     customer_name    = request.form.get('customer_name', '').strip()
     customer_email   = request.form.get('customer_email', '').strip() or None
 
+    # Validate payment method (whitelist allowed methods)
+    ALLOWED_PAYMENT_METHODS = ['cash', 'card', 'telebirr', 'bank']
+    if payment_method not in ALLOWED_PAYMENT_METHODS:
+        flash(f'Invalid payment method. Allowed: {", ".join(ALLOWED_PAYMENT_METHODS)}', 'danger')
+        return redirect(url_for('cart.checkout'))
+
     # Validate required fields for all users
-    if not shipping_address or len(shipping_address.strip()) < 5:
-        flash('እባክዎ ሙሉ አድራሻዎን ያስገቡ።', 'danger')
+    if not shipping_address or len(shipping_address) < 5:
+        flash('እባክዎ ትክክለኛ አድራሻዎን ያስገቡ። (ቢያንስ 5 ፊደሎች)', 'danger')
         return redirect(url_for('cart.checkout'))
     if not shipping_phone:
         flash('ስልክ ቁጥር ያስፈልጋል።', 'danger')
+        return redirect(url_for('cart.checkout'))
+    
+    # Validate phone number format - Ethiopian numbers only
+    import re
+    phone_pattern = r'^(09|07|2519|25107)\d{7}$'
+    phone_normalized = shipping_phone.replace(' ', '').replace('-', '')
+    if not re.match(phone_pattern, phone_normalized):
+        flash('ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ (09xxxxxxxx, 07xxxxxxxx, 2519xxxxxxxx)', 'danger')
+        return redirect(url_for('cart.checkout'))
+    
+    if not user_id and not customer_name:
+        flash('ሙሉ ስም ያስፈልጋል።', 'danger')
+        return redirect(url_for('cart.checkout'))
+    
+    # Validate customer name length
+    if customer_name and (len(customer_name) < 2 or len(customer_name) > 100):
+        flash('ስም 2 ወደ 100 ፊደሎች መሆን አለበት።', 'danger')
+        return redirect(url_for('cart.checkout'))
+    
+    # Validate email if provided
+    if customer_email:
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_pattern, customer_email):
+            flash('ትክክለኛ ኢሜይል ያስገቡ።', 'danger')
+            return redirect(url_for('cart.checkout'))
+    
+    # Validate city if provided
+    if shipping_city and len(shipping_city) > 50:
+        flash('ከተማ 50 ፊደሎች ያነስ መሆን አለበት።', 'danger')
+        return redirect(url_for('cart.checkout'))
+    
+    # Validate notes if provided
+    if notes and len(notes) > 500:
+        flash('ማስታወሻ 500 ፊደሎች ያነስ መሆን አለበት።', 'danger')
         return redirect(url_for('cart.checkout'))
     if not user_id and not customer_name:
         flash('ስምና ስልክ ቁጥር ያስፈልጋሉ።', 'danger')
@@ -463,7 +503,52 @@ def place_order():
         flash('Your cart is empty!', 'warning')
         return redirect(url_for('cart.view_cart'))
 
-    # Stock check
+    # Duplicate order prevention: check if identical order was just created
+    # This prevents double-submit when user clicks button twice or reloads page
+    try:
+        if user_id:
+            # For logged-in users, check for recent orders with same items
+            cursor.execute("""
+                SELECT id FROM orders 
+                WHERE user_id = %s 
+                AND created_at > NOW() - INTERVAL '30 seconds'
+                ORDER BY created_at DESC LIMIT 1
+            """, (user_id,))
+        else:
+            # For guests, check for recent orders with same phone/address
+            cursor.execute("""
+                SELECT id FROM orders 
+                WHERE user_id IS NULL
+                AND shipping_phone = %s 
+                AND shipping_address = %s
+                AND created_at > NOW() - INTERVAL '30 seconds'
+                ORDER BY created_at DESC LIMIT 1
+            """, (shipping_phone, shipping_address))
+        
+        recent_order = cursor.fetchone()
+        if recent_order:
+            # Likely a double-submit - redirect to confirmation for existing order
+            if user_id:
+                flash('ይህ ትዕዛዝ ቀድሞ ተላልፏል።', 'warning')
+            else:
+                # For guests, generate token for the recent order
+                cursor.execute("""
+                    SELECT order_number FROM orders WHERE id = %s
+                """, (recent_order['id'],))
+                dup_order_info = cursor.fetchone()
+                if dup_order_info:
+                    import hmac, hashlib
+                    dup_token = hmac.new(
+                        current_app.config['SECRET_KEY'].encode(),
+                        f"{recent_order['id']}-{dup_order_info['order_number']}-{shipping_phone}".encode(),
+                        hashlib.sha256
+                    ).hexdigest()
+                    session['guest_order_token'] = dup_token
+            return redirect(url_for('customer.order_confirmation', order_id=recent_order['id']))
+    except Exception as e:
+        current_app.logger.error(f"Duplicate order check failed: {e}")
+    
+# Stock check
     for item in cart_items_raw:
         qty = item['quantity'] if isinstance(item, dict) else item['quantity']
         stock = item['stock_quantity'] if isinstance(item, dict) else item['stock_quantity']
@@ -484,35 +569,44 @@ def place_order():
     total = totals['total']
     discount = totals['discount']
 
-    # Read coupon from session but do NOT pop yet — if stock fails we roll back
-    # and the coupon must remain available for the user's next attempt.
+    # Read coupon from session and consume it ATOMICALLY before creating order
     coupon_id  = None
     extra_disc = 0.0
     coupon_info = session.get('applied_coupon')
     if coupon_info:
-        # Re-validate coupon against current cart subtotal to prevent stale-discount abuse
         coupon_id   = coupon_info.get('coupon_id')
         disc_type   = coupon_info.get('discount_type')
         disc_value  = float(coupon_info.get('discount_value', 0))
         extra_disc  = 0.0
         if coupon_id and disc_type:
-            # Check coupon is still valid and usage limit not exceeded
+            # Atomic coupon consumption: check AND increment in one query
+            # This prevents race condition where two orders use the same limited coupon
             cursor.execute("""
-                SELECT min_order, max_discount, usage_limit, used_count, is_active
-                FROM coupons WHERE id = %s
-                AND (valid_to IS NULL OR valid_to >= NOW())
+                UPDATE coupons 
+                SET used_count = used_count + 1
+                WHERE id = %s 
+                  AND is_active = 1
+                  AND (valid_to IS NULL OR valid_to >= NOW())
+                  AND (usage_limit IS NULL OR used_count < usage_limit)
+                RETURNING min_order, max_discount
             """, (coupon_id,))
-            fresh = cursor.fetchone()
-            if fresh and fresh['is_active'] and (fresh['usage_limit'] is None or fresh['used_count'] < fresh['usage_limit']):
-                min_order = float(fresh['min_order'] or 0)
+            coupon_result = cursor.fetchone()
+            if coupon_result:
+                # Coupon was successfully consumed
+                min_order = float(coupon_result['min_order'] or 0)
                 if subtotal_after_discount >= min_order:
                     if disc_type == 'percentage':
                         extra_disc = subtotal_after_discount * disc_value / 100
-                        if fresh['max_discount']:
-                            extra_disc = min(extra_disc, float(fresh['max_discount']))
+                        if coupon_result['max_discount']:
+                            extra_disc = min(extra_disc, float(coupon_result['max_discount']))
                     else:
                         extra_disc = min(disc_value, subtotal_after_discount)
                     extra_disc = round(extra_disc, 2)
+            else:
+                # Coupon could not be consumed - already used or limit exceeded
+                coupon_id = None
+                extra_disc = 0.0
+                current_app.logger.warning(f"Coupon {coupon_id} could not be consumed - limit may have been reached")
         if extra_disc > 0:
             discount = round(discount + extra_disc, 2)
             total = round(max(0, total - extra_disc), 2)
@@ -546,33 +640,27 @@ def place_order():
         return redirect(url_for('cart.checkout'))
 
     # Create order items and update stock atomically
-    try:
-        for item in cart_items_raw:
-            price = float(item['price'])
-            qty   = int(item['quantity'])
-            pid   = int(item['product_id'])
-            name  = item['name']
-            discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
-            cursor.execute("""
-                INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
-                VALUES (%s, %s, %s, %s)
-            """, (order_id, pid, qty, discounted_price))
-            # Atomic decrement — prevents race condition when two orders compete for the last item
-            cursor.execute("""
-                UPDATE products SET
-                    stock_quantity = stock_quantity - %s,
-                    sales_count = sales_count + %s
-                WHERE id = %s AND stock_quantity >= %s
-            """, (qty, qty, pid, qty))
-            if cursor.rowcount == 0:
-                db.rollback()
-                flash(f'ይቅርታ! "{name}" ላይ በቂ ዕቃ አልተገኘም። ካርትዎን ያረጋግጡ።', 'danger')
-                return redirect(url_for('cart.view_cart'))
-    except Exception as _order_err:
-        db.rollback()
-        current_app.logger.error(f"Order items insertion failed: {_order_err}")
-        flash('ትዕዛዙን ማስቀመጥ አልተሳካም። እባክዎ እንደገና ይሞክሩ።', 'danger')
-        return redirect(url_for('cart.checkout'))
+    for item in cart_items_raw:
+        price = item['price'] if isinstance(item, dict) else item['price']
+        qty   = item['quantity'] if isinstance(item, dict) else item['quantity']
+        pid   = item['product_id'] if isinstance(item, dict) else item['product_id']
+        name  = item['name'] if isinstance(item, dict) else item['name']
+        discounted_price = round(price * (1 - USER_DISCOUNT_RATE if is_logged_in else 1.0), 2)
+        cursor.execute("""
+            INSERT INTO order_items (order_id, product_id, quantity, price_at_time)
+            VALUES (%s, %s, %s, %s)
+        """, (order_id, pid, qty, discounted_price))
+        # Atomic decrement — prevents race condition when two orders compete for the last item
+        cursor.execute("""
+            UPDATE products SET
+                stock_quantity = stock_quantity - %s,
+                sales_count = sales_count + %s
+            WHERE id = %s AND stock_quantity >= %s
+        """, (qty, qty, pid, qty))
+        if cursor.rowcount == 0:
+            db.rollback()
+            flash(f'ይቅርታ! "{name}" ላይ በቂ ዕቃ አልተገኘም። ካርትዎን ያረጋግጡ።', 'danger')
+            return redirect(url_for('cart.view_cart'))
 
     # Low-stock check — query updated stock levels within this transaction
     try:
@@ -593,16 +681,6 @@ def place_order():
                 send_low_stock_alert(_low)
     except Exception as _e:
         current_app.logger.error(f"Low-stock check error: {_e}")
-
-    # Increment coupon used_count now that the order is confirmed
-    if coupon_id and extra_disc > 0:
-        try:
-            cursor.execute(
-                "UPDATE coupons SET used_count = used_count + 1 WHERE id = %s",
-                (coupon_id,)
-            )
-        except Exception as _ce:
-            current_app.logger.error(f"Coupon used_count update failed: {_ce}")
 
     # Clear cart
     if user_id:
@@ -667,6 +745,17 @@ def place_order():
     except Exception:
         pass
 
+    # Generate secure token for guest order access
+    if not user_id:
+        import hmac
+        import hashlib
+        guest_token = hmac.new(
+            current_app.config['SECRET_KEY'].encode(),
+            f"{order_id}-{order_number}-{shipping_phone}".encode(),
+            hashlib.sha256
+        ).hexdigest()
+        session['guest_order_token'] = guest_token
+    
     session['last_order_id'] = order_id
     return redirect(url_for('customer.order_confirmation', order_id=order_id))
 
@@ -715,7 +804,7 @@ def get_cart_total():
             products = cursor.fetchall()
             for p in products:
                 quantity = cart.get(str(p['id']), 0)
-                total += p['price'] * quantity
+                total += float(p['price']) * quantity
     
     # Apply member discount for logged-in users
     if session.get('user_id'):
