@@ -90,6 +90,15 @@
         panel.classList.remove('open');
     };
 
+    window.clearAIChat = function () {
+        history = [];
+        saveHistory();
+        if (msgList) {
+            msgList.innerHTML = '';
+            showWelcome();
+        }
+    };
+
     // ── Restore history from sessionStorage ───────────────────────────────
     function restoreHistory() {
         history.forEach(function (h) {

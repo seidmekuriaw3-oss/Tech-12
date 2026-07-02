@@ -1544,70 +1544,92 @@
 
 <!-- ==================== SEMIRA AI AGENT WIDGET ==================== -->
 <style>
-/* ---- Floating Button ---- */
+/* ========================================================
+   SEMIRA AI — Professional & Modern Widget
+   ======================================================== */
+
+/* ── Floating Trigger Button ─────────────────────────────── */
 #semira-ai-toggle {
     position: fixed;
-    bottom: 80px;
-    right: 18px;
-    width: 56px;
-    height: 56px;
+    bottom: 84px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1a7a4a 0%, #25a865 100%);
+    background: linear-gradient(145deg, #0d5c38 0%, #1a8a52 50%, #22c46e 100%);
     border: none;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(26,122,74,0.45);
+    box-shadow: 0 4px 24px rgba(13,92,56,0.5), 0 0 0 0 rgba(34,196,110,0.4);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9998;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
     -webkit-tap-highlight-color: transparent;
+    animation: ai-btn-glow 3s ease-in-out infinite;
 }
-#semira-ai-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(26,122,74,0.55); }
-#semira-ai-toggle svg { width: 28px; height: 28px; fill: #fff; }
+@keyframes ai-btn-glow {
+    0%,100% { box-shadow: 0 4px 24px rgba(13,92,56,0.5), 0 0 0 0 rgba(34,196,110,0.35); }
+    50%      { box-shadow: 0 4px 28px rgba(13,92,56,0.6), 0 0 0 10px rgba(34,196,110,0); }
+}
+#semira-ai-toggle:hover {
+    transform: scale(1.1) rotate(-6deg);
+    box-shadow: 0 8px 32px rgba(13,92,56,0.6);
+    animation: none;
+}
+#semira-ai-toggle:active { transform: scale(0.95); }
+#semira-ai-toggle svg { width: 26px; height: 26px; fill: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2)); }
 
+/* notification badge */
 #semira-ai-badge {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 18px;
-    height: 18px;
-    background: #f44336;
+    top: -3px;
+    right: -3px;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #ff4757, #ff6b81);
     border-radius: 50%;
-    border: 2px solid #fff;
+    border: 2.5px solid #fff;
     display: none;
     align-items: center;
     justify-content: center;
     font-size: 9px;
     color: #fff;
     font-weight: 900;
+    box-shadow: 0 2px 8px rgba(255,71,87,0.5);
 }
 @keyframes ai-pulse {
-    0%,100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.3); opacity: 0.7; }
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.35); }
 }
-.ai-badge-pulse { animation: ai-pulse 1.5s infinite; }
+.ai-badge-pulse { animation: ai-pulse 1.4s ease-in-out infinite; }
 
-/* ---- Panel ---- */
+/* ── Chat Panel ─────────────────────────────────────────── */
 #semira-ai-panel {
     position: fixed;
-    bottom: 148px;
-    right: 18px;
-    width: 340px;
-    max-width: calc(100vw - 36px);
-    height: 480px;
-    max-height: calc(100vh - 180px);
-    background: #fff;
-    border-radius: 20px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    bottom: 158px;
+    right: 20px;
+    width: 370px;
+    max-width: calc(100vw - 32px);
+    height: 520px;
+    max-height: calc(100vh - 190px);
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.04),
+        0 8px 24px rgba(0,0,0,0.10),
+        0 24px 64px rgba(0,0,0,0.14),
+        0 0 0 1px rgba(0,0,0,0.04);
     display: flex;
     flex-direction: column;
     z-index: 9999;
     overflow: hidden;
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(28px) scale(0.92);
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.3s cubic-bezier(.4,0,.2,1),
+                transform 0.3s cubic-bezier(.34,1.4,.64,1);
+    transform-origin: bottom right;
 }
 #semira-ai-panel.open {
     opacity: 1;
@@ -1615,235 +1637,411 @@
     pointer-events: all;
 }
 
-/* ---- Header ---- */
+/* ── Header ─────────────────────────────────────────────── */
 .ai-header {
-    background: linear-gradient(135deg, #1a7a4a 0%, #25a865 100%);
-    padding: 14px 16px;
+    background: linear-gradient(135deg, #0a4429 0%, #0f6b3e 45%, #148c50 100%);
+    padding: 16px 16px 14px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+.ai-header::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+.ai-header::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: 20px;
+    width: 80px; height: 80px;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.ai-header-avatar {
+    position: relative;
+    width: 44px;
+    height: 44px;
     flex-shrink: 0;
 }
-.ai-header-avatar {
-    width: 38px;
-    height: 38px;
+.ai-avatar-ring {
+    position: absolute;
+    inset: -3px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    animation: ai-ring-spin 8s linear infinite;
+    border-top-color: rgba(255,255,255,0.7);
+}
+@keyframes ai-ring-spin { to { transform: rotate(360deg); } }
+.ai-avatar-inner {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
+    font-size: 22px;
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-.ai-header-info { flex: 1; }
-.ai-header-name { color: #fff; font-size: 15px; font-weight: 700; line-height: 1.2; }
-.ai-header-status { color: rgba(255,255,255,0.82); font-size: 11px; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
-.ai-status-dot { width: 7px; height: 7px; background: #a8ffca; border-radius: 50%; display: inline-block; animation: ai-blink 2s infinite; }
-@keyframes ai-blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.ai-header-close {
-    background: rgba(255,255,255,0.15);
-    border: none;
+
+.ai-header-info { flex: 1; min-width: 0; }
+.ai-header-name {
     color: #fff;
-    width: 28px;
-    height: 28px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    line-height: 1.2;
+}
+.ai-header-model {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    padding: 2px 7px;
+    font-size: 9.5px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    margin-top: 3px;
+}
+.ai-header-model::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 6px #4ade80;
+    animation: ai-blink 2s ease-in-out infinite;
+}
+@keyframes ai-blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.ai-header-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.ai-header-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.9);
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: background 0.15s;
+    transition: background 0.15s, transform 0.15s;
+    font-size: 14px;
+    line-height: 1;
 }
-.ai-header-close:hover { background: rgba(255,255,255,0.3); }
+.ai-header-btn:hover { background: rgba(255,255,255,0.22); transform: scale(1.08); }
 
-/* ---- Messages ---- */
+/* ── Messages area ───────────────────────────────────────── */
 #semira-ai-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 14px 12px;
+    padding: 16px 14px 8px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     scrollbar-width: thin;
-    scrollbar-color: #d4edda transparent;
-    background: #f8fdf9;
+    scrollbar-color: #d1fae5 transparent;
+    background: #f6fbf8;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(34,196,110,0.04) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(13,92,56,0.03) 0%, transparent 50%);
 }
-#semira-ai-messages::-webkit-scrollbar { width: 4px; }
-#semira-ai-messages::-webkit-scrollbar-thumb { background: #c3e6cb; border-radius: 4px; }
+#semira-ai-messages::-webkit-scrollbar { width: 3px; }
+#semira-ai-messages::-webkit-scrollbar-thumb { background: #a7f3d0; border-radius: 4px; }
 
+/* ── Message bubbles ─────────────────────────────────────── */
 .ai-msg-wrap {
     display: flex;
+    align-items: flex-end;
+    gap: 8px;
     opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(.34,1.2,.64,1);
 }
 .ai-msg-visible { opacity: 1; transform: translateY(0); }
-.ai-msg-user { justify-content: flex-end; }
-.ai-msg-assistant { justify-content: flex-start; }
+.ai-msg-user  { flex-direction: row-reverse; }
+.ai-msg-assistant { flex-direction: row; }
+
+.ai-msg-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+.ai-msg-assistant .ai-msg-icon {
+    background: linear-gradient(135deg, #0f6b3e, #22c46e);
+    box-shadow: 0 2px 8px rgba(15,107,62,0.3);
+}
+.ai-msg-user .ai-msg-icon {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+}
 
 .ai-bubble {
-    max-width: 82%;
-    padding: 9px 13px;
-    border-radius: 16px;
+    max-width: 78%;
+    padding: 10px 14px;
+    border-radius: 18px;
     font-size: 13.5px;
-    line-height: 1.5;
+    line-height: 1.55;
     word-break: break-word;
 }
 .ai-msg-user .ai-bubble {
-    background: linear-gradient(135deg, #1a7a4a, #25a865);
+    background: linear-gradient(135deg, #0d5c38, #1a8a52);
     color: #fff;
-    border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 2px 12px rgba(13,92,56,0.25);
 }
 .ai-msg-assistant .ai-bubble {
     background: #fff;
-    color: #333;
-    border: 1px solid #e8f5e9;
-    border-bottom-left-radius: 4px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    color: #1a2e22;
+    border: 1px solid rgba(167,243,208,0.5);
+    border-bottom-left-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
-.ai-msg-assistant .ai-bubble a { color: #1a7a4a; text-decoration: underline; }
+.ai-msg-assistant .ai-bubble a {
+    color: #0f6b3e;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(15,107,62,0.3);
+    transition: border-color 0.15s;
+}
+.ai-msg-assistant .ai-bubble a:hover { border-color: #0f6b3e; }
 
-/* ---- Typing dots ---- */
-.ai-typing { display: flex; gap: 5px; align-items: center; padding: 12px 14px !important; }
+/* ── Typing indicator ────────────────────────────────────── */
+.ai-typing {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 13px 16px !important;
+    min-width: 56px;
+}
 .ai-typing span {
     width: 7px; height: 7px;
-    background: #25a865;
     border-radius: 50%;
-    animation: ai-dot 1.2s infinite;
+    background: #22c46e;
+    animation: ai-dot 1.3s ease-in-out infinite;
 }
-.ai-typing span:nth-child(2) { animation-delay: 0.2s; }
-.ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+.ai-typing span:nth-child(1) { animation-delay: 0s;    background: #0f6b3e; }
+.ai-typing span:nth-child(2) { animation-delay: 0.18s; background: #1a8a52; }
+.ai-typing span:nth-child(3) { animation-delay: 0.36s; background: #22c46e; }
 @keyframes ai-dot {
-    0%,80%,100% { transform: translateY(0); opacity: 0.4; }
-    40% { transform: translateY(-6px); opacity: 1; }
+    0%,60%,100% { transform: translateY(0) scale(1); opacity: 0.5; }
+    30%          { transform: translateY(-7px) scale(1.1); opacity: 1; }
 }
 
-/* ---- Suggestion chips ---- */
+/* ── Suggestion chips ────────────────────────────────────── */
 .ai-suggestions {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 7px;
     margin-top: 4px;
+    padding-bottom: 2px;
 }
 .ai-chip {
-    background: #e8f5e9;
-    border: 1px solid #a5d6a7;
-    color: #1a7a4a;
-    font-size: 12px;
-    padding: 5px 10px;
+    background: #fff;
+    border: 1.5px solid #a7f3d0;
+    color: #0f6b3e;
+    font-size: 11.5px;
+    padding: 5px 12px;
     border-radius: 20px;
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
+    transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
     white-space: nowrap;
+    font-weight: 500;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
-.ai-chip:hover { background: #c8e6c9; transform: scale(1.03); }
+.ai-chip:hover {
+    background: linear-gradient(135deg, #0f6b3e, #22c46e);
+    color: #fff;
+    border-color: transparent;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15,107,62,0.3);
+}
 
-/* ---- Input area ---- */
+/* ── Divider ─────────────────────────────────────────────── */
+.ai-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(167,243,208,0.6), transparent);
+    margin: 0;
+    flex-shrink: 0;
+}
+
+/* ── Input area ──────────────────────────────────────────── */
 .ai-input-area {
-    padding: 10px 12px;
-    border-top: 1px solid #e8f5e9;
+    padding: 12px 14px 10px;
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: flex-end;
     background: #fff;
     flex-shrink: 0;
 }
+.ai-input-wrap {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    background: #f0faf5;
+    border: 1.5px solid #a7f3d0;
+    border-radius: 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+}
+.ai-input-wrap:focus-within {
+    border-color: #0f6b3e;
+    box-shadow: 0 0 0 3px rgba(15,107,62,0.1);
+    background: #fff;
+}
 #semira-ai-input {
     flex: 1;
-    border: 1.5px solid #c8e6c9;
-    border-radius: 20px;
-    padding: 9px 14px;
+    border: none;
+    background: transparent;
+    padding: 10px 14px;
     font-size: 13.5px;
     outline: none;
     resize: none;
-    max-height: 80px;
-    line-height: 1.4;
-    background: #f8fdf9;
-    color: #333;
-    transition: border-color 0.15s;
+    max-height: 90px;
+    line-height: 1.45;
+    color: #1a2e22;
     font-family: inherit;
+    scrollbar-width: none;
 }
-#semira-ai-input:focus { border-color: #1a7a4a; background: #fff; }
-#semira-ai-input::placeholder { color: #aaa; }
+#semira-ai-input::-webkit-scrollbar { display: none; }
+#semira-ai-input::placeholder { color: #9ca3af; }
+
 #semira-ai-send {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1a7a4a, #25a865);
+    background: linear-gradient(135deg, #0d5c38, #22c46e);
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: opacity 0.15s, transform 0.1s;
+    transition: opacity 0.15s, transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+    box-shadow: 0 2px 10px rgba(13,92,56,0.35);
 }
-#semira-ai-send:disabled { opacity: 0.4; cursor: not-allowed; }
-#semira-ai-send:not(:disabled):hover { transform: scale(1.08); }
+#semira-ai-send:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+#semira-ai-send:not(:disabled):hover {
+    transform: scale(1.12) rotate(-5deg);
+    box-shadow: 0 4px 16px rgba(13,92,56,0.5);
+}
+#semira-ai-send:not(:disabled):active { transform: scale(0.95); }
 #semira-ai-send svg { width: 18px; height: 18px; fill: #fff; }
 
-/* ---- Powered by ---- */
+/* ── Footer ─────────────────────────────────────────────── */
 .ai-footer-note {
     text-align: center;
     font-size: 10px;
-    color: #aaa;
-    padding: 4px 0 6px;
+    color: #9ca3af;
+    padding: 5px 0 8px;
     background: #fff;
     flex-shrink: 0;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.ai-footer-note span {
+    display: inline-block;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: #22c46e;
+    box-shadow: 0 0 4px #22c46e;
 }
 
-/* ---- Mobile adjustments ---- */
+/* ── Mobile ──────────────────────────────────────────────── */
 @media (max-width: 480px) {
-    #semira-ai-toggle { bottom: 72px; right: 14px; width: 50px; height: 50px; }
-    #semira-ai-panel { bottom: 136px; right: 14px; width: calc(100vw - 28px); height: 420px; }
+    #semira-ai-toggle { bottom: 76px; right: 14px; width: 54px; height: 54px; }
+    #semira-ai-panel  { bottom: 144px; right: 12px; left: 12px; width: auto; max-width: none; height: 460px; }
 }
 </style>
 
-<!-- AI Toggle Button -->
+<!-- ── AI Toggle Button ─────────────────────────────────── -->
 <button id="semira-ai-toggle" onclick="toggleAIPanel()" aria-label="AI Assistant" title="SEMIRA AI Assistant">
-    <span id="semira-ai-badge" style="display:none">✨</span>
+    <span id="semira-ai-badge" style="display:none">1</span>
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-        <path d="M9 8h2v8H9zm4 0h2v8h-2z" style="display:none"/>
-        <!-- Sparkle / AI icon -->
-        <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
-        <path d="M19 3l.75 2.25L22 6l-2.25.75L19 9l-.75-2.25L16 6l2.25-.75z" opacity=".7"/>
-        <path d="M5 17l.5 1.5L7 19l-1.5.5L5 21l-.5-1.5L3 19l1.5-.5z" opacity=".6"/>
+        <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2zM7.5 13A1.5 1.5 0 0 0 6 14.5 1.5 1.5 0 0 0 7.5 16 1.5 1.5 0 0 0 9 14.5 1.5 1.5 0 0 0 7.5 13zm9 0A1.5 1.5 0 0 0 15 14.5 1.5 1.5 0 0 0 16.5 16 1.5 1.5 0 0 0 18 14.5 1.5 1.5 0 0 0 16.5 13z"/>
     </svg>
 </button>
 
-<!-- AI Chat Panel -->
-<div id="semira-ai-panel" role="dialog" aria-label="SEMIRA AI Assistant">
+<!-- ── AI Chat Panel ────────────────────────────────────── -->
+<div id="semira-ai-panel" role="dialog" aria-modal="true" aria-label="SEMIRA AI Assistant">
+
     <!-- Header -->
     <div class="ai-header">
-        <div class="ai-header-avatar">👗</div>
+        <div class="ai-header-avatar">
+            <div class="ai-avatar-ring"></div>
+            <div class="ai-avatar-inner">🤖</div>
+        </div>
         <div class="ai-header-info">
-            <div class="ai-header-name">ሰሚራ AI</div>
-            <div class="ai-header-status">
-                <span class="ai-status-dot"></span>
-                {% if lang == 'ar' %}متصل الآن{% elif lang == 'en' %}Online now{% else %}አሁን ዝግጁ ነኝ{% endif %}
+            <div class="ai-header-name">SEMIRA AI</div>
+            <div class="ai-header-model">
+                {% if lang == 'ar' %}متصل · مساعد ذكي{% elif lang == 'en' %}Online · Smart Assistant{% else %}ዝግጁ · ሰሚራ አስተናጋጅ{% endif %}
             </div>
         </div>
-        <button class="ai-header-close" onclick="closeAIPanel()" aria-label="Close">✕</button>
+        <div class="ai-header-actions">
+            <button class="ai-header-btn" onclick="clearAIChat()" title="Clear chat" aria-label="Clear chat">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+            <button class="ai-header-btn" onclick="closeAIPanel()" aria-label="Close">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+        </div>
     </div>
 
     <!-- Messages -->
     <div id="semira-ai-messages" role="log" aria-live="polite"></div>
 
+    <!-- Divider -->
+    <div class="ai-divider"></div>
+
     <!-- Input -->
     <div class="ai-input-area">
-        <textarea
-            id="semira-ai-input"
-            rows="1"
-            placeholder="{% if lang == 'ar' %}اكتب رسالتك...{% elif lang == 'en' %}Type a message...{% else %}መልዕክት ጻፉ...{% endif %}"
-            aria-label="Message input"
-        ></textarea>
-        <button id="semira-ai-send" disabled aria-label="Send">
+        <div class="ai-input-wrap">
+            <textarea
+                id="semira-ai-input"
+                rows="1"
+                placeholder="{% if lang == 'ar' %}اكتب رسالتك...{% elif lang == 'en' %}Ask me anything...{% else %}ጥያቄዎን ያስገቡ...{% endif %}"
+                aria-label="Message input"
+            ></textarea>
+        </div>
+        <button id="semira-ai-send" disabled aria-label="Send message">
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
     </div>
-    <div class="ai-footer-note">Powered by SEMIRA AI ✨</div>
+
+    <!-- Footer -->
+    <div class="ai-footer-note">
+        <span></span>
+        Powered by Llama 3.3 · SEMIRA AI
+    </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/ai_agent.js') }}"></script>
