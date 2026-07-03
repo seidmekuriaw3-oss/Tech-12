@@ -342,6 +342,82 @@
             rgba(212,175,55,0.35) 70%, transparent);
     }
     
+    /* ── Category photo grid ── */
+    .cat-photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+        margin-bottom: 36px;
+    }
+    .cat-photo-card {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 3/4;
+        text-decoration: none;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.14);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: block;
+    }
+    .cat-photo-card:hover {
+        transform: translateY(-5px) scale(1.03);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.24);
+    }
+    .cat-photo-img {
+        position: absolute;
+        inset: 0; width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.45s ease;
+    }
+    .cat-photo-card:hover .cat-photo-img { transform: scale(1.1); }
+    .cat-photo-emoji {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 46px;
+    }
+    .cat-photo-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top,
+            rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.16) 55%, transparent 100%);
+        transition: background 0.3s;
+    }
+    .cat-photo-card:hover .cat-photo-overlay {
+        background: linear-gradient(to top,
+            rgba(10,62,34,0.90) 0%, rgba(10,62,34,0.32) 55%, transparent 100%);
+    }
+    .cat-photo-card::after {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        opacity: 0; transition: opacity 0.3s; z-index: 2;
+    }
+    .cat-photo-card:hover::after { opacity: 1; }
+    .cat-photo-name {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        padding: 8px 6px 10px;
+        font-size: 11px; font-weight: 700;
+        text-align: center; line-height: 1.3;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.95);
+        z-index: 1;
+    }
+    .cat-photo-badge {
+        position: absolute; top: 6px; left: 7px;
+        font-size: 18px; z-index: 1;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+    }
+    @media (max-width: 768px) {
+        .cat-photo-grid { grid-template-columns: repeat(3, 1fr); gap: 9px; }
+        .cat-photo-name { font-size: 10px; }
+    }
+    @media (min-width: 769px) {
+        .cat-photo-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; }
+        .cat-photo-name { font-size: 13px; }
+    }
+
     .btn-outline {
         padding: 8px 16px;
         background: var(--bg-white, white);
@@ -791,16 +867,27 @@
 {% endif %}
 
 <!-- Categories -->
-<div style="margin-bottom: 30px;">
+<div style="margin-bottom: 12px;">
     <h2>📂 {{ t.categories }}</h2>
-    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
-        <a href="{{ url_for('customer.products') }}" class="btn btn-outline">{{ t.all }}</a>
-        {% for cat in categories %}
-        <a href="{{ url_for('customer.category_products', category_id=cat.id) }}" class="btn btn-outline">
-            {% if cat.icon %}{{ cat.icon }}{% endif %} {{ category_name(cat) }}
-        </a>
-        {% endfor %}
-    </div>
+</div>
+<div class="cat-photo-grid">
+    {% for cat in categories %}
+    <a href="{{ url_for('customer.category_products', category_id=cat.id) }}" class="cat-photo-card">
+        {% if cat.image %}
+            <img class="cat-photo-img" src="{{ url_for('static', filename=cat.image) }}" alt="{{ category_name(cat) }}" loading="lazy">
+        {% else %}
+            <div class="cat-photo-emoji">{{ cat.icon or '👗' }}</div>
+        {% endif %}
+        <div class="cat-photo-overlay"></div>
+        {% if cat.icon %}<span class="cat-photo-badge">{{ cat.icon }}</span>{% endif %}
+        <div class="cat-photo-name">{{ category_name(cat) }}</div>
+    </a>
+    {% endfor %}
+    <a href="{{ url_for('customer.products') }}" class="cat-photo-card">
+        <div class="cat-photo-emoji" style="background:linear-gradient(135deg,#d4af37,#8b6914);">🛍️</div>
+        <div class="cat-photo-overlay"></div>
+        <div class="cat-photo-name">{{ t.all }}</div>
+    </a>
 </div>
 
 <!-- Products Grid -->

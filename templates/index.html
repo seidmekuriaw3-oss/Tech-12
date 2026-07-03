@@ -172,40 +172,74 @@
     }
     
     /* Categories Grid */
+    /* ── Category photo grid ── */
     .categories-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 14px;
         margin-bottom: 50px;
     }
-    
     .category-card {
-        background: var(--bg-white, white);
-        border-radius: 20px;
-        padding: 24px 16px;
-        text-align: center;
+        position: relative;
+        border-radius: 18px;
+        overflow: hidden;
+        aspect-ratio: 3/4;
         text-decoration: none;
-        color: var(--text-color, #333);
-        transition: all 0.3s;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        cursor: pointer;
-    }
-    
-    .category-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        background: #1a7a4a;
         color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: block;
     }
-    
-    .category-icon {
-        font-size: 48px;
-        margin-bottom: 12px;
+    .category-card:hover {
+        transform: translateY(-6px) scale(1.03);
+        box-shadow: 0 14px 36px rgba(0,0,0,0.25);
     }
-    
-    .category-name {
-        font-size: 16px;
-        font-weight: 600;
+    .cat-img {
+        position: absolute;
+        inset: 0; width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.45s ease;
+    }
+    .cat-emoji-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 52px;
+    }
+    .category-card:hover .cat-img { transform: scale(1.1); }
+    .cat-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top,
+            rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.18) 55%, transparent 100%);
+        transition: background 0.3s;
+    }
+    .category-card:hover .cat-overlay {
+        background: linear-gradient(to top,
+            rgba(10,62,34,0.88) 0%, rgba(10,62,34,0.35) 55%, transparent 100%);
+    }
+    /* gold top shimmer on hover */
+    .category-card::after {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        opacity: 0; transition: opacity 0.3s;
+        z-index: 2;
+    }
+    .category-card:hover::after { opacity: 1; }
+    .cat-name {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        padding: 10px 8px 12px;
+        font-size: 13px; font-weight: 700;
+        text-align: center; line-height: 1.3;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+        z-index: 1;
+    }
+    .cat-icon-badge {
+        position: absolute; top: 8px; left: 8px;
+        font-size: 20px; z-index: 1;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.6);
     }
     
     /* Features Section */
@@ -401,17 +435,9 @@
         }
         .categories-grid {
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 10px;
         }
-        .category-card {
-            padding: 16px 8px;
-        }
-        .category-icon {
-            font-size: 32px;
-        }
-        .category-name {
-            font-size: 12px;
-        }
+        .cat-name { font-size: 11px; padding: 8px 6px 10px; }
         .features-section {
             padding: 30px 20px;
         }
@@ -523,20 +549,20 @@
 <div class="categories-grid">
     {% for cat in categories %}
     <a href="{{ url_for('customer.products', category=cat.id) }}" class="category-card">
-        <div class="category-icon">
-            {% if cat.name_am == 'ሶፋ' %}🛋️
-            {% elif cat.name_am == 'አልጋ' %}🛏️
-            {% elif cat.name_am == 'መጅሊስ' %}👗
-            {% elif cat.name_am == 'መጋረጃ' %}🚪
-            {% elif cat.name_am == 'ቁምሳጥን' %}🗄️
-            {% else %}📦{% endif %}
-        </div>
-        <div class="category-name">{{ cat.name_am if lang == 'am' else cat.name }}</div>
+        {% if cat.image %}
+            <img class="cat-img" src="{{ url_for('static', filename=cat.image) }}" alt="{{ cat.name_am }}" loading="lazy">
+        {% else %}
+            <div class="cat-emoji-bg">{{ cat.icon or '👗' }}</div>
+        {% endif %}
+        <div class="cat-overlay"></div>
+        {% if cat.icon %}<span class="cat-icon-badge">{{ cat.icon }}</span>{% endif %}
+        <div class="cat-name">{{ cat.name_am }}</div>
     </a>
     {% endfor %}
     <a href="{{ url_for('customer.products') }}" class="category-card">
-        <div class="category-icon">🔄</div>
-        <div class="category-name">{% if lang == 'am' %}ሁሉም{% else %}All Products{% endif %}</div>
+        <div class="cat-emoji-bg" style="background:linear-gradient(135deg,#d4af37,#8b6914);">🛍️</div>
+        <div class="cat-overlay"></div>
+        <div class="cat-name">{% if lang == 'am' %}ሁሉም ምርቶች{% else %}All Products{% endif %}</div>
     </a>
 </div>
 
