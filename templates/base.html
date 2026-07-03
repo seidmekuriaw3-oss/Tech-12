@@ -1579,6 +1579,7 @@
 }
 #semira-ai-toggle:active { transform: scale(0.95); }
 #semira-ai-toggle svg { width: 26px; height: 26px; fill: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2)); }
+#semira-ai-toggle img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; display: block; }
 
 /* notification badge */
 #semira-ai-badge {
@@ -1684,14 +1685,12 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
-    backdrop-filter: blur(8px);
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
-    border: 1px solid rgba(255,255,255,0.15);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 .ai-header-info { flex: 1; min-width: 0; }
@@ -1986,9 +1985,7 @@
 <!-- ── AI Toggle Button ─────────────────────────────────── -->
 <button id="semira-ai-toggle" onclick="toggleAIPanel()" aria-label="AI Assistant" title="SEMIRA AI Assistant">
     <span id="semira-ai-badge" style="display:none">1</span>
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2zM7.5 13A1.5 1.5 0 0 0 6 14.5 1.5 1.5 0 0 0 7.5 16 1.5 1.5 0 0 0 9 14.5 1.5 1.5 0 0 0 7.5 13zm9 0A1.5 1.5 0 0 0 15 14.5 1.5 1.5 0 0 0 16.5 16 1.5 1.5 0 0 0 18 14.5 1.5 1.5 0 0 0 16.5 13z"/>
-    </svg>
+    <img src="{{ url_for('static', filename='images/semiraAi.jpg') }}" alt="SEMIRA AI">
 </button>
 
 <!-- ── AI Chat Panel ────────────────────────────────────── -->
@@ -1998,7 +1995,9 @@
     <div class="ai-header">
         <div class="ai-header-avatar">
             <div class="ai-avatar-ring"></div>
-            <div class="ai-avatar-inner">🤖</div>
+            <div class="ai-avatar-inner">
+                <img src="{{ url_for('static', filename='images/semiraAi.jpg') }}" alt="SEMIRA AI" style="width:44px;height:44px;border-radius:50%;object-fit:cover;display:block;">
+            </div>
         </div>
         <div class="ai-header-info">
             <div class="ai-header-name">SEMIRA AI</div>
