@@ -21587,3 +21587,6 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-03 03:03:15,289 - app - WARNING - Slow request: POST /api/ai-chat - 6.12s
 2026-07-03 12:11:09,506 - app - WARNING - Slow request: POST /api/ai-chat - 2.02s
 2026-07-03 12:20:37,278 - app - WARNING - Slow request: POST /api/ai-chat - 1.31s
+2026-07-03 12:53:58,971 - app - WARNING - 404 Error: http://2b4bcb0c-1b1d-4ec3-9d34-b63228153f50-00-74xhxkxaf8pn.riker.replit.dev/static/uploads/ads/habesha_dress.jpg
+2026-07-03 12:55:44,623 - app - WARNING - Slow request: POST /admin/ads/edit/2 - 15.73s
+2026-07-03 12:55:44,671 - app - WARNING - Slow request: GET / - 9.70s

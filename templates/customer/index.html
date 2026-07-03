@@ -177,7 +177,7 @@
     .ads-stories-bottom {
         position: absolute; bottom: 0; left: 0; right: 0;
         background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
-        padding: 60px 20px 50px; z-index: 10; color: #fff;
+        padding: 60px 20px 50px; z-index: 12; color: #fff;
     }
     .ads-stories-bottom h2 {
         font-size: 22px; font-weight: 900; margin: 0 0 10px; line-height: 1.3;
@@ -715,7 +715,7 @@
                 <div class="ads-crsl-play"><div class="ads-crsl-play-icon">▶</div></div>
                 <div class="ads-crsl-caption">
                     <h3>{{ ad_title }}</h3>
-                    <span class="ads-crsl-chip">{{ t.shop_now }} →</span>
+                    <a class="ads-crsl-chip" href="{{ ad_link }}" onclick="event.stopPropagation()">{{ t.shop_now }}</a>
                 </div>
             </div>
 
@@ -736,7 +736,7 @@
                 <div class="ads-crsl-caption">
                     <h3>{{ ad_title }}</h3>
                     {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
-                    <span class="ads-crsl-chip">{{ t.shop_now }} →</span>
+                    <a class="ads-crsl-chip" href="{{ ad_link }}" onclick="event.stopPropagation()">{{ t.shop_now }}</a>
                 </div>
             </div>
 
@@ -758,7 +758,7 @@
                 <div class="ads-crsl-caption">
                     <h3>{{ ad_title }}</h3>
                     {% if ad_desc %}<p>{{ ad_desc }}</p>{% endif %}
-                    <span class="ads-crsl-chip">{{ t.shop_now }} →</span>
+                    <a class="ads-crsl-chip" href="{{ ad_link }}" onclick="event.stopPropagation()">{{ t.shop_now }}</a>
                 </div>
             </div>
             {% endif %}
@@ -783,7 +783,7 @@
     <div class="ads-stories-bottom" id="adsStoriesBottom">
         <h2 id="adsStoriesTitle"></h2>
         <p  id="adsStoriesDesc" style="display:none;"></p>
-        <a  id="adsStoriesBtn" href="#" class="ads-stories-shop-btn">{{ t.shop_now }} →</a>
+        <a  id="adsStoriesBtn" href="#" class="ads-stories-shop-btn">{{ t.shop_now }}</a>
     </div>
     <div class="ads-stories-hint">↕ ወደ ታች ጥቅጥቅ ለመዝጋት</div>
 </div>
