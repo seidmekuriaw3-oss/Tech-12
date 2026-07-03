@@ -5,75 +5,139 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slider.css') }}">
 <style>
-    /* Hero Section */
+    /* ═══════════════════════════════════════════════════
+       HERO — Modern · Islamic · Habesha Fashion
+       ═══════════════════════════════════════════════════ */
     .hero-section {
-        background: linear-gradient(135deg, #1a7a4a, #0f5232);
+        position: relative;
+        background: linear-gradient(170deg,
+            #021a0d 0%, #083320 18%, #0f5232 45%, #0b4228 72%, #021a0d 100%);
         color: white;
         text-align: center;
-        padding: 60px 20px;
+        padding: 80px 32px 68px;
         border-radius: 24px;
         margin-bottom: 40px;
-        position: relative;
         overflow: hidden;
+        border: 1px solid rgba(212,175,55,0.28);
+        box-shadow:
+            0 0 0 1px rgba(212,175,55,0.07),
+            0 16px 60px rgba(0,0,0,0.5),
+            inset 0 1px 0 rgba(255,255,255,0.04);
     }
-    
+    /* Gold shimmer top line */
     .hero-section::before {
-        content: '👗';
+        content: '';
         position: absolute;
-        font-size: 200px;
-        opacity: 0.05;
-        bottom: -50px;
-        right: -50px;
-        transform: rotate(-15deg);
-        pointer-events: none;
+        top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg,
+            transparent 0%, #7a5c0a 6%, #d4af37 25%,
+            #f5e070 50%, #d4af37 75%, #7a5c0a 94%, transparent 100%);
+        z-index: 3;
     }
-    
+    /* Islamic diamond-lattice overlay */
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(45deg,  rgba(212,175,55,0.065) 25%, transparent 25%),
+            linear-gradient(-45deg, rgba(212,175,55,0.065) 25%, transparent 25%),
+            linear-gradient(45deg,  transparent 75%, rgba(212,175,55,0.065) 75%),
+            linear-gradient(-45deg, transparent 75%, rgba(212,175,55,0.065) 75%);
+        background-size: 36px 36px;
+        background-position: 0 0, 0 18px, 18px -18px, -18px 0;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .hero-section h1, .hero-section p, .hero-gold-divider, .hero-buttons { position: relative; z-index: 1; }
+    .hs-glow, .hs-btm, .hs-ornament { position: absolute !important; }
     .hero-section h1 {
         font-size: 42px;
-        margin-bottom: 16px;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 24px rgba(0,0,0,0.55);
+        letter-spacing: 1px;
     }
-    
+    .hero-gold-divider {
+        color: #d4af37;
+        font-size: 14px;
+        letter-spacing: 12px;
+        margin: 10px 0 20px;
+        text-shadow: 0 0 14px rgba(212,175,55,0.65);
+    }
     .hero-section p {
         font-size: 18px;
-        margin-bottom: 24px;
-        opacity: 0.95;
+        margin-bottom: 8px;
+        opacity: 0.93;
     }
-    
     .hero-buttons {
         display: flex;
         gap: 16px;
         justify-content: center;
         flex-wrap: wrap;
+        margin-top: 28px;
     }
-    
     .hero-btn {
-        padding: 12px 28px;
+        padding: 13px 32px;
         border-radius: 40px;
         text-decoration: none;
         font-weight: 600;
         transition: all 0.3s;
+        font-size: 15px;
     }
-    
     .hero-btn-primary {
-        background: white;
-        color: #1a7a4a;
+        background: linear-gradient(135deg, #fff 0%, #f0f9f4 100%);
+        color: #0f5232;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.25);
     }
-    
     .hero-btn-primary:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        box-shadow: 0 8px 28px rgba(0,0,0,0.3);
     }
-    
     .hero-btn-secondary {
-        background: rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.12);
         color: white;
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(212,175,55,0.45);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
     }
-    
     .hero-btn-secondary:hover {
-        background: rgba(255,255,255,0.3);
+        background: rgba(212,175,55,0.18);
+        border-color: rgba(212,175,55,0.7);
         transform: translateY(-3px);
+    }
+    /* Floating ornaments */
+    .hs-ornament {
+        position: absolute; z-index: 1;
+        opacity: 0.17; pointer-events: none;
+        animation: hsfloat 7s ease-in-out infinite;
+    }
+    .hs-ornament.tl { top: 16px;  left: 20px; }
+    .hs-ornament.tr { top: 16px;  right: 20px; animation-delay: -3.5s; }
+    .hs-ornament.bl { bottom: 16px; left: 20px; animation-delay: -1.8s; }
+    .hs-ornament.br { bottom: 16px; right: 20px; animation-delay: -5s; }
+    @keyframes hsfloat {
+        0%,100% { transform: translateY(0) rotate(0deg); }
+        50%      { transform: translateY(-5px) rotate(9deg); }
+    }
+    .hs-glow {
+        position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
+    }
+    .hs-glow.gl {
+        width: 280px; height: 280px;
+        background: radial-gradient(circle, rgba(212,175,55,0.09) 0%, transparent 70%);
+        top: -80px; left: -80px;
+    }
+    .hs-glow.gr {
+        width: 220px; height: 220px;
+        background: radial-gradient(circle, rgba(34,196,110,0.07) 0%, transparent 70%);
+        bottom: -60px; right: -60px;
+    }
+    .hs-btm {
+        position: absolute; bottom: 0; left: 0; right: 0; height: 1px; z-index: 2;
+        background: linear-gradient(90deg,
+            transparent, rgba(212,175,55,0.35) 30%,
+            rgba(212,175,55,0.65) 50%,
+            rgba(212,175,55,0.35) 70%, transparent);
     }
     
     /* Section Styles */
@@ -301,19 +365,23 @@
     
     /* Mobile Responsive */
     @media (max-width: 768px) {
-        .hero-section h1 {
-            font-size: 28px;
-        }
-        .hero-section p {
-            font-size: 14px;
-        }
-        .hero-buttons {
-            flex-direction: column;
-            align-items: center;
-        }
-        .hero-btn {
-            width: 80%;
-        }
+        .hero-section { padding: 48px 16px 40px !important; border-radius: 16px; }
+        .hero-section h1 { font-size: 26px; letter-spacing: 0.5px; }
+        .hero-section p { font-size: 14px; }
+        .hero-buttons { flex-direction: column; align-items: center; margin-top: 20px; }
+        .hero-btn { width: 80%; }
+        .hs-ornament { opacity: 0.1 !important; }
+    }
+    @media (min-width: 769px) {
+        .hero-section { padding: 96px 80px 80px; }
+        .hero-section h1 { font-size: 52px; }
+        .hs-ornament { opacity: 0.24 !important; width: 76px !important; height: 76px !important; }
+        .hs-ornament.tl { top: 24px; left: 32px; }
+        .hs-ornament.tr { top: 24px; right: 32px; }
+        .hs-ornament.bl { bottom: 24px; left: 32px; }
+        .hs-ornament.br { bottom: 24px; right: 32px; }
+    }
+    @media (max-width: 768px) {
         .section-header h2 {
             font-size: 24px;
         }
@@ -384,7 +452,44 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="hero-section">
+    <!-- Ambient glows -->
+    <div class="hs-glow gl"></div>
+    <div class="hs-glow gr"></div>
+    <!-- Bottom gold line -->
+    <div class="hs-btm"></div>
+    <!-- Islamic 8-pointed star — top corners -->
+    <svg class="hs-ornament tl" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="30,0 34.97,18 51.2,8.8 42,25.03 60,30 42,34.97 51.2,51.2 34.97,42 30,60 25.03,42 8.8,51.2 18,34.97 0,30 18,25.03 8.8,8.8 25.03,18" fill="rgba(212,175,55,0.15)" stroke="#d4af37" stroke-width="1.5"/>
+        <circle cx="30" cy="30" r="4.5" fill="#d4af37"/>
+    </svg>
+    <svg class="hs-ornament tr" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="30,0 34.97,18 51.2,8.8 42,25.03 60,30 42,34.97 51.2,51.2 34.97,42 30,60 25.03,42 8.8,51.2 18,34.97 0,30 18,25.03 8.8,8.8 25.03,18" fill="rgba(212,175,55,0.15)" stroke="#d4af37" stroke-width="1.5"/>
+        <circle cx="30" cy="30" r="4.5" fill="#d4af37"/>
+    </svg>
+    <!-- Habesha cross — bottom corners -->
+    <svg class="hs-ornament bl" width="48" height="48" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="23" y1="4" x2="23" y2="42" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="4" y1="23" x2="42" y2="23" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="17" y="17" width="12" height="12" stroke="#d4af37" stroke-width="1.4" transform="rotate(45,23,23)" fill="rgba(212,175,55,0.12)"/>
+        <circle cx="23" cy="23" r="3.5" fill="#d4af37"/>
+        <circle cx="23" cy="6"  r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="23" cy="40" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="6"  cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="40" cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+    </svg>
+    <svg class="hs-ornament br" width="48" height="48" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="23" y1="4" x2="23" y2="42" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="4" y1="23" x2="42" y2="23" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="17" y="17" width="12" height="12" stroke="#d4af37" stroke-width="1.4" transform="rotate(45,23,23)" fill="rgba(212,175,55,0.12)"/>
+        <circle cx="23" cy="23" r="3.5" fill="#d4af37"/>
+        <circle cx="23" cy="6"  r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="23" cy="40" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="6"  cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+        <circle cx="40" cy="23" r="2" fill="#d4af37" opacity="0.7"/>
+    </svg>
+
     <h1>👗 SEMIRA FASHION</h1>
+    <div class="hero-gold-divider">✦ &nbsp; ✦ &nbsp; ✦</div>
     <p>Quality fashion at affordable prices in ወሎ ደሴ ኩታበር</p>
     <p>🚚 Free shipping on orders over 5000 ETB</p>
     <div class="hero-buttons">
