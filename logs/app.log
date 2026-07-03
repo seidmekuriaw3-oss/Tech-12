@@ -175733,3 +175733,73 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-03 02:40:15,529 - app - INFO - Initializing Semira Fashion Application
 2026-07-03 02:40:15,713 - app - INFO - Database initialized successfully
 2026-07-03 02:40:15,724 - app - INFO - Application initialized successfully
+2026-07-03 02:45:36,874 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 02:45:37,187 - app - INFO - Database initialized successfully
+2026-07-03 02:45:37,188 - app - INFO - Application initialized successfully
+2026-07-03 02:45:45,286 - app - WARNING - Slow request: POST /api/ai-chat - 2.66s
+2026-07-03 02:46:09,987 - app - WARNING - Slow request: POST /api/ai-chat - 2.09s
+2026-07-03 02:46:11,765 - app - WARNING - Slow request: POST /api/ai-chat - 1.77s
+2026-07-03 02:46:14,154 - app - WARNING - Slow request: POST /api/ai-chat - 2.38s
+2026-07-03 02:46:35,442 - app - WARNING - Slow request: POST /api/ai-chat - 21.29s
+2026-07-03 02:48:12,361 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 02:48:12,461 - app - INFO - Database initialized successfully
+2026-07-03 02:48:12,463 - app - INFO - Application initialized successfully
+2026-07-03 02:48:24,595 - app - WARNING - Slow request: POST /api/ai-chat - 1.31s
+2026-07-03 02:48:26,620 - app - WARNING - Slow request: POST /api/ai-chat - 1.52s
+2026-07-03 02:48:36,874 - app - WARNING - Slow request: POST /api/ai-chat - 9.75s
+2026-07-03 02:48:58,974 - app - WARNING - Slow request: POST /api/ai-chat - 21.59s
+2026-07-03 02:49:21,188 - app - WARNING - Slow request: POST /api/ai-chat - 2.78s
+2026-07-03 02:49:45,084 - app - WARNING - Slow request: POST /api/ai-chat - 47.18s
+2026-07-03 02:50:06,747 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 02:50:06,784 - app - INFO - Database initialized successfully
+2026-07-03 02:50:06,784 - app - INFO - Application initialized successfully
+2026-07-03 02:50:20,330 - app - WARNING - Slow request: POST /api/ai-chat - 1.65s
+2026-07-03 02:50:29,834 - app - WARNING - Slow request: POST /api/ai-chat - 9.20s
+2026-07-03 02:50:51,566 - app - WARNING - Slow request: POST /api/ai-chat - 21.43s
+2026-07-03 02:51:14,742 - app - WARNING - Slow request: POST /api/ai-chat - 22.87s
+2026-07-03 02:51:36,118 - app - WARNING - Slow request: POST /api/ai-chat - 21.07s
+2026-07-03 02:51:58,347 - app - WARNING - Slow request: POST /api/ai-chat - 21.93s
+2026-07-03 02:52:23,163 - app - WARNING - Slow request: POST /api/ai-chat - 24.51s
+2026-07-03 02:52:45,716 - app - WARNING - Slow request: POST /api/ai-chat - 22.25s
+2026-07-03 02:53:47,306 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 02:53:47,371 - app - INFO - Database initialized successfully
+2026-07-03 02:53:47,371 - app - INFO - Application initialized successfully
+2026-07-03 02:54:03,011 - app - WARNING - Slow request: POST /api/ai-chat - 1.27s
+2026-07-03 02:54:04,648 - app - WARNING - Slow request: POST /api/ai-chat - 1.33s
+2026-07-03 02:54:14,068 - app - WARNING - Slow request: POST /api/ai-chat - 9.12s
+2026-07-03 02:54:15,407 - app - WARNING - Slow request: POST /api/ai-chat - 1.04s
+2026-07-03 02:54:51,906 - app - WARNING - Slow request: POST /api/ai-chat - 10.87s
+2026-07-03 02:55:38,604 - app - WARNING - Slow request: POST /api/ai-chat - 82.89s
+2026-07-03 02:56:23,010 - app - WARNING - Slow request: POST /api/ai-chat - 65.47s
+2026-07-03 02:56:25,611 - app - WARNING - Slow request: POST /api/ai-chat - 17.43s
+2026-07-03 02:56:25,827 - app - WARNING - Slow request: POST /api/ai-chat - 93.62s
+2026-07-03 02:56:26,064 - app - WARNING - Slow request: POST /api/ai-chat - 43.21s
+2026-07-03 02:56:57,500 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 02:56:57,538 - app - INFO - Database initialized successfully
+2026-07-03 02:56:57,538 - app - INFO - Application initialized successfully
+2026-07-03 02:57:15,062 - app - WARNING - Slow request: POST /api/ai-chat - 2.50s
+2026-07-03 02:57:58,654 - app - WARNING - Slow request: POST /api/ai-chat - 43.59s
+2026-07-03 02:58:41,893 - app - WARNING - Slow request: POST /api/ai-chat - 46.79s
+2026-07-03 02:58:44,589 - app - WARNING - Slow request: POST /api/ai-chat - 69.50s
+2026-07-03 02:59:24,554 - app - WARNING - Slow request: POST /api/ai-chat - 49.43s
+2026-07-03 02:59:26,956 - app - WARNING - Slow request: POST /api/ai-chat - 31.83s
+2026-07-03 02:59:28,537 - app - WARNING - Slow request: POST /api/ai-chat - 73.42s
+2026-07-03 03:00:13,240 - app - WARNING - Slow request: POST /api/ai-chat - 58.09s
+2026-07-03 03:00:57,598 - app - WARNING - Slow request: POST /api/ai-chat - 82.43s
+2026-07-03 03:00:59,526 - app - WARNING - Slow request: POST /api/ai-chat - 64.33s
+2026-07-03 03:02:49,299 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 03:02:49,442 - app - INFO - Database initialized successfully
+2026-07-03 03:02:49,442 - app - INFO - Application initialized successfully
+2026-07-03 03:03:15,289 - app - WARNING - Slow request: POST /api/ai-chat - 6.12s
+2026-07-03 03:04:05,893 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 03:04:05,963 - app - INFO - Database initialized successfully
+2026-07-03 03:04:05,963 - app - INFO - Application initialized successfully
+2026-07-03 03:05:43,072 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 03:05:43,111 - app - INFO - Database initialized successfully
+2026-07-03 03:05:43,111 - app - INFO - Application initialized successfully
+2026-07-03 03:07:24,346 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 03:07:24,487 - app - INFO - Database initialized successfully
+2026-07-03 03:07:24,489 - app - INFO - Application initialized successfully
+2026-07-03 03:09:36,510 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 03:09:36,588 - app - INFO - Database initialized successfully
+2026-07-03 03:09:36,588 - app - INFO - Application initialized successfully

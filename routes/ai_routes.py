@@ -72,8 +72,8 @@ AMHARIC_PRICE_WORDS = [
 ]
 
 AMHARIC_ORDER_WORDS = [
-    'ትዕዛዝ', 'order', 'ደረሰ', 'arrived', 'track', 'status', 'ሁኔታ',
-    'ደረሰኝ', 'ተላከ', 'shipped', 'delivery', 'ማድረስ', 'where is',
+    'ትዕዛዝ', 'ትዕዛዜ', 'order', 'ደረሰ', 'arrived', 'track',
+    'ደረሰኝ', 'ተላከ', 'shipped', 'where is',
     'order number', 'ትዕዛዝ ቁጥር',
 ]
 
@@ -94,7 +94,7 @@ AMHARIC_SIZE_WORDS = [
 
 AMHARIC_GREETING_WORDS = [
     'ሰላም', 'selam', 'hello', 'hi', 'hey', 'good morning', 'good afternoon',
-    'مرحبا', 'السلام', 'good', 'start', 'begin', 'እዚህ', 'ምን',
+    'مرحبا', 'السلام',
 ]
 
 AMHARIC_PAYMENT_WORDS = [
@@ -129,91 +129,19 @@ PAYMENT_LABELS = {
     'refunded': {'am': '↩️ ተመልሷል',   'en': '↩️ Refunded',  'ar': '↩️ مسترد'},
 }
 
-# ── Comprehensive system prompt ───────────────────────────────────────────────
-STORE_SYSTEM_PROMPT = """You are SEMIRA (ሰሚራ), the expert AI shopping assistant for SEMIRA FASHION — an Ethiopian women's and children's clothing store.
+# ── System prompt (kept compact to fit Groq free-tier TPM limits) ─────────────
+STORE_SYSTEM_PROMPT = """You are SEMIRA, AI assistant for SEMIRA FASHION (Ethiopian clothing store). Reply in the customer's language (Amharic/English/Arabic). Note: ነጻ ማጓጓዝ=free shipping, ዋጋ=price, ትዕዛዝ=order, ክፍያ=payment, ሳይዝ=size, ቅሬታ=return.
 
-═══════════════════════════════════════════════
-STORE INFORMATION
-═══════════════════════════════════════════════
-• Store Name: SEMIRA FASHION (ሰሚራ ፋሽን)
-• Location: Wollo, Dessie, Kutaber — Ethiopia
-• WhatsApp: {whatsapp}
-• Business Hours: Mon–Sat 8AM–8PM, Sun 10AM–6PM (Ethiopia time)
-• Speciality: Women's & children's clothing (Ethiopian traditional + modern fashion)
+Store: Wollo, Dessie — Ethiopia | WA: {whatsapp} | Mon–Sat 8AM–8PM
+Shipping: Free ≥{free_ship} ETB, else {ship_cost} ETB, 2–5 days. Payment: COD (pay on arrival). Discount: {discount_pct}% off when logged in. Returns: 7 days unused with tags.
+Sizes: Women XS–3XL | Kids 0m–14yr.
 
-SHIPPING & PAYMENT:
-• Free shipping on orders ≥ {free_ship} ETB
-• Standard shipping: {ship_cost} ETB
-• Logged-in customers get {discount_pct}% discount on all orders
-• Payment: Cash on Delivery (COD) — pay when your order arrives
-• Delivery: 2–5 business days within Ethiopia
-
-RETURN POLICY:
-• 7 days return window for unused, unwashed items with original tags
-• Exchange available for wrong size/color
-• Contact WhatsApp for return process
-
-SIZES AVAILABLE:
-• Women's clothing: XS, S, M, L, XL, XXL, 3XL
-• Children's clothing: 0–6m, 6–12m, 1yr, 2yr, 3yr, 4yr, 5yr, 6yr, 8yr, 10yr, 12yr, 14yr
-• Traditional wear: One size fits most / custom sizing available
-
-CATEGORIES (with Amharic):
-1. ቀሚሶች (Dresses & Gowns) — formal, casual, traditional
-2. ቶፖች እና ሸሚዞች (Tops & Shirts) — blouses, t-shirts, shirts
-3. ሱሪዎች እና ቁምጣዎች (Trousers & Shorts) — pants, jeans, shorts
-4. ጃኬቶች እና ሹራቦች (Jackets & Knitwear) — jackets, cardigans, sweaters
-5. የውስጥ እና የሌሊት ልብሶች (Underwear & Nightwear) — pajamas, nightwear
-6. የሕፃናት ሙሉ ልብሶች (Baby Suits & Rompers) — baby & kids clothing
-7. ስፖርታዊ ልብሶች (Activewear) — gym, sports, yoga wear
-8. የባህል ልብሶች (Traditional Wear) — Habesha Kemis, Netela, Gabi, Kuta, Tilf
-
-═══════════════════════════════════════════════
-CURRENT PRODUCTS IN STORE ({product_count} items):
-═══════════════════════════════════════════════
+PRODUCTS ({product_count}):
 {products}
 
-═══════════════════════════════════════════════
-CUSTOMER ORDER HISTORY:
-═══════════════════════════════════════════════
-{orders}
+ORDERS: {orders}
 
-═══════════════════════════════════════════════
-INSTRUCTIONS
-═══════════════════════════════════════════════
-LANGUAGE: Always respond in the EXACT language the customer wrote in.
-  → Amharic ( አማርኛ) = respond in Amharic
-  → English = respond in English
-  → Arabic (العربية) = respond in Arabic
-  → Mixed = use the dominant language
-
-RESPONSE RULES:
-1. Be ACCURATE — never invent products, prices, or order statuses not shown above
-2. Be SPECIFIC — mention exact product names and prices from the list above
-3. Be CONCISE — 2–4 sentences for most answers; lists are OK for product recommendations
-4. Be HELPFUL — if you can't answer, direct to WhatsApp: {whatsapp}
-5. For product questions: mention name, price, availability, and link to /products
-6. For order questions: use ONLY the order data above — never guess
-7. For out-of-stock items: apologize and suggest alternatives from the list
-8. Use emojis sparingly (👗 🌸 ✅ 📦) — 1–2 per response maximum
-
-WHAT YOU CAN HELP WITH:
-✓ Product recommendations & search
-✓ Price information & comparisons
-✓ Order status & tracking
-✓ Shipping & delivery questions
-✓ Return & exchange policy
-✓ Size guidance
-✓ Payment methods
-✓ Store location & contact
-✓ Traditional Ethiopian clothing guidance
-
-DO NOT:
-✗ Invent product details or prices
-✗ Make up order statuses
-✗ Provide medical, legal, or financial advice
-✗ Discuss topics unrelated to the store
-"""
+Rules: (1) Only quote prices/products shown above—never invent. (2) If ORDERS has ⚠️ or "not logged in" → tell customer to log in at /login, never guess status. (3) If unsure → WhatsApp {whatsapp}. (4) Concise, warm, max 2 emojis."""
 
 
 def _extract_price_range(msg: str):
@@ -314,47 +242,44 @@ def get_product_context(user_message: str, lang: str = 'am') -> tuple[str, int]:
                    OR p.description_am ILIKE %s OR p.description_en ILIKE %s
                    OR c.name_am ILIKE %s OR p.material ILIKE %s)
             ORDER BY p.is_featured DESC, p.sales_count DESC
-            LIMIT 8
+            LIMIT 6
         """, kw_params)
         keyword_products = cursor.fetchall()
 
-        # Popular products (always include as context, cached longer)
+        # Popular products fallback (cached longer)
         pop_cache_key = f"pop:{lang}"
         popular = _cget(pop_cache_key)
         if popular is None:
             cursor.execute(f"""
                 SELECT p.id, p.name_am, p.name_en, p.name_ar, p.price, p.compare_price,
-                       p.stock_quantity, p.is_featured, p.is_new, p.material, p.color,
-                       p.sizes, p.gender, {cat_col} as cat_name,
-                       LEFT(COALESCE({desc_col}, p.description_am, p.description), 80) as desc_snippet,
-                       p.thumbnail
+                       p.stock_quantity, p.is_featured, p.is_new, p.sizes,
+                       {cat_col} as cat_name
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.id
                 WHERE p.is_active = 1
                 ORDER BY p.is_featured DESC, p.is_new DESC, p.sales_count DESC
-                LIMIT 10
+                LIMIT 6
             """)
             popular = cursor.fetchall()
             _cset(pop_cache_key, popular, ttl=_CACHE_TTL_LONG)
 
-        # Merge, deduplicate
+        # Merge, deduplicate — cap at 8 total
         seen_ids = set()
         all_products = []
         for p in list(keyword_products) + list(popular):
             if p['id'] not in seen_ids:
                 seen_ids.add(p['id'])
                 all_products.append(p)
-            if len(all_products) >= 12:
+            if len(all_products) >= 8:
                 break
 
         if not all_products:
-            result = "ምንም ምርቶች አልተገኙም (No products found)."
+            result = "No products found."
             _cset(cache_key, (result, 0))
             return result, 0
 
         lines = []
         for p in all_products:
-            # Pick best name for the language
             if lang == 'am':
                 name = p['name_am'] or p['name_en'] or 'Unknown'
             elif lang == 'ar':
@@ -365,35 +290,19 @@ def get_product_context(user_message: str, lang: str = 'am') -> tuple[str, int]:
             price = float(p['price'])
             compare = float(p['compare_price']) if p['compare_price'] else None
             stock = int(p['stock_quantity'] or 0)
-            avail = '✅ In stock' if stock > 5 else ('⚠️ Low stock' if stock > 0 else '❌ Out of stock')
-            cat = p['cat_name'] or ''
-            badges = []
-            if p['is_featured']:
-                badges.append('⭐Featured')
-            if p['is_new']:
-                badges.append('🆕New')
+            avail = 'in stock' if stock > 0 else 'OUT OF STOCK'
+            sizes = p.get('sizes') or ''
 
-            line = f"• {name} | {price:,.0f} ETB"
+            line = f"- {name}: {price:,.0f} ETB"
             if compare and compare > price:
-                discount_pct = round((1 - price / compare) * 100)
-                line += f" (was {compare:,.0f} ETB, save {discount_pct}%)"
-            line += f" | {avail}"
-            if cat:
-                line += f" | Category: {cat}"
-            if p['material']:
-                line += f" | {p['material']}"
-            if p['color']:
-                line += f" | Color: {p['color']}"
-            if p['sizes']:
-                line += f" | Sizes: {p['sizes']}"
-            if badges:
-                line += f" | {', '.join(badges)}"
-            if p['desc_snippet']:
-                line += f"\n  ↳ {p['desc_snippet'].strip()}..."
-            line += f"\n  ↳ Link: /products/{p['id']}"
+                line += f" (was {compare:,.0f})"
+            line += f" [{avail}]"
+            if sizes:
+                line += f" sizes:{sizes}"
+            line += f" → /products/{p['id']}"
             lines.append(line)
 
-        result = "\n\n".join(lines)
+        result = "\n".join(lines)
         count = len(all_products)
         _cset(cache_key, (result, count), ttl=_CACHE_TTL_SHORT)
         return result, count
@@ -592,32 +501,52 @@ def smart_fallback(message: str, user_id=None, lang: str = 'am', products_ctx: s
             'ar': f"📱 واتساب: wa.me/{WHATSAPP_NUMBER}\n📍 العنوان: وولو، ديسي، كوتابر — إثيوبيا\n🕐 الساعات: الإثنين–السبت 8ص–8م",
         }.get(lang, f"WhatsApp: wa.me/{WHATSAPP_NUMBER} | Wollo, Dessie, Kutaber")
 
-    # Category/product browse
+    # Category/product browse — show real product data if available
     cat_id = _detect_category(msg)
     price_min, price_max = _extract_price_range(msg)
+    is_product_query = cat_id or _has(*AMHARIC_PRICE_WORDS) or \
+        any(w in msg for w in ('product', 'ምርት', 'ልብስ', 'ምን አለ', 'አለ?', 'አለ '))
 
-    if cat_id or _has(*AMHARIC_PRICE_WORDS) or 'product' in msg or 'ምርት' in msg or 'ልብስ' in msg:
-        base_url = f"/products"
+    if is_product_query:
+        # If product context was passed in, show it directly
+        if products_ctx and 'No products' not in products_ctx and len(products_ctx) > 20:
+            intro = {
+                'am': "👗 እነዚህ ምርቶች አሉ:",
+                'en': "👗 Here are our products:",
+                'ar': "👗 إليك منتجاتنا:",
+            }.get(lang, "👗 Our products:")
+            browse_url = "/products"
+            if cat_id:
+                browse_url += f"?category={cat_id}"
+            if price_max and price_max < 999999:
+                sep = '&' if '?' in browse_url else '?'
+                browse_url += f"{sep}max_price={price_max}"
+            footer = {
+                'am': f"ሁሉም ምርቶች: {browse_url}",
+                'en': f"See all: {browse_url}",
+                'ar': f"عرض الكل: {browse_url}",
+            }.get(lang, f"Browse: {browse_url}")
+            return f"{intro}\n{products_ctx}\n\n{footer}"
+
+        # No context — send to products page
+        base_url = "/products"
         if cat_id:
             base_url += f"?category={cat_id}"
         if price_max and price_max < 999999:
             sep = '&' if '?' in base_url else '?'
             base_url += f"{sep}max_price={price_max}"
         return {
-            'am': f"👗 ምርቶቻችንን ለማየት: {base_url}\nወይም ጥያቄ ካለዎ WhatsApp: wa.me/{WHATSAPP_NUMBER}",
-            'en': f"👗 Browse our products: {base_url}\nOr ask me more specific questions!",
-            'ar': f"👗 تصفح منتجاتنا: {base_url}\nأو اسألني أسئلة أكثر تحديداً!",
+            'am': f"👗 ምርቶቻችንን ለማየት: {base_url}",
+            'en': f"👗 Browse our products: {base_url}",
+            'ar': f"👗 تصفح منتجاتنا: {base_url}",
         }.get(lang, f"Browse: {base_url}")
 
     # Default
     return {
         'am': f"ሰሚራ AI ለማገልገል ዝግጁ ነኝ! 🌸\n"
-              f"ስለ ምርቶች፣ ዋጋ፣ ትዕዛዝ ሁኔታ፣ ሳይዝ፣ ወይም ማጓጓዝ ይጠይቁ።\n"
-              f"ዝርዝር ለ: wa.me/{WHATSAPP_NUMBER}",
-        'en': f"I'm here to help! 🌸 Ask me about products, prices, your orders, sizing, or delivery.\n"
-              f"Direct contact: wa.me/{WHATSAPP_NUMBER}",
-        'ar': f"أنا هنا للمساعدة! 🌸 اسألني عن المنتجات والأسعار وطلباتك والمقاسات.\n"
-              f"تواصل مباشر: wa.me/{WHATSAPP_NUMBER}",
+              f"ስለ ምርቶች፣ ዋጋ፣ ትዕዛዝ ሁኔታ፣ ሳይዝ፣ ወይም ማጓጓዝ ይጠይቁ።",
+        'en': f"I'm here to help! Ask about products, prices, orders, sizes, or delivery. 🌸",
+        'ar': f"أنا هنا للمساعدة! اسألني عن المنتجات والأسعار وطلباتك والمقاسات. 🌸",
     }.get(lang, f"How can I help? WhatsApp: wa.me/{WHATSAPP_NUMBER}")
 
 
@@ -643,6 +572,7 @@ def _log_conversation(message: str, reply: str, source: str, lang: str,
 def ai_chat():
     """Main AI chat endpoint — Groq LLM with comprehensive smart fallback."""
     message = ''
+    products_ctx = ''   # ensure available in except scope
     try:
         data     = request.get_json(silent=True) or {}
         message  = (data.get('message') or '').strip()
@@ -655,7 +585,7 @@ def ai_chat():
         if not message:
             return jsonify({'success': False, 'error': 'Empty message'}), 400
 
-        message = message[:600]  # cap at 600 chars
+        message = message[:400]  # cap to keep tokens low
 
         api_key = os.environ.get('GROQ_API_KEY', '').strip()
 
@@ -666,10 +596,17 @@ def ai_chat():
         # Always fetch product context (cached, fast)
         products_ctx, product_count = get_product_context(message, lang)
 
-        # Fetch order context ONLY when intent is order-related AND user is logged in
-        # This avoids unnecessary DB queries and minimises customer data sent to Groq
-        if is_order_intent and user_id:
-            orders_ctx = get_order_context(user_id, message, lang)
+        # Fetch order context only when message has order intent
+        if is_order_intent:
+            if user_id:
+                orders_ctx = get_order_context(user_id, message, lang)
+            else:
+                # Not logged in — tell AI clearly so it directs them to /login
+                orders_ctx = {
+                    'am': "⚠️ ደንበኛው ወደ ስርዓቱ አልገቡም። ትዕዛዝ ለማየት /login ላይ መግባት አለባቸው። ትዕዛዝ ሁኔታ አታስብ — ፍጹም አታፈጥር።",
+                    'en': "⚠️ Customer is NOT logged in. They must log in at /login to view orders. Do NOT guess or invent any order status.",
+                    'ar': "⚠️ العميل غير مسجل الدخول. يجب تسجيل الدخول على /login. لا تخترع أي معلومات عن الطلب.",
+                }.get(lang, "⚠️ NOT logged in — tell customer to log in at /login. Never invent order status.")
         else:
             orders_ctx = {
                 'am': "ትዕዛዝ ጥያቄ አልተጠየቀም።",
@@ -693,21 +630,21 @@ def ai_chat():
             orders=orders_ctx,
         )
 
-        # Build message history (last 10 turns)
+        # Build message history (last 5 turns to save tokens)
         messages = [{'role': 'system', 'content': system_content}]
-        for h in history[-10:]:
+        for h in history[-5:]:
             role    = h.get('role', 'user')
             content = h.get('content', '')
             if role in ('user', 'assistant') and content:
-                messages.append({'role': role, 'content': str(content)[:400]})
+                messages.append({'role': role, 'content': str(content)[:200]})
         messages.append({'role': 'user', 'content': message})
 
-        client = _GroqClient(api_key=api_key)
+        client = _GroqClient(api_key=api_key, timeout=15.0)
         completion = client.chat.completions.create(
             model='llama-3.3-70b-versatile',
             messages=messages,
-            max_tokens=500,
-            temperature=0.4,   # Lower = more factual/accurate
+            max_tokens=380,
+            temperature=0.25,
             top_p=0.9,
         )
         reply = completion.choices[0].message.content.strip()
@@ -720,7 +657,7 @@ def ai_chat():
         _uid      = session.get('user_id')
         _name     = session.get('username') or session.get('full_name')
         _ip       = request.remote_addr
-        fallback  = smart_fallback(message or '', user_id=_uid, lang=_lang)
+        fallback  = smart_fallback(message or '', user_id=_uid, lang=_lang, products_ctx=products_ctx)
         _log_conversation(message or '', fallback, 'error', _lang, _uid, _name, _ip)
         return jsonify({'success': True, 'reply': fallback, 'source': 'fallback'})
 
