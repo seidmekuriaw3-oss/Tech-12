@@ -255,7 +255,7 @@
                        style="width: 100%; padding: 8px;"
                        onchange="previewMedia(this)">
                 <small style="color: #666; display: block; margin-top: 8px;">
-                    ምስሎች: JPG, PNG, WEBP, GIF &nbsp;|&nbsp; ቪዲዮ: MP4, WebM, MOV (Max 50MB) — አሮጌውን ለማቆየት ባዶ ይተውት
+                    ምስሎች: JPG, PNG, WEBP, GIF &nbsp;|&nbsp; ቪዲዮ: MP4, WebM, MOV — አሮጌውን ለማቆየት ባዶ ይተውት
                 </small>
             </div>
             
@@ -356,18 +356,6 @@
         const file = input.files[0];
         
         if (file) {
-            // Check file size (16MB = 16 * 1024 * 1024)
-            if (file.size > 16 * 1024 * 1024) {
-                if (window.showToast) {
-                    window.showToast('File size must be less than 16MB', 'error');
-                } else {
-                    alert('File size must be less than 16MB');
-                }
-                input.value = '';
-                resetPreview();
-                return;
-            }
-            
             const reader = new FileReader();
             reader.onload = function(e) {
                 let mediaHtml = '';

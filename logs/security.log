@@ -21542,3 +21542,6 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-06-29 02:28:20,986 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-07-02 13:52:59,034 - app - WARNING - 404 Error: http://59c3d644-0bb1-4bdb-891a-db968ad2ee91-00-3s1nl40qeb0c.worf.replit.dev/product/uploads/products/product_tilf_skirt.jpg
 2026-07-02 13:58:29,159 - app - WARNING - 404 Error: http://59c3d644-0bb1-4bdb-891a-db968ad2ee91-00-3s1nl40qeb0c.worf.replit.dev/product/uploads/products/product_tilf_skirt.jpg
+2026-07-02 18:17:24,221 - app - WARNING - Slow request: POST /admin/ads/edit/1 - 4.81s
+2026-07-02 18:33:21,738 - app - WARNING - Slow request: POST /admin/ads/create - 15.86s
+2026-07-02 18:34:34,849 - app - WARNING - Slow request: POST /admin/ads/create - 2.16s
