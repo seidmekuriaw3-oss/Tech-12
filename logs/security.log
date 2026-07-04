@@ -21597,3 +21597,4 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-03 13:20:49,367 - app - WARNING - Slow request: POST /api/ai-chat - 1.48s
 2026-07-04 00:01:48,783 - app - WARNING - 404 Error: http://localhost:5000/home
 2026-07-04 00:01:58,547 - app - WARNING - 404 Error: http://localhost:5000/shop
+2026-07-04 00:11:40,528 - app - WARNING - Slow request: POST /api/ai-chat - 1.45s

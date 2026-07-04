@@ -107,243 +107,113 @@
         color: var(--text-muted, #666);
         font-size: 14px;
     }
+    /* ── Compact product grid (matches home page) ── */
     .products-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 24px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 0;
     }
+    @media (min-width: 540px) { .products-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
+    @media (min-width: 900px) { .products-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
+    @media (min-width: 1200px) { .products-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; } }
+
     .product-card {
-        background: var(--bg-white, white);
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
-        cursor: pointer;
+        border-radius: 14px; overflow: hidden;
+        background: #fff; text-decoration: none; color: inherit;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.09);
+        transition: transform 0.22s, box-shadow 0.22s;
+        display: flex; flex-direction: column; cursor: pointer;
     }
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
     .product-image {
-        height: 220px;
-        background: var(--bg-hover, #f8f9fa);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
+        position: relative; width: 100%;
+        padding-top: 133%; overflow: hidden;
+        background: #f0f4f0; flex-shrink: 0;
     }
     .product-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s;
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; transition: transform 0.4s;
     }
-    .product-card:hover .product-image img {
-        transform: scale(1.05);
+    .product-card:hover .product-image img { transform: scale(1.07); }
+    .pc-fallback {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 36px; background: linear-gradient(135deg,#e8f5ee,#f0faf4);
     }
     .discount-badge {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background: linear-gradient(135deg, #f44336, #d32f2f);
-        color: white;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: bold;
+        position: absolute; top: 8px; left: 8px;
+        background: #e53935; color: #fff;
+        font-size: 10px; font-weight: 800; border-radius: 20px;
+        padding: 2px 7px; z-index: 2;
     }
-    .product-info {
-        padding: 16px;
+    .new-badge {
+        position: absolute; top: 8px; right: 8px;
+        background: linear-gradient(135deg,#1a7a4a,#22a060); color: #fff;
+        font-size: 10px; font-weight: 800; border-radius: 20px;
+        padding: 2px 7px; z-index: 2;
     }
+    .cart-hover-btn {
+        position: absolute; bottom: 8px; right: 8px;
+        width: 30px; height: 30px; border-radius: 50%;
+        background: #1a7a4a; color: #fff; border: none;
+        font-size: 14px; cursor: pointer; z-index: 2;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; transform: scale(0.8);
+        transition: opacity 0.2s, transform 0.2s;
+    }
+    .product-card:hover .cart-hover-btn { opacity: 1; transform: scale(1); }
+    .product-info { padding: 8px 9px 10px; }
     .product-title {
-        font-size: 15px;
-        font-weight: 600;
-        margin: 0 0 8px 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        color: var(--text-color, #333);
+        font-size: 11.5px; font-weight: 600; color: #222;
+        line-height: 1.35; margin: 0 0 5px;
+        display: -webkit-box; -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
     }
-    .product-rating {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 8px;
-    }
-    .stars {
-        color: #ff9800;
-        font-size: 12px;
-    }
-    .product-price {
-        margin: 10px 0;
-    }
-    .current-price {
-        font-size: 18px;
-        font-weight: bold;
-        color: #1a7a4a;
-    }
-    .old-price {
-        text-decoration: line-through;
-        color: var(--text-muted, #999);
-        font-size: 13px;
-        margin-left: 8px;
-    }
-    .btn-add-to-cart {
-        width: 100%;
-        background: #1a7a4a;
-        color: white;
-        border: none;
-        padding: 10px;
-        border-radius: 30px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    .btn-add-to-cart:hover {
-        background: #0f5232;
-        transform: translateY(-2px);
-    }
-    .btn-add-to-cart:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+    .current-price { font-size: 13px; font-weight: 800; color: #1a7a4a; }
+    .old-price { font-size: 10px; color: #bbb; text-decoration: line-through; margin-left: 4px; }
+
     .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 40px;
+        display: flex; justify-content: center;
+        gap: 10px; margin-top: 40px;
     }
     .page-btn {
-        padding: 8px 16px;
-        border: 1px solid var(--border-color, #ddd);
-        background: var(--bg-white, white);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s;
-        color: var(--text-color, #333);
+        padding: 8px 16px; border: 1px solid var(--border-color, #ddd);
+        background: var(--bg-white, white); border-radius: 8px;
+        cursor: pointer; transition: all 0.3s; color: var(--text-color, #333);
     }
-    .page-btn:hover, .page-btn.active {
-        background: #1a7a4a;
-        color: white;
-        border-color: #1a7a4a;
-    }
-    .page-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+    .page-btn:hover, .page-btn.active { background: #1a7a4a; color: white; border-color: #1a7a4a; }
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .mobile-filter-toggle {
-        display: none;
-        background: #1a7a4a;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 30px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-    @media (max-width: 992px) {
-        .products-grid {
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 16px;
-        }
-        .product-image {
-            height: 180px;
-        }
+        display: none; background: #1a7a4a; color: white;
+        border: none; padding: 10px 20px; border-radius: 30px;
+        cursor: pointer; font-size: 14px;
     }
     @media (max-width: 768px) {
-        .products-container {
-            padding: 15px;
-        }
-        .mobile-filter-toggle {
-            display: block;
-            margin-bottom: 16px;
-        }
+        .products-container { padding: 15px; }
+        .mobile-filter-toggle { display: block; margin-bottom: 16px; }
         .filter-sidebar {
-            position: fixed;
-            top: 0;
-            left: -100%;
-            width: 80%;
-            max-width: 320px;
-            height: 100vh;
-            z-index: 1000;
-            overflow-y: auto;
-            border-radius: 0;
-            transition: left 0.3s ease;
-            padding-top: 60px;
+            position: fixed; top: 0; left: -100%; width: 80%;
+            max-width: 320px; height: 100vh; z-index: 1000;
+            overflow-y: auto; border-radius: 0;
+            transition: left 0.3s ease; padding-top: 60px;
         }
-        .filter-sidebar.open {
-            left: 0;
-        }
+        .filter-sidebar.open { left: 0; }
         .filter-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 999; display: none;
         }
-        .filter-overlay.active {
-            display: block;
-        }
-        .products-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        .product-title {
-            font-size: 13px;
-        }
-        .current-price {
-            font-size: 15px;
-        }
-        .sort-bar {
-            flex-direction: column;
-            align-items: stretch;
-        }
-        .sort-select {
-            width: 100%;
-        }
-    }
-    @media (max-width: 480px) {
-        .products-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        .product-info {
-            padding: 12px;
-        }
-        .btn-add-to-cart {
-            padding: 8px;
-            font-size: 11px;
-        }
-        .product-image {
-            height: 150px;
-        }
+        .filter-overlay.active { display: block; }
+        .sort-bar { flex-direction: column; align-items: stretch; }
+        .sort-select { width: 100%; }
     }
     @media (prefers-color-scheme: dark) {
-        .filter-sidebar, .product-card {
-            background: #1e1e2e;
-        }
-        .sort-select {
-            background: #2a2a3e;
-            border-color: #3a3a4e;
-        }
-        .filter-section {
-            border-color: #3a3a4e;
-        }
-        .page-btn {
-            background: #2a2a3e;
-            border-color: #3a3a4e;
-        }
-        .price-range input {
-            background: #2a2a3e;
-            border-color: #3a3a4e;
-            color: #eee;
-        }
+        .filter-sidebar, .product-card { background: #1e1e2e; }
+        .product-title { color: #eee; }
+        .sort-select { background: #2a2a3e; border-color: #3a3a4e; }
+        .filter-section { border-color: #3a3a4e; }
+        .page-btn { background: #2a2a3e; border-color: #3a3a4e; }
+        .price-range input { background: #2a2a3e; border-color: #3a3a4e; color: #eee; }
     }
 </style>
 {% endblock %}
@@ -549,56 +419,46 @@
             return;
         }
         
+        const IS_MEMBER = {{ 'true' if session.get('user_id') else 'false' }};
+        const DISC_MULT = {{ member_discount_multiplier }};
         grid.innerHTML = pageProducts.map(product => {
             const hasImage = product.thumbnail && product.thumbnail != 'None' && product.thumbnail.trim() != '';
             const imageUrl = hasImage ? `{{ url_for('static', filename='') }}${product.thumbnail}` : '';
-            const IS_MEMBER = {{ 'true' if session.get('user_id') else 'false' }};
             const baseP = parseFloat(product.price);
-            const memberP = IS_MEMBER ? Math.round(baseP * {{ member_discount_multiplier }} * 100) / 100 : baseP;
-            const displayP = memberP;
+            const displayP = IS_MEMBER ? Math.round(baseP * DISC_MULT * 100) / 100 : baseP;
+            const compP = parseFloat(product.compare_price) || 0;
 
-            // Discount badge: member-10% takes priority over compare_price discount
-            let discountHtml = '';
-            if (IS_MEMBER) {
-                discountHtml = `<span class="discount-badge" style="background:linear-gradient(135deg,#4caf50,#388e3c);position:absolute;top:10px;right:10px;z-index:2;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:700;color:white;">-10%</span>`;
-            } else if (product.compare_price && parseFloat(product.compare_price) > baseP) {
-                const pct = Math.round((parseFloat(product.compare_price) - baseP) / parseFloat(product.compare_price) * 100);
-                discountHtml = `<span class="discount-badge" style="position:absolute;top:10px;right:10px;z-index:2;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:700;color:white;background:#f44336;">-${pct}%</span>`;
-            }
+            let salePct = 0;
+            if (IS_MEMBER) { salePct = 10; }
+            else if (compP > baseP) { salePct = Math.round((compP - baseP) / compP * 100); }
 
-            const oldPriceHtml = IS_MEMBER
+            const discHtml = salePct > 0
+                ? `<span class="discount-badge">-${salePct}%</span>` : '';
+            const newHtml = product.is_new
+                ? `<span class="new-badge">NEW</span>` : '';
+            const oldHtml = IS_MEMBER
                 ? `<span class="old-price">${formatPriceNumber(baseP)} ETB</span>`
-                : (product.compare_price && parseFloat(product.compare_price) > baseP
-                    ? `<span class="old-price">${formatPriceNumber(product.compare_price)} ETB</span>` : '');
-
-            const memberBadge = IS_MEMBER
-                ? `<div style="margin-top:4px;font-size:10px;color:#2e7d32;font-weight:700;background:#e8f5e9;border-radius:6px;padding:2px 7px;display:inline-block;">🏷️ Member Price</div>`
-                : `<div style="margin-top:4px;font-size:10px;color:#f59e0b;background:#fff8e1;border-radius:6px;padding:2px 7px;display:inline-block;">🔓 Login for 10% off</div>`;
+                : (compP > baseP ? `<span class="old-price">${formatPriceNumber(compP)} ETB</span>` : '');
+            const imgHtml = hasImage
+                ? `<img src="${imageUrl}" alt="${escapeHtml(product.name_am)}" loading="lazy"
+                        onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+                   <div class="pc-fallback" style="display:none;">👗</div>`
+                : `<div class="pc-fallback">👗</div>`;
+            const inStock = (product.stock_quantity || 0) > 0;
 
             return `
-            <div class="product-card" onclick="location.href='{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0', '/' + ${product.id})">
-                <div class="product-image" style="position:relative;">
-                    ${hasImage ? 
-                        `<img src="${imageUrl}" alt="${escapeHtml(product.name_am)}" loading="lazy"
-                             onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-size:48px;\'>👗</div>'">` :
-                        '<div style="font-size: 48px;">👗</div>'
-                    }
-                    ${discountHtml}
+            <div class="product-card" onclick="location.href='{{ url_for('customer.product_detail', product_id=0) }}'.replace('/0','/${product.id}')">
+                <div class="product-image">
+                    ${imgHtml}
+                    ${discHtml}${newHtml}
+                    ${inStock ? `<button class="cart-hover-btn" onclick="event.stopPropagation();if(window.addToCart)addToCart('${product.id}',1,this)">🛒</button>` : ''}
                 </div>
                 <div class="product-info">
-                    <div class="product-title">${escapeHtml(product.name_am)}</div>
-                    <div class="product-rating">
-                        <div class="stars">${renderStars(product.rating || 0)}</div>
-                        <span style="color: var(--text-muted, #999); font-size: 11px;">(${product.reviews || 0})</span>
-                    </div>
-                    <div class="product-price">
+                    <p class="product-title">${escapeHtml(product.name_am)}</p>
+                    <div>
                         <span class="current-price">${formatPriceNumber(displayP)} ETB</span>
-                        ${oldPriceHtml}
+                        ${oldHtml}
                     </div>
-                    ${memberBadge}
-                    <button class="btn-add-to-cart" style="margin-top:10px;" onclick="event.stopPropagation(); if(window.addToCart) addToCart('${product.id}', 1, this)" ${(product.stock_quantity || 0) === 0 ? 'disabled' : ''}>
-                        🛒 Add to Cart
-                    </button>
                 </div>
             </div>`;
         }).join('');

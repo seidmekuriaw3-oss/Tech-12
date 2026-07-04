@@ -177972,3 +177972,7 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-04 00:07:06,004 - app - INFO - Initializing Semira Fashion Application
 2026-07-04 00:07:06,036 - app - INFO - Database initialized successfully
 2026-07-04 00:07:06,036 - app - INFO - Application initialized successfully
+2026-07-04 00:11:40,528 - app - WARNING - Slow request: POST /api/ai-chat - 1.45s
+2026-07-04 00:14:56,779 - app - INFO - Initializing Semira Fashion Application
+2026-07-04 00:14:56,941 - app - INFO - Database initialized successfully
+2026-07-04 00:14:56,941 - app - INFO - Application initialized successfully
