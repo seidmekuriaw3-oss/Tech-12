@@ -177961,3 +177961,9 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-03 13:12:40,867 - app - INFO - Initializing Semira Fashion Application
 2026-07-03 13:12:40,907 - app - INFO - Database initialized successfully
 2026-07-03 13:12:40,907 - app - INFO - Application initialized successfully
+2026-07-03 13:19:01,781 - app - WARNING - 404 Error: http://2b4bcb0c-1b1d-4ec3-9d34-b63228153f50-00-74xhxkxaf8pn.riker.replit.dev/uploads/products/girls_dress.jpg
+2026-07-03 13:19:37,006 - app - WARNING - Slow request: POST /api/ai-chat - 1.36s
+2026-07-03 13:20:49,367 - app - WARNING - Slow request: POST /api/ai-chat - 1.48s
+2026-07-03 23:53:02,451 - app - INFO - Initializing Semira Fashion Application
+2026-07-03 23:53:03,229 - app - INFO - Database initialized successfully
+2026-07-03 23:53:03,229 - app - INFO - Application initialized successfully
