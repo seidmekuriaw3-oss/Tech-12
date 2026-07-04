@@ -177969,3 +177969,6 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-03 23:53:03,229 - app - INFO - Application initialized successfully
 2026-07-04 00:01:48,783 - app - WARNING - 404 Error: http://localhost:5000/home
 2026-07-04 00:01:58,547 - app - WARNING - 404 Error: http://localhost:5000/shop
+2026-07-04 00:07:06,004 - app - INFO - Initializing Semira Fashion Application
+2026-07-04 00:07:06,036 - app - INFO - Database initialized successfully
+2026-07-04 00:07:06,036 - app - INFO - Application initialized successfully
