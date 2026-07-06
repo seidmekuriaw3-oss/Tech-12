@@ -735,7 +735,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://unpkg.com/three@0.161.0/build/three.min.js" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='js/three.min.js') }}"></script>
 <script>
 const PI   = { Fajr:'🌙', Dhuhr:'☀️', Asr:'🌤️', Maghrib:'🌅', Isha:'🌙' };
 const PORD = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];

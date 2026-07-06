@@ -177997,3 +177997,23 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-06 07:24:11,603 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/knit_cardigan.jpg
 2026-07-06 07:24:11,604 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/cargo_shorts.jpg
 2026-07-06 07:24:11,605 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/leather_biker_jacket.jpg
+2026-07-06 07:31:15,864 - app - WARNING - Slow request: POST /admin/ads/edit/1 - 12.87s
+2026-07-06 07:32:36,860 - app - WARNING - Slow request: POST /admin/ads/edit/2 - 19.02s
+2026-07-06 07:32:44,994 - app - WARNING - Slow request: POST /admin/ads/edit/2 - 18.87s
+2026-07-06 07:34:39,016 - app - WARNING - Slow request: POST /admin/ads/edit/3 - 17.36s
+2026-07-06 07:36:20,983 - app - WARNING - Slow request: POST /admin/ads/edit/4 - 3.14s
+2026-07-06 07:36:24,963 - app - WARNING - Slow request: POST /admin/ads/edit/4 - 2.74s
+2026-07-06 07:37:23,516 - app - WARNING - Slow request: POST /admin/ads/edit/5 - 7.78s
+2026-07-06 07:37:59,857 - app - WARNING - 404 Error: http://b9f2ddce-09fb-45d1-986d-fc54abdcf99b-00-8wp1j5vpa93k.kirk.replit.dev/static/uploads/products/images/products/modern_abaya.jpg
+2026-07-06 07:37:59,858 - app - WARNING - 404 Error: http://b9f2ddce-09fb-45d1-986d-fc54abdcf99b-00-8wp1j5vpa93k.kirk.replit.dev/static/uploads/products/images/products/habesha_kemis.jpg
+2026-07-06 07:38:31,143 - app - WARNING - 404 Error: http://b9f2ddce-09fb-45d1-986d-fc54abdcf99b-00-8wp1j5vpa93k.kirk.replit.dev/static/uploads/products/images/products/ethiopian_gabi.jpg
+2026-07-06 07:38:31,149 - app - WARNING - 404 Error: http://b9f2ddce-09fb-45d1-986d-fc54abdcf99b-00-8wp1j5vpa93k.kirk.replit.dev/static/uploads/products/images/products/habesha_kemis.jpg
+2026-07-06 07:42:01,807 - app - INFO - Initializing Semira Fashion Application
+2026-07-06 07:42:01,897 - app - INFO - Database initialized successfully
+2026-07-06 07:42:01,913 - app - INFO - Application initialized successfully
+2026-07-06 07:42:51,169 - app - INFO - Initializing Semira Fashion Application
+2026-07-06 07:42:51,198 - app - INFO - Database initialized successfully
+2026-07-06 07:42:51,212 - app - INFO - Application initialized successfully
+2026-07-06 07:44:10,645 - app - INFO - Initializing Semira Fashion Application
+2026-07-06 07:44:10,706 - app - INFO - Database initialized successfully
+2026-07-06 07:44:10,715 - app - INFO - Application initialized successfully
