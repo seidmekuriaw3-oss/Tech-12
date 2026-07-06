@@ -177984,3 +177984,16 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-06 07:06:40,433 - app - INFO - Application initialized successfully
 2026-07-06 07:19:44,728 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/placeholder.jpg
 2026-07-06 07:19:52,411 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/placeholder.jpg
+2026-07-06 07:20:32,706 - app - WARNING - 404 Error: http://b9f2ddce-09fb-45d1-986d-fc54abdcf99b-00-8wp1j5vpa93k.kirk.replit.dev/static/static/images/placeholder.jpg
+2026-07-06 07:24:11,543 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/modern_abaya.jpg
+2026-07-06 07:24:11,547 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/ethiopian_gabi.jpg
+2026-07-06 07:24:11,551 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/habesha_kemis.jpg
+2026-07-06 07:24:11,565 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/baby_onesie_set.jpg
+2026-07-06 07:24:11,566 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/yoga_leggings.jpg
+2026-07-06 07:24:11,569 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/running_sports_set.jpg
+2026-07-06 07:24:11,593 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/cotton_underwear.jpg
+2026-07-06 07:24:11,595 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/silk_pajama_set.jpg
+2026-07-06 07:24:11,602 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/denim_jacket.jpg
+2026-07-06 07:24:11,603 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/knit_cardigan.jpg
+2026-07-06 07:24:11,604 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/cargo_shorts.jpg
+2026-07-06 07:24:11,605 - app - WARNING - 404 Error: http://127.0.0.1:5000/static/static/images/products/leather_biker_jacket.jpg
