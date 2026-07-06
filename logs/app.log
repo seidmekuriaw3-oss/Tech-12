@@ -177976,3 +177976,9 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-04 00:14:56,779 - app - INFO - Initializing Semira Fashion Application
 2026-07-04 00:14:56,941 - app - INFO - Database initialized successfully
 2026-07-04 00:14:56,941 - app - INFO - Application initialized successfully
+2026-07-06 07:05:20,281 - app - INFO - Initializing Semira Fashion Application
+2026-07-06 07:05:20,708 - app - INFO - Database initialized successfully
+2026-07-06 07:05:20,719 - app - INFO - Application initialized successfully
+2026-07-06 07:06:40,392 - app - INFO - Initializing Semira Fashion Application
+2026-07-06 07:06:40,424 - app - INFO - Database initialized successfully
+2026-07-06 07:06:40,433 - app - INFO - Application initialized successfully
