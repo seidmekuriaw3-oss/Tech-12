@@ -1560,16 +1560,52 @@ async function enableCompassSensor() {
     }
 }
 
-/* Low-pass smoothing factor: 0.07 = very heavy smoothing, 1.0 = no smoothing (raw/shaky) */
+/* ── Low-pass smoothing ──────────────────────────────────────────────────────
+   α=0.07: heavy smoothing; handles 0°/360° wrap-around correctly.           */
 const _LP_ALPHA = 0.07;
 
-/* Smooths angles across the 0°/360° wrap boundary */
 function _smoothAngle(prev, next) {
     if (prev === null) return next;
     let diff = next - prev;
     if (diff >  180) diff -= 360;
     if (diff < -180) diff += 360;
     return (prev + _LP_ALPHA * diff + 360) % 360;
+}
+
+/* ── Tilt-compensated compass heading ────────────────────────────────────────
+   Works for ALL phone orientations: flat on table, vertical, tilted.
+   Uses W3C rotation matrix R = Rz(α)·Rx(β)·Ry(γ) (ZXY Euler order).
+
+   When FLAT  (β≈0): heading = (360−α)%360  ← matches verified working formula
+   When VERTICAL (|β|→90°): blends in device −Z axis (back-face) direction
+   so the compass still reads correctly when the phone stands upright.        */
+function _computeCompassHeading(alpha, beta, gamma) {
+    if (alpha == null) return null;
+    const DEG = Math.PI / 180;
+    const a = alpha * DEG;
+    const b = (beta  || 0) * DEG;
+    const g = (gamma || 0) * DEG;
+
+    const sinA = Math.sin(a), cosA = Math.cos(a);
+    const sinB = Math.sin(b), cosB = Math.cos(b);
+    const sinG = Math.sin(g), cosG = Math.cos(g);
+
+    /* Column 1 of R → device Y-axis (screen top) direction in world frame.
+       Works best when phone is flat.  East/North components:                 */
+    const ey = -sinA * cosB;
+    const ny =  cosA * cosB;
+
+    /* Negated column 2 of R → device −Z axis (back face) direction in world.
+       Works best when phone is held upright / vertical.                      */
+    const ez = -(cosA * sinG + sinA * sinB * cosG);
+    const nz =   cosA * sinB * cosG - sinA * sinG;
+
+    /* Blend: |sinB|=0 → flat (use Y-axis); |sinB|=1 → vertical (use −Z axis) */
+    const t     = Math.abs(sinB);
+    const east  = ey * (1 - t) + ez * t;
+    const north = ny * (1 - t) + nz * t;
+
+    return (Math.atan2(east, north) / DEG + 360) % 360;
 }
 
 function _registerOrientationListeners() {
@@ -1582,14 +1618,14 @@ function _registerOrientationListeners() {
 
         let h = null;
         if (e.webkitCompassHeading != null) {
-            /* iOS: absolute true-north heading */
+            /* iOS: OS already returns tilt-compensated true-north heading */
             h = e.webkitCompassHeading;
         } else if (e.alpha != null) {
-            /* Android: deviceorientationabsolute = true-north; plain alpha drifts */
-            h = (360 - e.alpha) % 360;
+            /* Android: compute tilt-compensated heading from all 3 angles.
+               Works flat on a table, vertical, or any angle in between.    */
+            h = _computeCompassHeading(e.alpha, e.beta, e.gamma);
         }
         if (h !== null) {
-            /* Apply low-pass filter to remove sensor jitter/shakiness */
             _head = _smoothAngle(_head, h);
             if (st) {
                 st.className   = 'sensor-st active';
