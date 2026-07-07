@@ -627,11 +627,14 @@
         <p class="qsub">ስልኩን ይያዙ — ቀስቱ ወደ ካዕባ (🕋) ሲጠቁም ቂብላ ላይ ነዎት</p>
 
         <!-- Location permission UI -->
-        <div class="qibla-loc-bar" id="qibla-loc-bar">
-            📍 ቦታ በመጠበቅ ላይ…
-        </div>
+        <div class="qibla-loc-bar" id="qibla-loc-bar">📍 ቦታ በመጠበቅ ላይ…</div>
         <button class="qibla-gps-btn" id="qibla-gps-btn" onclick="requestQiblaGPS()">
             📡 GPS ቦታዬን ፍቃድ ስጥ
+        </button>
+        <!-- iOS compass sensor permission button (hidden until needed) -->
+        <button class="qibla-gps-btn" id="qibla-sensor-btn" onclick="enableCompassSensor()"
+            style="display:none;background:linear-gradient(135deg,rgba(26,122,74,.2),rgba(26,122,74,.08));border-color:var(--ig);color:#6ee7a0;margin-bottom:4px">
+            📱 Compass ሴንሰር ፍቃድ ስጥ
         </button>
 
         <div id="compass-wrapper">
@@ -781,12 +784,13 @@ const CITIES = {{ cities | tojson }};
 let _cityHighlight = -1;
 let _cityFiltered  = [];
 
-let _times  = null;
-let _qbear  = null;
-let _head   = null;
-let _sw     = null;
-let _lat    = null;
-let _lng    = null;
+let _times      = null;
+let _qbear      = null;
+let _head       = null;
+let _sw         = null;
+let _lat        = null;
+let _lng        = null;
+let _lastAzanKey = null;   /* dedup: prevent playing Azan every clock tick */
 let _cYear  = new Date().getFullYear();
 let _cMonth = new Date().getMonth() + 1;
 let _cData  = null;
@@ -839,7 +843,12 @@ function updateNextBanner() {
         if (pn===curName) { r.classList.add('curr'); addBadge(r,'Now'); }
         else if (pn===nName) { r.classList.add('nxt'); addBadge(r,'Next'); }
     });
-    if (diff===0) playAzan(nName);
+    /* Play Azan once per prayer (dedup: reset when a new prayer becomes next) */
+    const azanKey = nName + '_' + now.toDateString();
+    if (diff === 0 && _lastAzanKey !== azanKey) {
+        _lastAzanKey = azanKey;
+        playAzan(nName);
+    }
 }
 
 function addBadge(row, txt) {
@@ -1200,81 +1209,97 @@ function useGPS() {
 }
 
 function startLocation() {
+    /* Use default location for prayer times immediately.
+       GPS is only requested when the user opens the Qibla tab. */
     _lat = DEFAULT_LAT; _lng = DEFAULT_LNG;
     loadPrayerTimes(DEFAULT_LAT, DEFAULT_LNG);
     loadQibla(DEFAULT_LAT, DEFAULT_LNG);
-
-    /* On mobile, silently try GPS in background immediately */
-    if (navigator.geolocation && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
-        _setQiblaLocBar('busy', '⏳ GPS ቦታ በመፈለግ ላይ…');
-        const btn = document.getElementById('qibla-gps-btn');
-        if (btn) { btn.disabled = true; btn.textContent = '📡 GPS ቦታ በመፈለግ ላይ…'; }
-        navigator.geolocation.getCurrentPosition(
-            pos => {
-                _lat = pos.coords.latitude;
-                _lng = pos.coords.longitude;
-                _gpsGranted = true;
-                _setQiblaLocBar('ok', `📍 GPS: ${_lat.toFixed(4)}°N, ${_lng.toFixed(4)}°E`);
-                if (btn) btn.style.display = 'none';
-                const lb = document.getElementById('loc-bar');
-                if (lb) { lb.className='loc-bar ok'; lb.textContent=`📍 GPS: ${_lat.toFixed(4)}°N, ${_lng.toFixed(4)}°E`; }
-                loadQibla(_lat, _lng);
-                loadPrayerTimes(_lat, _lng);
-            },
-            () => {
-                /* silent fail — keep default, show button */
-                _setQiblaLocBar('', '📍 ነባሪ ቦታ (አዲስ አበባ)');
-                if (btn) { btn.disabled = false; btn.textContent = '📡 GPS ቦታዬን ፍቃድ ስጥ'; }
-            },
-            { enableHighAccuracy: true, timeout: 14000, maximumAge: 60000 }
-        );
-    } else {
-        /* Desktop: show manual button */
-        _setQiblaLocBar('', '📍 ነባሪ ቦታ (አዲስ አበባ)');
-    }
+    _setQiblaLocBar('', '📍 ነባሪ ቦታ (አዲስ አበባ)');
 }
 
 async function requestAzan() {
-    const btn=document.getElementById('notif-btn');
-    btn.disabled=true; btn.textContent='⏳ Requesting permission…';
-    if (!('Notification' in window)) { btn.textContent='⚠️ Notifications not supported'; return; }
+    const btn = document.getElementById('notif-btn');
+    btn.disabled = true; btn.textContent = '⏳ ፍቃድ በመጠየቅ ላይ…';
+    if (!('Notification' in window)) {
+        btn.textContent = '⚠️ Notifications not supported'; return;
+    }
     const perm = await Notification.requestPermission();
-    if (perm!=='granted') { btn.textContent='❌ Permission denied'; btn.disabled=false; return; }
+    if (perm !== 'granted') {
+        btn.textContent = '❌ ፍቃድ ተከልክሏል'; btn.disabled = false; return;
+    }
     if ('serviceWorker' in navigator) {
         try {
-            _sw = await navigator.serviceWorker.register('/static/js/azan-sw.js',{scope:'/'});
+            /* Register SW and wait until it's truly active */
+            const reg = await navigator.serviceWorker.register('/static/js/azan-sw.js', {scope:'/'});
             await navigator.serviceWorker.ready;
-            btn.textContent='✅ Azan & Notifications Enabled';
+            /* If SW is installing (first time), wait for it to activate */
+            if (reg.installing) {
+                await new Promise(res => {
+                    reg.installing.addEventListener('statechange', e => {
+                        if (e.target.state === 'activated') res();
+                    });
+                });
+            }
+            _sw = await navigator.serviceWorker.ready;
+            btn.textContent = '✅ Azan & Notifications ተሰጥቷል';
             if (_times) scheduleSW(_times);
-        } catch(e) { btn.textContent='⚠️ Notifications unavailable in this browser'; btn.disabled=false; }
-    } else { btn.textContent='✅ In-tab Azan Enabled'; }
+        } catch(e) {
+            btn.textContent = '⚠️ Notifications unavailable'; btn.disabled = false;
+        }
+    } else {
+        btn.textContent = '✅ In-tab Azan Enabled';
+    }
 }
 
-function scheduleSW(times) {
-    if (!_sw||!_sw.active) return;
-    const list = PORD.map(p=>({name:p,time:times[p]}));
+function _buildPrayerList(times) {
+    const list = PORD.map(p => ({name: p, time: times[p]}));
     if (RAMADAN_ACTIVE) {
         const h = parseInt(times.Isha.split(':')[0]);
         const m = parseInt(times.Isha.split(':')[1]) + 30;
         const th = (h + Math.floor(m/60)) % 24;
         const tm = m % 60;
-        list.push({ name:'Taraweeh', time:`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')}` });
+        list.push({name:'Taraweeh', time:`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')}`});
     }
-    _sw.active.postMessage({type:'SCHEDULE_AZAN', prayers:list});
+    return list;
 }
 
-navigator.serviceWorker && navigator.serviceWorker.addEventListener('message', e=>{
-    if (e.data&&e.data.type==='PLAY_AZAN') playAzan(e.data.prayer);
+function scheduleSW(times) {
+    /* Use the live registration's active worker — avoids stale _sw reference */
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.ready.then(reg => {
+        if (reg && reg.active) {
+            reg.active.postMessage({type:'SCHEDULE_AZAN', prayers: _buildPrayerList(times)});
+        }
+    }).catch(() => {});
+}
+
+navigator.serviceWorker && navigator.serviceWorker.addEventListener('message', e => {
+    if (e.data && e.data.type === 'PLAY_AZAN') playAzan(e.data.prayer);
 });
 
+const _PRAYER_NAMES_AM = {
+    Fajr:'ፈጅር', Dhuhr:'ዙህር', Asr:'ዓስር', Maghrib:'ማግሪብ', Isha:'ዒሻ', Taraweeh:'ተራዊህ'
+};
+
 function playAzan(name) {
-    const a=document.getElementById('az-audio');
-    a.src = name==='Fajr' ? '/static/audio/fajrazan.mp3' : '/static/audio/azan.mp3';
-    a.load(); a.play().catch(()=>{});
-    if (name==='Taraweeh' && 'Notification' in window && Notification.permission==='granted') {
-        new Notification('🕌 Taraweeh Time', {
-            body:'It is time for Taraweeh prayers. May Allah accept your worship this Ramadan.',
-            icon:'/static/images/mylogo.png'
+    const a = document.getElementById('az-audio');
+    if (!a) return;
+    a.src = name === 'Fajr' ? '/static/audio/fajrazan.mp3' : '/static/audio/azan.mp3';
+    a.load();
+    a.play().catch(() => {}); /* autoplay may be blocked — notification is the fallback */
+
+    /* Show push notification for EVERY prayer (not just Taraweeh) */
+    if ('Notification' in window && Notification.permission === 'granted') {
+        const amName = _PRAYER_NAMES_AM[name] || name;
+        const body = name === 'Taraweeh'
+            ? 'የተራዊህ ሰዓት ደርሷል። አላህ ሰናይ ያቀበልልን።'
+            : `${amName} ሰዓት ደርሷል። ወደ ሰላት ኑ!`;
+        new Notification(`🕌 ${amName} ሰዓት`, {
+            body,
+            icon: '/static/images/mylogo.png',
+            tag:  'azan-' + name,
+            requireInteraction: true,
+            data: { prayer: name }
         });
     }
 }
@@ -1479,60 +1504,77 @@ function updateNeedle() {
     _wasAligned = aligned;
 }
 
-function initOrientation() {
+let _orientationInited = false;
+
+/* Called for iOS when the user taps the compass permission button */
+async function enableCompassSensor() {
+    const sBtn = document.getElementById('qibla-sensor-btn');
+    const st   = document.getElementById('sensor-st');
+    if (sBtn) { sBtn.disabled = true; sBtn.textContent = '⏳ ፍቃድ በመጠየቅ ላይ…'; }
+    try {
+        const p = await DeviceOrientationEvent.requestPermission();
+        if (p === 'granted') {
+            _registerOrientationListeners();
+            if (sBtn) sBtn.style.display = 'none';
+        } else {
+            if (st)   { st.className = 'sensor-st err'; st.textContent = 'Compass ፍቃድ ተከልክሏል።'; }
+            if (sBtn) { sBtn.disabled = false; sBtn.textContent = '📱 Compass ሴንሰር ፍቃድ ስጥ'; }
+        }
+    } catch(err) {
+        if (st)   { st.className = 'sensor-st err'; st.textContent = 'Compass ፍቃድ አልተሰጠም።'; }
+        if (sBtn) { sBtn.disabled = false; sBtn.textContent = '📱 Compass ሴንሰር ፍቃድ ስጥ'; }
+    }
+}
+
+function _registerOrientationListeners() {
     const st = document.getElementById('sensor-st');
-    let _absReceived = false; /* prefer deviceorientationabsolute over deviceorientation */
+    let _absReceived = false;
 
     function handle(e) {
-        /* skip relative events if we already have absolute ones */
         if (e.type === 'deviceorientation' && _absReceived) return;
         if (e.type === 'deviceorientationabsolute') _absReceived = true;
 
         let h = null;
         if (e.webkitCompassHeading != null) {
-            /* iOS: directly gives true-north heading */
+            /* iOS: absolute true-north heading */
             h = e.webkitCompassHeading;
-        } else if (e.absolute === true && e.alpha != null) {
-            /* Android absolute: alpha=0 means North */
-            h = (360 - e.alpha) % 360;
-        } else if (!_absReceived && e.alpha != null) {
-            /* Android fallback relative — may drift, but better than nothing */
+        } else if (e.alpha != null) {
+            /* Android: use alpha regardless of absolute flag.
+               deviceorientationabsolute gives true-north; plain alpha drifts but
+               is still useful to show compass movement. */
             h = (360 - e.alpha) % 360;
         }
         if (h !== null) {
             _head = h;
-            st.className   = 'sensor-st active';
-            st.textContent = `Compass: ${h.toFixed(1)}° | Qibla: ${_qbear !== null ? _qbear.toFixed(1) + '°' : '…'}`;
+            if (st) {
+                st.className   = 'sensor-st active';
+                st.textContent = `Compass: ${h.toFixed(1)}° | Qibla: ${_qbear !== null ? _qbear.toFixed(1) + '°' : '…'}`;
+            }
             updateNeedle();
         }
     }
 
-    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        /* iOS 13+ requires permission */
-        const pb = document.createElement('button');
-        pb.className = 'action-btn';
-        pb.style.marginTop = '12px';
-        pb.textContent = '📱 Enable Compass Sensor';
-        pb.onclick = async () => {
-            try {
-                const p = await DeviceOrientationEvent.requestPermission();
-                if (p === 'granted') {
-                    window.addEventListener('deviceorientationabsolute', handle, true);
-                    window.addEventListener('deviceorientation', handle, true);
-                    pb.remove();
-                }
-            } catch(err) {
-                st.className   = 'sensor-st err';
-                st.textContent = 'Sensor permission denied.';
-            }
-        };
-        document.querySelector('.qcard').appendChild(pb);
-    } else if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientationabsolute', handle, true);
-        window.addEventListener('deviceorientation', handle, true);
+    window.addEventListener('deviceorientationabsolute', handle, true);
+    window.addEventListener('deviceorientation', handle, true);
+}
+
+function initOrientation() {
+    if (_orientationInited) return;
+    _orientationInited = true;
+
+    const st = document.getElementById('sensor-st');
+
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+        /* iOS 13+: must ask via user gesture — show the dedicated button */
+        const sBtn = document.getElementById('qibla-sensor-btn');
+        if (sBtn) sBtn.style.display = '';
+        if (st)   { st.className = 'sensor-st'; st.textContent = '📱 Compass ፍቃድ ለመስጠት ላይ ያለውን ቁልፍ ይጫኑ'; }
+    } else if (typeof DeviceOrientationEvent !== 'undefined') {
+        /* Android / other browsers: register immediately — no permission needed */
+        _registerOrientationListeners();
     } else {
-        st.className   = 'sensor-st err';
-        st.textContent = 'No compass sensor detected.';
+        if (st) { st.className = 'sensor-st err'; st.textContent = 'Compass sensor አልተገኘም።'; }
     }
 }
 
@@ -1595,7 +1637,7 @@ let _compassInited = false;
 window.addEventListener('DOMContentLoaded',()=>{
     setInterval(tickClock,1000); tickClock();
     startLocation();
-    initOrientation();
+    /* initOrientation() is called lazily when the Qibla tab is first opened */
 });
 window.addEventListener('resize',()=>{
     /* Re-init canvas if compass is visible, so it fills the new size */
@@ -1816,7 +1858,7 @@ switchTab = function(name, btn) {
     _origSwitchTab(name, btn);
     if (name === 'quran' && !_qSurahs.length) qLoadSurahs();
     if (name === 'qibla') {
-        /* Init compass on first open */
+        /* Init 2D compass canvas on first open */
         if (!_compassInited) {
             _compassInited = true;
             requestAnimationFrame(() => {
@@ -1824,10 +1866,13 @@ switchTab = function(name, btn) {
                 updateNeedle();
             });
         }
-        /* Auto-request GPS the first time the Qibla tab is opened (if not yet granted) */
+        /* Init device-orientation listeners on first open (lazy — needs Qibla tab visible) */
+        initOrientation();
+
+        /* Request GPS the first time (if not yet granted) — after a short delay
+           so the tab-switch animation finishes and the browser prompt appears cleanly */
         if (!_gpsGranted) {
-            /* Small delay so the tab animation finishes first */
-            setTimeout(() => requestQiblaGPS(), 400);
+            setTimeout(() => requestQiblaGPS(), 350);
         }
     }
 };
