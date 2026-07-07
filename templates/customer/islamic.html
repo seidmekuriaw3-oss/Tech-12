@@ -1426,49 +1426,60 @@ function initCompass() {
         ctx.fill();
         ctx.strokeStyle = '#a09060'; ctx.lineWidth = 0.5; ctx.stroke();
 
-        /* ── QIBLA ARROW (on the disc, at qibla_bearing angle) ── */
+        ctx.restore(); /* end disc rotation — Qibla arrow drawn on static layer below */
+
+        /* ── QIBLA ARROW ── static layer, outside disc
+           visual angle = (qibla_bearing − heading) mod 360
+           → when heading == qibla_bearing, angle = 0 → arrow points UP = facing Mecca ✓
+           → disc (N/E/S/W) rotates independently; Qibla arrow stays geographically correct */
         if (qibla !== null) {
-            const qa   = qibla * Math.PI / 180;
-            const tipR = R * 0.54;
-            const baseW = R * 0.075;
-            const baseY = R * 0.08;
+            const relDeg = ((qibla - heading) % 360 + 360) % 360;
+            const va     = relDeg * Math.PI / 180;
+            const tipR   = R * 0.52;
+            const baseW  = R * 0.072;
+            const baseY  = R * 0.09;
 
             ctx.save();
-            ctx.rotate(qa);
+            ctx.translate(cx, cy);
+            ctx.rotate(va);
 
-            /* glow */
+            /* outer glow ring slice to help distinguish from N needle */
             ctx.shadowColor = '#c9a84c';
-            ctx.shadowBlur  = 16;
+            ctx.shadowBlur  = 20;
 
-            /* gold arrow body */
+            /* gold Qibla arrow body */
             ctx.beginPath();
-            ctx.moveTo(0, -tipR);
-            ctx.lineTo(-baseW, baseY);
-            ctx.lineTo(0,      baseY * 0.45);
-            ctx.lineTo(baseW,  baseY);
+            ctx.moveTo(0,      -tipR);
+            ctx.lineTo(-baseW,  baseY);
+            ctx.lineTo(0,       baseY * 0.4);
+            ctx.lineTo(baseW,   baseY);
             ctx.closePath();
-            ctx.fillStyle = '#c9a84c';
+            ctx.fillStyle = '#e8c060';
             ctx.fill();
+            ctx.strokeStyle = '#a07828';
+            ctx.lineWidth   = 1;
+            ctx.stroke();
 
             ctx.shadowBlur = 0;
 
-            /* kaaba emoji at tip */
-            const emojiSz = Math.round(W * 0.10);
+            /* kaaba emoji at arrow tip */
+            const emojiSz = Math.round(W * 0.095);
             ctx.font = `${emojiSz}px serif`;
             ctx.textAlign    = 'center';
             ctx.textBaseline = 'bottom';
-            ctx.fillText('🕋', 0, -tipR - 2);
+            ctx.fillText('🕋', 0, -tipR - 1);
 
-            /* "QIBLA" label just below the arrowhead tip */
-            ctx.font = `bold ${Math.round(W * 0.036)}px 'Segoe UI',Arial,sans-serif`;
-            ctx.fillStyle    = '#c9a84c';
+            /* QIBLA label */
+            ctx.font = `bold ${Math.round(W * 0.034)}px 'Segoe UI',Arial,sans-serif`;
+            ctx.fillStyle    = '#e8c060';
             ctx.textBaseline = 'top';
-            ctx.fillText('QIBLA', 0, -tipR + emojiSz + 4);
+            ctx.shadowColor  = 'rgba(0,0,0,0.9)';
+            ctx.shadowBlur   = 4;
+            ctx.fillText('QIBLA', 0, -tipR + emojiSz + 2);
+            ctx.shadowBlur = 0;
 
             ctx.restore();
         }
-
-        ctx.restore(); /* end disc rotation */
 
         /* centre pivot */
         const pg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.06);
