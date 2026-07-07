@@ -178549,3 +178549,210 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-07 03:36:41,237 - app - INFO - Initializing Semira Fashion Application
 2026-07-07 03:36:41,541 - app - INFO - Database initialized successfully
 2026-07-07 03:36:41,553 - app - INFO - Application initialized successfully
+2026-07-07 03:44:05,912 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:05,989 - app - INFO - Database initialized successfully
+2026-07-07 03:44:06,000 - app - INFO - Application initialized successfully
+2026-07-07 03:44:06,973 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:07,008 - app - INFO - Database initialized successfully
+2026-07-07 03:44:07,018 - app - INFO - Application initialized successfully
+2026-07-07 03:44:10,502 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:10,536 - app - INFO - Database initialized successfully
+2026-07-07 03:44:10,549 - app - INFO - Application initialized successfully
+2026-07-07 03:44:14,048 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:14,078 - app - INFO - Database initialized successfully
+2026-07-07 03:44:14,088 - app - INFO - Application initialized successfully
+2026-07-07 03:44:17,566 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:17,603 - app - INFO - Database initialized successfully
+2026-07-07 03:44:17,616 - app - INFO - Application initialized successfully
+2026-07-07 03:44:21,088 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:21,122 - app - INFO - Database initialized successfully
+2026-07-07 03:44:21,134 - app - INFO - Application initialized successfully
+2026-07-07 03:44:24,595 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:24,634 - app - INFO - Database initialized successfully
+2026-07-07 03:44:24,645 - app - INFO - Application initialized successfully
+2026-07-07 03:44:28,163 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:28,196 - app - INFO - Database initialized successfully
+2026-07-07 03:44:28,207 - app - INFO - Application initialized successfully
+2026-07-07 03:44:31,780 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:31,822 - app - INFO - Database initialized successfully
+2026-07-07 03:44:31,840 - app - INFO - Application initialized successfully
+2026-07-07 03:44:37,091 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:37,376 - app - INFO - Database initialized successfully
+2026-07-07 03:44:37,389 - app - INFO - Application initialized successfully
+2026-07-07 03:44:40,939 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:40,982 - app - INFO - Database initialized successfully
+2026-07-07 03:44:40,997 - app - INFO - Application initialized successfully
+2026-07-07 03:44:44,451 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:44,488 - app - INFO - Database initialized successfully
+2026-07-07 03:44:44,498 - app - INFO - Application initialized successfully
+2026-07-07 03:44:47,961 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:47,995 - app - INFO - Database initialized successfully
+2026-07-07 03:44:48,009 - app - INFO - Application initialized successfully
+2026-07-07 03:44:51,501 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:51,535 - app - INFO - Database initialized successfully
+2026-07-07 03:44:51,546 - app - INFO - Application initialized successfully
+2026-07-07 03:44:55,009 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:55,048 - app - INFO - Database initialized successfully
+2026-07-07 03:44:55,061 - app - INFO - Application initialized successfully
+2026-07-07 03:44:58,575 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:44:58,616 - app - INFO - Database initialized successfully
+2026-07-07 03:44:58,631 - app - INFO - Application initialized successfully
+2026-07-07 03:45:02,122 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:02,155 - app - INFO - Database initialized successfully
+2026-07-07 03:45:02,170 - app - INFO - Application initialized successfully
+2026-07-07 03:45:05,773 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:05,836 - app - INFO - Database initialized successfully
+2026-07-07 03:45:05,850 - app - INFO - Application initialized successfully
+2026-07-07 03:45:09,361 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:09,394 - app - INFO - Database initialized successfully
+2026-07-07 03:45:09,406 - app - INFO - Application initialized successfully
+2026-07-07 03:45:12,896 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:12,930 - app - INFO - Database initialized successfully
+2026-07-07 03:45:12,942 - app - INFO - Application initialized successfully
+2026-07-07 03:45:16,488 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:16,523 - app - INFO - Database initialized successfully
+2026-07-07 03:45:16,534 - app - INFO - Application initialized successfully
+2026-07-07 03:45:20,046 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:20,087 - app - INFO - Database initialized successfully
+2026-07-07 03:45:20,100 - app - INFO - Application initialized successfully
+2026-07-07 03:45:23,577 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:23,612 - app - INFO - Database initialized successfully
+2026-07-07 03:45:23,631 - app - INFO - Application initialized successfully
+2026-07-07 03:45:27,116 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:27,148 - app - INFO - Database initialized successfully
+2026-07-07 03:45:27,160 - app - INFO - Application initialized successfully
+2026-07-07 03:45:30,659 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:30,695 - app - INFO - Database initialized successfully
+2026-07-07 03:45:30,708 - app - INFO - Application initialized successfully
+2026-07-07 03:45:34,195 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:34,228 - app - INFO - Database initialized successfully
+2026-07-07 03:45:34,245 - app - INFO - Application initialized successfully
+2026-07-07 03:45:37,841 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:37,883 - app - INFO - Database initialized successfully
+2026-07-07 03:45:37,900 - app - INFO - Application initialized successfully
+2026-07-07 03:45:41,422 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:41,458 - app - INFO - Database initialized successfully
+2026-07-07 03:45:41,475 - app - INFO - Application initialized successfully
+2026-07-07 03:45:44,978 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:45,014 - app - INFO - Database initialized successfully
+2026-07-07 03:45:45,025 - app - INFO - Application initialized successfully
+2026-07-07 03:45:48,516 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:48,546 - app - INFO - Database initialized successfully
+2026-07-07 03:45:48,559 - app - INFO - Application initialized successfully
+2026-07-07 03:45:52,092 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:52,122 - app - INFO - Database initialized successfully
+2026-07-07 03:45:52,135 - app - INFO - Application initialized successfully
+2026-07-07 03:45:55,644 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:55,682 - app - INFO - Database initialized successfully
+2026-07-07 03:45:55,692 - app - INFO - Application initialized successfully
+2026-07-07 03:45:59,153 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:45:59,188 - app - INFO - Database initialized successfully
+2026-07-07 03:45:59,199 - app - INFO - Application initialized successfully
+2026-07-07 03:46:02,792 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:02,858 - app - INFO - Database initialized successfully
+2026-07-07 03:46:02,872 - app - INFO - Application initialized successfully
+2026-07-07 03:46:06,398 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:06,434 - app - INFO - Database initialized successfully
+2026-07-07 03:46:06,449 - app - INFO - Application initialized successfully
+2026-07-07 03:46:09,998 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:10,062 - app - INFO - Database initialized successfully
+2026-07-07 03:46:10,078 - app - INFO - Application initialized successfully
+2026-07-07 03:46:13,624 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:13,655 - app - INFO - Database initialized successfully
+2026-07-07 03:46:13,666 - app - INFO - Application initialized successfully
+2026-07-07 03:46:17,207 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:17,241 - app - INFO - Database initialized successfully
+2026-07-07 03:46:17,253 - app - INFO - Application initialized successfully
+2026-07-07 03:46:20,772 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:20,812 - app - INFO - Database initialized successfully
+2026-07-07 03:46:20,825 - app - INFO - Application initialized successfully
+2026-07-07 03:46:24,323 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:24,362 - app - INFO - Database initialized successfully
+2026-07-07 03:46:24,377 - app - INFO - Application initialized successfully
+2026-07-07 03:46:27,895 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:27,927 - app - INFO - Database initialized successfully
+2026-07-07 03:46:27,942 - app - INFO - Application initialized successfully
+2026-07-07 03:46:31,626 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:31,669 - app - INFO - Database initialized successfully
+2026-07-07 03:46:31,690 - app - INFO - Application initialized successfully
+2026-07-07 03:46:35,249 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:35,284 - app - INFO - Database initialized successfully
+2026-07-07 03:46:35,296 - app - INFO - Application initialized successfully
+2026-07-07 03:46:38,856 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:38,900 - app - INFO - Database initialized successfully
+2026-07-07 03:46:38,913 - app - INFO - Application initialized successfully
+2026-07-07 03:46:42,450 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:42,484 - app - INFO - Database initialized successfully
+2026-07-07 03:46:42,495 - app - INFO - Application initialized successfully
+2026-07-07 03:46:45,979 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:46,012 - app - INFO - Database initialized successfully
+2026-07-07 03:46:46,023 - app - INFO - Application initialized successfully
+2026-07-07 03:46:49,540 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:49,585 - app - INFO - Database initialized successfully
+2026-07-07 03:46:49,601 - app - INFO - Application initialized successfully
+2026-07-07 03:46:53,155 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:53,197 - app - INFO - Database initialized successfully
+2026-07-07 03:46:53,213 - app - INFO - Application initialized successfully
+2026-07-07 03:46:56,718 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:46:56,750 - app - INFO - Database initialized successfully
+2026-07-07 03:46:56,761 - app - INFO - Application initialized successfully
+2026-07-07 03:47:00,249 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:00,282 - app - INFO - Database initialized successfully
+2026-07-07 03:47:00,299 - app - INFO - Application initialized successfully
+2026-07-07 03:47:03,813 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:03,854 - app - INFO - Database initialized successfully
+2026-07-07 03:47:03,865 - app - INFO - Application initialized successfully
+2026-07-07 03:47:07,339 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:07,371 - app - INFO - Database initialized successfully
+2026-07-07 03:47:07,389 - app - INFO - Application initialized successfully
+2026-07-07 03:47:10,950 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:10,988 - app - INFO - Database initialized successfully
+2026-07-07 03:47:11,005 - app - INFO - Application initialized successfully
+2026-07-07 03:47:14,486 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:14,554 - app - INFO - Database initialized successfully
+2026-07-07 03:47:14,567 - app - INFO - Application initialized successfully
+2026-07-07 03:47:18,064 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:18,094 - app - INFO - Database initialized successfully
+2026-07-07 03:47:18,106 - app - INFO - Application initialized successfully
+2026-07-07 03:47:21,592 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:21,627 - app - INFO - Database initialized successfully
+2026-07-07 03:47:21,638 - app - INFO - Application initialized successfully
+2026-07-07 03:47:25,155 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:25,188 - app - INFO - Database initialized successfully
+2026-07-07 03:47:25,200 - app - INFO - Application initialized successfully
+2026-07-07 03:47:28,728 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:28,759 - app - INFO - Database initialized successfully
+2026-07-07 03:47:28,772 - app - INFO - Application initialized successfully
+2026-07-07 03:47:32,963 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:33,025 - app - INFO - Database initialized successfully
+2026-07-07 03:47:33,037 - app - INFO - Application initialized successfully
+2026-07-07 03:47:33,911 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:33,962 - app - INFO - Database initialized successfully
+2026-07-07 03:47:33,975 - app - INFO - Application initialized successfully
+2026-07-07 03:47:37,532 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:37,630 - app - INFO - Database initialized successfully
+2026-07-07 03:47:37,655 - app - INFO - Application initialized successfully
+2026-07-07 03:47:41,191 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:41,232 - app - INFO - Database initialized successfully
+2026-07-07 03:47:41,257 - app - INFO - Application initialized successfully
+2026-07-07 03:47:44,750 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:44,791 - app - INFO - Database initialized successfully
+2026-07-07 03:47:44,805 - app - INFO - Application initialized successfully
+2026-07-07 03:47:48,459 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:48,497 - app - INFO - Database initialized successfully
+2026-07-07 03:47:48,514 - app - INFO - Application initialized successfully
+2026-07-07 03:47:52,215 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:52,262 - app - INFO - Database initialized successfully
+2026-07-07 03:47:52,275 - app - INFO - Application initialized successfully
+2026-07-07 03:47:55,775 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:55,808 - app - INFO - Database initialized successfully
+2026-07-07 03:47:55,825 - app - INFO - Application initialized successfully
+2026-07-07 03:47:59,335 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:47:59,371 - app - INFO - Database initialized successfully
+2026-07-07 03:47:59,386 - app - INFO - Application initialized successfully
+2026-07-07 03:48:02,958 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:48:02,999 - app - INFO - Database initialized successfully
+2026-07-07 03:48:03,014 - app - INFO - Application initialized successfully
+2026-07-07 03:48:06,667 - app - INFO - Initializing Semira Fashion Application
+2026-07-07 03:48:06,751 - app - INFO - Database initialized successfully
+2026-07-07 03:48:06,774 - app - INFO - Application initialized successfully
