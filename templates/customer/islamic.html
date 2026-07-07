@@ -275,7 +275,31 @@
 
 .qcard{background:var(--ipanel);border:1px solid var(--iborder);border-radius:18px;padding:24px 18px;max-width:460px;margin:0 auto;backdrop-filter:blur(10px);text-align:center}
 .qcard h2{font-size:18px;color:var(--igold);margin-bottom:4px;font-weight:700}
-.qcard .qsub{font-size:12px;color:#7a7060;margin-bottom:18px}
+.qcard .qsub{font-size:12px;color:#7a7060;margin-bottom:10px}
+
+/* Qibla GPS location bar */
+.qibla-loc-bar{
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    font-size:11px;font-weight:600;letter-spacing:.3px;
+    padding:7px 14px;border-radius:30px;margin:0 auto 12px;
+    max-width:320px;transition:all .3s;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);color:#7a8070;
+}
+.qibla-loc-bar.ok  {background:rgba(26,122,74,.15);border-color:var(--ig);color:#6ee7a0}
+.qibla-loc-bar.err {background:rgba(248,113,113,.1);border-color:#f87171;color:#f87171}
+.qibla-loc-bar.busy{background:rgba(201,168,76,.1); border-color:var(--igold);color:#c9a84c}
+/* GPS request button inside Qibla card */
+.qibla-gps-btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    width:100%;max-width:300px;margin:0 auto 16px;padding:12px 18px;
+    border-radius:50px;border:2px solid var(--igold);
+    background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.07));
+    color:var(--igold);font-size:14px;font-weight:700;cursor:pointer;
+    letter-spacing:.5px;transition:all .25s;
+    animation:pulse-gold 2s ease-in-out infinite alternate;
+}
+.qibla-gps-btn:hover:not(:disabled){background:rgba(201,168,76,.28);transform:translateY(-1px)}
+.qibla-gps-btn:disabled{opacity:.55;cursor:not-allowed;animation:none;transform:none}
 #compass-wrapper{position:relative;width:260px;height:260px;margin:0 auto 16px}
 #qibla-canvas{width:100%;height:100%;border-radius:50%;display:block}
 .bearing-big{font-size:30px;font-weight:700;color:var(--igold);letter-spacing:2px;margin-bottom:3px}
@@ -600,13 +624,22 @@
 <div id="tab-qibla" class="tab-panel">
     <div class="qcard">
         <h2>🕋 Qibla Direction</h2>
-        <p class="qsub">Point your phone to find the direction of the Kaaba in Makkah</p>
+        <p class="qsub">ስልኩን ይያዙ — ቀስቱ ወደ ካዕባ (🕋) ሲጠቁም ቂብላ ላይ ነዎት</p>
+
+        <!-- Location permission UI -->
+        <div class="qibla-loc-bar" id="qibla-loc-bar">
+            📍 ቦታ በመጠበቅ ላይ…
+        </div>
+        <button class="qibla-gps-btn" id="qibla-gps-btn" onclick="requestQiblaGPS()">
+            📡 GPS ቦታዬን ፍቃድ ስጥ
+        </button>
+
         <div id="compass-wrapper">
             <canvas id="qibla-canvas" width="520" height="520"></canvas>
         </div>
         <div class="bearing-big" id="bearing-big">--- °</div>
         <div class="bearing-lbl">Qibla bearing from your location</div>
-        <div class="qalert" id="qalert">✅ You are facing the Qibla!</div>
+        <div class="qalert" id="qalert">✅ ወደ ቂብላ ተዞሯል!</div>
         <div class="sensor-st" id="sensor-st">Sensor: waiting for location…</div>
     </div>
 </div>
@@ -996,9 +1029,68 @@ function loadQibla(lat, lng) {
             if (!data.success) return;
             _qbear = data.bearing;
             document.getElementById('bearing-big').textContent = `${data.bearing.toFixed(1)} °`;
-            document.getElementById('sensor-st').textContent   = `Qibla: ${data.bearing.toFixed(1)}° from North — rotate your phone to align.`;
+            document.getElementById('sensor-st').textContent   = `Qibla: ${data.bearing.toFixed(1)}° from North — ቀስቱ 🕋 ላይ ሲጠቁም ቂብላ ነዎት`;
             updateNeedle();
         });
+}
+
+/* ─── GPS Location for Qibla ─── */
+let _gpsGranted = false;          /* true once real GPS coords are in _lat/_lng */
+
+function _setQiblaLocBar(state, text) {
+    const bar = document.getElementById('qibla-loc-bar');
+    if (!bar) return;
+    bar.className = 'qibla-loc-bar' + (state ? ' ' + state : '');
+    bar.textContent = text;
+}
+
+function requestQiblaGPS() {
+    const btn = document.getElementById('qibla-gps-btn');
+    if (!navigator.geolocation) {
+        _setQiblaLocBar('err', '⚠️ GPS በዚህ ስልክ አይደገፍም');
+        if (btn) btn.textContent = '⚠️ GPS የለም';
+        return;
+    }
+    if (btn) { btn.disabled = true; btn.textContent = '📡 GPS ቦታ በመፈለግ ላይ…'; }
+    _setQiblaLocBar('busy', '⏳ GPS ቦታ በመፈለግ ላይ…');
+
+    navigator.geolocation.getCurrentPosition(
+        pos => {
+            _lat = pos.coords.latitude;
+            _lng = pos.coords.longitude;
+            _gpsGranted = true;
+
+            /* Update global GPS button in Prayer Times tab */
+            const gb = document.getElementById('gps-btn');
+            if (gb) { gb.textContent = '✅ GPS ቦታ ተገኝቷል'; gb.disabled = false; }
+
+            /* Update Prayer Times loc-bar */
+            const lb = document.getElementById('loc-bar');
+            if (lb) { lb.className='loc-bar ok'; lb.textContent=`📍 GPS: ${_lat.toFixed(4)}°N, ${_lng.toFixed(4)}°E`; }
+
+            /* Update Qibla loc-bar and hide button */
+            _setQiblaLocBar('ok', `📍 GPS: ${_lat.toFixed(4)}°N, ${_lng.toFixed(4)}°E`);
+            if (btn) btn.style.display = 'none';
+
+            /* Reload all sections with real location */
+            loadQibla(_lat, _lng);
+            loadPrayerTimes(_lat, _lng);
+            if (_cData) { _cData = null; loadCalendar(); }
+        },
+        err => {
+            _gpsGranted = false;
+            const msg = err.code === 1
+                ? '🔒 ፍቃድ ተከልክሏል — ነባሪ ቦታ ጥቅም ላይ ነው'
+                : '⚠️ ቦታ ማግኘት ተሳናል — ነባሪ ቦታ ጥቅም ላይ ነው';
+            _setQiblaLocBar('err', msg);
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '🔄 እንደገና ሞክር';
+                btn.style.display = '';
+            }
+        },
+        { enableHighAccuracy: true, timeout: 14000, maximumAge: 0 }
+    );
 }
 
 function filterCities(q) {
@@ -1111,6 +1203,35 @@ function startLocation() {
     _lat = DEFAULT_LAT; _lng = DEFAULT_LNG;
     loadPrayerTimes(DEFAULT_LAT, DEFAULT_LNG);
     loadQibla(DEFAULT_LAT, DEFAULT_LNG);
+
+    /* On mobile, silently try GPS in background immediately */
+    if (navigator.geolocation && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+        _setQiblaLocBar('busy', '⏳ GPS ቦታ በመፈለግ ላይ…');
+        const btn = document.getElementById('qibla-gps-btn');
+        if (btn) { btn.disabled = true; btn.textContent = '📡 GPS ቦታ በመፈለግ ላይ…'; }
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                _lat = pos.coords.latitude;
+                _lng = pos.coords.longitude;
+                _gpsGranted = true;
+                _setQiblaLocBar('ok', `📍 GPS: ${_lat.toFixed(4)}°N, ${_lng.toFixed(4)}°E`);
+                if (btn) btn.style.display = 'none';
+                const lb = document.getElementById('loc-bar');
+                if (lb) { lb.className='loc-bar ok'; lb.textContent=`📍 GPS: ${_lat.toFixed(4)}°N, ${_lng.toFixed(4)}°E`; }
+                loadQibla(_lat, _lng);
+                loadPrayerTimes(_lat, _lng);
+            },
+            () => {
+                /* silent fail — keep default, show button */
+                _setQiblaLocBar('', '📍 ነባሪ ቦታ (አዲስ አበባ)');
+                if (btn) { btn.disabled = false; btn.textContent = '📡 GPS ቦታዬን ፍቃድ ስጥ'; }
+            },
+            { enableHighAccuracy: true, timeout: 14000, maximumAge: 60000 }
+        );
+    } else {
+        /* Desktop: show manual button */
+        _setQiblaLocBar('', '📍 ነባሪ ቦታ (አዲስ አበባ)');
+    }
 }
 
 async function requestAzan() {
@@ -1695,12 +1816,18 @@ switchTab = function(name, btn) {
     _origSwitchTab(name, btn);
     if (name === 'quran' && !_qSurahs.length) qLoadSurahs();
     if (name === 'qibla') {
+        /* Init compass on first open */
         if (!_compassInited) {
             _compassInited = true;
             requestAnimationFrame(() => {
                 initCompass();
                 updateNeedle();
             });
+        }
+        /* Auto-request GPS the first time the Qibla tab is opened (if not yet granted) */
+        if (!_gpsGranted) {
+            /* Small delay so the tab animation finishes first */
+            setTimeout(() => requestQiblaGPS(), 400);
         }
     }
 };
