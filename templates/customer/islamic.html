@@ -1426,56 +1426,53 @@ function initCompass() {
         ctx.fill();
         ctx.strokeStyle = '#a09060'; ctx.lineWidth = 0.5; ctx.stroke();
 
-        ctx.restore(); /* end disc rotation — Qibla arrow drawn on static layer below */
+        ctx.restore(); /* end disc rotation */
 
-        /* ── QIBLA ARROW ── static layer, outside disc
-           visual angle = (qibla_bearing − heading) mod 360
-           → when heading == qibla_bearing, angle = 0 → arrow points UP = facing Mecca ✓
-           → disc (N/E/S/W) rotates independently; Qibla arrow stays geographically correct */
+        /* ── QIBLA DIRECTION INDICATOR ── static layer, independent of disc rotation
+           The disc (N/E/S/W) is in phone-view: the direction you face appears at the top.
+           The Qibla indicator is placed OUTSIDE the disc ring so it never overlaps with
+           the compass needle, even when Qibla ≈ North (≈4.6° for Ethiopia).
+
+           Logic: when heading == qibla_bearing, relDeg == 0 → indicator at top (12 o'clock)
+                  → the direction you are facing IS Mecca → outer ring glows green ✓        */
         if (qibla !== null) {
             const relDeg = ((qibla - heading) % 360 + 360) % 360;
             const va     = relDeg * Math.PI / 180;
-            const tipR   = R * 0.52;
-            const baseW  = R * 0.072;
-            const baseY  = R * 0.09;
 
             ctx.save();
             ctx.translate(cx, cy);
             ctx.rotate(va);
 
-            /* outer glow ring slice to help distinguish from N needle */
+            /* ── long needle from centre to near disc edge ─────────────────── */
+            const needleOuter = R * 0.82;
+            const needleInner = R * 0.16;
+            const needleW     = R * 0.022;
+
             ctx.shadowColor = '#c9a84c';
-            ctx.shadowBlur  = 20;
+            ctx.shadowBlur  = 12;
 
-            /* gold Qibla arrow body */
+            /* shaft */
             ctx.beginPath();
-            ctx.moveTo(0,      -tipR);
-            ctx.lineTo(-baseW,  baseY);
-            ctx.lineTo(0,       baseY * 0.4);
-            ctx.lineTo(baseW,   baseY);
+            ctx.moveTo(-needleW * 0.5, -needleInner);
+            ctx.lineTo(-needleW * 0.5, -needleOuter * 0.72);
+            ctx.lineTo(-needleW,       -needleOuter * 0.72);
+            ctx.lineTo(0,              -needleOuter);
+            ctx.lineTo(needleW,        -needleOuter * 0.72);
+            ctx.lineTo(needleW * 0.5,  -needleOuter * 0.72);
+            ctx.lineTo(needleW * 0.5,  -needleInner);
             ctx.closePath();
-            ctx.fillStyle = '#e8c060';
+            ctx.fillStyle = '#c9a84c';
             ctx.fill();
-            ctx.strokeStyle = '#a07828';
-            ctx.lineWidth   = 1;
-            ctx.stroke();
-
             ctx.shadowBlur = 0;
 
-            /* kaaba emoji at arrow tip */
-            const emojiSz = Math.round(W * 0.095);
-            ctx.font = `${emojiSz}px serif`;
+            /* ── Kaaba emoji OUTSIDE the disc ring ─────────────────────────── */
+            const kaabaSz = Math.round(W * 0.085);
+            ctx.font = `${kaabaSz}px serif`;
             ctx.textAlign    = 'center';
-            ctx.textBaseline = 'bottom';
-            ctx.fillText('🕋', 0, -tipR - 1);
-
-            /* QIBLA label */
-            ctx.font = `bold ${Math.round(W * 0.034)}px 'Segoe UI',Arial,sans-serif`;
-            ctx.fillStyle    = '#e8c060';
-            ctx.textBaseline = 'top';
-            ctx.shadowColor  = 'rgba(0,0,0,0.9)';
-            ctx.shadowBlur   = 4;
-            ctx.fillText('QIBLA', 0, -tipR + emojiSz + 2);
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor  = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur   = 6;
+            ctx.fillText('🕋', 0, -(R * 0.93));
             ctx.shadowBlur = 0;
 
             ctx.restore();
