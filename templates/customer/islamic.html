@@ -1307,8 +1307,9 @@ function playAzan(name) {
 }
 
 /* ── 2D Canvas Qibla Compass ── */
-let _compassCtx = null;
+let _compassCtx  = null;
 let _compassAnimId = null;
+let _drawHead    = null;   /* interpolated heading used by canvas — silky smooth */
 
 function initCompass() {
     const wrapper = document.getElementById('compass-wrapper');
@@ -1331,7 +1332,20 @@ function initCompass() {
         const R  = W * 0.44;
         ctx.clearRect(0, 0, W, H);
 
-        const heading = _head || 0;
+        /* ── smooth interpolation toward sensor heading ──
+           _drawHead glides toward _head each frame (α=0.07).
+           Dead-zone: if diff < 0.25° we do NOT move — kills micro-jitter. */
+        const rawTarget = _head !== null ? _head : 0;
+        if (_drawHead === null) {
+            _drawHead = rawTarget;
+        } else {
+            let d = rawTarget - _drawHead;
+            if (d >  180) d -= 360;
+            if (d < -180) d += 360;
+            if (Math.abs(d) > 0.25) _drawHead = (_drawHead + 0.07 * d + 360) % 360;
+        }
+
+        const heading = _drawHead;
         const qibla   = _qbear;
         const headRad = heading * Math.PI / 180;
 
@@ -1546,8 +1560,8 @@ async function enableCompassSensor() {
     }
 }
 
-/* Low-pass smoothing factor: 0.12 = heavy smoothing (stable), 1.0 = no smoothing (raw/shaky) */
-const _LP_ALPHA = 0.12;
+/* Low-pass smoothing factor: 0.07 = very heavy smoothing, 1.0 = no smoothing (raw/shaky) */
+const _LP_ALPHA = 0.07;
 
 /* Smooths angles across the 0°/360° wrap boundary */
 function _smoothAngle(prev, next) {
