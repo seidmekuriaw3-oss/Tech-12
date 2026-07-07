@@ -1572,13 +1572,58 @@ function _smoothAngle(prev, next) {
     return (prev + _LP_ALPHA * diff + 360) % 360;
 }
 
-/* ── Tilt-compensated compass heading ────────────────────────────────────────
-   Works for ALL phone orientations: flat on table, vertical, tilted.
-   Uses W3C rotation matrix R = Rz(α)·Rx(β)·Ry(γ) (ZXY Euler order).
+/* ── Quaternion → compass heading ────────────────────────────────────────────
+   Used with AbsoluteOrientationSensor which gives a unit quaternion
+   [x,y,z,w] representing the rotation FROM Earth frame (X=East,Y=North,Z=Up)
+   TO the device frame.
 
-   When FLAT  (β≈0): heading = (360−α)%360  ← matches verified working formula
-   When VERTICAL (|β|→90°): blends in device −Z axis (back-face) direction
-   so the compass still reads correctly when the phone stands upright.        */
+   Device Y-axis (screen top) in Earth frame = second row of rotation matrix:
+     East  = 2(xy + wz)
+     North = 1 − 2(x² + z²)
+   Heading (clockwise from North) = atan2(East, North).
+
+   This is inherently tilt-compensated: works flat, vertical, or any angle.  */
+function _quaternionToHeading(q) {
+    const [x, y, z, w] = q;
+    const east  = 2 * (x*y + w*z);
+    const north = 1 - 2 * (x*x + z*z);
+    return (Math.atan2(east, north) * 180 / Math.PI + 360) % 360;
+}
+
+/* ── Try modern AbsoluteOrientationSensor ────────────────────────────────────
+   Chrome 67+/Edge 79+. Returns true if sensor started successfully.
+   Falls back automatically to deviceorientationabsolute if unavailable.      */
+async function _initModernSensor(st) {
+    if (!('AbsoluteOrientationSensor' in window)) return false;
+    try {
+        if (navigator.permissions) {
+            const checks = await Promise.all([
+                navigator.permissions.query({ name: 'accelerometer' }),
+                navigator.permissions.query({ name: 'magnetometer'  }),
+                navigator.permissions.query({ name: 'gyroscope'     }),
+            ]);
+            if (checks.some(r => r.state === 'denied')) return false;
+        }
+        const sensor = new AbsoluteOrientationSensor({ frequency: 10, referenceFrame: 'earth' });
+        sensor.addEventListener('error', () => {});
+        sensor.addEventListener('reading', () => {
+            const h = _quaternionToHeading(sensor.quaternion);
+            _head = _smoothAngle(_head, h);
+            if (st) {
+                st.className   = 'sensor-st active';
+                st.textContent = `Compass: ${_head.toFixed(1)}° | Qibla: ${_qbear !== null ? _qbear.toFixed(1) + '°' : '…'}`;
+            }
+            updateNeedle();
+        });
+        sensor.start();
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+/* Legacy tilt-compensated heading from Euler angles (fallback for older browsers).
+   Also correct for all orientations via rotation-matrix math.                */
 function _computeCompassHeading(alpha, beta, gamma) {
     if (alpha == null) return null;
     const DEG = Math.PI / 180;
@@ -1590,18 +1635,14 @@ function _computeCompassHeading(alpha, beta, gamma) {
     const sinB = Math.sin(b), cosB = Math.cos(b);
     const sinG = Math.sin(g), cosG = Math.cos(g);
 
-    /* Column 1 of R → device Y-axis (screen top) direction in world frame.
-       Works best when phone is flat.  East/North components:                 */
+    /* Device Y-axis (screen top) in Earth frame — good when phone is flat    */
     const ey = -sinA * cosB;
     const ny =  cosA * cosB;
-
-    /* Negated column 2 of R → device −Z axis (back face) direction in world.
-       Works best when phone is held upright / vertical.                      */
+    /* Device −Z axis (back face) in Earth frame — good when phone is vertical */
     const ez = -(cosA * sinG + sinA * sinB * cosG);
     const nz =   cosA * sinB * cosG - sinA * sinG;
 
-    /* Blend: |sinB|=0 → flat (use Y-axis); |sinB|=1 → vertical (use −Z axis) */
-    const t     = Math.abs(sinB);
+    const t     = Math.abs(sinB);          /* 0=flat → 1=vertical            */
     const east  = ey * (1 - t) + ez * t;
     const north = ny * (1 - t) + nz * t;
 
@@ -1652,8 +1693,11 @@ function initOrientation() {
         if (sBtn) sBtn.style.display = '';
         if (st)   { st.className = 'sensor-st'; st.textContent = '📱 Compass ፍቃድ ለመስጠት ላይ ያለውን ቁልፍ ይጫኑ'; }
     } else if (typeof DeviceOrientationEvent !== 'undefined') {
-        /* Android / other browsers: register immediately — no permission needed */
-        _registerOrientationListeners();
+        /* Android / other browsers: try AbsoluteOrientationSensor (quaternion-based,
+           works flat OR vertical), fall back to deviceorientationabsolute events.  */
+        _initModernSensor(st).then(ok => {
+            if (!ok) _registerOrientationListeners();
+        });
     } else {
         if (st) { st.className = 'sensor-st err'; st.textContent = 'Compass sensor አልተገኘም።'; }
     }
