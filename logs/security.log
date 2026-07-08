@@ -21625,3 +21625,5 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-06 07:38:31,143 - app - WARNING - 404 Error: http://b9f2ddce-09fb-45d1-986d-fc54abdcf99b-00-8wp1j5vpa93k.kirk.replit.dev/static/uploads/products/images/products/ethiopian_gabi.jpg
 2026-07-06 07:38:31,149 - app - WARNING - 404 Error: http://b9f2ddce-09fb-45d1-986d-fc54abdcf99b-00-8wp1j5vpa93k.kirk.replit.dev/static/uploads/products/images/products/habesha_kemis.jpg
 2026-07-06 08:02:43,435 - app - WARNING - 404 Error: http://b9f2ddce-09fb-45d1-986d-fc54abdcf99b-00-8wp1j5vpa93k.kirk.replit.dev/product/images/products/modern_abaya.jpg
+2026-07-08 12:31:31,430 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-08 12:31:34,650 - app - WARNING - 404 Error: http://localhost:5000/static/uploads/products/product_ddb0ba9f.jpg

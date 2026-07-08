@@ -362,8 +362,8 @@ def product_edit(pid):
                 price = float(request.form.get('price', 0) or 0)
                 compare_price = request.form.get('compare_price')
                 compare_price = float(compare_price) if compare_price else None
-                stock_quantity = int(request.form.get('stock_quantity', 0) or 0)
-                category_id = int(request.form.get('category_id', 0) or 0) or None
+                stock_quantity = int(float(request.form.get('stock_quantity', 0) or 0))
+                category_id = int(float(request.form.get('category_id', 0) or 0)) or None
             except (ValueError, TypeError) as e:
                 flash(f'Invalid number in Price, Compare Price, Stock, or Category field: {e}', 'error')
                 return redirect(url_for('admin.product_edit', pid=pid))
