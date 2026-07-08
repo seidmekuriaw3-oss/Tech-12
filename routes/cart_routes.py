@@ -434,7 +434,7 @@ def place_order():
     
     # Validate phone number format - Ethiopian numbers only
     import re
-    phone_pattern = r'^(09|07|2519|25107)\d{7}$'
+    phone_pattern = r'^(09|07|2519|2517)\d{8}$'
     phone_normalized = shipping_phone.replace(' ', '').replace('-', '')
     if not re.match(phone_pattern, phone_normalized):
         flash('ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ (09xxxxxxxx, 07xxxxxxxx, 2519xxxxxxxx)', 'danger')
@@ -589,7 +589,7 @@ def place_order():
             """, (coupon_id,))
             coupon_result = cursor.fetchone()
             if coupon_result:
-                # Coupon was successfully consumed
+                # Coupon was successfully consumed (used_count incremented)
                 min_order = float(coupon_result['min_order'] or 0)
                 if subtotal_after_discount >= min_order:
                     if disc_type == 'percentage':
@@ -599,8 +599,14 @@ def place_order():
                     else:
                         extra_disc = min(disc_value, subtotal_after_discount)
                     extra_disc = round(extra_disc, 2)
+                else:
+                    # Min order not met — rollback the used_count increment to avoid leaking
+                    cursor.execute("UPDATE coupons SET used_count = used_count - 1 WHERE id = %s", (coupon_id,))
+                    coupon_id = None
+                    extra_disc = 0.0
+                    current_app.logger.warning(f"Coupon min_order not met; rolled back used_count")
             else:
-                # Coupon could not be consumed - already used or limit exceeded
+                # Coupon could not be consumed - already used or limit exceeded or expired
                 coupon_id = None
                 extra_disc = 0.0
                 current_app.logger.warning(f"Coupon {coupon_id} could not be consumed - limit may have been reached")

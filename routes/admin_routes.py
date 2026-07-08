@@ -47,7 +47,21 @@ def admin_login():
             flash('Admin login is not configured. Set ADMIN_USERNAME and ADMIN_PASSWORD in environment variables.', 'danger')
             return render_template('admin/login.html')
 
-        if username == admin_username and password == admin_password:
+        # Check settings table for a stored password hash override
+        _pw_ok = False
+        try:
+            _conn = get_db()
+            _cur = _conn.cursor()
+            _cur.execute("SELECT value FROM settings WHERE key = 'admin_password_hash'")
+            _row = _cur.fetchone()
+            if _row and _row[0]:
+                _pw_ok = (username == admin_username and check_password_hash(_row[0], password))
+            else:
+                _pw_ok = (username == admin_username and password == admin_password)
+        except Exception:
+            _pw_ok = (username == admin_username and password == admin_password)
+
+        if _pw_ok:
             session['admin'] = True
             session['admin_username'] = username
             flash('Logged in successfully!', 'success')
@@ -440,6 +454,9 @@ def product_edit(pid):
             old_prod = cursor.fetchone()
             old_price = float(old_prod['price']) if old_prod else None
 
+            meta_title = request.form.get('meta_title', '').strip()
+            meta_description = request.form.get('meta_description', '').strip()
+
             cursor.execute("""
                 UPDATE products SET
                     name=%s, name_am=%s, name_ar=%s, name_en=%s,
@@ -447,13 +464,15 @@ def product_edit(pid):
                     price=%s, compare_price=%s, stock_quantity=%s, category_id=%s,
                     material=%s, color=%s, sku=%s, gender=%s, season=%s, sizes=%s,
                     is_featured=%s, is_new=%s, thumbnail=%s, images=%s,
+                    meta_title=%s, meta_description=%s,
                     updated_at=CURRENT_TIMESTAMP
                 WHERE id=%s
             """, (name, name_am, name_ar, name_en,
                   description, description_am, description_ar, description_en,
                   price, compare_price, stock_quantity, category_id,
                   material, color, sku, gender, season, sizes,
-                  is_featured, is_new, image_filename, images_json, pid))
+                  is_featured, is_new, image_filename, images_json,
+                  meta_title, meta_description, pid))
             conn.commit()
 
             # Notify wishlist users if price dropped
@@ -498,8 +517,11 @@ def product_delete(pid):
         conn.commit()
         return jsonify({'success': True, 'message': 'Product deleted successfully'})
     except Exception as e:
-        import logging as _log
-        _log.getLogger(__name__).error("Product delete error: %s", e, exc_info=True)
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        current_app.logger.error("Product delete error: %s", e, exc_info=True)
         return jsonify({'success': False, 'error': 'Could not delete product'}), 500
 
 
@@ -1151,9 +1173,28 @@ def ad_delete(aid):
         conn.commit()
         return jsonify({'success': True, 'message': 'Advertisement deleted successfully'})
     except Exception as e:
-        import logging as _log
-        _log.getLogger(__name__).error("Ad delete error: %s", e, exc_info=True)
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        current_app.logger.error("Ad delete error: %s", e, exc_info=True)
         return jsonify({'success': False, 'error': 'Could not delete advertisement'}), 500
+
+
+@admin_bp.route('/ads/clear-media/<int:aid>', methods=['POST'])
+@admin_required
+def ad_clear_media(aid):
+    """Remove only the image/video from an ad without deleting the ad itself."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE advertisements SET image = '', media_url = '' WHERE id = %s", (aid,))
+        conn.commit()
+        return jsonify({'success': True, 'message': 'Media removed from advertisement'})
+    except Exception as e:
+        conn.rollback()
+        current_app.logger.error(f"Ad clear media error for ad {aid}: {e}")
+        return jsonify({'success': False, 'error': 'Could not remove media'}), 500
 
 
 @admin_bp.route('/ads/reorder', methods=['POST'])
@@ -2023,21 +2064,35 @@ def change_password():
         return redirect(url_for('admin.settings') + '#change-password')
 
     try:
+        current_admin_password = os.environ.get('ADMIN_PASSWORD', '1234')
+
+        # Check settings table for a stored hash override first
         conn = get_db()
         cursor = conn.cursor()
-        admin_id = session.get('admin_id') or session.get('user_id')
-        cursor.execute("SELECT id, password_hash FROM users WHERE id = %s AND is_admin = 1",
-                       (admin_id,))
-        admin = cursor.fetchone()
+        cursor.execute("SELECT value FROM settings WHERE key = 'admin_password_hash'")
+        row = cursor.fetchone()
+        stored_hash = row[0] if row else None
 
-        if not admin or not check_password_hash(admin[1], current_password):
+        # Verify current password
+        if stored_hash:
+            password_ok = check_password_hash(stored_hash, current_password)
+        else:
+            password_ok = (current_password == current_admin_password)
+
+        if not password_ok:
             flash('Current password is incorrect.', 'error')
             return redirect(url_for('admin.settings') + '#change-password')
 
         new_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
-        cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_hash, admin[0]))
+        # Store new hash in settings table for persistence across restarts
+        cursor.execute("""
+            INSERT INTO settings (key, value) VALUES ('admin_password_hash', %s)
+            ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
+        """, (new_hash,))
         conn.commit()
-        flash('Password changed successfully!', 'success')
+        # Also update in-memory env var for this session
+        os.environ['ADMIN_PASSWORD'] = new_password
+        flash('Password changed successfully! Update ADMIN_PASSWORD in Replit Secrets to make it permanent.', 'success')
     except Exception as e:
         current_app.logger.error(f"Admin change password error: {e}")
         flash('Error changing password. Please try again.', 'error')

@@ -403,10 +403,10 @@
         previewContainer.classList.remove('has-media');
     }
 
-    // Delete media function
+    // Clear media (image/video) from ad without deleting the ad itself
     function deleteMedia(adId) {
         if (!adId) return;
-        const deleteUrl = "{{ url_for('admin.ad_delete', aid=0) }}".replace('/0', `/${adId}`);
+        const deleteUrl = "{{ url_for('admin.ad_clear_media', aid=0) }}".replace('/0', `/${adId}`);
         
         const confirmFn = window.showConfirm || confirm;
         const callback = () => {
