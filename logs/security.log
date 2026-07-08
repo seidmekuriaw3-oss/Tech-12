@@ -21634,3 +21634,4 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-08 17:16:48,316 - app - WARNING - 404 Error: http://localhost:5000/static/uploads/products/product_ddb0ba9f.jpg
 2026-07-08 17:21:55,956 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
 2026-07-08 17:23:21,005 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-08 17:30:42,122 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
