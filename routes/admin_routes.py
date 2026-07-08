@@ -18,8 +18,11 @@ import os
 import json
 import uuid
 import csv
-from io import StringIO
+from io import StringIO, BytesIO
 import datetime as datetime_
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 from services.notification_service import (
     notify_user, notify_admin,
     get_admin_alerts, get_admin_unread_count, mark_admin_alerts_read
@@ -1470,6 +1473,160 @@ def export_order(oid):
     except Exception as e:
         current_app.logger.error(f"Export order error: {e}")
         flash('Error exporting order.', 'error')
+        return redirect(url_for('admin.orders'))
+
+
+@admin_bp.route('/orders/export-excel')
+@admin_required
+def orders_export_excel():
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+
+        status = request.args.get('status', 'all')
+        search = request.args.get('search', '').strip()
+
+        query = """
+            SELECT
+                o.id, o.order_number, o.created_at, o.status,
+                o.customer_name, o.shipping_phone, o.shipping_city, o.shipping_address,
+                o.subtotal, o.discount, o.shipping_fee, o.total,
+                o.payment_method, o.notes,
+                o.customer_email,
+                o.tracking_number, o.payment_status
+            FROM orders o
+            WHERE 1=1
+        """
+        params = []
+
+        if status and status != 'all':
+            query += " AND o.status = %s"
+            params.append(status)
+
+        if search:
+            query += """ AND (
+                o.order_number ILIKE %s OR
+                o.shipping_name ILIKE %s OR
+                o.shipping_phone ILIKE %s
+            )"""
+            like = f"%{search}%"
+            params.extend([like, like, like])
+
+        query += " ORDER BY o.created_at DESC"
+        cursor.execute(query, params)
+        orders = cursor.fetchall()
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Orders"
+
+        header_fill = PatternFill(start_color="1D6F42", end_color="1D6F42", fill_type="solid")
+        header_font = Font(name="Arial", bold=True, color="FFFFFF", size=11)
+        header_align = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        alt_fill = PatternFill(start_color="F0F7F2", end_color="F0F7F2", fill_type="solid")
+        border_side = Side(style="thin", color="CCCCCC")
+        cell_border = Border(left=border_side, right=border_side, top=border_side, bottom=border_side)
+
+        headers = [
+            "ID", "Order Number", "Date", "Status",
+            "Customer Name", "Phone", "City", "Address",
+            "Subtotal (ETB)", "Discount (ETB)", "Shipping (ETB)", "Total (ETB)",
+            "Payment Method", "Customer Email", "Notes",
+            "Tracking Number", "Payment Status"
+        ]
+
+        col_widths = [6, 18, 18, 12, 22, 16, 14, 28, 14, 14, 14, 14, 16, 26, 30, 20, 16]
+
+        for col_idx, (header, width) in enumerate(zip(headers, col_widths), start=1):
+            cell = ws.cell(row=1, column=col_idx, value=header)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = header_align
+            cell.border = cell_border
+            ws.column_dimensions[get_column_letter(col_idx)].width = width
+
+        ws.row_dimensions[1].height = 30
+
+        for row_idx, order in enumerate(orders, start=2):
+            is_alt = (row_idx % 2 == 0)
+            row_fill = alt_fill if is_alt else None
+
+            created_at = order['created_at']
+            if created_at and hasattr(created_at, 'strftime'):
+                created_at = created_at.strftime('%Y-%m-%d %H:%M')
+
+            values = [
+                order['id'],
+                order['order_number'] or '',
+                created_at,
+                (order['status'] or 'pending').capitalize(),
+                order['customer_name'] or '',
+                order['shipping_phone'] or '',
+                order['shipping_city'] or '',
+                order['shipping_address'] or '',
+                float(order['subtotal'] or 0),
+                float(order['discount'] or 0),
+                float(order['shipping_fee'] or 0),
+                float(order['total'] or 0),
+                order['payment_method'] or '',
+                order['customer_email'] or '',
+                order['notes'] or '',
+                order['tracking_number'] or '',
+                (order['payment_status'] or '').capitalize(),
+            ]
+
+            for col_idx, value in enumerate(values, start=1):
+                cell = ws.cell(row=row_idx, column=col_idx, value=value)
+                cell.border = cell_border
+                cell.alignment = Alignment(vertical="center", wrap_text=(col_idx in (8, 15)))
+                if row_fill:
+                    cell.fill = row_fill
+                if col_idx in (9, 10, 11, 12):
+                    cell.number_format = '#,##0.00'
+                if col_idx in (8, 15):
+                    cell.alignment = Alignment(vertical="center", wrap_text=True)
+
+            ws.row_dimensions[row_idx].height = 18
+
+        ws.freeze_panes = "A2"
+        ws.auto_filter.ref = ws.dimensions
+
+        ws2 = wb.create_sheet(title="Summary")
+        ws2['A1'] = "Export Summary"
+        ws2['A1'].font = Font(bold=True, size=13)
+        ws2['A3'] = "Generated At:"
+        ws2['B3'] = datetime_.datetime.now().strftime('%Y-%m-%d %H:%M')
+        ws2['A4'] = "Filter - Status:"
+        ws2['B4'] = status.capitalize()
+        ws2['A5'] = "Filter - Search:"
+        ws2['B5'] = search or '(none)'
+        ws2['A6'] = "Total Orders:"
+        ws2['B6'] = len(orders)
+        ws2['A7'] = "Total Revenue (ETB):"
+        ws2['B7'] = sum(float(o['total'] or 0) for o in orders)
+        ws2['B7'].number_format = '#,##0.00'
+        for cell in [ws2['A3'], ws2['A4'], ws2['A5'], ws2['A6'], ws2['A7']]:
+            cell.font = Font(bold=True)
+        ws2.column_dimensions['A'].width = 24
+        ws2.column_dimensions['B'].width = 22
+
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+
+        date_str = datetime_.datetime.now().strftime('%Y%m%d_%H%M')
+        filename = f"orders_{status}_{date_str}.xlsx"
+
+        response = make_response(output.read())
+        response.headers['Content-Type'] = (
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
+    except Exception as e:
+        current_app.logger.error(f"Export orders Excel error: {e}")
+        flash('Error generating Excel export. Please try again.', 'error')
         return redirect(url_for('admin.orders'))
 
 

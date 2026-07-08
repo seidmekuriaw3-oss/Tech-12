@@ -180921,3 +180921,11 @@ TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'
 2026-07-08 17:16:45,151 - app - INFO - Database initialized successfully
 2026-07-08 17:16:45,162 - app - INFO - Application initialized successfully
 2026-07-08 17:16:48,316 - app - WARNING - 404 Error: http://localhost:5000/static/uploads/products/product_ddb0ba9f.jpg
+2026-07-08 17:21:55,956 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-08 17:21:56,318 - app - INFO - Initializing Semira Fashion Application
+2026-07-08 17:21:56,421 - app - INFO - Database initialized successfully
+2026-07-08 17:21:56,433 - app - INFO - Application initialized successfully
+2026-07-08 17:23:21,005 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-08 17:23:21,268 - app - INFO - Initializing Semira Fashion Application
+2026-07-08 17:23:21,343 - app - INFO - Database initialized successfully
+2026-07-08 17:23:21,354 - app - INFO - Application initialized successfully
