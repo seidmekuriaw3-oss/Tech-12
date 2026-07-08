@@ -851,6 +851,126 @@ with app.app_context():
     initialize_app()
 
 
+# ==================== 13. DAILY DIGEST SCHEDULER ====================
+
+def _run_daily_digest(app_ref):
+    """Gather yesterday's stats and email the admin digest."""
+    with app_ref.app_context():
+        try:
+            from database.db import get_db as _get_db
+            from services.email_service import (
+                is_email_configured, send_email,
+                build_digest_html, build_digest_text
+            )
+            import os as _os
+            import datetime as _dt
+
+            if not is_email_configured():
+                app_ref.logger.info("Daily digest skipped — SMTP not configured.")
+                return
+
+            conn   = _get_db()
+            cursor = conn.cursor()
+            yesterday = (_dt.datetime.now() - _dt.timedelta(days=1)).date()
+
+            # New orders yesterday
+            cursor.execute(
+                "SELECT COUNT(*), COALESCE(SUM(total),0) FROM orders "
+                "WHERE created_at::date = %s", (yesterday,)
+            )
+            row = cursor.fetchone()
+            new_orders    = row[0] or 0
+            total_revenue = float(row[1] or 0)
+
+            # All pending orders
+            cursor.execute("SELECT COUNT(*) FROM orders WHERE status='pending'")
+            pending_orders = cursor.fetchone()[0] or 0
+
+            # Low stock products
+            cursor.execute("""
+                SELECT name, name_am, stock_quantity, low_stock_threshold
+                FROM products
+                WHERE is_active=1 AND stock_quantity <= low_stock_threshold
+                ORDER BY stock_quantity ASC LIMIT 10
+            """)
+            low_stock = [dict(zip(['name','name_am','stock_quantity','low_stock_threshold'], r))
+                         for r in cursor.fetchall()]
+
+            # AI conversations yesterday
+            cursor.execute(
+                "SELECT COUNT(*) FROM ai_conversations WHERE created_at::date = %s",
+                (yesterday,)
+            )
+            ai_conversations = cursor.fetchone()[0] or 0
+
+            # Top 5 products by orders yesterday
+            cursor.execute("""
+                SELECT p.name, p.name_am, COUNT(oi.id) AS order_count
+                FROM order_items oi
+                JOIN orders o ON o.id = oi.order_id
+                JOIN products p ON p.id = oi.product_id
+                WHERE o.created_at::date = %s
+                GROUP BY p.id, p.name, p.name_am
+                ORDER BY order_count DESC LIMIT 5
+            """, (yesterday,))
+            top_products = [dict(zip(['name','name_am','order_count'], r))
+                            for r in cursor.fetchall()]
+
+            # Admin email from settings
+            cursor.execute("SELECT value FROM settings WHERE key='admin_email'")
+            row = cursor.fetchone()
+            admin_email = (row[0] if row else None) or _os.environ.get('ADMIN_EMAIL', '')
+
+            if not admin_email:
+                app_ref.logger.warning("Daily digest: no admin_email configured in settings.")
+                return
+
+            data = {
+                'date': yesterday.strftime('%B %d, %Y'),
+                'new_orders': new_orders,
+                'total_revenue': total_revenue,
+                'pending_orders': pending_orders,
+                'low_stock_products': low_stock,
+                'ai_conversations': ai_conversations,
+                'top_products': top_products,
+            }
+
+            subject = f"📊 SEMIRA Daily Digest — {yesterday.strftime('%b %d, %Y')}"
+            ok = send_email(
+                admin_email, subject,
+                build_digest_html(data),
+                build_digest_text(data)
+            )
+            if ok:
+                app_ref.logger.info(f"Daily digest sent to {admin_email}")
+            else:
+                app_ref.logger.warning("Daily digest failed — check SMTP config.")
+        except Exception as _e:
+            app_ref.logger.error(f"Daily digest error: {_e}")
+
+
+try:
+    from apscheduler.schedulers.background import BackgroundScheduler
+    import pytz
+
+    _scheduler = BackgroundScheduler(timezone=pytz.utc)
+    # Run at 05:00 UTC = 08:00 EAT (Ethiopia Africa/Addis_Ababa)
+    _scheduler.add_job(
+        func=_run_daily_digest,
+        args=[app],
+        trigger='cron',
+        hour=5, minute=0,
+        id='daily_digest',
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+    _scheduler.start()
+    atexit.register(lambda: _scheduler.shutdown(wait=False))
+    app.logger.info("Daily digest scheduler started — runs at 05:00 UTC (08:00 EAT)")
+except Exception as _sched_err:
+    app.logger.warning(f"Scheduler could not start: {_sched_err}")
+
+
 # ==================== 14. MAIN ENTRY POINT ====================
 
 def main():

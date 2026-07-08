@@ -2348,6 +2348,139 @@ def ai_logs():
     )
 
 
+@admin_bp.route('/settings/smtp', methods=['POST'])
+@admin_required
+def save_smtp_settings():
+    """Save SMTP credentials to env + settings table."""
+    try:
+        conn   = get_db()
+        cursor = conn.cursor()
+
+        smtp_user = request.form.get('smtp_user', '').strip()
+        smtp_host = request.form.get('smtp_host', 'smtp.gmail.com').strip()
+        smtp_port = request.form.get('smtp_port', '587').strip()
+        smtp_pass_raw = request.form.get('smtp_pass', '').strip()
+
+        # Only update password if user typed something new (not the placeholder)
+        update_pass = smtp_pass_raw and smtp_pass_raw != '••••••••'
+
+        pairs = [
+            ('smtp_user', smtp_user),
+            ('smtp_host', smtp_host),
+            ('smtp_port', smtp_port),
+        ]
+        if update_pass:
+            pairs.append(('smtp_pass', smtp_pass_raw))
+
+        for key, val in pairs:
+            cursor.execute("""
+                INSERT INTO settings (key, value)
+                VALUES (%s, %s)
+                ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
+            """, (key, val))
+            os.environ[key.upper()] = val
+
+        conn.commit()
+
+        # If password saved, also load it into env
+        if update_pass:
+            os.environ['SMTP_PASS'] = smtp_pass_raw
+
+        flash('SMTP settings saved successfully! "Test Email Now" ን ተጠቀሙ።', 'success')
+    except Exception as e:
+        current_app.logger.error(f"save_smtp_settings error: {e}")
+        flash('Error saving SMTP settings.', 'error')
+    return redirect(url_for('admin.settings') + '#email-digest')
+
+
+@admin_bp.route('/settings/send-digest', methods=['POST'])
+@admin_required
+def send_test_digest():
+    """Send a test digest email immediately (today's real data)."""
+    try:
+        from services.email_service import (
+            is_email_configured, send_email,
+            build_digest_html, build_digest_text
+        )
+        import datetime as _dt
+
+        # Load SMTP from DB settings into env (in case just saved)
+        conn   = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT key, value FROM settings WHERE key IN ('smtp_user','smtp_pass','smtp_host','smtp_port')")
+        for row in cursor.fetchall():
+            if row['value']:
+                os.environ[row['key'].upper()] = row['value']
+
+        if not is_email_configured():
+            return jsonify({'ok': False, 'msg': 'SMTP_USER / SMTP_PASS አልተዋቀረም። Settings-ወ ላይ ያስቀምጡ።'})
+
+        today = _dt.date.today()
+
+        cursor.execute(
+            "SELECT COUNT(*), COALESCE(SUM(total),0) FROM orders WHERE created_at::date = %s",
+            (today,)
+        )
+        row = cursor.fetchone()
+        new_orders, total_revenue = row[0] or 0, float(row[1] or 0)
+
+        cursor.execute("SELECT COUNT(*) FROM orders WHERE status='pending'")
+        pending_orders = cursor.fetchone()[0] or 0
+
+        cursor.execute("""
+            SELECT name, name_am, stock_quantity, low_stock_threshold
+            FROM products WHERE is_active=1 AND stock_quantity <= low_stock_threshold
+            ORDER BY stock_quantity ASC LIMIT 10
+        """)
+        low_stock = [dict(zip(['name','name_am','stock_quantity','low_stock_threshold'], r))
+                     for r in cursor.fetchall()]
+
+        cursor.execute(
+            "SELECT COUNT(*) FROM ai_conversations WHERE created_at::date = %s", (today,)
+        )
+        ai_conversations = cursor.fetchone()[0] or 0
+
+        cursor.execute("""
+            SELECT p.name, p.name_am, COUNT(oi.id) AS order_count
+            FROM order_items oi
+            JOIN orders o ON o.id = oi.order_id
+            JOIN products p ON p.id = oi.product_id
+            WHERE o.created_at::date = %s
+            GROUP BY p.id, p.name, p.name_am
+            ORDER BY order_count DESC LIMIT 5
+        """, (today,))
+        top_products = [dict(zip(['name','name_am','order_count'], r))
+                        for r in cursor.fetchall()]
+
+        cursor.execute("SELECT value FROM settings WHERE key='admin_email'")
+        row = cursor.fetchone()
+        admin_email = (row[0] if row else None) or os.environ.get('ADMIN_EMAIL', '')
+
+        if not admin_email:
+            return jsonify({'ok': False, 'msg': 'Admin email አልተዋቀረም። Settings ላይ "Admin Email" ያስቀምጡ።'})
+
+        data = {
+            'date': f"TEST — {today.strftime('%B %d, %Y')}",
+            'new_orders': new_orders,
+            'total_revenue': total_revenue,
+            'pending_orders': pending_orders,
+            'low_stock_products': low_stock,
+            'ai_conversations': ai_conversations,
+            'top_products': top_products,
+        }
+        subject = f"📊 [TEST] SEMIRA Daily Digest — {today.strftime('%b %d, %Y')}"
+        ok = send_email(admin_email, subject, build_digest_html(data), build_digest_text(data))
+
+        if ok:
+            return jsonify({'ok': True, 'msg': f'✅ Test email sent to {admin_email}'})
+        else:
+            return jsonify({'ok': False, 'msg': '❌ Send failed — SMTP credentials ያረጋግጡ (Gmail App Password ይፈልጋሉ).'})
+
+    except Exception as e:
+        current_app.logger.error(f"send_test_digest error: {e}")
+        return jsonify({'ok': False, 'msg': f'Error: {e}'})
+
+
 @admin_bp.route('/ai-logs/clear', methods=['POST'])
 @admin_required
 def ai_logs_clear():

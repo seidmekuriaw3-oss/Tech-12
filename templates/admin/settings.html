@@ -339,6 +339,65 @@
         </form>
     </div>
 
+    <!-- Daily Email Digest -->
+    <div class="settings-card" id="email-digest">
+        <h3><span>📧</span> Daily Email Digest</h3>
+        <p style="color:var(--text-muted,#666);margin-bottom:18px;font-size:14px;">
+            ቀን ቀን ጠዋት 8:00 (EAT) — አዲስ ትዕዛዞች፣ ዝቅ ያለ stock፣ AI ንግግሮች ወደ admin email ይላካሉ።
+        </p>
+
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;">
+            <strong>📋 Setup ጡሮ (Gmail):</strong><br>
+            1. Gmail → Settings → Security → <strong>2-Step Verification</strong> ያብሩ<br>
+            2. <strong>App Passwords</strong> → "Mail" + "Other (Semira)" → 16-char code ያስቀምጡ<br>
+            3. ያ code-ን ከዚህ በታች <strong>SMTP Password</strong> ላይ ያስገቡ
+        </div>
+
+        <form method="POST" action="{{ url_for('admin.save_smtp_settings') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>SMTP Email (Gmail address)</label>
+                    <input type="email" name="smtp_user"
+                           value="{{ settings.get('smtp_user','') }}"
+                           placeholder="yourstore@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label>SMTP Password (App Password)</label>
+                    <input type="password" name="smtp_pass"
+                           value="{{ '••••••••' if settings.get('smtp_pass') else '' }}"
+                           placeholder="16-char Gmail App Password"
+                           autocomplete="new-password">
+                    <small>ቅርጸት: xxxx xxxx xxxx xxxx (Google ይሰጠዋል)</small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>SMTP Host</label>
+                    <input type="text" name="smtp_host"
+                           value="{{ settings.get('smtp_host','smtp.gmail.com') }}"
+                           placeholder="smtp.gmail.com">
+                </div>
+                <div class="form-group">
+                    <label>SMTP Port</label>
+                    <input type="number" name="smtp_port"
+                           value="{{ settings.get('smtp_port','587') }}"
+                           placeholder="587">
+                </div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+                <button type="submit" class="btn btn-primary" style="padding:10px 22px;">
+                    💾 Save SMTP Settings
+                </button>
+                <button type="button" onclick="sendTestDigest()" class="btn btn-outline" style="padding:10px 22px;" id="testDigestBtn">
+                    📤 Test Email Now
+                </button>
+            </div>
+        </form>
+
+        <div id="digestResult" style="display:none;margin-top:14px;padding:12px 16px;border-radius:8px;font-size:13px;"></div>
+    </div>
+
     <!-- Change Password -->
     <div class="settings-card" id="change-password">
         <h3>
@@ -398,6 +457,48 @@
 </div>
 
 <script>
+    // Test digest email
+    function sendTestDigest() {
+        var btn = document.getElementById('testDigestBtn');
+        var result = document.getElementById('digestResult');
+        btn.disabled = true;
+        btn.textContent = '⏳ Sending...';
+        result.style.display = 'none';
+
+        fetch('{{ url_for("admin.send_test_digest") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({})
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            result.style.display = 'block';
+            if (d.ok) {
+                result.style.background = '#f0fdf4';
+                result.style.border = '1px solid #bbf7d0';
+                result.style.color = '#166534';
+            } else {
+                result.style.background = '#fef2f2';
+                result.style.border = '1px solid #fecaca';
+                result.style.color = '#991b1b';
+            }
+            result.textContent = d.msg;
+        })
+        .catch(function() {
+            result.style.display = 'block';
+            result.style.background = '#fef2f2';
+            result.style.color = '#991b1b';
+            result.textContent = 'Network error — try again.';
+        })
+        .finally(function() {
+            btn.disabled = false;
+            btn.textContent = '📤 Test Email Now';
+        });
+    }
+
     // Preview WhatsApp number
     const whatsappInput = document.getElementById('whatsapp_number');
     const whatsappPreview = document.getElementById('whatsappPreview');
