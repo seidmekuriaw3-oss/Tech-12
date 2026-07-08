@@ -589,6 +589,19 @@ def ai_chat():
 
         api_key = os.environ.get('GROQ_API_KEY', '').strip()
 
+        # If env var empty, try DB settings (survives server restarts)
+        if not api_key and _GROQ_AVAILABLE:
+            try:
+                _db = get_db()
+                _cur = _db.cursor()
+                _cur.execute("SELECT value FROM settings WHERE key = %s", ('groq_api_key',))
+                _row = _cur.fetchone()
+                if _row and _row['value']:
+                    api_key = _row['value'].strip()
+                    os.environ['GROQ_API_KEY'] = api_key  # cache for next request
+            except Exception:
+                pass
+
         # Detect intent once — used by both fallback and LLM path
         msg_lower = message.lower()
         is_order_intent = any(w in msg_lower for w in AMHARIC_ORDER_WORDS)
