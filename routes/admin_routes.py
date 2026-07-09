@@ -739,9 +739,9 @@ def import_products():
 
     if request.method == 'GET':
         return render_template('admin/products/import.html',
-                               categories=categories_list, csrf_token=csrf_token, lang=lang)
+                               categories=categories_list, import_csrf=csrf_token, lang=lang)
 
-    submitted_token = request.form.get('csrf_token', '')
+    submitted_token = request.form.get('import_csrf_token', '')
     if submitted_token != session.get('import_csrf', ''):
         flash('Invalid or expired security token. Please try again.', 'error')
         return redirect(url_for('admin.import_products'))
@@ -878,7 +878,7 @@ def import_products():
     if row_errors and not validated_rows:
         flash(f'No valid rows found. {len(row_errors)} error(s) detected.', 'error')
         return render_template('admin/products/import.html',
-                               categories=categories_list, csrf_token=csrf_token,
+                               categories=categories_list, import_csrf=csrf_token,
                                row_errors=row_errors, lang=lang)
 
     imported = 0

@@ -181893,3 +181893,15 @@ TypeError: 'str' object is not callable
     ^^^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: 'str' object is not callable
 
+2026-07-09 01:13:22,004 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-09 01:13:24,125 - app - INFO - Initializing Semira Fashion Application
+2026-07-09 01:13:24,213 - app - INFO - Database initialized successfully
+2026-07-09 01:13:24,232 - app - INFO - GROQ_API_KEY loaded from database settings
+2026-07-09 01:13:24,236 - app - INFO - Application initialized successfully
+2026-07-09 01:13:24,424 - app - INFO - Daily digest scheduler started — runs at 05:00 UTC (08:00 EAT)
+2026-07-09 01:14:09,610 - app - WARNING - ⚠️  SECURITY: Default admin password '1234' detected — change it before going live!
+2026-07-09 01:14:10,790 - app - INFO - Initializing Semira Fashion Application
+2026-07-09 01:14:10,852 - app - INFO - Database initialized successfully
+2026-07-09 01:14:10,869 - app - INFO - GROQ_API_KEY loaded from database settings
+2026-07-09 01:14:10,871 - app - INFO - Application initialized successfully
+2026-07-09 01:14:11,003 - app - INFO - Daily digest scheduler started — runs at 05:00 UTC (08:00 EAT)
